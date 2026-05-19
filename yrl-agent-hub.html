@@ -2065,12 +2065,15 @@
         const btn = document.getElementById('btnHubEdit');
         btn.classList.add('active');
         btn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Done Editing</span>';
-        injectDeleteButtons();   // ensure delete + edit buttons exist on all cards
+        injectDeleteButtons();      // ensure delete + edit buttons exist on all cards
         injectContactEditButtons(); // ensure edit buttons exist on all contact cards
         injectAddButtons();
         updateRestoreBar();
         setupDraggableCards();
         restoreHubCardOrder();
+        // Explicitly show all edit/delete buttons (bypasses any CSS caching issues)
+        document.querySelectorAll('.card-edit-btn, .card-delete-btn').forEach(b => b.style.display = 'flex');
+        document.querySelectorAll('.btn-contact-edit, .btn-info-edit, .btn-info-del').forEach(b => b.style.display = 'flex');
     }
 
     function exitHubEditMode() {
@@ -2082,6 +2085,9 @@
         teardownDraggableCards();
         // Remove add buttons
         document.querySelectorAll('.card-add-btn').forEach(b => b.remove());
+        // Explicitly hide all edit/delete buttons
+        document.querySelectorAll('.card-edit-btn, .card-delete-btn').forEach(b => b.style.display = 'none');
+        document.querySelectorAll('.btn-contact-edit, .btn-info-edit, .btn-info-del').forEach(b => b.style.display = 'none');
         // Always persist final state — card order + custom/hidden cards
         saveHubCardOrder();
         saveCustomCards();
