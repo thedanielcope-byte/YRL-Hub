@@ -579,6 +579,7 @@
         }
 
         .contact-card {
+            position: relative;
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius);
@@ -590,6 +591,21 @@
         }
 
         .contact-card:hover { border-color: rgba(192,57,38,0.3); }
+
+        /* ── Contact card edit button (edit mode only) ── */
+        .btn-contact-edit {
+            display: none;
+            position: absolute; top: 7px; right: 8px;
+            width: 22px; height: 22px;
+            background: var(--red); color: #fff;
+            border: none; border-radius: 50%;
+            font-size: 10px; cursor: pointer;
+            align-items: center; justify-content: center;
+            z-index: 10; line-height: 1;
+            transition: background 0.15s;
+        }
+        .btn-contact-edit:hover { background: var(--red-dark); }
+        body.hub-edit-mode .btn-contact-edit { display: flex; }
 
         .c-icon {
             width: 42px;
@@ -1691,51 +1707,50 @@
         </div>
 
         <div class="contact-grid">
-            <!-- ⚙️ REPLACE: all placeholder contact info below -->
-            <div class="contact-card">
+            <div class="contact-card" data-contact-id="main-office">
                 <div class="c-icon"><i class="fa-solid fa-phone"></i></div>
-                <div class="c-info">
+                <div class="c-info" id="cc-main-office">
                     <h4>Main Office</h4>
                     <a href="tel:+13179977404">(317) 997-7404</a>
                 </div>
             </div>
 
-            <div class="contact-card">
+            <div class="contact-card" data-contact-id="office-email">
                 <div class="c-icon"><i class="fa-solid fa-envelope"></i></div>
-                <div class="c-info">
+                <div class="c-info" id="cc-office-email">
                     <h4>Office Email</h4>
                     <a href="mailto:janet@yourrealtylink.com">janet@yourrealtylink.com</a>
                 </div>
             </div>
 
-            <div class="contact-card">
+            <div class="contact-card" data-contact-id="office-address">
                 <div class="c-icon"><i class="fa-solid fa-location-dot"></i></div>
-                <div class="c-info">
+                <div class="c-info" id="cc-office-address">
                     <h4>Office Address</h4>
                     <p>2302 E Southport Rd<br>Indianapolis, IN 46227</p>
                 </div>
             </div>
 
-            <div class="contact-card">
+            <div class="contact-card" data-contact-id="office-hours">
                 <div class="c-icon"><i class="fa-solid fa-clock"></i></div>
-                <div class="c-info">
+                <div class="c-info" id="cc-office-hours">
                     <h4>Office Hours</h4>
                     <p>Mon–Thu: 9:00 AM – 5:00 PM<br>Fri–Sun: Closed</p>
                 </div>
             </div>
 
-            <div class="contact-card">
+            <div class="contact-card" data-contact-id="broker-owner">
                 <div class="c-icon"><i class="fa-solid fa-user-tie"></i></div>
-                <div class="c-info">
+                <div class="c-info" id="cc-broker-owner">
                     <h4>Broker / Owner</h4>
                     <p>Janet Giles-Schultz</p>
                     <a href="tel:+13179977404" class="sub-link">(317) 997-7404</a>
                 </div>
             </div>
 
-            <div class="contact-card">
+            <div class="contact-card" data-contact-id="transaction-coordinator">
                 <div class="c-icon"><i class="fa-solid fa-headset"></i></div>
-                <div class="c-info">
+                <div class="c-info" id="cc-transaction-coordinator">
                     <h4>Transaction Coordinator</h4>
                     <p>Daniel Cope</p>
                     <a href="tel:+13172016323" class="sub-link">(317) 201-6323</a>
@@ -1840,6 +1855,34 @@
                 <i class="fa-solid fa-floppy-disk"></i> Save Tile
             </button>
             <button class="add-card-cancel" onclick="closeInfoTileModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     CONTACT CARD EDIT MODAL
+═══════════════════════════════════════ -->
+<div class="add-card-overlay" id="contactCardOverlay" onclick="if(event.target===this)closeContactCardModal()">
+    <div class="add-card-modal">
+        <h3>
+            <span>Edit Contact Card</span>
+            <button onclick="closeContactCardModal()" style="background:none;border:none;color:var(--text-muted);font-size:20px;cursor:pointer;line-height:1;"><i class="fa-solid fa-xmark"></i></button>
+        </h3>
+        <input type="hidden" id="editingContactId">
+        <div class="add-card-field">
+            <label>Title *</label>
+            <input type="text" id="ccTitle" placeholder="e.g. Main Office" maxlength="50">
+        </div>
+        <div class="add-card-field">
+            <label>Content — one item per line (phone numbers and emails auto-link)</label>
+            <textarea id="ccContent" rows="5" placeholder="e.g.&#10;Janet Giles-Schultz&#10;(317) 997-7404&#10;janet@yourrealtylink.com" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:Inter,sans-serif;font-size:14px;resize:vertical;background:var(--surface-2);color:var(--text);"></textarea>
+        </div>
+        <div class="add-card-error" id="contactCardError" style="display:none;">Please fill in a Title.</div>
+        <div class="add-card-actions">
+            <button class="add-card-save" onclick="saveContactCard()">
+                <i class="fa-solid fa-floppy-disk"></i> Save
+            </button>
+            <button class="add-card-cancel" onclick="closeContactCardModal()">Cancel</button>
         </div>
     </div>
 </div>
@@ -2173,7 +2216,12 @@
     }
 
     // Init on page load: inject delete buttons, load custom/hidden cards, restore order
-    document.addEventListener('DOMContentLoaded', () => { initHubCards(); loadOfficeInfo(); });
+    document.addEventListener('DOMContentLoaded', () => {
+        initHubCards();
+        loadOfficeInfo();
+        injectContactEditButtons();
+        loadContactOverrides();
+    });
 
     /* ══════════════════════════════════════════
        OFFICE INFO TILES
@@ -2312,6 +2360,124 @@
         } catch {}
     }
 
+
+    // ══════════════════════════════════════
+    //  CONTACT CARD EDITING
+    // ══════════════════════════════════════
+    const CONTACT_CARDS_KEY = 'yrl-contact-cards';
+    let contactOverrides = {}; // { id: { title, lines[] } }
+
+    /* Inject a pencil edit button onto every contact card that has data-contact-id */
+    function injectContactEditButtons() {
+        document.querySelectorAll('.contact-card[data-contact-id]').forEach(card => {
+            if (card.querySelector('.btn-contact-edit')) return;
+            const id = card.dataset.contactId;
+            const btn = document.createElement('button');
+            btn.className = 'btn-contact-edit';
+            btn.title = 'Edit card';
+            btn.innerHTML = '<i class="fa-solid fa-pen"></i>';
+            btn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); openContactCardModal(id); });
+            card.appendChild(btn);
+        });
+    }
+
+    /* Open the edit modal, pre-filling from current DOM or stored override */
+    function openContactCardModal(id) {
+        const infoEl = document.getElementById('cc-' + id);
+        if (!infoEl) return;
+        document.getElementById('editingContactId').value = id;
+
+        // Read current title from h4
+        const h4 = infoEl.querySelector('h4');
+        document.getElementById('ccTitle').value = h4 ? h4.textContent.trim() : '';
+
+        // Build content lines from everything after the h4
+        const lines = [];
+        infoEl.childNodes.forEach(node => {
+            if (node === h4 || (node.tagName === 'H4')) return;
+            const text = node.textContent?.trim();
+            if (text) lines.push(text);
+        });
+        document.getElementById('ccContent').value = lines.join('\n');
+
+        document.getElementById('contactCardError').style.display = 'none';
+        document.getElementById('contactCardOverlay').classList.add('open');
+        setTimeout(() => document.getElementById('ccTitle').focus(), 80);
+    }
+
+    function closeContactCardModal() {
+        document.getElementById('contactCardOverlay').classList.remove('open');
+    }
+
+    /* Auto-generate safe HTML for a single content line */
+    function contactLineHtml(line) {
+        line = line.trim();
+        if (!line) return '';
+        // Email
+        if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(line)) {
+            return `<a href="mailto:${esc(line)}" class="sub-link">${esc(line)}</a>`;
+        }
+        // Phone: digits/spaces/parens/dashes, 10+ digits total
+        if (/^[\+\(\d][\d\s\(\)\-\.]{7,}$/.test(line)) {
+            const digits = line.replace(/\D/g, '');
+            const href = digits.length >= 10 ? 'tel:+1' + digits.slice(-10) : 'tel:' + digits;
+            return `<a href="${href}" class="sub-link">${esc(line)}</a>`;
+        }
+        return `<p>${esc(line)}</p>`;
+    }
+
+    /* Apply an override to the live DOM */
+    function applyContactOverride(id, data) {
+        const infoEl = document.getElementById('cc-' + id);
+        if (!infoEl) return;
+        let html = `<h4>${esc(data.title)}</h4>`;
+        (data.lines || []).forEach(line => { html += contactLineHtml(line); });
+        infoEl.innerHTML = html;
+    }
+
+    /* Save from modal */
+    async function saveContactCard() {
+        const id    = document.getElementById('editingContactId').value;
+        const title = document.getElementById('ccTitle').value.trim();
+        const errEl = document.getElementById('contactCardError');
+        if (!title) { errEl.style.display = 'block'; return; }
+        errEl.style.display = 'none';
+
+        const lines = document.getElementById('ccContent').value
+            .split('\n').map(l => l.trim()).filter(Boolean);
+
+        contactOverrides[id] = { title, lines };
+
+        // Update DOM immediately
+        applyContactOverride(id, contactOverrides[id]);
+
+        // Persist
+        localStorage.setItem(CONTACT_CARDS_KEY, JSON.stringify(contactOverrides));
+        if (typeof saveHubContent === 'function') saveHubContent(CONTACT_CARDS_KEY, contactOverrides);
+
+        closeContactCardModal();
+    }
+
+    /* Load overrides on init and apply to DOM */
+    async function loadContactOverrides() {
+        try {
+            const cached = localStorage.getItem(CONTACT_CARDS_KEY);
+            if (cached) {
+                contactOverrides = JSON.parse(cached);
+                Object.keys(contactOverrides).forEach(id => applyContactOverride(id, contactOverrides[id]));
+            }
+        } catch {}
+        try {
+            if (typeof loadHubContent === 'function') {
+                const remote = await loadHubContent(CONTACT_CARDS_KEY);
+                if (remote && typeof remote === 'object' && !Array.isArray(remote)) {
+                    contactOverrides = remote;
+                    localStorage.setItem(CONTACT_CARDS_KEY, JSON.stringify(contactOverrides));
+                    Object.keys(contactOverrides).forEach(id => applyContactOverride(id, contactOverrides[id]));
+                }
+            }
+        } catch {}
+    }
 
     // ══════════════════════════════════════
     //  CUSTOM CARDS (add / edit / delete)
