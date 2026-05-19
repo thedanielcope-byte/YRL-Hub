@@ -2065,6 +2065,8 @@
         const btn = document.getElementById('btnHubEdit');
         btn.classList.add('active');
         btn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Done Editing</span>';
+        injectDeleteButtons();   // ensure delete + edit buttons exist on all cards
+        injectContactEditButtons(); // ensure edit buttons exist on all contact cards
         injectAddButtons();
         updateRestoreBar();
         setupDraggableCards();
@@ -2598,23 +2600,24 @@
     // ── Inject delete + edit buttons into all built-in cards ──
     function injectDeleteButtons() {
         document.querySelectorAll('.card[data-card-id]').forEach(card => {
-            if (card.querySelector('.card-delete-btn')) return; // already injected
             const id = card.dataset.cardId;
             const isCustom = !!card.dataset.customCard;
 
-            // Delete button
-            const delBtn = document.createElement('button');
-            delBtn.className = 'card-delete-btn';
-            delBtn.title = 'Delete card';
-            delBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
-            delBtn.addEventListener('click', e => {
-                e.preventDefault(); e.stopPropagation();
-                deleteHubCard(id, isCustom ? 'custom' : 'builtin');
-            });
-            card.insertBefore(delBtn, card.firstChild);
+            // Inject delete button if missing
+            if (!card.querySelector('.card-delete-btn')) {
+                const delBtn = document.createElement('button');
+                delBtn.className = 'card-delete-btn';
+                delBtn.title = 'Delete card';
+                delBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                delBtn.addEventListener('click', e => {
+                    e.preventDefault(); e.stopPropagation();
+                    deleteHubCard(id, isCustom ? 'custom' : 'builtin');
+                });
+                card.appendChild(delBtn);
+            }
 
-            // Edit button (built-in cards only — custom cards get it from buildCustomCardEl)
-            if (!isCustom) {
+            // Inject edit button if missing (built-in cards only — custom get it in buildCustomCardEl)
+            if (!isCustom && !card.querySelector('.card-edit-btn')) {
                 const editBtn = document.createElement('button');
                 editBtn.className = 'card-edit-btn';
                 editBtn.title = 'Edit card';
@@ -2623,7 +2626,7 @@
                     e.preventDefault(); e.stopPropagation();
                     openEditBuiltinCardModal(card);
                 });
-                card.insertBefore(editBtn, card.firstChild);
+                card.appendChild(editBtn);
             }
         });
     }
