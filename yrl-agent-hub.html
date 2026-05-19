@@ -794,6 +794,18 @@
         body.hub-edit-mode .sec-header { border: 1.5px dashed rgba(192,57,38,0.3); border-radius: 10px; padding: 10px 14px; margin-bottom: 18px; background: rgba(192,57,38,0.03); }
         body.hub-edit-mode .card { cursor: grab; }
         body.hub-edit-mode .card:active { cursor: grabbing; }
+
+        /* Edit-mode card: pencil badge on hover to signal click-to-edit */
+        body.hub-edit-mode .card .card-edit-hint {
+            display: none;
+            position: absolute; bottom: 8px; right: 8px;
+            background: var(--red); color: #fff;
+            font-size: 10px; font-weight: 600; font-family: 'Inter', sans-serif;
+            padding: 3px 8px; border-radius: 20px;
+            align-items: center; gap: 4px; z-index: 5;
+            pointer-events: none; opacity: 0.9;
+        }
+        body.hub-edit-mode .card:hover .card-edit-hint { display: flex; }
         body.hub-edit-mode .card::before {
             content: '⠿'; position: absolute; top: 8px; left: 10px;
             font-size: 16px; color: var(--text-muted); line-height: 1;
@@ -2059,20 +2071,37 @@
         }
     }
 
+    // ── Card click handler for edit mode (replaces per-card pencil buttons) ──
+    function onCardEditClick(e) {
+        // Ignore if clicking the delete button itself
+        if (e.target.closest('.card-delete-btn')) return;
+        e.preventDefault();
+        e.stopPropagation();
+        const card = e.currentTarget;
+        if (card.dataset.customCard) {
+            openEditCardModal(card.dataset.cardId);
+        } else {
+            openEditBuiltinCardModal(card);
+        }
+    }
+
     function enterHubEditMode() {
         hubEditMode = true;
         document.body.classList.add('hub-edit-mode');
         const btn = document.getElementById('btnHubEdit');
         btn.classList.add('active');
         btn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Done Editing</span>';
-        injectDeleteButtons();      // ensure delete + edit buttons exist on all cards
-        injectContactEditButtons(); // ensure edit buttons exist on all contact cards
+        injectDeleteButtons();
+        injectContactEditButtons();
         injectAddButtons();
         updateRestoreBar();
         setupDraggableCards();
         restoreHubCardOrder();
-        // Explicitly show all edit/delete buttons (bypasses any CSS caching issues)
-        document.querySelectorAll('.card-edit-btn, .card-delete-btn').forEach(b => b.style.display = 'flex');
+        // Wire click-to-edit on every card
+        document.querySelectorAll('.card[data-card-id]').forEach(card => {
+            card.addEventListener('click', onCardEditClick);
+        });
+        // Contact card edit buttons — force visible via inline style (CSS-injected elements)
         document.querySelectorAll('.btn-contact-edit, .btn-info-edit, .btn-info-del').forEach(b => b.style.display = 'flex');
     }
 
@@ -2085,10 +2114,13 @@
         teardownDraggableCards();
         // Remove add buttons
         document.querySelectorAll('.card-add-btn').forEach(b => b.remove());
-        // Explicitly hide all edit/delete buttons
-        document.querySelectorAll('.card-edit-btn, .card-delete-btn').forEach(b => b.style.display = 'none');
+        // Remove click-to-edit listeners
+        document.querySelectorAll('.card[data-card-id]').forEach(card => {
+            card.removeEventListener('click', onCardEditClick);
+        });
+        // Hide contact/info edit buttons
         document.querySelectorAll('.btn-contact-edit, .btn-info-edit, .btn-info-del').forEach(b => b.style.display = 'none');
-        // Always persist final state — card order + custom/hidden cards
+        // Always persist final state
         saveHubCardOrder();
         saveCustomCards();
         saveHiddenCards();
@@ -2610,6 +2642,14 @@
         document.querySelectorAll('.card[data-card-id]').forEach(card => {
             const id = card.dataset.cardId;
             const isCustom = !!card.dataset.customCard;
+
+            // Inject hover edit hint if missing
+            if (!card.querySelector('.card-edit-hint')) {
+                const hint = document.createElement('span');
+                hint.className = 'card-edit-hint';
+                hint.innerHTML = '<i class="fa-solid fa-pen"></i> Edit';
+                card.appendChild(hint);
+            }
 
             // Inject delete button if missing
             if (!card.querySelector('.card-delete-btn')) {
