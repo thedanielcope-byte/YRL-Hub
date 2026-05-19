@@ -792,8 +792,7 @@
         /* ── Edit mode section overlay ── */
         body.hub-edit-mode .section { position: relative; }
         body.hub-edit-mode .sec-header { border: 1.5px dashed rgba(192,57,38,0.3); border-radius: 10px; padding: 10px 14px; margin-bottom: 18px; background: rgba(192,57,38,0.03); }
-        body.hub-edit-mode .card { cursor: grab; }
-        body.hub-edit-mode .card:active { cursor: grabbing; }
+        body.hub-edit-mode .card { cursor: pointer; }
 
         /* Edit-mode card: pencil badge on hover to signal click-to-edit */
         body.hub-edit-mode .card .card-edit-hint {
@@ -1323,8 +1322,8 @@
 <main class="main">
 
     <div class="hub-edit-banner">
-        <i class="fa-solid fa-arrows-up-down-left-right"></i>
-        <strong>Edit Layout:</strong> drag to reorder · click <strong>+</strong> to add · click <strong>×</strong> to delete. Click <strong>Done Editing</strong> when finished.
+        <i class="fa-solid fa-pen-to-square"></i>
+        <strong>Edit Layout:</strong> <strong>click any card</strong> to edit its text &amp; link · drag <strong>⠿</strong> to reorder · <strong>×</strong> to remove · <strong>+</strong> to add new
     </div>
     <div class="restore-hidden-bar" id="restoreHiddenBar">
         <i class="fa-solid fa-eye-slash"></i>
