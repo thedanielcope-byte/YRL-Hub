@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Directory — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="yrl-hub.js"></script>
+
+    <style>
+        /* ── Brand Tokens ── */
+        :root {
+            --red:          #c03926;
+            --red-light:    #d94a35;
+            --red-dark:     #9e2e1e;
+            --green:        #16a34a;
+            --bg:           #f2f4f7;
+            --surface:      #ffffff;
+            --surface-2:    #f7f8fa;
+            --surface-3:    #eef0f3;
+            --border:       #e2e5ea;
+            --text:         #1a1d22;
+            --text-sec:     #4b5563;
+            --text-muted:   #9ca3af;
+            --radius:       12px;
+            --shadow:       0 2px 12px rgba(0,0,0,0.08);
+            --shadow-red:   0 4px 20px rgba(192,57,38,0.15);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+        a { text-decoration: none; color: inherit; }
+
+        /* ── Sub-header ── */
+        .sub-header {
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+        }
+        .sub-header-left { display: flex; align-items: center; gap: 14px; }
+        .sub-header-back {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 13px; font-weight: 500; color: var(--text-muted);
+            padding: 6px 10px; border-radius: 8px;
+            transition: all 0.15s; border: 1px solid transparent;
+        }
+        .sub-header-back:hover { color: var(--red); background: rgba(192,57,38,0.05); border-color: rgba(192,57,38,0.2); }
+        .sub-header-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 22px; letter-spacing: 2px; color: var(--text);
+        }
+        .sub-header-right { display: flex; align-items: center; gap: 10px; }
+
+        .save-flash {
+            font-size: 12px; font-weight: 600; color: var(--green);
+            background: rgba(22,163,74,0.1); border-radius: 6px;
+            padding: 4px 10px; opacity: 0; transition: opacity 0.3s;
+        }
+        .save-flash.show { opacity: 1; }
+
+        .btn-edit {
+            display: flex; align-items: center; gap: 7px;
+            background: var(--surface-3); color: var(--text-sec);
+            border: 1px solid var(--border); border-radius: 8px;
+            padding: 7px 14px; font-size: 12px; font-weight: 600;
+            font-family: 'Inter', sans-serif; cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn-edit:hover { border-color: var(--red); color: var(--red); background: rgba(192,57,38,0.05); }
+        .btn-edit.active { background: var(--red); color: #fff; border-color: var(--red); }
+        .btn-edit.active:hover { background: var(--red-dark); }
+
+        /* ── Main ── */
+        .main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; }
+
+        /* ── Page title row ── */
+        .page-intro { margin-bottom: 28px; }
+        .page-intro h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 32px; letter-spacing: 2px; color: var(--text);
+            margin-bottom: 4px;
+        }
+        .page-intro p { font-size: 14px; color: var(--text-muted); }
+
+        /* ── Search ── */
+        .search-wrap {
+            position: relative;
+            max-width: 400px;
+            margin-bottom: 28px;
+        }
+        .search-wrap i.si {
+            position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+            color: var(--text-muted); font-size: 13px; pointer-events: none;
+        }
+        .search-input {
+            width: 100%; padding: 10px 38px 10px 38px;
+            border: 1px solid var(--border); border-radius: 10px;
+            font-size: 13.5px; font-family: 'Inter', sans-serif;
+            background: var(--surface); color: var(--text); outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .search-input:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(192,57,38,0.08); }
+        .search-input::placeholder { color: var(--text-muted); }
+        .search-clear {
+            position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+            background: none; border: none; color: var(--text-muted);
+            cursor: pointer; font-size: 14px; display: none; padding: 2px 6px;
+        }
+        .search-clear:hover { color: var(--red); }
+
+        /* ── Agent Grid ── */
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        /* ── Agent Card ── */
+        .agent-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px 20px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 0;
+            box-shadow: var(--shadow);
+            transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+            position: relative;
+        }
+        .agent-card:hover {
+            border-color: rgba(192,57,38,0.3);
+            box-shadow: var(--shadow-red);
+            transform: translateY(-2px);
+        }
+
+        /* Avatar */
+        .agent-avatar {
+            width: 88px; height: 88px; border-radius: 50%;
+            overflow: hidden; flex-shrink: 0;
+            background: var(--surface-3);
+            border: 3px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 26px; letter-spacing: 1px;
+            margin-bottom: 14px;
+            transition: border-color 0.15s;
+        }
+        .agent-card:hover .agent-avatar { border-color: rgba(192,57,38,0.4); }
+        .agent-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        .agent-name {
+            font-size: 15px; font-weight: 700; color: var(--text);
+            margin-bottom: 3px; line-height: 1.3;
+        }
+        .agent-title {
+            font-size: 11.5px; font-weight: 600; color: var(--red);
+            text-transform: uppercase; letter-spacing: 0.8px;
+            margin-bottom: 14px;
+        }
+
+        .agent-info { width: 100%; display: flex; flex-direction: column; gap: 7px; }
+        .agent-info-row {
+            display: flex; align-items: center; gap: 9px;
+            font-size: 12.5px; color: var(--text-sec);
+            overflow: hidden;
+        }
+        .agent-info-row i {
+            width: 14px; text-align: center;
+            color: var(--red); flex-shrink: 0; font-size: 11px;
+        }
+        .agent-info-row a {
+            color: var(--text-sec); overflow: hidden;
+            text-overflow: ellipsis; white-space: nowrap;
+            transition: color 0.15s;
+        }
+        .agent-info-row a:hover { color: var(--red); }
+        .agent-info-row span {
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+
+        /* Edit mode overlays */
+        .btn-edit-agent {
+            position: absolute; top: 8px; right: 34px;
+            width: 24px; height: 24px; border-radius: 50%;
+            background: var(--surface-3); color: var(--text-muted);
+            border: 1px solid var(--border); font-size: 11px;
+            display: none; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.12s; z-index: 2;
+        }
+        .btn-edit-agent:hover { background: var(--red); color: #fff; border-color: var(--red); }
+        .btn-del-agent {
+            position: absolute; top: 8px; right: 8px;
+            width: 24px; height: 24px; border-radius: 50%;
+            background: #ef4444; color: #fff; border: none;
+            font-size: 13px; line-height: 1;
+            display: none; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+            transition: background 0.12s; z-index: 2;
+        }
+        .btn-del-agent:hover { background: #b91c1c; }
+        body.edit-mode .btn-edit-agent,
+        body.edit-mode .btn-del-agent { display: flex; }
+
+        /* Brand slide buttons on agent cards */
+        .btn-dl-slide {
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            margin-top: 12px; width: 100%; padding: 7px 10px;
+            background: rgba(192,57,38,0.06); border: 1.5px solid rgba(192,57,38,0.22);
+            border-radius: 8px; color: var(--red);
+            font-size: 11.5px; font-weight: 600; font-family: 'Inter', sans-serif;
+            cursor: pointer; transition: all 0.15s;
+        }
+        .btn-dl-slide:hover { background: rgba(192,57,38,0.14); border-color: var(--red); }
+        .btn-upload-slide {
+            display: flex; align-items: center; justify-content: center; gap: 5px;
+            margin-top: 8px; width: 100%; padding: 7px 10px;
+            background: none; border: 1.5px dashed var(--border);
+            border-radius: 7px; color: var(--text-muted);
+            font-size: 11px; font-weight: 600; font-family: 'Inter', sans-serif;
+            cursor: pointer; transition: all 0.15s;
+        }
+        .btn-upload-slide:hover { border-color: var(--red); color: var(--red); }
+        .btn-upload-slide.has-slide { border-color: rgba(192,57,38,0.3); color: var(--red); }
+        .slide-upload-status {
+            font-size: 10.5px; text-align: center; min-height: 14px; margin-top: 3px;
+        }
+
+        /* Add agent card */
+        .btn-add-agent {
+            background: rgba(192,57,38,0.04);
+            border: 1.5px dashed rgba(192,57,38,0.4);
+            border-radius: var(--radius);
+            min-height: 180px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 10px;
+            color: var(--red); font-size: 13px; font-weight: 600;
+            font-family: 'Inter', sans-serif; cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .btn-add-agent:hover { background: rgba(192,57,38,0.08); border-color: var(--red); }
+        .btn-add-agent i { font-size: 22px; opacity: 0.7; }
+
+        /* Empty state */
+        .empty-state {
+            grid-column: 1/-1;
+            text-align: center; padding: 64px 20px;
+            color: var(--text-muted); font-size: 14px;
+        }
+        .empty-state i { display: block; font-size: 40px; margin-bottom: 14px; opacity: 0.3; }
+        .empty-state p { margin-bottom: 6px; }
+        .empty-state small { font-size: 12px; opacity: 0.7; }
+
+        /* No search results */
+        .no-results {
+            display: none;
+            grid-column: 1/-1;
+            text-align: center; padding: 48px 20px;
+            color: var(--text-muted); font-size: 14px;
+        }
+        .no-results i { display: block; font-size: 32px; margin-bottom: 10px; opacity: 0.3; }
+
+        /* ── Modal ── */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.45); z-index: 100;
+            align-items: center; justify-content: center; padding: 20px;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal {
+            background: var(--surface); border-radius: 16px;
+            padding: 28px; width: 100%; max-width: 480px;
+            max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2); position: relative;
+        }
+        .modal-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 22px; letter-spacing: 1.5px; color: var(--text);
+            margin-bottom: 20px;
+        }
+        .modal-close {
+            position: absolute; top: 16px; right: 16px;
+            background: none; border: none; font-size: 20px;
+            color: var(--text-muted); cursor: pointer; line-height: 1;
+        }
+        .modal-close:hover { color: var(--text); }
+        .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .modal-field { display: flex; flex-direction: column; gap: 4px; }
+        .modal-field.full { grid-column: 1/-1; }
+        .modal-label {
+            font-size: 11px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.06em; color: var(--red);
+        }
+        .modal-input {
+            border: 1px solid var(--border); border-radius: 8px;
+            padding: 9px 12px; font-size: 13px; font-family: 'Inter', sans-serif;
+            color: var(--text); outline: none; background: var(--surface-3);
+            transition: border-color 0.15s;
+        }
+        .modal-input:focus { border-color: var(--red); background: var(--surface); }
+        .modal-input::placeholder { color: var(--text-muted); }
+        .modal-hint { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+        .modal-actions {
+            display: flex; gap: 8px;
+            margin-top: 20px; justify-content: flex-end;
+        }
+        .btn-modal-save {
+            background: var(--red); color: #fff; border: none;
+            border-radius: 8px; padding: 10px 22px; font-size: 13px;
+            font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer;
+        }
+        .btn-modal-save:hover { background: var(--red-dark); }
+        .btn-modal-cancel {
+            background: none; color: var(--text-muted);
+            border: 1px solid var(--border); border-radius: 8px;
+            padding: 10px 18px; font-size: 13px;
+            font-family: 'Inter', sans-serif; cursor: pointer;
+        }
+        .btn-modal-cancel:hover { background: var(--surface-3); }
+
+        /* Avatar preview in modal */
+        .photo-preview {
+            width: 84px; height: 84px; border-radius: 50%;
+            overflow: hidden; border: 2px solid var(--border);
+            background: var(--surface-3);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Bebas Neue', sans-serif; font-size: 24px;
+            color: var(--red); flex-shrink: 0;
+            transition: border-color 0.15s;
+            cursor: pointer; position: relative;
+        }
+        .photo-preview:hover { border-color: var(--red); }
+        .photo-preview-inner { width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
+        .photo-preview-inner img { width:100%; height:100%; object-fit:cover; }
+        .photo-preview-overlay {
+            position: absolute; inset: 0; border-radius: 50%;
+            background: rgba(0,0,0,0.45); display: flex; align-items: center;
+            justify-content: center; opacity: 0; transition: opacity 0.15s;
+            color: #fff; font-size: 18px; pointer-events: none;
+        }
+        .photo-preview:hover .photo-preview-overlay { opacity: 1; }
+        .photo-preview-row {
+            display: flex; align-items: center; gap: 16px;
+            grid-column: 1/-1;
+        }
+        .photo-preview-row .modal-field { flex: 1; }
+        .photo-upload-area { display:flex; flex-direction:column; align-items:center; gap:5px; }
+        .photo-upload-hint { font-size:11px; color:var(--text-muted); text-align:center; }
+        .photo-upload-status { font-size:11px; min-height:14px; text-align:center; }
+
+        /* ── PIN Modal ── */
+        .pin-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:1000; align-items:center; justify-content:center; padding:20px; }
+        .pin-overlay.open { display:flex; }
+        .pin-modal { background:#fff; border:1px solid #e2e5ea; border-radius:20px; padding:40px 36px; width:100%; max-width:360px; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.4); }
+        .pin-lock-icon { width:56px; height:56px; background:rgba(192,57,38,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:22px; color:#c03926; }
+        .pin-modal h3 { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:1.5px; margin-bottom:6px; }
+        .pin-modal p  { font-size:13px; color:#9ca3af; margin-bottom:20px; }
+        .pin-input { width:100%; background:#eef0f3; border:2px solid #e2e5ea; border-radius:10px; padding:12px 16px; font-size:22px; text-align:center; letter-spacing:6px; font-family:'Inter',sans-serif; color:#1a1d22; outline:none; margin-bottom:12px; transition:border-color 0.2s; }
+        .pin-input:focus { border-color:#c03926; }
+        .pin-input.shake { animation:pinShake 0.4s ease; border-color:#ef4444; }
+        @keyframes pinShake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
+        .pin-submit { width:100%; background:#c03926; color:#fff; border:none; border-radius:10px; padding:12px; font-size:15px; font-weight:700; font-family:'Inter',sans-serif; cursor:pointer; transition:background 0.2s; display:flex; align-items:center; justify-content:center; gap:8px; }
+        .pin-submit:hover { background:#d94a35; }
+        .pin-error { color:#ef4444; font-size:12px; font-weight:600; margin-top:10px; display:none; }
+
+        /* ── Agent card drag states ── */
+        .agent-card.a-dragging { opacity:0.35; transform:scale(0.97); }
+        .agent-card.a-drag-over { outline:2px dashed #c03926; outline-offset:2px; background:rgba(192,57,38,0.04); }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .main { padding: 20px 16px 60px; }
+            .agent-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .agent-card { padding: 18px 14px 16px; }
+            .agent-avatar { width: 72px; height: 72px; font-size: 22px; }
+            .modal-grid { grid-template-columns: 1fr; }
+            .modal-field.full { grid-column: 1; }
+        }
+        @media (max-width: 380px) {
+            .agent-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+    <script src="yrl-auth.js"></script>
+</head>
+<body>
+
+<!-- ── Sub-header ── -->
+<header class="sub-header">
+    <div class="sub-header-left">
+        <a href="yrl-agent-hub.html" class="sub-header-back">
+            <i class="fa-solid fa-arrow-left"></i> Hub
+        </a>
+        <div class="sub-header-title">Agent Directory</div>
+    </div>
+    <div class="sub-header-right">
+        <span class="save-flash" id="saveFlash">&#10003; Saved</span>
+        <button class="btn-edit" id="btnEdit" onclick="toggleEditMode()">
+            <i class="fa-solid fa-pen"></i> Edit Directory
+        </button>
+        <span id="yrl-user-name" style="color:rgba(255,255,255,0.75);font-size:12.5px;font-weight:500;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+        <button onclick="yrlSignOut()" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:7px 14px;border-radius:100px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+        </button>
+    </div>
+</header>
+
+<!-- ── Main ── -->
+<main class="main">
+    <div class="page-intro">
+        <h1>Meet the Team</h1>
+        <p>Contact information for every agent at Your Realty Link.</p>
+    </div>
+
+    <!-- Search -->
+    <div class="search-wrap">
+        <i class="fa-solid fa-magnifying-glass si"></i>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search by name or title…" autocomplete="off">
+        <button class="search-clear" id="searchClear" onclick="clearSearch()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+
+    <!-- Grid -->
+    <div class="agent-grid" id="agentGrid"></div>
+</main>
+
+<!-- ── Add / Edit Modal ── -->
+<div class="modal-overlay" id="agentModal" onclick="handleOverlayClick(event)">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <div class="modal-title" id="modalTitle">Add Agent</div>
+        <div class="modal-grid">
+            <!-- Photo upload row -->
+            <div class="photo-preview-row">
+                <input type="file" id="f-photo-file" style="display:none" accept="image/*" onchange="handlePhotoUpload(this)">
+                <input type="hidden" id="f-photo">
+                <div class="photo-upload-area">
+                    <div class="photo-preview" id="photoPreview"
+                         onclick="document.getElementById('f-photo-file').click()"
+                         title="Click to upload photo">
+                        <div class="photo-preview-inner" id="photoPreviewInner">?</div>
+                        <div class="photo-preview-overlay"><i class="fa-solid fa-camera"></i></div>
+                    </div>
+                    <div class="photo-upload-hint">Click to upload</div>
+                    <div class="photo-upload-status" id="photoUploadStatus"></div>
+                </div>
+                <div style="flex:1;">
+                    <div class="modal-label" style="margin-bottom:4px;">Agent Photo <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted)">(optional)</span></div>
+                    <div style="font-size:12px;color:var(--text-muted);line-height:1.5;">Click the circle to upload a headshot directly. Accepts JPG, PNG, or WEBP images. The photo will be stored and displayed on the agent's card.</div>
+                </div>
+            </div>
+            <div class="modal-field">
+                <label class="modal-label">First Name *</label>
+                <input class="modal-input" id="f-first" type="text" placeholder="Jane" oninput="previewPhoto()">
+            </div>
+            <div class="modal-field">
+                <label class="modal-label">Last Name *</label>
+                <input class="modal-input" id="f-last" type="text" placeholder="Smith" oninput="previewPhoto()">
+            </div>
+            <div class="modal-field full">
+                <label class="modal-label">Title *</label>
+                <input class="modal-input" id="f-title" type="text" placeholder="REALTOR®, Broker, Transaction Coordinator…">
+            </div>
+            <div class="modal-field">
+                <label class="modal-label">Phone *</label>
+                <input class="modal-input" id="f-phone" type="tel" placeholder="317-555-1234">
+            </div>
+            <div class="modal-field">
+                <label class="modal-label">Email *</label>
+                <input class="modal-input" id="f-email" type="email" placeholder="jane@yourrealtylink.com">
+            </div>
+            <div class="modal-field full">
+                <label class="modal-label">Website <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted)">(optional)</span></label>
+                <input class="modal-input" id="f-website" type="url" placeholder="https://janesmith.com">
+            </div>
+            <div class="modal-field">
+                <label class="modal-label">MIBOR # <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted)">(optional)</span></label>
+                <input class="modal-input" id="f-mibor" type="text" placeholder="e.g. 12345">
+            </div>
+            <div class="modal-field">
+                <label class="modal-label">RB # <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted)">(optional)</span></label>
+                <input class="modal-input" id="f-rb" type="text" placeholder="e.g. RB12345678">
+            </div>
+
+            <!-- Brand Slide -->
+            <div class="modal-field full" id="brandSlideField" style="display:none;">
+                <label class="modal-label">Brand Slide <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted)">(optional — downloadable by agent)</span></label>
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                    <input type="file" id="f-brand-slide" style="display:none" accept="image/*"
+                        onchange="handleModalBrandUpload(this)">
+                    <button type="button" class="btn-upload-slide"
+                        style="margin-top:0;flex:1;min-width:140px;"
+                        onclick="document.getElementById('f-brand-slide').click()">
+                        <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                        <span id="brandSlideLabel">Upload Brand Slide</span>
+                    </button>
+                    <div id="brandSlidePreviewWrap" style="display:none;">
+                        <img id="brandSlidePreviewImg" src="" alt="Brand slide preview"
+                            style="height:48px;border-radius:6px;border:1.5px solid var(--border);object-fit:cover;cursor:pointer;"
+                            onclick="document.getElementById('f-brand-slide').click()"
+                            title="Click to replace">
+                    </div>
+                </div>
+                <div id="brandSlideUploadStatus" style="font-size:11px;min-height:14px;margin-top:2px;"></div>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-modal-cancel" onclick="closeModal()">Cancel</button>
+            <button class="btn-modal-save" id="modalSaveBtn" onclick="saveAgent()">Add Agent</button>
+        </div>
+    </div>
+</div>
+
+<div class="pin-overlay" id="dirPinOverlay">
+    <div class="pin-modal">
+        <div class="pin-lock-icon"><i class="fa-solid fa-lock"></i></div>
+        <h3>Broker Access</h3>
+        <p>Enter your PIN to edit the agent directory</p>
+        <input type="password" inputmode="numeric" maxlength="10" class="pin-input" id="dirPinInput"
+               placeholder="• • • •" autocomplete="off"
+               onkeydown="if(event.key==='Enter')submitDirPin()">
+        <button class="pin-submit" onclick="submitDirPin()">
+            <i class="fa-solid fa-unlock"></i> Unlock
+        </button>
+        <p class="pin-error" id="dirPinError">Incorrect PIN. Try again.</p>
+        <button onclick="closeDirPinModal()" style="margin-top:14px;background:none;border:none;color:#9ca3af;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;">Cancel</button>
+    </div>
+</div>
+
+<script>
+/* ============================================================
+   YRL Agent Directory
+   ============================================================ */
+
+const DIRECTORY_KEY = 'yrl-agent-directory';
+const BROKER_PIN = '2302';
+const PIN_KEY    = 'yrl_broker_auth';
+
+let agents    = [];
+let editMode  = false;
+let editingId = null; // id of agent being edited (null = adding new)
+let dragAgentId = null;
+let _agentWasDragging = false;
+
+/* ── Utilities ── */
+function uid() { return Math.random().toString(36).slice(2, 9); }
+function esc(s) {
+    return String(s||'')
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function initials(name) {
+    return (name||'?').trim().split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
+}
+function avatarColor(name) {
+    /* deterministic hue from name characters */
+    let h = 0;
+    for (let i = 0; i < (name||'').length; i++) h = (h * 31 + (name||'').charCodeAt(i)) % 360;
+    return `hsl(${h}, 45%, 88%)`;
+}
+function avatarTextColor(name) {
+    let h = 0;
+    for (let i = 0; i < (name||'').length; i++) h = (h * 31 + (name||'').charCodeAt(i)) % 360;
+    return `hsl(${h}, 60%, 30%)`;
+}
+
+/* ── Supabase sync ── */
+async function init() {
+    // Try localStorage first for instant render
+    try {
+        const cached = localStorage.getItem(DIRECTORY_KEY);
+        if (cached) { agents = JSON.parse(cached); render(); }
+    } catch {}
+    // Then fetch from Supabase
+    try {
+        const remote = await loadHubContent(DIRECTORY_KEY);
+        if (Array.isArray(remote)) {
+            agents = remote;
+            localStorage.setItem(DIRECTORY_KEY, JSON.stringify(agents));
+            render();
+        }
+    } catch {}
+    render();
+}
+
+async function persist() {
+    localStorage.setItem(DIRECTORY_KEY, JSON.stringify(agents));
+    const ok = await saveHubContent(DIRECTORY_KEY, agents);
+    if (ok) {
+        const f = document.getElementById('saveFlash');
+        if (f) { f.classList.add('show'); setTimeout(() => f.classList.remove('show'), 2500); }
+    }
+    return ok;
+}
+
+/* ── PIN auth ── */
+function isAuthed() { return sessionStorage.getItem(PIN_KEY) === BROKER_PIN; }
+
+function openDirPinModal() {
+    document.getElementById('dirPinInput').value = '';
+    document.getElementById('dirPinError').style.display = 'none';
+    document.getElementById('dirPinOverlay').classList.add('open');
+    setTimeout(() => document.getElementById('dirPinInput').focus(), 80);
+}
+function closeDirPinModal() {
+    document.getElementById('dirPinOverlay').classList.remove('open');
+}
+function submitDirPin() {
+    const val = document.getElementById('dirPinInput').value.trim();
+    if (val === BROKER_PIN) {
+        sessionStorage.setItem(PIN_KEY, BROKER_PIN);
+        closeDirPinModal();
+        enterDirEditMode();
+    } else {
+        const inp = document.getElementById('dirPinInput');
+        inp.classList.add('shake');
+        document.getElementById('dirPinError').style.display = 'block';
+        inp.value = '';
+        setTimeout(() => inp.classList.remove('shake'), 450);
+    }
+}
+
+/* ── Edit mode ── */
+function toggleEditMode() {
+    if (editMode) {
+        exitDirEditMode();
+    } else {
+        if (isAuthed()) {
+            enterDirEditMode();
+        } else {
+            openDirPinModal();
+        }
+    }
+}
+function enterDirEditMode() {
+    editMode = true;
+    document.body.classList.add('edit-mode');
+    const btn = document.getElementById('btnEdit');
+    btn.innerHTML = '<i class="fa-solid fa-check"></i> Done Editing';
+    btn.classList.add('active');
+    render();
+}
+function exitDirEditMode() {
+    editMode = false;
+    document.body.classList.remove('edit-mode');
+    const btn = document.getElementById('btnEdit');
+    btn.innerHTML = '<i class="fa-solid fa-pen"></i> Edit Directory';
+    btn.classList.remove('active');
+    render();
+}
+
+/* ── Drag-and-drop ── */
+function agentDragStart(e, agentId) {
+    dragAgentId = agentId;
+    _agentWasDragging = true;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', agentId);
+    setTimeout(() => {
+        const el = document.querySelector(`.agent-card[data-agent-id="${agentId}"]`);
+        if (el) el.classList.add('a-dragging');
+    }, 0);
+}
+function agentDragEnd(e) {
+    document.querySelectorAll('.agent-card.a-dragging, .agent-card.a-drag-over').forEach(el => {
+        el.classList.remove('a-dragging', 'a-drag-over');
+    });
+    dragAgentId = null;
+}
+function agentDragOver(e, agentId) {
+    if (!dragAgentId || agentId === dragAgentId) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    document.querySelectorAll('.agent-card.a-drag-over').forEach(el => el.classList.remove('a-drag-over'));
+    const el = document.querySelector(`.agent-card[data-agent-id="${agentId}"]`);
+    if (el) el.classList.add('a-drag-over');
+}
+function agentDragLeave(e) {
+    e.currentTarget.classList.remove('a-drag-over');
+}
+function agentDrop(e, toAgentId) {
+    e.preventDefault();
+    document.querySelectorAll('.agent-card.a-drag-over').forEach(el => el.classList.remove('a-drag-over'));
+    if (!dragAgentId || dragAgentId === toAgentId) return;
+
+    const fromIdx = agents.findIndex(a => a.id === dragAgentId);
+    const toIdx   = agents.findIndex(a => a.id === toAgentId);
+    if (fromIdx === -1 || toIdx === -1) return;
+
+    const [moved] = agents.splice(fromIdx, 1);
+    agents.splice(toIdx, 0, moved);
+
+    persist();
+    render();
+}
+
+/* ── Render ── */
+function render() {
+    const grid = document.getElementById('agentGrid');
+    const q = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+
+    const filtered = q
+        ? agents.filter(a => (a.name||'').toLowerCase().includes(q) || (a.title||'').toLowerCase().includes(q))
+        : agents;
+
+    let html = '';
+
+    if (agents.length === 0 && !editMode) {
+        html = `<div class="empty-state">
+            <i class="fa-solid fa-address-card"></i>
+            <p>No agents added yet.</p>
+            <small>Click <strong>Edit Directory</strong> to add the first agent.</small>
+        </div>`;
+    } else if (filtered.length === 0 && q) {
+        html = `<div class="no-results" style="display:block;">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            No agents match "<strong>${esc(q)}</strong>"
+        </div>`;
+    } else {
+        filtered.forEach(agent => {
+            const bg  = avatarColor(agent.name);
+            const fg  = avatarTextColor(agent.name);
+            const ini = initials(agent.name);
+            const avatarHtml = agent.photo
+                ? `<img src="${esc(agent.photo)}" alt="${esc(agent.name)}" onerror="this.parentElement.innerHTML='<span style=\\'color:${fg}\\'>${ini}</span>';this.parentElement.style.background='${bg}';">`
+                : `<span style="color:${fg}">${ini}</span>`;
+
+            const dragAttrs = editMode
+                ? `draggable="true" ondragstart="agentDragStart(event,'${agent.id}')" ondragend="agentDragEnd(event)" ondragover="agentDragOver(event,'${agent.id}')" ondragleave="agentDragLeave(event)" ondrop="agentDrop(event,'${agent.id}')"`
+                : '';
+            html += `<div class="agent-card" id="card-${agent.id}" data-agent-id="${agent.id}" ${dragAttrs}>
+                <button class="btn-edit-agent" onclick="openEditModal('${agent.id}')" title="Edit">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+                <button class="btn-del-agent" onclick="deleteAgent('${agent.id}')" title="Remove">&times;</button>
+                <div class="agent-avatar" style="background:${agent.photo ? '#fff' : bg}">
+                    ${avatarHtml}
+                </div>
+                <div class="agent-name">${esc(agent.name)}</div>
+                <div class="agent-title">${esc(agent.title)}</div>
+                <div class="agent-info">
+                    ${agent.phone ? `<div class="agent-info-row"><i class="fa-solid fa-phone"></i><a href="tel:${esc(agent.phone.replace(/\s/g,''))}">${esc(agent.phone)}</a></div>` : ''}
+                    ${agent.email ? `<div class="agent-info-row"><i class="fa-solid fa-envelope"></i><a href="mailto:${esc(agent.email)}">${esc(agent.email)}</a></div>` : ''}
+                    ${agent.website ? `<div class="agent-info-row"><i class="fa-solid fa-globe"></i><a href="${esc(agent.website)}" target="_blank" rel="noopener">${esc(agent.website.replace(/^https?:\/\//,''))}</a></div>` : ''}
+                    ${agent.mibor ? `<div class="agent-info-row"><i class="fa-solid fa-id-badge"></i><span>MIBOR&nbsp;#&nbsp;${esc(agent.mibor)}</span></div>` : ''}
+                    ${agent.rb ? `<div class="agent-info-row"><i class="fa-solid fa-certificate"></i><span>RB&nbsp;#&nbsp;${esc(agent.rb)}</span></div>` : ''}
+                </div>
+                ${agent.photo ? `
+                <button class="btn-dl-slide" onclick="downloadAgentPhoto('${agent.id}')" style="background:rgba(28,124,212,0.07);color:#1c7cd4;border-color:rgba(28,124,212,0.3);">
+                    <i class="fa-solid fa-download"></i> Download Photo
+                </button>` : ''}
+                ${agent.brandSlide ? `
+                <button class="btn-dl-slide" onclick="downloadAgentSlide('${agent.id}')">
+                    <i class="fa-solid fa-download"></i> Download Brand Slide
+                </button>` : ''}
+                ${editMode ? `
+                <input type="file" id="slide-file-${agent.id}" style="display:none"
+                    accept="image/*" onchange="uploadAgentSlide('${agent.id}',this)">
+                <button class="btn-upload-slide"
+                    onclick="document.getElementById('slide-file-${agent.id}').click()">
+                    <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                    ${agent.brandSlide ? 'Replace Brand Slide' : 'Upload Brand Slide'}
+                </button>
+                <div class="slide-upload-status" id="slide-status-${agent.id}"></div>` : ''}
+            </div>`;
+        });
+    }
+
+    // Add Agent button always visible in edit mode
+    if (editMode) {
+        html += `<button class="btn-add-agent" onclick="openAddModal()">
+            <i class="fa-solid fa-user-plus"></i>
+            Add Agent
+        </button>`;
+    }
+
+    grid.innerHTML = html;
+}
+
+/* ── Modal ── */
+function openAddModal() {
+    editingId = null;
+    document.getElementById('modalTitle').textContent = 'Add Agent';
+    document.getElementById('modalSaveBtn').textContent = 'Add Agent';
+    clearForm();
+    openModal();
+}
+
+function openEditModal(id) {
+    const agent = agents.find(a => a.id === id);
+    if (!agent) return;
+    editingId = id;
+    document.getElementById('modalTitle').textContent = 'Edit Agent';
+    document.getElementById('modalSaveBtn').textContent = 'Save Changes';
+    // Split name back into first/last
+    const parts = (agent.name || '').trim().split(/\s+/);
+    document.getElementById('f-first').value   = parts[0] || '';
+    document.getElementById('f-last').value    = parts.slice(1).join(' ') || '';
+    document.getElementById('f-title').value   = agent.title   || '';
+    document.getElementById('f-phone').value   = agent.phone   || '';
+    document.getElementById('f-email').value   = agent.email   || '';
+    document.getElementById('f-website').value = agent.website || '';
+    document.getElementById('f-mibor').value   = agent.mibor   || '';
+    document.getElementById('f-rb').value      = agent.rb      || '';
+    document.getElementById('f-photo').value   = agent.photo   || '';
+    updatePhotoPreview(agent.photo, agent.name);
+    // Show brand slide field in edit modal (edit mode only)
+    document.getElementById('brandSlideField').style.display = '';
+    setBrandSlideModalState(agent.brandSlide || null);
+    openModal();
+}
+
+function openModal() {
+    document.getElementById('agentModal').classList.add('open');
+}
+
+function closeModal() {
+    document.getElementById('agentModal').classList.remove('open');
+    editingId = null;
+}
+
+function handleOverlayClick(e) {
+    if (e.target === document.getElementById('agentModal')) closeModal();
+}
+
+function clearForm() {
+    ['f-first','f-last','f-title','f-phone','f-email','f-website','f-mibor','f-rb','f-photo'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.value = ''; el.style.borderColor = ''; }
+    });
+    const fileInput = document.getElementById('f-photo-file');
+    if (fileInput) fileInput.value = '';
+    const photoStatus = document.getElementById('photoUploadStatus');
+    if (photoStatus) { photoStatus.textContent = ''; }
+    updatePhotoPreview('', '');
+    // Hide brand slide field for Add modal (no agent id yet to attach it to)
+    document.getElementById('brandSlideField').style.display = 'none';
+    setBrandSlideModalState(null);
+}
+
+/* ── Photo preview — refreshes avatar initials when name fields change ── */
+function previewPhoto() {
+    const url   = document.getElementById('f-photo').value.trim();
+    const first = document.getElementById('f-first').value.trim();
+    const last  = document.getElementById('f-last').value.trim();
+    updatePhotoPreview(url, (first + ' ' + last).trim());
+}
+
+/* ── Photo upload handler ── */
+async function handlePhotoUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const statusEl = document.getElementById('photoUploadStatus');
+    if (statusEl) { statusEl.textContent = 'Uploading…'; statusEl.style.color = '#ea580c'; }
+    try {
+        const url = await uploadHubFile(file, 'agent-photos');
+        document.getElementById('f-photo').value = url;
+        const first = document.getElementById('f-first').value.trim();
+        const last  = document.getElementById('f-last').value.trim();
+        updatePhotoPreview(url, (first + ' ' + last).trim());
+        if (statusEl) { statusEl.textContent = '✓ Photo uploaded'; statusEl.style.color = 'var(--green)'; }
+    } catch (err) {
+        if (statusEl) { statusEl.textContent = '✗ ' + (err.message || 'Upload failed'); statusEl.style.color = '#ef4444'; }
+        input.value = '';
+    }
+}
+
+function updatePhotoPreview(url, name) {
+    const el    = document.getElementById('photoPreview');
+    const inner = document.getElementById('photoPreviewInner');
+    if (!el || !inner) return;
+    const ini = initials(name || '?');
+    const bg  = avatarColor(name || '');
+    const fg  = avatarTextColor(name || '');
+    if (url) {
+        el.style.background = '#fff';
+        inner.innerHTML = `<img src="${esc(url)}" alt="preview"
+            onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\\'color:${fg}\\'>${ini}</span>';this.parentElement.parentElement.style.background='${bg}';"
+            style="width:100%;height:100%;object-fit:cover;">`;
+    } else {
+        el.style.background = bg;
+        inner.innerHTML = `<span style="color:${fg}">${ini}</span>`;
+    }
+}
+
+/* ── Save agent ── */
+async function saveAgent() {
+    const requiredFields = [
+        { id: 'f-first',  label: 'First Name' },
+        { id: 'f-last',   label: 'Last Name' },
+        { id: 'f-title',  label: 'Title' },
+        { id: 'f-phone',  label: 'Phone' },
+        { id: 'f-email',  label: 'Email' },
+    ];
+    for (const f of requiredFields) {
+        const el = document.getElementById(f.id);
+        if (!el.value.trim()) {
+            el.style.borderColor = '#ef4444';
+            el.focus();
+            return;
+        }
+        el.style.borderColor = '';
+    }
+
+    const first   = document.getElementById('f-first').value.trim();
+    const last    = document.getElementById('f-last').value.trim();
+    const name    = (first + ' ' + last).trim();
+    const title   = document.getElementById('f-title').value.trim();
+    const phone   = document.getElementById('f-phone').value.trim();
+    const email   = document.getElementById('f-email').value.trim();
+    const website = document.getElementById('f-website').value.trim();
+    const mibor   = document.getElementById('f-mibor').value.trim();
+    const rb      = document.getElementById('f-rb').value.trim();
+    const photo   = document.getElementById('f-photo').value.trim();
+
+    if (editingId) {
+        const idx = agents.findIndex(a => a.id === editingId);
+        if (idx > -1) {
+            agents[idx] = { ...agents[idx], name, title, phone, email, website, mibor, rb, photo };
+        }
+    } else {
+        agents.push({ id: uid(), name, title, phone, email, website, mibor, rb, photo, created: new Date().toISOString() });
+    }
+
+    closeModal();
+    render();
+    const ok = await persist();
+    if (!ok) alert('⚠️ Saved locally but failed to sync — check your connection and try again.');
+}
+
+/* ── Delete agent ── */
+async function deleteAgent(id) {
+    const agent = agents.find(a => a.id === id);
+    if (!agent) return;
+    if (!confirm(`Remove ${agent.name} from the directory?`)) return;
+    agents = agents.filter(a => a.id !== id);
+    render();
+    await persist();
+}
+
+/* ── Modal brand slide helpers ── */
+function setBrandSlideModalState(existingUrl) {
+    const label   = document.getElementById('brandSlideLabel');
+    const preview = document.getElementById('brandSlidePreviewWrap');
+    const img     = document.getElementById('brandSlidePreviewImg');
+    const status  = document.getElementById('brandSlideUploadStatus');
+    const btn     = document.querySelector('#brandSlideField .btn-upload-slide');
+    if (status) status.textContent = '';
+    if (existingUrl) {
+        if (label)   label.textContent = 'Replace Brand Slide';
+        if (img)     img.src = existingUrl;
+        if (preview) preview.style.display = '';
+        if (btn)     btn.classList.add('has-slide');
+    } else {
+        if (label)   label.textContent = 'Upload Brand Slide';
+        if (preview) preview.style.display = 'none';
+        if (btn)     btn.classList.remove('has-slide');
+    }
+}
+
+async function handleModalBrandUpload(input) {
+    const file = input.files[0];
+    if (!file || !editingId) return;
+    const status = document.getElementById('brandSlideUploadStatus');
+    const btn    = document.querySelector('#brandSlideField .btn-upload-slide');
+    if (status) { status.textContent = 'Uploading…'; status.style.color = '#ea580c'; }
+    if (btn)    btn.disabled = true;
+    try {
+        const url   = await uploadHubFile(file, 'agent-slides');
+        const agent = agents.find(a => a.id === editingId);
+        if (agent) { agent.brandSlide = url; await persist(); }
+        setBrandSlideModalState(url);
+        if (status) { status.textContent = '✓ Uploaded'; status.style.color = 'var(--green)'; }
+        render(); // update card download button
+    } catch (err) {
+        if (status) { status.textContent = '✗ ' + (err.message || 'Upload failed'); status.style.color = '#ef4444'; }
+    } finally {
+        if (btn) btn.disabled = false;
+    }
+}
+
+/* ── Agent brand slide: upload (card button, kept for compatibility) ── */
+async function uploadAgentSlide(agentId, input) {
+    const file    = input.files[0];
+    if (!file) return;
+    const statusEl = document.getElementById('slide-status-' + agentId);
+    if (statusEl) { statusEl.textContent = 'Uploading…'; statusEl.style.color = '#ea580c'; }
+
+    try {
+        const url   = await uploadHubFile(file, 'agent-slides');
+        const agent = agents.find(a => a.id === agentId);
+        if (!agent) throw new Error('Agent not found');
+        agent.brandSlide = url;
+        await persist();
+        render(); // re-render so download button appears + upload button updates
+    } catch (err) {
+        if (statusEl) {
+            statusEl.textContent = '✗ ' + (err.message || 'Upload failed');
+            statusEl.style.color = '#ef4444';
+        }
+    }
+}
+
+/* ── Agent brand slide: download ── */
+async function downloadAgentSlide(agentId) {
+    const agent = agents.find(a => a.id === agentId);
+    if (!agent?.brandSlide) return;
+    try {
+        const resp = await fetch(agent.brandSlide);
+        const blob = await resp.blob();
+        const a    = document.createElement('a');
+        a.href     = URL.createObjectURL(blob);
+        a.download = (agent.name || 'agent').replace(/[^a-zA-Z0-9 ]/g,'').trim()
+            .replace(/\s+/g,'-').toLowerCase() + '-brand-slide.png';
+        a.click();
+        URL.revokeObjectURL(a.href);
+    } catch {
+        window.open(agent.brandSlide, '_blank'); // fallback — open in new tab
+    }
+}
+
+/* ── Agent photo: download ── */
+async function downloadAgentPhoto(agentId) {
+    const agent = agents.find(a => a.id === agentId);
+    if (!agent?.photo) return;
+    try {
+        const resp = await fetch(agent.photo);
+        const blob = await resp.blob();
+        const ext  = blob.type.includes('png') ? 'png' : 'jpg';
+        const a    = document.createElement('a');
+        a.href     = URL.createObjectURL(blob);
+        a.download = (agent.name || 'agent').replace(/[^a-zA-Z0-9 ]/g,'').trim()
+            .replace(/\s+/g,'-').toLowerCase() + '-photo.' + ext;
+        a.click();
+        URL.revokeObjectURL(a.href);
+    } catch {
+        window.open(agent.photo, '_blank'); // fallback — open in new tab
+    }
+}
+
+/* ── Search ── */
+document.addEventListener('DOMContentLoaded', () => {
+    const inp   = document.getElementById('searchInput');
+    const clear = document.getElementById('searchClear');
+    inp.addEventListener('input', () => {
+        clear.style.display = inp.value ? 'block' : 'none';
+        render();
+    });
+
+    document.getElementById('dirPinOverlay').addEventListener('click', function(e) {
+        if (e.target === this) closeDirPinModal();
+    });
+});
+
+function clearSearch() {
+    const inp = document.getElementById('searchInput');
+    inp.value = '';
+    document.getElementById('searchClear').style.display = 'none';
+    inp.focus();
+    render();
+}
+
+/* ── Keyboard ── */
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+});
+
+/* ── Boot ── */
+init();
+</script>
+</body>
+</html>

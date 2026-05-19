@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Open House — Buyer Interest Form</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --red:#c03926; --red-dark:#9e2e1e;
+            --bg:#f2f4f7; --surface:#fff; --border:#e2e5ea;
+            --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+            --green:#16a34a; --radius:12px;
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;}
+
+        /* ── Header ── */
+        .header{
+            background:linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);
+            padding:28px 20px 24px; color:#fff; position:relative; overflow:hidden;
+        }
+        .header::before{
+            content:''; position:absolute; inset:0;
+            background-image:radial-gradient(rgba(255,255,255,0.08) 1px,transparent 1px);
+            background-size:28px 28px; pointer-events:none;
+        }
+        .header-inner{max-width:560px;margin:0 auto;position:relative;z-index:1;}
+        .header-logo{max-width:100px;background:#fff;border-radius:8px;padding:8px 12px;
+            box-shadow:0 4px 16px rgba(0,0,0,0.2);margin-bottom:16px;display:block;}
+        .header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,6vw,44px);
+            letter-spacing:2px;line-height:1;margin-bottom:6px;}
+        .header-sub{font-size:13px;color:rgba(255,255,255,0.8);}
+        .event-badge{
+            display:inline-flex;align-items:center;gap:8px;
+            background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);
+            border-radius:100px;padding:6px 14px;font-size:12.5px;font-weight:600;
+            margin-top:14px;
+        }
+        .event-badge i{font-size:11px;}
+
+        /* ── Main ── */
+        .main{max-width:560px;margin:0 auto;padding:32px 20px 60px;}
+
+        /* ── Property card ── */
+        .property-card{
+            background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+            padding:20px 22px;margin-bottom:24px;
+            box-shadow:0 2px 12px rgba(0,0,0,0.06);
+        }
+        .property-card-label{
+            font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;
+            color:var(--red);margin-bottom:8px;
+        }
+        .property-address{font-size:17px;font-weight:700;color:var(--text);margin-bottom:10px;line-height:1.3;}
+        .property-meta{display:flex;flex-wrap:wrap;gap:12px;}
+        .property-meta-item{
+            display:flex;align-items:center;gap:6px;
+            font-size:12.5px;color:var(--text-sec);
+        }
+        .property-meta-item i{font-size:11px;color:var(--red);}
+        .agent-row{
+            display:flex;align-items:center;gap:10px;
+            margin-top:14px;padding-top:14px;border-top:1px solid var(--border);
+        }
+        .agent-avatar{
+            width:36px;height:36px;border-radius:50%;
+            background:var(--red);color:#fff;font-size:13px;font-weight:700;
+            display:flex;align-items:center;justify-content:center;flex-shrink:0;
+        }
+        .agent-name{font-size:13px;font-weight:600;color:var(--text);}
+        .agent-title{font-size:11.5px;color:var(--text-muted);}
+
+        /* ── Form card ── */
+        .form-card{
+            background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+            padding:28px 24px;box-shadow:0 2px 12px rgba(0,0,0,0.06);
+        }
+        .form-card h2{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1.5px;
+            color:var(--text);margin-bottom:6px;}
+        .form-desc{font-size:13px;color:var(--text-sec);margin-bottom:24px;}
+        .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+        .form-group{display:flex;flex-direction:column;gap:5px;}
+        .form-group.full{grid-column:1/-1;}
+        .form-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-sec);}
+        .req{color:var(--red);}
+        .form-input{
+            border:1.5px solid var(--border);border-radius:9px;
+            padding:10px 13px;font-size:14px;font-family:'Inter',sans-serif;
+            color:var(--text);outline:none;background:#fafbfc;width:100%;
+            transition:border-color 0.15s,background 0.15s;
+        }
+        .form-input:focus{border-color:var(--red);background:#fff;}
+        .form-input.error{border-color:#ef4444;}
+
+        /* ── Intent options ── */
+        .intent-grid{display:flex;flex-direction:column;gap:8px;}
+        .intent-option{
+            display:flex;align-items:center;gap:12px;
+            border:1.5px solid var(--border);border-radius:10px;
+            padding:12px 16px;cursor:pointer;transition:all 0.15s;
+            background:#fafbfc;
+        }
+        .intent-option:hover{border-color:var(--red);background:#fff;}
+        .intent-option.selected{border-color:var(--red);background:rgba(192,57,38,0.05);}
+        .intent-option input[type="radio"]{display:none;}
+        .intent-dot{
+            width:18px;height:18px;border-radius:50%;border:2px solid var(--border);
+            flex-shrink:0;display:flex;align-items:center;justify-content:center;
+            transition:all 0.15s;
+        }
+        .intent-option.selected .intent-dot{border-color:var(--red);background:var(--red);}
+        .intent-option.selected .intent-dot::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff;display:block;}
+        .intent-icon{font-size:16px;color:var(--text-muted);flex-shrink:0;width:20px;text-align:center;}
+        .intent-option.selected .intent-icon{color:var(--red);}
+        .intent-text{font-size:13.5px;font-weight:500;color:var(--text);}
+        .intent-hint{font-size:11.5px;color:var(--text-muted);margin-top:1px;}
+
+        /* ── Submit ── */
+        .btn-submit{
+            width:100%;background:var(--red);color:#fff;border:none;border-radius:10px;
+            padding:15px;font-size:16px;font-weight:700;font-family:'Inter',sans-serif;
+            cursor:pointer;transition:background 0.15s;margin-top:20px;
+            display:flex;align-items:center;justify-content:center;gap:8px;
+        }
+        .btn-submit:hover:not(:disabled){background:var(--red-dark);}
+        .btn-submit:disabled{opacity:0.65;cursor:not-allowed;}
+        .privacy{font-size:11px;color:var(--text-muted);text-align:center;margin-top:12px;}
+
+        /* ── Thank you ── */
+        #viewThanks{display:none;}
+        .thanks-card{
+            background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+            padding:48px 28px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,0.06);
+        }
+        .thanks-icon{
+            width:72px;height:72px;border-radius:50%;background:rgba(22,163,74,0.1);
+            display:flex;align-items:center;justify-content:center;
+            font-size:32px;color:var(--green);margin:0 auto 20px;
+        }
+        .thanks-card h2{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1.5px;
+            color:var(--text);margin-bottom:10px;}
+        .thanks-card p{font-size:14px;color:var(--text-sec);max-width:360px;margin:0 auto;}
+
+        /* ── Loading / error ── */
+        #viewLoading{text-align:center;padding:60px 20px;color:var(--text-muted);font-size:14px;}
+        #viewError{display:none;text-align:center;padding:60px 20px;}
+        #viewError p{font-size:14px;color:var(--text-muted);}
+
+        @media(max-width:480px){
+            .form-grid{grid-template-columns:1fr;}
+            .form-group.full{grid-column:1;}
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-inner">
+        <img src="https://yrlagent.com/wp-content/uploads/2026/04/Your-Realty-Link-ver6.6-4-final.png"
+             alt="Your Realty Link" class="header-logo">
+        <h1>Virtual Open House</h1>
+        <div class="header-sub">Live property tour — express your interest below</div>
+        <div class="event-badge" id="eventBadge" style="display:none">
+            <i class="fa-solid fa-calendar-days"></i>
+            <span id="badgeDate">Loading…</span>
+        </div>
+    </div>
+</header>
+
+<main class="main">
+
+    <!-- Loading -->
+    <div id="viewLoading">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size:24px;margin-bottom:12px;display:block;"></i>
+        Loading event details…
+    </div>
+
+    <!-- Error -->
+    <div id="viewError">
+        <p><i class="fa-solid fa-circle-exclamation" style="font-size:28px;color:#ef4444;display:block;margin-bottom:12px;"></i>
+        This interest form link is invalid or the event has ended.</p>
+    </div>
+
+    <!-- Form -->
+    <div id="viewForm" style="display:none">
+        <!-- Property info -->
+        <div class="property-card">
+            <div class="property-card-label"><i class="fa-solid fa-house"></i> Property</div>
+            <div class="property-address" id="propAddress">Loading…</div>
+            <div class="property-meta">
+                <div class="property-meta-item" id="propBeds" style="display:none">
+                    <i class="fa-solid fa-bed"></i><span></span>
+                </div>
+                <div class="property-meta-item" id="propBaths" style="display:none">
+                    <i class="fa-solid fa-bath"></i><span></span>
+                </div>
+                <div class="property-meta-item" id="propSqft" style="display:none">
+                    <i class="fa-solid fa-ruler-combined"></i><span></span>
+                </div>
+                <div class="property-meta-item" id="propPrice" style="display:none">
+                    <i class="fa-solid fa-tag"></i><span></span>
+                </div>
+            </div>
+            <div class="agent-row">
+                <div class="agent-avatar" id="agentAvatar">YRL</div>
+                <div>
+                    <div class="agent-name" id="agentName">Your Realty Link</div>
+                    <div class="agent-title">Listing Agent</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interest form -->
+        <div class="form-card">
+            <h2>Express Your Interest</h2>
+            <p class="form-desc">Fill out the form below and your agent will follow up with you shortly.</p>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">First Name <span class="req">*</span></label>
+                    <input id="f_first" class="form-input" type="text" placeholder="John">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Last Name <span class="req">*</span></label>
+                    <input id="f_last" class="form-input" type="text" placeholder="Smith">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email <span class="req">*</span></label>
+                    <input id="f_email" class="form-input" type="email" placeholder="john@email.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone <span class="req">*</span></label>
+                    <input id="f_phone" class="form-input" type="tel" placeholder="(317) 555-0100">
+                </div>
+            </div>
+
+            <div class="form-group full" style="margin-bottom:0;">
+                <label class="form-label" style="margin-bottom:10px;">I am interested in… <span class="req">*</span></label>
+                <div class="intent-grid" id="intentGrid">
+                    <label class="intent-option" onclick="selectIntent(this)">
+                        <input type="radio" name="intent" value="Schedule a Showing">
+                        <div class="intent-dot"></div>
+                        <i class="fa-solid fa-calendar-check intent-icon"></i>
+                        <div>
+                            <div class="intent-text">Scheduling a Showing</div>
+                            <div class="intent-hint">I'd like to see the property in person</div>
+                        </div>
+                    </label>
+                    <label class="intent-option" onclick="selectIntent(this)">
+                        <input type="radio" name="intent" value="Making an Offer">
+                        <div class="intent-dot"></div>
+                        <i class="fa-solid fa-file-signature intent-icon"></i>
+                        <div>
+                            <div class="intent-text">Making an Offer</div>
+                            <div class="intent-hint">I'm ready to move forward</div>
+                        </div>
+                    </label>
+                    <label class="intent-option" onclick="selectIntent(this)">
+                        <input type="radio" name="intent" value="Getting More Information">
+                        <div class="intent-dot"></div>
+                        <i class="fa-solid fa-circle-info intent-icon"></i>
+                        <div>
+                            <div class="intent-text">Getting More Information</div>
+                            <div class="intent-hint">I have questions about the property</div>
+                        </div>
+                    </label>
+                    <label class="intent-option" onclick="selectIntent(this)">
+                        <input type="radio" name="intent" value="Exploring Financing Options">
+                        <div class="intent-dot"></div>
+                        <i class="fa-solid fa-building-columns intent-icon"></i>
+                        <div>
+                            <div class="intent-text">Exploring Financing Options</div>
+                            <div class="intent-hint">I'd like to learn about mortgage options</div>
+                        </div>
+                    </label>
+                    <label class="intent-option" onclick="selectIntent(this)">
+                        <input type="radio" name="intent" value="Just Exploring">
+                        <div class="intent-dot"></div>
+                        <i class="fa-solid fa-binoculars intent-icon"></i>
+                        <div>
+                            <div class="intent-text">Just Exploring</div>
+                            <div class="intent-hint">Keeping my options open for now</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <button class="btn-submit" id="btnSubmit" onclick="submitInterest()">
+                <i class="fa-solid fa-paper-plane"></i> Submit Interest
+            </button>
+            <p class="privacy"><i class="fa-solid fa-lock" style="margin-right:4px;"></i>Your information is private and will only be shared with your agent.</p>
+        </div>
+    </div>
+
+    <!-- Thank you -->
+    <div id="viewThanks">
+        <div class="thanks-card">
+            <div class="thanks-icon"><i class="fa-solid fa-check"></i></div>
+            <h2>You're All Set!</h2>
+            <p>Thank you for your interest in <strong id="thanksAddress"></strong>. Your agent will be in touch with you shortly.</p>
+        </div>
+    </div>
+
+</main>
+
+<script>
+const SB_URL = 'https://khhfkxfxefjgunhrihyx.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtoaGZreGZ4ZWZqZ3VuaHJpaHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3NzYwMjcsImV4cCI6MjA5MTM1MjAyN30.bYW68xMDUEXBRC1bxOLdj77xCcjXb3wIuHbPAPFdSGo';
+const GHL_WEBHOOK = 'https://services.leadconnectorhq.com/hooks/iOT1nopTL5CnKPq44zFI/webhook-trigger/ac791ae2-015d-4aaa-9356-0e2081f04093';
+
+let eventData = null;
+let selectedIntent = '';
+
+/* ── Boot ── */
+document.addEventListener('DOMContentLoaded', loadEvent);
+
+async function loadEvent() {
+    const params  = new URLSearchParams(window.location.search);
+    const eventId = params.get('event');
+
+    if (!eventId) { showError(); return; }
+
+    try {
+        const res = await fetch(
+            `${SB_URL}/rest/v1/voh_events?id=eq.${encodeURIComponent(eventId)}&select=property_address,asking_price,bedrooms,bathrooms,square_footage,event_date,event_time,agent_name,status`,
+            { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }
+        );
+        const rows = await res.json();
+        if (!rows.length) { showError(); return; }
+
+        eventData = rows[0];
+
+        // Populate property card
+        setText('propAddress', eventData.property_address || 'Address not available');
+        setText('agentName',   eventData.agent_name || 'Your Realty Link');
+
+        const initials = (eventData.agent_name || 'YRL').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+        setText('agentAvatar', initials);
+
+        showMeta('propPrice', eventData.asking_price, eventData.asking_price);
+        showMeta('propBeds',  eventData.bedrooms,     eventData.bedrooms + ' bed');
+        showMeta('propBaths', eventData.bathrooms,    eventData.bathrooms + ' bath');
+        showMeta('propSqft',  eventData.square_footage, Number(eventData.square_footage).toLocaleString() + ' sq ft');
+
+        if (eventData.event_date) {
+            const d = new Date(eventData.event_date + 'T12:00:00');
+            const label = d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})
+                + (eventData.event_time ? ' · ' + eventData.event_time : '');
+            setText('badgeDate', label);
+            document.getElementById('eventBadge').style.display = '';
+        }
+
+        document.title = `VOH Interest — ${eventData.property_address}`;
+        hide('viewLoading'); show('viewForm');
+    } catch {
+        showError();
+    }
+}
+
+/* ── Intent selection ── */
+function selectIntent(el) {
+    document.querySelectorAll('.intent-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedIntent = el.querySelector('input').value;
+}
+
+/* ── Submit ── */
+async function submitInterest() {
+    const first = val('f_first'), last = val('f_last'),
+          email = val('f_email'), phone = val('f_phone');
+
+    let ok = true;
+    [['f_first',first],['f_last',last],['f_email',email],['f_phone',phone]].forEach(([id,v]) => {
+        const el = document.getElementById(id);
+        if (!v) { el.classList.add('error'); el.addEventListener('input',()=>el.classList.remove('error'),{once:true}); ok=false; }
+    });
+    if (!selectedIntent) {
+        document.getElementById('intentGrid').style.outline = '2px solid #ef4444';
+        document.getElementById('intentGrid').style.borderRadius = '8px';
+        ok = false;
+    }
+    if (!ok) return;
+
+    const btn = document.getElementById('btnSubmit');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting…';
+
+    try {
+        await fetch(GHL_WEBHOOK, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            mode: 'no-cors',
+            body: JSON.stringify({
+                first_name:       first,
+                last_name:        last,
+                email:            email,
+                phone:            phone,
+                intent:           selectedIntent,
+                property_address: eventData?.property_address || '',
+                agent_name:       eventData?.agent_name || '',
+                event_date:       eventData?.event_date || '',
+                source:           'VOH Interest Form'
+            })
+        });
+
+        setText('thanksAddress', eventData?.property_address || 'this property');
+        hide('viewForm'); show('viewThanks');
+    } catch {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Interest';
+        alert('Something went wrong — please try again.');
+    }
+}
+
+/* ── Helpers ── */
+function val(id) { return (document.getElementById(id)?.value||'').trim(); }
+function setText(id, t) { const el=document.getElementById(id); if(el) el.textContent=t; }
+function show(id) { const el=document.getElementById(id); if(el) el.style.display=''; }
+function hide(id) { const el=document.getElementById(id); if(el) el.style.display='none'; }
+function showError() { hide('viewLoading'); show('viewError'); }
+function showMeta(id, val, label) {
+    if (!val) return;
+    const el = document.getElementById(id);
+    if (el) { el.querySelector('span').textContent = label; el.style.display=''; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In — Your Realty Link Agent Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --red:       #c03926;
+            --red-light: #d94a35;
+            --red-dark:  #9e2e1e;
+            --bg:        #f2f4f7;
+            --surface:   #ffffff;
+            --border:    #e2e5ea;
+            --text:      #1a1d22;
+            --text-sec:  #5a6270;
+            --text-muted:#9ca3af;
+            --radius:    14px;
+            --shadow-red:0 8px 32px rgba(192,57,38,0.25);
+        }
+
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html, body { height: 100%; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Background pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                linear-gradient(150deg, #a82f1e 0%, #c03926 45%, #9e2e1e 100%);
+            z-index: -2;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
+            background-size: 28px 28px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* ── Login card ── */
+        .login-card {
+            background: var(--surface);
+            border-radius: 24px;
+            padding: 48px 44px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+            text-align: center;
+            position: relative;
+        }
+
+        .login-logo {
+            max-width: 160px;
+            margin: 0 auto 28px;
+            border-radius: 10px;
+        }
+
+        .login-card h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 30px;
+            letter-spacing: 2px;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .login-card .sub {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            margin-bottom: 36px;
+            line-height: 1.5;
+        }
+
+        /* ── Form ── */
+        .login-form { text-align: left; }
+
+        .form-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--text-sec);
+            margin-bottom: 7px;
+        }
+
+        .form-input {
+            width: 100%;
+            background: #f7f8fa;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 13px 16px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            margin-bottom: 16px;
+        }
+
+        .form-input:focus {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(192,57,38,0.12);
+        }
+
+        .form-input.error {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239,68,68,0.12);
+        }
+
+        .btn-magic {
+            width: 100%;
+            background: var(--red);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+            margin-bottom: 12px;
+        }
+
+        .btn-magic:hover:not(:disabled) {
+            background: var(--red-light);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-red);
+        }
+
+        .btn-magic:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* ── States ── */
+        .state { display: none; }
+        .state.active { display: block; }
+
+        /* Success state */
+        .success-icon {
+            width: 72px;
+            height: 72px;
+            background: rgba(22,163,74,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 30px;
+            color: #16a34a;
+        }
+
+        .success-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 26px;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+        }
+
+        .success-msg {
+            font-size: 14px;
+            color: var(--text-sec);
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .success-msg strong { color: var(--text); }
+
+        .btn-back {
+            background: none;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            padding: 9px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            color: var(--text-sec);
+            transition: all 0.15s;
+        }
+        .btn-back:hover { border-color: var(--red); color: var(--red); }
+
+        /* Loading state (while checking session on callback) */
+        .loading-icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(192,57,38,0.08);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 26px;
+            color: var(--red);
+        }
+
+        /* Error message */
+        .error-msg {
+            display: none;
+            background: rgba(239,68,68,0.08);
+            border: 1px solid rgba(239,68,68,0.2);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #dc2626;
+            margin-top: -4px;
+            margin-bottom: 14px;
+            text-align: left;
+        }
+
+        /* Footer note */
+        .login-note {
+            font-size: 12px;
+            color: rgba(255,255,255,0.55);
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            .login-card { padding: 36px 28px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <img src="https://yrlagent.com/wp-content/uploads/2026/04/Your-Realty-Link-ver6.6-4-final.png"
+         alt="Your Realty Link" class="login-logo"
+         onerror="this.style.display='none'">
+
+    <!-- ── State: Loading (checking callback token) ── -->
+    <div class="state" id="stateLoading">
+        <div class="loading-icon"><i class="fa-solid fa-spinner fa-spin"></i></div>
+        <h1>Signing You In</h1>
+        <p class="sub">Just a moment…</p>
+    </div>
+
+    <!-- ── State: Email form ── -->
+    <div class="state active" id="stateForm">
+        <h1>Agent Hub</h1>
+        <p class="sub">Enter your work email and we'll send you a sign-in link — no password needed.</p>
+
+        <div class="login-form">
+            <label class="form-label" for="emailInput">Work Email</label>
+            <input type="email" id="emailInput" class="form-input"
+                   placeholder="you@yourrealtylink.com" autocomplete="email"
+                   onkeydown="if(event.key==='Enter')sendMagicLink()">
+            <div class="error-msg" id="errorMsg"></div>
+            <button class="btn-magic" id="btnMagic" onclick="sendMagicLink()">
+                <i class="fa-solid fa-paper-plane"></i> Send Sign-In Link
+            </button>
+            <p style="font-size:11.5px;color:var(--text-muted);text-align:center;">
+                Check your inbox after clicking — the link expires in 1 hour.
+            </p>
+        </div>
+    </div>
+
+    <!-- ── State: Magic link sent ── -->
+    <div class="state" id="stateSuccess">
+        <div class="success-icon"><i class="fa-solid fa-envelope-circle-check"></i></div>
+        <div class="success-title">Check Your Email</div>
+        <p class="success-msg">
+            We sent a sign-in link to <strong id="sentToEmail"></strong>.
+            Click the link in the email to access the hub.
+        </p>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">
+            Don't see it? Check your spam folder. The link expires in 1 hour.
+        </p>
+        <button class="btn-back" onclick="resetForm()">
+            <i class="fa-solid fa-arrow-left"></i> Use a different email
+        </button>
+    </div>
+
+    <!-- ── State: Auth error ── -->
+    <div class="state" id="stateError">
+        <div class="loading-icon" style="background:rgba(239,68,68,0.08);color:#dc2626;">
+            <i class="fa-solid fa-circle-exclamation"></i>
+        </div>
+        <div class="success-title" style="color:#dc2626;">Access Denied</div>
+        <p class="success-msg" id="errorDetail">
+            This email isn't registered for hub access.
+            Please contact your broker to get access.
+        </p>
+        <button class="btn-back" onclick="resetForm()">
+            <i class="fa-solid fa-arrow-left"></i> Try again
+        </button>
+    </div>
+</div>
+
+<p class="login-note">
+    Your Realty Link Agent Hub &nbsp;·&nbsp; Secure sign-in powered by Supabase
+</p>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+/* ── Supabase setup ── */
+const _SB_URL = 'https://khhfkxfxefjgunhrihyx.supabase.co';
+const _SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtoaGZreGZ4ZWZqZ3VuaHJpaHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3NzYwMjcsImV4cCI6MjA5MTM1MjAyN30.bYW68xMDUEXBRC1bxOLdj77xCcjXb3wIuHbPAPFdSGo';
+const _sb    = supabase.createClient(_SB_URL, _SB_KEY);
+
+const HUB_URL = 'yrl-agent-hub.html';
+
+/* ── State helpers ── */
+function showState(id) {
+    ['stateLoading','stateForm','stateSuccess','stateError'].forEach(s => {
+        document.getElementById(s).classList.remove('active');
+    });
+    document.getElementById(id).classList.add('active');
+}
+
+/* ── On page load: check if this is a magic link callback ── */
+window.addEventListener('load', async function () {
+
+    /* Supabase puts the token in the URL hash on magic link callbacks */
+    const hash = window.location.hash;
+    if (hash && (hash.includes('access_token') || hash.includes('type=magiclink') || hash.includes('type=recovery'))) {
+        showState('stateLoading');
+
+        /* Let Supabase JS client process the hash and create a session */
+        const { data, error } = await _sb.auth.getSession();
+
+        if (error || !data.session) {
+            /* Try exchanging code for session (PKCE flow) */
+            const { error: err2 } = await _sb.auth.exchangeCodeForSession(window.location.search);
+            if (err2) {
+                document.getElementById('errorDetail').textContent =
+                    'The sign-in link is invalid or has expired. Please request a new one.';
+                showState('stateError');
+                return;
+            }
+        }
+
+        /* Authenticated — send to hub (or where they originally wanted to go) */
+        const intended = sessionStorage.getItem('yrl_intended');
+        sessionStorage.removeItem('yrl_intended');
+        window.location.replace(intended && !intended.includes('yrl-login') ? intended : HUB_URL);
+        return;
+    }
+
+    /* Not a callback — check if already logged in */
+    const { data: { session } } = await _sb.auth.getSession();
+    if (session) {
+        /* Already signed in — skip login */
+        const intended = sessionStorage.getItem('yrl_intended');
+        sessionStorage.removeItem('yrl_intended');
+        window.location.replace(intended && !intended.includes('yrl-login') ? intended : HUB_URL);
+        return;
+    }
+
+    /* Show the form */
+    showState('stateForm');
+    document.getElementById('emailInput').focus();
+});
+
+/* ── Send magic link ── */
+async function sendMagicLink() {
+    const emailEl  = document.getElementById('emailInput');
+    const errorEl  = document.getElementById('errorMsg');
+    const btn      = document.getElementById('btnMagic');
+    const email    = emailEl.value.trim().toLowerCase();
+
+    errorEl.style.display = 'none';
+    emailEl.classList.remove('error');
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        emailEl.classList.add('error');
+        errorEl.textContent = 'Please enter a valid email address.';
+        errorEl.style.display = 'block';
+        emailEl.focus();
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending…';
+
+    const { error } = await _sb.auth.signInWithOtp({
+        email,
+        options: {
+            emailRedirectTo: window.location.href  /* redirect back to this login page */
+        }
+    });
+
+    if (error) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send Sign-In Link';
+
+        /* Supabase returns a generic error for unregistered emails to prevent enumeration */
+        const msg = error.message?.toLowerCase() || '';
+        if (msg.includes('not found') || msg.includes('invalid') || msg.includes('signups not allowed')) {
+            document.getElementById('errorDetail').textContent =
+                'This email isn\'t registered for hub access. Contact your broker to get set up.';
+            showState('stateError');
+        } else {
+            errorEl.textContent = 'Something went wrong. Please try again in a moment.';
+            errorEl.style.display = 'block';
+        }
+        return;
+    }
+
+    /* Success */
+    document.getElementById('sentToEmail').textContent = email;
+    showState('stateSuccess');
+}
+
+/* ── Reset form ── */
+function resetForm() {
+    document.getElementById('emailInput').value = '';
+    document.getElementById('errorMsg').style.display = 'none';
+    document.getElementById('emailInput').classList.remove('error');
+    const btn = document.getElementById('btnMagic');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send Sign-In Link';
+    showState('stateForm');
+    setTimeout(() => document.getElementById('emailInput').focus(), 50);
+}
+</script>
+
+</body>
+</html>

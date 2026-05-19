@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing Resources — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --red:          #c03926;
+            --red-light:    #d94a35;
+            --red-dark:     #9e2e1e;
+            --bg:           #f2f4f7;
+            --surface:      #ffffff;
+            --surface-2:    #f7f8fa;
+            --surface-3:    #eef0f3;
+            --border:       #e2e5ea;
+            --text:         #1a1d22;
+            --text-sec:     #5a6270;
+            --text-muted:   #9ca3af;
+            --radius:       12px;
+            --radius-lg:    20px;
+            --shadow:       0 4px 20px rgba(0,0,0,0.08);
+            --shadow-red:   0 6px 28px rgba(192,57,38,0.22);
+            --green:        #16a34a;
+        }
+
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        a { text-decoration: none; color: inherit; }
+        img { display: block; max-width: 100%; }
+
+        /* ── Subpage header ── */
+        .sub-header {
+            background: linear-gradient(150deg, #a82f1e 0%, #c03926 45%, #9e2e1e 100%);
+            padding: 28px 20px;
+            border-bottom: 4px solid rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        .sub-header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
+            background-size: 28px 28px;
+            pointer-events: none;
+        }
+        .sub-header-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+        .sub-header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .sub-header-logo {
+            max-width: 120px;
+            background: #fff;
+            border-radius: 10px;
+            padding: 10px 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        }
+        .sub-header-text h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 32px;
+            letter-spacing: 2px;
+            color: #fff;
+            line-height: 1;
+        }
+        .sub-header-text p {
+            font-size: 12.5px;
+            color: rgba(255,255,255,0.7);
+            margin-top: 3px;
+        }
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(255,255,255,0.18);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+            padding: 9px 18px;
+            border-radius: 100px;
+            font-size: 12.5px;
+            font-weight: 600;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.28); }
+
+        /* ── Main layout ── */
+        .main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 44px 20px 90px;
+        }
+
+        /* ── Page header row ── */
+        .page-header-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 36px;
+            flex-wrap: wrap;
+        }
+        .page-header-left h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 30px;
+            letter-spacing: 1.5px;
+            color: var(--text);
+        }
+        .page-header-left p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+        .page-header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .save-flash {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--green);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .save-flash.show { opacity: 1; }
+
+        .btn-edit {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            color: var(--text-sec);
+            padding: 9px 18px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-edit:hover  { border-color: var(--red); color: var(--red); }
+        .btn-edit.active { background: var(--red); border-color: var(--red); color: #fff; }
+
+        /* ── Guide section ── */
+        .guide-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            margin-bottom: 24px;
+            position: relative;
+        }
+        .guide-section-label {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 22px;
+            letter-spacing: 1.5px;
+            color: var(--text);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .guide-section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* Section rename (edit mode) */
+        .section-edit-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+        .section-name-input {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 20px;
+            letter-spacing: 1.5px;
+            color: var(--text);
+            background: var(--surface-3);
+            border: 1.5px solid var(--border);
+            border-radius: 7px;
+            padding: 4px 10px;
+            flex: 1;
+            outline: none;
+        }
+        .section-name-input:focus { border-color: var(--red); }
+        .btn-del-section {
+            background: none;
+            border: 1px solid #fca5a5;
+            color: #ef4444;
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.15s;
+        }
+        .btn-del-section:hover { background: #fef2f2; }
+        .btn-save-section {
+            background: var(--red);
+            border: none;
+            color: #fff;
+            border-radius: 6px;
+            padding: 5px 12px;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.15s;
+        }
+        .btn-save-section:hover { background: var(--red-light); }
+
+        /* ── Tile grid ── */
+        .guide-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        /* ── Tile ── */
+        .guide-tile {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 14px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--text);
+            transition: all 0.2s ease;
+            min-height: 56px;
+        }
+        a.guide-tile:hover {
+            background: rgba(192,57,38,0.05);
+            border-color: rgba(192,57,38,0.35);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(192,57,38,0.14);
+            color: var(--red);
+        }
+        .guide-tile.editable {
+            cursor: pointer;
+            position: relative;
+        }
+        .guide-tile.editable:hover {
+            background: rgba(192,57,38,0.04);
+            border-color: rgba(192,57,38,0.25);
+        }
+
+        /* ── Tile Badges ── */
+        .badge-available {
+            background: rgba(22,163,74,0.12);
+            color: #16a34a;
+            font-size: 9.5px;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 20px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .badge-coming {
+            background: var(--surface-3);
+            color: var(--text-muted);
+            font-size: 9.5px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 20px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .edit-hint {
+            font-size: 10px;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-top: 2px;
+        }
+
+        /* ── Delete tile button ── */
+        .btn-del-tile {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 20px;
+            height: 20px;
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            z-index: 2;
+        }
+        .btn-del-tile:hover { background: #dc2626; }
+
+        /* ── Inline edit form ── */
+        .guide-tile-editing {
+            background: var(--surface);
+            border: 2px solid var(--red);
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+            grid-column: span 2;
+        }
+        .tile-edit-label {
+            font-size: 9.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .tile-edit-input {
+            width: 100%;
+            background: var(--surface-3);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .tile-edit-input:focus { border-color: var(--red); }
+        .tile-edit-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
+        .btn-tile-save {
+            background: var(--red); color: #fff; border: none;
+            border-radius: 6px; padding: 6px 16px; font-size: 12px;
+            font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer;
+            transition: background 0.15s;
+        }
+        .btn-tile-save:hover { background: var(--red-light); }
+        .btn-tile-save:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-tile-cancel {
+            background: var(--surface-3); color: var(--text-sec); border: 1px solid var(--border);
+            border-radius: 6px; padding: 6px 14px; font-size: 12px;
+            font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer;
+        }
+        .btn-tile-cancel:hover { border-color: var(--red); color: var(--red); }
+
+        /* ── Upload row ── */
+        .tile-upload-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 6px;
+        }
+        .btn-upload-file {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: rgba(192,57,38,0.08); color: var(--red);
+            border: 1.5px dashed var(--red); border-radius: 7px;
+            padding: 5px 11px; font-size: 11.5px; font-weight: 600;
+            font-family: 'Inter', sans-serif; cursor: pointer; white-space: nowrap;
+            transition: all 0.15s; flex-shrink: 0;
+        }
+        .btn-upload-file:hover { background: rgba(192,57,38,0.15); }
+        .upload-status {
+            font-size: 11.5px; font-weight: 500; color: var(--text-muted);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;
+        }
+        .upload-status.uploading { color: #ea580c; }
+        .upload-status.success   { color: var(--green); }
+        .upload-status.error     { color: #ef4444; }
+
+        /* ── Add tile form ── */
+        .add-guide-form {
+            background: var(--surface-3);
+            border: 1.5px dashed var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .add-guide-input {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            padding: 8px 12px;
+            font-size: 12.5px;
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .add-guide-input:focus { border-color: var(--red); }
+        .btn-add-save {
+            background: var(--red); color: #fff; border: none;
+            border-radius: 6px; padding: 7px 16px; font-size: 12px;
+            font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer;
+        }
+        .btn-add-save:hover { background: var(--red-light); }
+        .btn-add-cancel {
+            background: var(--surface-3); color: var(--text-sec); border: 1px solid var(--border);
+            border-radius: 6px; padding: 7px 14px; font-size: 12px;
+            font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer;
+        }
+        .btn-add-cancel:hover { border-color: var(--red); color: var(--red); }
+        .btn-add-open {
+            display: flex; align-items: center;
+            justify-content: center;
+            gap: 5px;
+            background: rgba(192,57,38,0.05);
+            color: var(--red);
+            border: 1px dashed var(--red);
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn-add-open:hover { background: rgba(192,57,38,0.1); }
+
+        /* ── PIN Modal ── */
+        .pin-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.6); z-index: 1000;
+            align-items: center; justify-content: center; padding: 20px;
+        }
+        .pin-overlay.open { display: flex; }
+        .pin-modal {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); padding: 40px 36px;
+            width: 100%; max-width: 360px; text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+        .pin-lock-icon {
+            width: 56px; height: 56px; background: rgba(192,57,38,0.1);
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; margin: 0 auto 16px;
+            font-size: 22px; color: var(--red);
+        }
+        .pin-modal h3 {
+            font-family: 'Bebas Neue', sans-serif; font-size: 26px;
+            letter-spacing: 1.5px; margin-bottom: 6px;
+        }
+        .pin-modal p { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+        .pin-input {
+            width: 100%; background: var(--surface-3); border: 2px solid var(--border);
+            border-radius: 10px; padding: 12px 16px; font-size: 22px;
+            text-align: center; letter-spacing: 6px; font-family: 'Inter', sans-serif;
+            color: var(--text); outline: none; margin-bottom: 12px;
+            transition: border-color 0.2s;
+        }
+        .pin-input:focus { border-color: var(--red); }
+        .pin-input.shake { animation: pinShake 0.4s ease; border-color: #ef4444; }
+        @keyframes pinShake {
+            0%,100% { transform:translateX(0); } 20% { transform:translateX(-8px); }
+            40% { transform:translateX(8px); }  60% { transform:translateX(-5px); }
+            80% { transform:translateX(5px); }
+        }
+        .pin-submit {
+            width: 100%; background: var(--red); color: #fff; border: none;
+            border-radius: 10px; padding: 12px; font-size: 15px; font-weight: 700;
+            font-family: 'Inter', sans-serif; cursor: pointer; transition: background 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .pin-submit:hover { background: var(--red-light); }
+        .pin-error { color: #ef4444; font-size: 12px; font-weight: 600; margin-top: 10px; display: none; }
+
+        /* ── Drag & Drop ── */
+        .guide-tile[draggable="true"] { cursor: grab; }
+        .guide-tile[draggable="true"]:active { cursor: grabbing; }
+        .tile-dragging { opacity: 0.35 !important; }
+        .tile-drag-over {
+            outline: 2px dashed var(--red) !important;
+            outline-offset: 2px;
+            background: rgba(192,57,38,0.06) !important;
+        }
+        .grid-drag-over {
+            outline: 2px dashed var(--red);
+            outline-offset: 4px;
+            border-radius: 10px;
+            background: rgba(192,57,38,0.03);
+        }
+        .section-drag-handle {
+            cursor: grab; color: var(--text-muted); font-size: 18px;
+            padding: 0 4px; margin-right: 2px; user-select: none;
+            flex-shrink: 0; line-height: 1;
+        }
+        .section-drag-handle:hover { color: var(--red); }
+        .section-dragging { opacity: 0.45; }
+        .section-drag-over {
+            outline: 2px dashed var(--red);
+            outline-offset: -3px;
+            border-radius: var(--radius-lg);
+        }
+
+        /* ── Add Section button ── */
+        .btn-add-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            background: var(--surface);
+            border: 2px dashed var(--border);
+            color: var(--text-muted);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 24px;
+        }
+        .btn-add-section:hover {
+            border-color: var(--red);
+            color: var(--red);
+            background: rgba(192,57,38,0.03);
+        }
+
+        /* ── Add Section inline form ── */
+        .add-section-form {
+            background: var(--surface);
+            border: 2px solid var(--red);
+            border-radius: var(--radius-lg);
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .add-section-form label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        /* ── Loading state ── */
+        .loading-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        .loading-state i { font-size: 28px; margin-bottom: 12px; display: block; opacity: 0.4; }
+
+        /* ── Footer ── */
+        .footer {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 32px 20px;
+            text-align: center;
+        }
+        .footer-logo { max-width: 100px; margin: 0 auto 12px; opacity: 0.4; }
+        .footer p { font-size: 12px; color: var(--text-muted); }
+        .footer a { color: var(--red); }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .sub-header { padding: 20px 16px; }
+            .sub-header-inner { flex-direction: column; gap: 16px; text-align: center; }
+            .sub-header-left { flex-direction: column; align-items: center; }
+            .sub-header-logo { max-width: 90px; }
+            .main { padding: 36px 16px 70px; }
+            .guide-grid { grid-template-columns: 1fr; }
+            .guide-tile-editing { grid-column: span 1; }
+        }
+    </style>
+    <script src="yrl-auth.js"></script>
+</head>
+<body>
+
+<!-- ── Subpage Header ── -->
+<header class="sub-header">
+    <div class="sub-header-inner">
+        <div class="sub-header-left">
+            <img src="https://yrlagent.com/wp-content/uploads/2026/04/Your-Realty-Link-ver6.6-4-final.png"
+                 alt="Your Realty Link" class="sub-header-logo">
+            <div class="sub-header-text">
+                <h1>Marketing Resources</h1>
+                <p>Flyers, scripts, templates, and materials organized by category</p>
+            </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+            <span id="yrl-user-name" style="color:rgba(255,255,255,0.75);font-size:12.5px;font-weight:500;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+            <button onclick="yrlSignOut()" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:7px 14px;border-radius:100px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+            </button>
+            <a href="yrl-agent-hub.html" class="back-btn">
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to Hub
+            </a>
+        </div>
+    </div>
+</header>
+
+<!-- ── Main ── -->
+<main class="main">
+
+    <div class="page-header-row">
+        <div class="page-header-left">
+            <h2>Marketing Library</h2>
+            <p>Click any available resource to open it. Use Edit Mode to add, upload, or update materials.</p>
+        </div>
+        <div class="page-header-right">
+            <span class="save-flash" id="saveFlash">&#10003; Saved!</span>
+            <button class="btn-edit" id="btnEdit" onclick="toggleEditMode()">
+                <i class="fa-solid fa-pen"></i> Edit Mode
+            </button>
+        </div>
+    </div>
+
+    <div id="marketingContainer">
+        <div class="loading-state">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            Loading resources…
+        </div>
+    </div>
+
+</main>
+
+<!-- ── Footer ── -->
+<footer class="footer">
+    <img src="https://yrlagent.com/wp-content/uploads/2026/04/Your-Realty-Link-ver6.6-4-final.png"
+         alt="Your Realty Link" class="footer-logo"
+         onerror="this.style.display='none'">
+    <p>&copy; 2026 Your Realty Link &nbsp;&middot;&nbsp; All Rights Reserved &nbsp;&middot;&nbsp;
+       <a href="https://www.yourrealtylink.com" target="_blank">yourrealtylink.com</a>
+    </p>
+</footer>
+
+<!-- ── PIN Modal ── -->
+<div class="pin-overlay" id="pinOverlay">
+    <div class="pin-modal">
+        <div class="pin-lock-icon"><i class="fa-solid fa-lock"></i></div>
+        <h3>Editor Access</h3>
+        <p>Enter your broker passcode to edit this page.</p>
+        <input type="password" class="pin-input" id="pinInput" maxlength="10"
+            placeholder="• • • •" onkeydown="if(event.key==='Enter')submitPin()">
+        <button class="pin-submit" onclick="submitPin()">
+            Unlock <i class="fa-solid fa-arrow-right"></i>
+        </button>
+        <div class="pin-error" id="pinError">Incorrect passcode — try again.</div>
+    </div>
+</div>
+
+<script src="yrl-hub.js"></script>
+<script>
+/* ============================================================
+   Marketing Resources — Dynamic Library
+   ============================================================ */
+
+const MARKETING_KEY = 'yrl-marketing-state';
+const BROKER_PIN    = '2302';
+const PIN_KEY       = 'yrl_broker_auth';
+
+const DEFAULT_STATE = {
+    categories: [
+        {
+            id: 'sellers',
+            name: '🏡 Sellers',
+            guides: [
+                { id: 's1',  title: 'Listing Presentation',              link: null },
+                { id: 's2',  title: 'Seller\'s Guide / Home Prep Tips',  link: null },
+                { id: 's3',  title: 'CMA / Market Analysis Template',    link: null },
+                { id: 's4',  title: 'Just Listed Flyer Template',        link: null },
+                { id: 's5',  title: 'Just Sold Announcement',            link: null },
+                { id: 's6',  title: 'Seller Net Sheet',                  link: null },
+                { id: 's7',  title: 'Home Staging Checklist',            link: null },
+                { id: 's8',  title: 'Pricing Strategy Handout',          link: null },
+            ]
+        },
+        {
+            id: 'buyers',
+            name: '🔑 Buyers',
+            guides: [
+                { id: 'b1',  title: 'Buyer\'s Guide',                    link: null },
+                { id: 'b2',  title: 'Buyer Consultation Presentation',   link: null },
+                { id: 'b3',  title: 'Pre-Approval Checklist',            link: null },
+                { id: 'b4',  title: 'Offer Strategy Guide',              link: null },
+                { id: 'b5',  title: 'First-Time Buyer Checklist',        link: null },
+                { id: 'b6',  title: 'Neighborhood Comparison Sheet',     link: null },
+                { id: 'b7',  title: 'Home Search Wishlist Template',     link: null },
+            ]
+        },
+        {
+            id: 'openhouse',
+            name: '🚪 Open House',
+            guides: [
+                { id: 'oh1', title: 'Open House Sign-In Sheet',          link: null },
+                { id: 'oh2', title: 'Open House Flyer Template',         link: null },
+                { id: 'oh3', title: 'Property Feature Sheet',            link: null },
+                { id: 'oh4', title: 'Open House Follow-Up Script',       link: null },
+                { id: 'oh5', title: 'Neighborhood Info Sheet',           link: null },
+                { id: 'oh6', title: 'Door Hanger for Open House',        link: null },
+            ]
+        },
+        {
+            id: 'prospecting',
+            name: '📞 Prospecting',
+            guides: [
+                { id: 'pr1', title: 'Sphere of Influence Letter',        link: null },
+                { id: 'pr2', title: 'Geographic Farming Postcard',       link: null },
+                { id: 'pr3', title: 'FSBO Introduction Letter',          link: null },
+                { id: 'pr4', title: 'Expired Listing Letter',            link: null },
+                { id: 'pr5', title: 'Referral Request Script',           link: null },
+                { id: 'pr6', title: 'Community Newsletter Template',     link: null },
+                { id: 'pr7', title: 'Door Knocking Leave-Behind',        link: null },
+            ]
+        },
+        {
+            id: 'socialmedia',
+            name: '📱 Social Media',
+            guides: [
+                { id: 'sm1', title: 'Social Media Content Calendar',     link: null },
+                { id: 'sm2', title: 'Instagram / Facebook Templates',    link: null },
+                { id: 'sm3', title: 'Listing Post Template',             link: null },
+                { id: 'sm4', title: 'Just Listed / Sold Post Captions',  link: null },
+                { id: 'sm5', title: 'Testimonial Graphic Template',      link: null },
+                { id: 'sm6', title: 'Market Update Graphic',             link: null },
+                { id: 'sm7', title: 'Stories / Reels Ideas Sheet',       link: null },
+                { id: 'sm8', title: 'Hashtag Guide',                     link: null },
+            ]
+        },
+        {
+            id: 'emailtemplates',
+            name: '✉️ Email Templates',
+            guides: [
+                { id: 'em1', title: 'New Client Welcome Email',          link: null },
+                { id: 'em2', title: 'Listing Follow-Up Drip Series',     link: null },
+                { id: 'em3', title: 'Buyer Update Email Template',       link: null },
+                { id: 'em4', title: 'Post-Closing Thank You',            link: null },
+                { id: 'em5', title: 'Holiday / Seasonal Emails',         link: null },
+                { id: 'em6', title: 'Market Update Newsletter',          link: null },
+                { id: 'em7', title: 'Anniversary / Birthday Check-In',   link: null },
+            ]
+        },
+        {
+            id: 'scripts',
+            name: '🎙️ Scripts & Dialogues',
+            guides: [
+                { id: 'sc1', title: 'Listing Appointment Script',        link: null },
+                { id: 'sc2', title: 'Buyer Consultation Script',         link: null },
+                { id: 'sc3', title: 'Objection Handlers (Sellers)',      link: null },
+                { id: 'sc4', title: 'Objection Handlers (Buyers)',       link: null },
+                { id: 'sc5', title: 'Price Reduction Conversation',      link: null },
+                { id: 'sc6', title: 'Cold Call / Circle Prospect Script', link: null },
+                { id: 'sc7', title: 'Voicemail Scripts',                 link: null },
+            ]
+        },
+        {
+            id: 'print',
+            name: '🖨️ Print Materials',
+            guides: [
+                { id: 'pt1', title: 'Business Card Template',            link: null },
+                { id: 'pt2', title: 'Postcard — Just Listed',            link: null },
+                { id: 'pt3', title: 'Postcard — Just Sold',              link: null },
+                { id: 'pt4', title: 'Farming Mailer Template',           link: null },
+                { id: 'pt5', title: 'Brochure / Tri-Fold Template',      link: null },
+                { id: 'pt6', title: 'Yard Sign Rider Design',            link: null },
+                { id: 'pt7', title: 'Notepad / Stationery Template',     link: null },
+            ]
+        },
+    ]
+};
+
+let state         = null;
+let editMode      = false;
+let addingIn      = null;
+let editingTile   = null;
+let addingSection = false;
+let dragTile      = null; // { catId, guideId }
+let dragSection   = null; // catId
+
+/* ── Utilities ── */
+function uid() { return Math.random().toString(36).slice(2, 9); }
+function esc(s) {
+    return String(s || '')
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── Load / Save ── */
+async function init() {
+    const data = await loadHubContent(MARKETING_KEY);
+    if (data && data.categories && Array.isArray(data.categories)) {
+        state = data;
+    } else {
+        state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+        await saveHubContent(MARKETING_KEY, state);
+    }
+    render();
+}
+
+async function persist() {
+    const ok = await saveHubContent(MARKETING_KEY, state);
+    if (ok) {
+        const flash = document.getElementById('saveFlash');
+        if (flash) {
+            flash.classList.add('show');
+            setTimeout(() => flash.classList.remove('show'), 2500);
+        }
+    }
+}
+
+/* ── PIN Auth ── */
+function isAuthed() { return sessionStorage.getItem(PIN_KEY) === BROKER_PIN; }
+
+function openPinModal() {
+    document.getElementById('pinOverlay').classList.add('open');
+    document.getElementById('pinInput').value = '';
+    document.getElementById('pinError').style.display = 'none';
+    setTimeout(() => document.getElementById('pinInput').focus(), 80);
+}
+function closePinModal() {
+    document.getElementById('pinOverlay').classList.remove('open');
+}
+function submitPin() {
+    const val = document.getElementById('pinInput').value.trim();
+    if (val === BROKER_PIN) {
+        sessionStorage.setItem(PIN_KEY, BROKER_PIN);
+        closePinModal();
+        enterEditMode();
+    } else {
+        const inp = document.getElementById('pinInput');
+        inp.classList.add('shake');
+        document.getElementById('pinError').style.display = 'block';
+        inp.value = '';
+        setTimeout(() => inp.classList.remove('shake'), 420);
+    }
+}
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('pinOverlay').addEventListener('click', function(e) {
+        if (e.target === this) closePinModal();
+    });
+});
+
+function enterEditMode() {
+    editMode = true; addingIn = null; editingTile = null; addingSection = false;
+    const btn = document.getElementById('btnEdit');
+    btn.innerHTML = '<i class="fa-solid fa-xmark"></i> Done Editing';
+    btn.classList.add('active');
+    render();
+}
+
+/* ── Edit mode toggle ── */
+function toggleEditMode() {
+    if (!editMode) {
+        if (!isAuthed()) { openPinModal(); return; }
+        enterEditMode();
+    } else {
+        editMode = false; addingIn = null; editingTile = null; addingSection = false;
+        const btn = document.getElementById('btnEdit');
+        btn.innerHTML = '<i class="fa-solid fa-pen"></i> Edit Mode';
+        btn.classList.remove('active');
+        render();
+    }
+}
+
+/* ── Drag & Drop ── */
+function tileDragStart(e, catId, guideId) {
+    dragTile = { catId, guideId }; dragSection = null;
+    e.dataTransfer.effectAllowed = 'move';
+    e.currentTarget.classList.add('tile-dragging');
+}
+function tileDragOver(e, catId, guideId) {
+    if (!dragTile) return;
+    e.preventDefault(); e.stopPropagation();
+    clearDragHighlights();
+    e.currentTarget.classList.add('tile-drag-over');
+}
+function tileDragLeave(e) { e.currentTarget.classList.remove('tile-drag-over'); }
+function tileDrop(e, catId, guideId) {
+    e.preventDefault(); e.stopPropagation();
+    clearDragHighlights();
+    if (!dragTile || (dragTile.catId === catId && dragTile.guideId === guideId)) { dragTile = null; return; }
+    moveTile(dragTile.catId, dragTile.guideId, catId, guideId);
+    dragTile = null;
+}
+function tileDragEnd(e) { clearDragHighlights(); dragTile = null; }
+
+function gridDragOver(e, catId) {
+    if (!dragTile) return;
+    e.preventDefault(); e.stopPropagation();
+    clearDragHighlights();
+    e.currentTarget.classList.add('grid-drag-over');
+}
+function gridDrop(e, catId) {
+    e.preventDefault(); e.stopPropagation();
+    clearDragHighlights();
+    if (!dragTile) return;
+    moveTile(dragTile.catId, dragTile.guideId, catId, null);
+    dragTile = null;
+}
+
+function sectionDragStart(e, catId) {
+    dragSection = catId; dragTile = null;
+    e.dataTransfer.effectAllowed = 'move';
+    e.currentTarget.closest('.guide-section').classList.add('section-dragging');
+}
+function sectionDragOver(e, catId) {
+    if (!dragSection || dragSection === catId) return;
+    e.preventDefault();
+    document.querySelectorAll('.section-drag-over').forEach(el => el.classList.remove('section-drag-over'));
+    e.currentTarget.classList.add('section-drag-over');
+}
+function sectionDragLeave(e) { e.currentTarget.classList.remove('section-drag-over'); }
+function sectionDrop(e, catId) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('section-drag-over');
+    if (!dragSection || dragSection === catId) return;
+    const from = state.categories.findIndex(c => c.id === dragSection);
+    const to   = state.categories.findIndex(c => c.id === catId);
+    const [moved] = state.categories.splice(from, 1);
+    state.categories.splice(to, 0, moved);
+    dragSection = null; persist(); render();
+}
+function sectionDragEnd(e) { clearDragHighlights(); dragSection = null; }
+
+function clearDragHighlights() {
+    document.querySelectorAll('.tile-dragging,.tile-drag-over,.grid-drag-over,.section-dragging,.section-drag-over')
+        .forEach(el => el.classList.remove('tile-dragging','tile-drag-over','grid-drag-over','section-dragging','section-drag-over'));
+}
+
+function moveTile(fromCatId, fromGuideId, toCatId, beforeGuideId) {
+    const fromCat = state.categories.find(c => c.id === fromCatId);
+    if (!fromCat) return;
+    const fromIdx = fromCat.guides.findIndex(g => g.id === fromGuideId);
+    if (fromIdx === -1) return;
+    const [moved] = fromCat.guides.splice(fromIdx, 1);
+    const toCat = state.categories.find(c => c.id === toCatId);
+    if (!toCat) { fromCat.guides.splice(fromIdx, 0, moved); return; }
+    if (beforeGuideId) {
+        const toIdx = toCat.guides.findIndex(g => g.id === beforeGuideId);
+        toCat.guides.splice(toIdx >= 0 ? toIdx : toCat.guides.length, 0, moved);
+    } else {
+        toCat.guides.push(moved);
+    }
+    persist(); render();
+}
+
+/* ── Render ── */
+function render() {
+    const container = document.getElementById('marketingContainer');
+    if (!state) {
+        container.innerHTML = '<div class="loading-state"><i class="fa-solid fa-spinner fa-spin"></i>Loading…</div>';
+        return;
+    }
+
+    let html = '';
+
+    state.categories.forEach(cat => {
+        const isAddingHere = addingIn === cat.id;
+
+        html += `<div class="guide-section"
+            ondragover="sectionDragOver(event,'${cat.id}')"
+            ondragleave="sectionDragLeave(event)"
+            ondrop="sectionDrop(event,'${cat.id}')">`;
+
+        /* ── Section label / rename in edit mode ── */
+        if (editMode) {
+            html += `<div class="section-edit-row">
+                <span class="section-drag-handle" draggable="true"
+                    title="Drag to reorder section"
+                    ondragstart="sectionDragStart(event,'${cat.id}')"
+                    ondragend="sectionDragEnd(event)">⠿</span>
+                <input class="section-name-input" id="secName-${cat.id}"
+                    value="${esc(cat.name)}" placeholder="Section name">
+                <button class="btn-save-section" onclick="saveSectionName('${cat.id}')">✓ Rename</button>
+                <button class="btn-del-section" onclick="deleteSection('${cat.id}')">✕ Delete Section</button>
+            </div>`;
+        } else {
+            html += `<div class="guide-section-label">${esc(cat.name)}</div>`;
+        }
+
+        html += `<div class="guide-grid"
+            ondragover="gridDragOver(event,'${cat.id}')"
+            ondrop="gridDrop(event,'${cat.id}')">`;
+
+        cat.guides.forEach(guide => {
+            const isEditingThis = editingTile && editingTile.catId === cat.id && editingTile.guideId === guide.id;
+
+            if (editMode && isEditingThis) {
+                html += `<div class="guide-tile-editing">
+                    <button class="btn-del-tile" onclick="deleteTile('${cat.id}','${guide.id}')" title="Remove">&times;</button>
+                    <div>
+                        <div class="tile-edit-label">Title</div>
+                        <input class="tile-edit-input" id="editTitle-${guide.id}" type="text" value="${esc(guide.title)}" placeholder="Resource title">
+                    </div>
+                    <div>
+                        <div class="tile-edit-label">Link <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted);">(optional)</span></div>
+                        <input class="tile-edit-input" id="editLink-${guide.id}" type="url" value="${esc(guide.link || '')}" placeholder="Paste Google Drive, Canva, Dropbox, or direct link…">
+                        <div class="tile-upload-row">
+                            <input type="file" id="fileInput-${guide.id}" style="display:none"
+                                accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.gif,.svg,.pptx,.ppt"
+                                onchange="handleTileFileUpload('${guide.id}')">
+                            <button class="btn-upload-file" type="button"
+                                onclick="document.getElementById('fileInput-${guide.id}').click()">
+                                <i class="fa-solid fa-arrow-up-from-bracket"></i> Upload file
+                            </button>
+                            <span class="upload-status" id="uploadStatus-${guide.id}">or paste URL above</span>
+                        </div>
+                    </div>
+                    <div class="tile-edit-actions">
+                        <button class="btn-tile-save" data-guide="${guide.id}" onclick="saveEditTile('${cat.id}','${guide.id}')">Save</button>
+                        <button class="btn-tile-cancel" onclick="cancelTileEdit()">Cancel</button>
+                    </div>
+                </div>`;
+
+            } else if (editMode) {
+                const hasLink = guide.link && guide.link.trim();
+                const badge   = hasLink
+                    ? `<span class="badge-available">Available</span>`
+                    : `<span class="badge-coming">Coming Soon</span>`;
+                html += `<div class="guide-tile editable" draggable="true"
+                    ondragstart="tileDragStart(event,'${cat.id}','${guide.id}')"
+                    ondragover="tileDragOver(event,'${cat.id}','${guide.id}')"
+                    ondragleave="tileDragLeave(event)"
+                    ondrop="tileDrop(event,'${cat.id}','${guide.id}')"
+                    ondragend="tileDragEnd(event)"
+                    onclick="openTileEdit('${cat.id}','${guide.id}')" style="position:relative;">
+                    <button class="btn-del-tile" onclick="event.stopPropagation();deleteTile('${cat.id}','${guide.id}')" title="Remove">&times;</button>
+                    <div style="flex:1;min-width:0;overflow:hidden;">
+                        <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(guide.title)}</div>
+                        <div class="edit-hint">Click to edit · drag to move</div>
+                    </div>
+                    ${badge}
+                </div>`;
+
+            } else {
+                const hasLink = guide.link && guide.link.trim();
+                const tag     = hasLink ? 'a' : 'div';
+                const href    = hasLink ? ` href="${esc(guide.link)}" target="_blank" rel="noopener"` : '';
+                const badge   = hasLink
+                    ? `<span class="badge-available">Available</span>`
+                    : `<span class="badge-coming">Coming Soon</span>`;
+                html += `<${tag} class="guide-tile"${href}><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;">${esc(guide.title)}</span>${badge}</${tag}>`;
+            }
+        });
+
+        html += `</div>`; /* /guide-grid */
+
+        if (editMode) {
+            if (isAddingHere) {
+                html += `<div class="add-guide-form">
+                    <input class="add-guide-input" id="addTitle-${cat.id}" type="text" placeholder="Resource title (required)" autocomplete="off">
+                    <div>
+                        <input class="add-guide-input" id="addLink-${cat.id}" type="url" placeholder="Paste link (optional)" autocomplete="off">
+                        <div class="tile-upload-row">
+                            <input type="file" id="addFileInput-${cat.id}" style="display:none"
+                                accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.gif,.pptx,.ppt"
+                                onchange="handleAddFileUpload('${cat.id}')">
+                            <button class="btn-upload-file" type="button"
+                                onclick="document.getElementById('addFileInput-${cat.id}').click()">
+                                <i class="fa-solid fa-arrow-up-from-bracket"></i> Upload file
+                            </button>
+                            <span class="upload-status" id="addUploadStatus-${cat.id}">or paste URL above</span>
+                        </div>
+                    </div>
+                    <div class="tile-edit-actions">
+                        <button class="btn-add-save" id="addSaveBtn-${cat.id}" onclick="saveNewTile('${cat.id}')">Add</button>
+                        <button class="btn-add-cancel" onclick="cancelAdd()">Cancel</button>
+                    </div>
+                </div>`;
+            } else {
+                html += `<button class="btn-add-open" onclick="openAddForm('${cat.id}')">+ Add Resource</button>`;
+            }
+        }
+
+        html += `</div>`; /* /guide-section */
+    });
+
+    /* ── Add Section controls ── */
+    if (editMode) {
+        if (addingSection) {
+            html += `<div class="add-section-form">
+                <label>New Section:</label>
+                <input class="add-guide-input" id="newSectionName" type="text"
+                    placeholder="e.g. 🎯 Farming" autocomplete="off" style="min-width:220px;">
+                <button class="btn-add-save" onclick="saveNewSection()">Add Section</button>
+                <button class="btn-add-cancel" onclick="cancelAddSection()">Cancel</button>
+            </div>`;
+        } else {
+            html += `<button class="btn-add-section" onclick="startAddSection()">
+                <i class="fa-solid fa-plus"></i> Add New Section
+            </button>`;
+        }
+    }
+
+    container.innerHTML = html;
+
+    /* Auto-focus */
+    if (editingTile) {
+        const inp = document.getElementById('editTitle-' + editingTile.guideId);
+        if (inp) { inp.focus(); inp.select(); }
+    } else if (addingIn) {
+        const inp = document.getElementById('addTitle-' + addingIn);
+        if (inp) inp.focus();
+    } else if (addingSection) {
+        const inp = document.getElementById('newSectionName');
+        if (inp) inp.focus();
+    }
+}
+
+/* ── Section management ── */
+function saveSectionName(catId) {
+    const inp = document.getElementById('secName-' + catId);
+    const name = inp ? inp.value.trim() : '';
+    if (!name) { if (inp) { inp.style.borderColor='#ef4444'; inp.focus(); } return; }
+    const cat = state.categories.find(c => c.id === catId);
+    if (cat) { cat.name = name; persist(); render(); }
+}
+
+function deleteSection(catId) {
+    const cat = state.categories.find(c => c.id === catId);
+    if (!cat) return;
+    const count = cat.guides.length;
+    const msg = count > 0
+        ? `Delete "${cat.name}" and its ${count} resource(s)? This cannot be undone.`
+        : `Delete "${cat.name}"?`;
+    if (!confirm(msg)) return;
+    state.categories = state.categories.filter(c => c.id !== catId);
+    if (editingTile && editingTile.catId === catId) editingTile = null;
+    if (addingIn === catId) addingIn = null;
+    persist();
+    render();
+}
+
+function startAddSection()  { addingSection = true; addingIn = null; editingTile = null; render(); }
+function cancelAddSection() { addingSection = false; render(); }
+
+function saveNewSection() {
+    const inp  = document.getElementById('newSectionName');
+    const name = inp ? inp.value.trim() : '';
+    if (!name) { if (inp) { inp.style.borderColor='#ef4444'; inp.focus(); } return; }
+    state.categories.push({ id: uid(), name, guides: [] });
+    addingSection = false;
+    persist();
+    render();
+}
+
+/* ── Tile edit actions ── */
+function openTileEdit(catId, guideId) {
+    addingIn    = null;
+    editingTile = { catId, guideId };
+    render();
+}
+function cancelTileEdit() { editingTile = null; render(); }
+
+function saveEditTile(catId, guideId) {
+    const titleEl = document.getElementById('editTitle-' + guideId);
+    const linkEl  = document.getElementById('editLink-'  + guideId);
+    const title   = titleEl ? titleEl.value.trim() : '';
+    const link    = linkEl  ? linkEl.value.trim()  : '';
+    if (!title) {
+        if (titleEl) { titleEl.style.borderColor = '#ef4444'; titleEl.focus(); }
+        return;
+    }
+    const cat   = state.categories.find(c => c.id === catId);
+    if (!cat) return;
+    const guide = cat.guides.find(g => g.id === guideId);
+    if (!guide) return;
+    guide.title = title;
+    guide.link  = link || null;
+    editingTile = null;
+    persist();
+    render();
+}
+
+async function handleTileFileUpload(guideId) {
+    const fileInput = document.getElementById('fileInput-' + guideId);
+    const linkInput = document.getElementById('editLink-'  + guideId);
+    const statusEl  = document.getElementById('uploadStatus-' + guideId);
+    const saveBtn   = document.querySelector(`.btn-tile-save[data-guide="${guideId}"]`);
+    if (!fileInput?.files?.[0]) return;
+    const file = fileInput.files[0];
+    if (file.size > 50 * 1024 * 1024) {
+        statusEl.textContent = '✗ File too large (max 50 MB)';
+        statusEl.className = 'upload-status error';
+        fileInput.value = ''; return;
+    }
+    statusEl.textContent = 'Uploading…'; statusEl.className = 'upload-status uploading';
+    if (saveBtn) saveBtn.disabled = true;
+    try {
+        const url = await uploadHubFile(file, 'marketing');
+        if (linkInput) linkInput.value = url;
+        const name = file.name.length > 28 ? file.name.slice(0,25) + '…' : file.name;
+        statusEl.textContent = '✓ Saved: ' + name; statusEl.className = 'upload-status success';
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.click(); }
+    } catch(err) {
+        statusEl.textContent = '✗ ' + (err.message || 'Upload failed');
+        statusEl.className = 'upload-status error';
+        fileInput.value = '';
+        if (saveBtn) saveBtn.disabled = false;
+    }
+}
+
+/* ── Upload handler for Add form ── */
+async function handleAddFileUpload(catId) {
+    const fileInput  = document.getElementById('addFileInput-' + catId);
+    const linkInput  = document.getElementById('addLink-' + catId);
+    const titleInput = document.getElementById('addTitle-' + catId);
+    const statusEl   = document.getElementById('addUploadStatus-' + catId);
+    const saveBtn    = document.getElementById('addSaveBtn-' + catId);
+    if (!fileInput?.files?.[0]) return;
+    const file = fileInput.files[0];
+    if (file.size > 50 * 1024 * 1024) {
+        statusEl.textContent = '✗ File too large (max 50 MB)';
+        statusEl.className = 'upload-status error';
+        fileInput.value = ''; return;
+    }
+    statusEl.textContent = 'Uploading…'; statusEl.className = 'upload-status uploading';
+    if (saveBtn) saveBtn.disabled = true;
+    try {
+        const url = await uploadHubFile(file, 'marketing');
+        if (linkInput) linkInput.value = url;
+        if (titleInput && !titleInput.value.trim()) {
+            titleInput.value = file.name.replace(/\.[^.]+$/, '').replace(/[_\-]/g, ' ');
+        }
+        const name = file.name.length > 28 ? file.name.slice(0,25) + '…' : file.name;
+        statusEl.textContent = '✓ ' + name; statusEl.className = 'upload-status success';
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.click(); }
+    } catch(err) {
+        statusEl.textContent = '✗ ' + (err.message || 'Upload failed');
+        statusEl.className = 'upload-status error';
+        fileInput.value = '';
+        if (saveBtn) saveBtn.disabled = false;
+    }
+}
+
+/* ── Delete tile ── */
+function deleteTile(catId, guideId) {
+    const cat = state.categories.find(c => c.id === catId);
+    if (!cat) return;
+    cat.guides = cat.guides.filter(g => g.id !== guideId);
+    if (editingTile && editingTile.guideId === guideId) editingTile = null;
+    persist();
+    render();
+}
+
+/* ── Add tile ── */
+function openAddForm(catId) { editingTile = null; addingIn = catId; render(); }
+function cancelAdd()        { addingIn = null; render(); }
+
+function saveNewTile(catId) {
+    const titleEl = document.getElementById('addTitle-' + catId);
+    const linkEl  = document.getElementById('addLink-'  + catId);
+    const title   = titleEl ? titleEl.value.trim() : '';
+    const link    = linkEl  ? linkEl.value.trim()  : '';
+    if (!title) {
+        if (titleEl) { titleEl.style.borderColor = '#ef4444'; titleEl.focus(); }
+        return;
+    }
+    const cat = state.categories.find(c => c.id === catId);
+    if (!cat) return;
+    cat.guides.push({ id: uid(), title, link: link || null });
+    addingIn = null;
+    persist();
+    render();
+}
+
+/* ── Keyboard shortcuts ── */
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+        if (editingTile)   { cancelTileEdit();   return; }
+        if (addingIn)      { cancelAdd();         return; }
+        if (addingSection) { cancelAddSection();  return; }
+    }
+    if (e.key === 'Enter' && !e.shiftKey) {
+        if (editingTile) { saveEditTile(editingTile.catId, editingTile.guideId); return; }
+        if (addingIn)    { saveNewTile(addingIn); return; }
+        if (addingSection) { saveNewSection(); return; }
+    }
+});
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indy Property Guide — Website Page Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #c03926;
+    --red-light: #e8523c;
+    --gray: #6e6e70;
+    --dark: #111;
+    --mid: #333;
+    --light: #f7f7f7;
+    --border: #e2e2e2;
+    --white: #fff;
+    --green: #2e7d32;
+    --blue: #1565c0;
+    --amber: #e65100;
+    --slate: #555;
+    --gold: #c8a830;
+    --radius: 10px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    background: #f2f2f2;
+    color: var(--dark);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--dark);
+    padding: 16px 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-bottom: 3px solid var(--red);
+  }
+  .site-header .logo {
+    font-size: 13px;
+    color: #aaa;
+    font-family: 'DM Mono', monospace;
+  }
+  .site-header .logo span { color: var(--red); font-weight: 500; }
+  .site-header .sep { color: #444; margin: 0 4px; }
+  .site-header .page-name {
+    font-size: 13px;
+    color: #fff;
+    font-weight: 600;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+
+  /* ── HERO ── */
+  .hero { margin-bottom: 32px; }
+  .hero h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 6px;
+  }
+  .hero h1 span { color: var(--red); }
+  .hero p { font-size: 14px; color: var(--gray); line-height: 1.6; }
+  .hero-meta {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--gray);
+    font-family: 'DM Mono', monospace;
+  }
+  .sync-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; } 50% { opacity: 0.4; }
+  }
+  .reset-btn {
+    margin-left: auto;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 12px;
+    color: var(--gray);
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    transition: all 0.2s;
+  }
+  .reset-btn:hover { border-color: var(--red); color: var(--red); }
+
+  /* ── SUMMARY CARDS ── */
+  .summary-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 22px 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .stat-card .num {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-card .num.total   { color: var(--blue); }
+  .stat-card .num.built   { color: var(--green); }
+  .stat-card .num.checked { color: var(--red); }
+  .stat-card .num.remain  { color: var(--gray); }
+  .stat-card .label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gray);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 24px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray);
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: 'Sora', sans-serif;
+    transition: all 0.2s;
+  }
+  .tab-btn:hover { color: var(--red); }
+  .tab-btn.active { color: var(--red); border-bottom-color: var(--red); }
+
+  /* ── TAB PANELS ── */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── PROGRESS BY CATEGORY (Summary tab) ── */
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .cat-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+    border-left: 4px solid var(--border);
+  }
+  .cat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.11); }
+  .cat-card.phase1 { border-left-color: var(--green); }
+  .cat-card.phase2 { border-left-color: var(--blue); }
+  .cat-card.phase3 { border-left-color: var(--amber); }
+  .cat-card.phase4 { border-left-color: var(--gray); }
+  .cat-card.service { border-left-color: var(--red); }
+  .cat-card.blog    { border-left-color: var(--gold); }
+  .cat-card h3 { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+  .cat-card .cat-meta {
+    font-size: 11.5px;
+    color: var(--gray);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 10px;
+  }
+  .progress-bar-wrap {
+    height: 6px;
+    background: #eee;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: var(--red);
+    transition: width 0.4s ease;
+  }
+  .cat-card.phase1 .progress-bar-fill { background: var(--green); }
+  .cat-card.phase2 .progress-bar-fill { background: var(--blue); }
+  .cat-card.phase3 .progress-bar-fill { background: var(--amber); }
+  .cat-card.phase4 .progress-bar-fill { background: var(--gray); }
+  .cat-card.service .progress-bar-fill { background: var(--red); }
+  .cat-card.blog    .progress-bar-fill { background: var(--gold); }
+
+  /* ── PAGE LIST ── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-header h2 { font-size: 16px; font-weight: 700; color: var(--dark); }
+  .section-header .count-badge {
+    background: var(--light);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 2px 10px;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: var(--gray);
+  }
+  .section-header .phase-tag {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 3px 10px;
+    border-radius: 99px;
+    color: white;
+  }
+  .phase-tag.p1 { background: var(--green); }
+  .phase-tag.p2 { background: var(--blue); }
+  .phase-tag.p3 { background: var(--amber); }
+  .phase-tag.p4 { background: var(--gray); }
+  .phase-tag.svc { background: var(--red); }
+  .phase-tag.blg { background: var(--gold); }
+
+  .subsection { margin-bottom: 28px; }
+  .subsection-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--gray);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 10px;
+    padding-left: 4px;
+    border-left: 3px solid var(--red);
+    padding-left: 10px;
+  }
+
+  .page-list { display: flex; flex-direction: column; gap: 6px; }
+
+  .page-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: all 0.15s;
+    cursor: pointer;
+    user-select: none;
+  }
+  .page-item:hover { border-color: #ccc; background: #fafafa; }
+  .page-item.checked {
+    background: #f0fdf0;
+    border-color: #bbf0bb;
+  }
+  .page-item.checked .page-name { text-decoration: line-through; color: var(--gray); }
+
+  .checkbox {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border);
+    border-radius: 5px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    font-size: 13px;
+  }
+  .page-item.checked .checkbox {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+  }
+
+  .page-info { flex: 1; min-width: 0; }
+  .page-name { font-size: 13px; font-weight: 600; color: var(--dark); }
+  .page-keyword {
+    font-size: 11px;
+    color: var(--gray);
+    font-family: 'DM Mono', monospace;
+    margin-top: 2px;
+  }
+
+  .page-badges { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+  .badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 99px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: 'DM Mono', monospace;
+  }
+  .badge.p1 { background: #e8f5e9; color: var(--green); }
+  .badge.p2 { background: #e3f2fd; color: var(--blue); }
+  .badge.p3 { background: #fff3e0; color: var(--amber); }
+  .badge.p4 { background: #f5f5f5; color: var(--gray); }
+  .badge.svc { background: #fdecea; color: var(--red); }
+
+  .built-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 99px;
+    background: var(--green);
+    color: white;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── FILTER BAR ── */
+  .filter-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-bar input {
+    flex: 1;
+    min-width: 200px;
+    padding: 9px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: 'Sora', sans-serif;
+    outline: none;
+    transition: border 0.2s;
+  }
+  .filter-bar input:focus { border-color: var(--red); }
+  .filter-select {
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 12px;
+    font-family: 'Sora', sans-serif;
+    background: white;
+    cursor: pointer;
+    outline: none;
+    color: var(--dark);
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 700px) {
+    .summary-cards { grid-template-columns: repeat(2, 1fr); }
+    .cat-grid { grid-template-columns: 1fr; }
+    .tabs { gap: 0; }
+    .tab-btn { padding: 10px 12px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo"><span>Your Realty Link</span><span class="sep"> / </span>Indy Property Guide</div>
+  <div class="sep">|</div>
+  <div class="page-name">Website Page Tracker</div>
+</header>
+
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>Website Page <span>Tracker</span></h1>
+    <p>Every page we need to build — core pages, service pages, city pages, county pages, and blog posts. Check them off as they go live on indypropertyguide.com.</p>
+    <div class="hero-meta">
+      <div class="sync-dot"></div>
+      Saved in browser storage — syncs across sessions
+      <button class="reset-btn" onclick="resetAll()">↺ Reset All</button>
+    </div>
+  </div>
+
+  <!-- SUMMARY STATS -->
+  <div class="summary-cards">
+    <div class="stat-card"><div class="num total" id="totalCount">0</div><div class="label">Total Pages</div></div>
+    <div class="stat-card"><div class="num built" id="builtCount">0</div><div class="label">Built</div></div>
+    <div class="stat-card"><div class="num checked" id="checkedCount">0</div><div class="label">Checked Off</div></div>
+    <div class="stat-card"><div class="num remain" id="remainCount">0</div><div class="label">Remaining</div></div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs" id="tabBar"></div>
+
+  <!-- TAB PANELS -->
+  <div id="tabPanels"></div>
+
+</div>
+
+<script src="yrl-hub.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════
+const DATA = {
+  "Summary": { type: "summary" },
+
+  "Core Pages": {
+    type: "list",
+    phase: "p1",
+    phaseLabel: "Phase 1",
+    cssClass: "phase1",
+    sections: [
+      {
+        title: "Foundation Pages",
+        pages: [
+          { name: "Homepage", keyword: "central indiana real estate", phase: "p1" },
+          { name: "About Your Realty Link", keyword: "your realty link indianapolis", phase: "p1" },
+          { name: "Contact", keyword: "contact yrl indianapolis", phase: "p1" },
+          { name: "Blog Index", keyword: "indianapolis real estate blog", phase: "p1" },
+        ]
+      },
+      {
+        title: "Indianapolis Hub Pages",
+        pages: [
+          { name: "Indianapolis Real Estate", keyword: "indianapolis real estate", phase: "p1" },
+          { name: "Indianapolis Homes for Sale", keyword: "indianapolis homes for sale", phase: "p1" },
+          { name: "Sell My Home Indianapolis", keyword: "sell my home indianapolis", phase: "p1" },
+          { name: "Indianapolis Real Estate Agent", keyword: "indianapolis real estate agent", phase: "p1" },
+          { name: "First Time Home Buyers Indianapolis", keyword: "first time home buyer indianapolis", phase: "p1" },
+          { name: "Indianapolis Investment Properties", keyword: "investment properties indianapolis", phase: "p1" },
+          { name: "New Construction Indianapolis", keyword: "new construction indianapolis", phase: "p1" },
+          { name: "Indianapolis Luxury Homes", keyword: "luxury homes indianapolis", phase: "p1" },
+        ]
+      },
+      {
+        title: "Indianapolis Neighborhoods",
+        pages: [
+          { name: "Broad Ripple Indianapolis", keyword: "broad ripple homes for sale", phase: "p2" },
+          { name: "Irvington Indianapolis", keyword: "irvington indianapolis real estate", phase: "p2" },
+          { name: "Geist Reservoir", keyword: "geist indiana homes for sale", phase: "p2" },
+          { name: "Southport Indianapolis", keyword: "southport indianapolis real estate", phase: "p2" },
+          { name: "Eagle Creek Indianapolis", keyword: "eagle creek indianapolis homes", phase: "p2" },
+          { name: "Meridian-Kessler", keyword: "meridian kessler homes for sale", phase: "p2" },
+          { name: "Fountain Square / SoBro", keyword: "fountain square indianapolis homes", phase: "p2" },
+          { name: "Castleton Indianapolis", keyword: "castleton indianapolis homes", phase: "p2" },
+          { name: "Pike Township", keyword: "pike township indianapolis real estate", phase: "p3" },
+          { name: "Warren Township", keyword: "warren township homes for sale", phase: "p3" },
+        ]
+      }
+    ]
+  },
+
+  "Services": {
+    type: "list",
+    phase: "svc",
+    phaseLabel: "Services",
+    cssClass: "service",
+    sections: [
+      {
+        title: "Buyer Services",
+        pages: [
+          { name: "Buyer Representation", keyword: "buyer representation indianapolis", phase: "p1" },
+          { name: "First Time Home Buyers", keyword: "first time home buyer indianapolis", phase: "p1" },
+          { name: "FHA Loan Buyers", keyword: "fha loan homes indianapolis", phase: "p1" },
+          { name: "VA Loan Buyers", keyword: "va loan homes indianapolis", phase: "p1" },
+          { name: "Relocation Buyers", keyword: "relocating to indianapolis", phase: "p1" },
+          { name: "Buyer Compensation Agreement", keyword: "buyer compensation agreement indiana", phase: "p1" },
+          { name: "Move-Up Buyers", keyword: "move up homes indianapolis", phase: "p2" },
+          { name: "Downsizing", keyword: "downsizing home indianapolis", phase: "p2" },
+          { name: "Cash Home Buyers", keyword: "cash home buyers indianapolis", phase: "p2" },
+          { name: "Luxury Home Buyers", keyword: "luxury homes indianapolis", phase: "p2" },
+          { name: "Senior Home Buyers", keyword: "senior home buyers indianapolis", phase: "p2" },
+        ]
+      },
+      {
+        title: "Seller Services",
+        pages: [
+          { name: "Seller Representation", keyword: "sell my home indianapolis", phase: "p1" },
+          { name: "Free Home Valuation / CMA", keyword: "home valuation indianapolis", phase: "p1" },
+          { name: "Pricing Your Home", keyword: "how to price my home indianapolis", phase: "p1" },
+          { name: "Sell Fast Indianapolis", keyword: "sell my house fast indianapolis", phase: "p1" },
+          { name: "Seller Net Sheet", keyword: "seller closing costs indiana", phase: "p1" },
+          { name: "Home Staging", keyword: "home staging indianapolis", phase: "p2" },
+          { name: "Pre-Listing Preparation", keyword: "preparing home for sale indianapolis", phase: "p2" },
+          { name: "Listing Marketing Plan", keyword: "how to market a home for sale indy", phase: "p2" },
+          { name: "Luxury Home Sellers", keyword: "sell luxury home indianapolis", phase: "p2" },
+          { name: "Senior Home Sellers", keyword: "senior home selling indianapolis", phase: "p2" },
+        ]
+      },
+      {
+        title: "Specialty Seller Situations",
+        pages: [
+          { name: "Expired Listings", keyword: "expired listing agent indianapolis", phase: "p1" },
+          { name: "For Sale By Owner (FSBO)", keyword: "for sale by owner indianapolis", phase: "p1" },
+          { name: "Divorce Home Sale", keyword: "selling a home during divorce indiana", phase: "p1" },
+          { name: "Estate Sales / Probate", keyword: "estate sale home indianapolis", phase: "p1" },
+          { name: "Inherited Property", keyword: "inherited home indianapolis sell", phase: "p1" },
+          { name: "Pre-Foreclosure", keyword: "avoid foreclosure indianapolis", phase: "p1" },
+          { name: "Short Sale", keyword: "short sale indianapolis", phase: "p2" },
+          { name: "Job Relocation Sale", keyword: "relocating selling home indianapolis", phase: "p2" },
+          { name: "Vacant Home Sale", keyword: "sell vacant home indianapolis", phase: "p2" },
+          { name: "Behind on Payments", keyword: "behind on mortgage payments indianapolis", phase: "p2" },
+          { name: "Rental Property Sale", keyword: "sell rental property indianapolis", phase: "p2" },
+          { name: "Downsizing Estate", keyword: "downsizing large home indianapolis", phase: "p2" },
+        ]
+      },
+      {
+        title: "Investor Services",
+        pages: [
+          { name: "Investment Property Buying", keyword: "investment property indianapolis", phase: "p1" },
+          { name: "Rental Property Buying", keyword: "rental property indianapolis", phase: "p1" },
+          { name: "Fix and Flip", keyword: "fix and flip indianapolis", phase: "p2" },
+          { name: "Multi-Family Properties", keyword: "multi-family homes indianapolis", phase: "p2" },
+          { name: "1031 Exchange", keyword: "1031 exchange indianapolis indiana", phase: "p2" },
+          { name: "Cash Flow Properties", keyword: "cash flow real estate indianapolis", phase: "p2" },
+          { name: "Off-Market Properties", keyword: "off market homes indianapolis", phase: "p2" },
+          { name: "Portfolio Selling", keyword: "sell multiple properties indianapolis", phase: "p3" },
+        ]
+      },
+      {
+        title: "New Construction",
+        pages: [
+          { name: "New Construction Buying Guide", keyword: "new construction homes indianapolis", phase: "p1" },
+          { name: "New Home Communities", keyword: "new home communities indianapolis", phase: "p1" },
+          { name: "Builder Representation", keyword: "buyer agent new construction indianapolis", phase: "p1" },
+          { name: "Custom Home Building", keyword: "custom home builder indianapolis", phase: "p2" },
+          { name: "New Construction Negotiation", keyword: "negotiate new construction price indiana", phase: "p2" },
+          { name: "New Construction by County", keyword: "new homes hamilton county indiana", phase: "p2" },
+        ]
+      },
+      {
+        title: "Financial & Mortgage",
+        pages: [
+          { name: "Mortgage Calculator", keyword: "mortgage calculator indianapolis", phase: "p1" },
+          { name: "Mortgage Pre-Approval Guide", keyword: "mortgage pre-approval indianapolis", phase: "p1" },
+          { name: "Down Payment Assistance", keyword: "down payment assistance indiana", phase: "p1" },
+          { name: "Closing Costs for Buyers", keyword: "closing costs buyer indiana", phase: "p1" },
+          { name: "Closing Costs for Sellers", keyword: "closing costs seller indiana", phase: "p1" },
+          { name: "Home Equity", keyword: "home equity indianapolis", phase: "p2" },
+          { name: "USDA Loans Indiana", keyword: "usda loan indiana rural", phase: "p2" },
+        ]
+      },
+      {
+        title: "Agent Recruiting",
+        pages: [
+          { name: "Join Your Realty Link", keyword: "join real estate team indianapolis", phase: "p2" },
+          { name: "Commission Structure", keyword: "real estate commission split indianapolis", phase: "p2" },
+          { name: "New Agent Training", keyword: "real estate training indianapolis", phase: "p2" },
+          { name: "Experienced Agent Recruiting", keyword: "experienced agent brokerage indianapolis", phase: "p2" },
+          { name: "Brokerage Comparison", keyword: "best real estate brokerage indianapolis", phase: "p2" },
+          { name: "Part Time Agents", keyword: "part time real estate agent indianapolis", phase: "p3" },
+        ]
+      }
+    ]
+  },
+
+  "Marion County": {
+    type: "list", phase: "p1", phaseLabel: "Phase 1", cssClass: "phase1",
+    sections: [{
+      title: "Marion County — County Hub + Cities",
+      pages: [
+        { name: "Marion County Real Estate (Hub)", keyword: "marion county real estate", phase: "p1" },
+        { name: "Indianapolis", keyword: "indianapolis real estate", phase: "p1" },
+        { name: "Southport", keyword: "southport indianapolis real estate", phase: "p1" },
+        { name: "Lawrence", keyword: "lawrence indiana real estate", phase: "p1" },
+        { name: "Beech Grove", keyword: "beech grove indiana homes for sale", phase: "p1" },
+        { name: "Speedway", keyword: "speedway indiana real estate", phase: "p1" },
+        { name: "Irvington", keyword: "irvington indianapolis real estate", phase: "p1" },
+        { name: "Broad Ripple", keyword: "broad ripple homes for sale", phase: "p1" },
+        { name: "Geist", keyword: "geist indiana homes for sale", phase: "p1" },
+        { name: "Eagle Creek", keyword: "eagle creek indianapolis homes", phase: "p2" },
+        { name: "Pike Township", keyword: "pike township indianapolis real estate", phase: "p2" },
+        { name: "Warren Township", keyword: "warren township homes for sale", phase: "p2" },
+        { name: "Wayne Township", keyword: "wayne township indianapolis real estate", phase: "p2" },
+        { name: "Clermont", keyword: "clermont indiana real estate", phase: "p3" },
+        { name: "Rocky Ripple", keyword: "rocky ripple indianapolis", phase: "p3" },
+      ]
+    }]
+  },
+
+  "Hamilton County": {
+    type: "list", phase: "p1", phaseLabel: "Phase 1", cssClass: "phase1",
+    sections: [{
+      title: "Hamilton County — County Hub + Cities",
+      pages: [
+        { name: "Hamilton County Real Estate (Hub)", keyword: "hamilton county homes for sale", phase: "p1" },
+        { name: "Carmel", keyword: "carmel in homes for sale", phase: "p1" },
+        { name: "Fishers", keyword: "fishers indiana real estate", phase: "p1" },
+        { name: "Noblesville", keyword: "noblesville in real estate", phase: "p1" },
+        { name: "Westfield", keyword: "westfield indiana homes for sale", phase: "p1" },
+        { name: "Arcadia", keyword: "arcadia indiana real estate", phase: "p2" },
+        { name: "Atlanta", keyword: "atlanta indiana real estate", phase: "p2" },
+        { name: "Cicero", keyword: "cicero indiana homes for sale", phase: "p2" },
+        { name: "Sheridan", keyword: "sheridan indiana real estate", phase: "p3" },
+      ]
+    }]
+  },
+
+  "Johnson County": {
+    type: "list", phase: "p1", phaseLabel: "Phase 1", cssClass: "phase1",
+    sections: [{
+      title: "Johnson County — County Hub + Cities",
+      pages: [
+        { name: "Johnson County Real Estate (Hub)", keyword: "johnson county real estate indiana", phase: "p1" },
+        { name: "Greenwood", keyword: "greenwood indiana homes for sale", phase: "p1" },
+        { name: "Franklin", keyword: "franklin indiana real estate", phase: "p1" },
+        { name: "Bargersville", keyword: "bargersville indiana real estate", phase: "p2" },
+        { name: "Whiteland", keyword: "whiteland indiana homes", phase: "p2" },
+        { name: "New Whiteland", keyword: "new whiteland indiana real estate", phase: "p2" },
+        { name: "Edinburgh", keyword: "edinburgh indiana real estate", phase: "p3" },
+        { name: "Trafalgar", keyword: "trafalgar indiana homes for sale", phase: "p3" },
+        { name: "Nineveh", keyword: "nineveh indiana real estate", phase: "p3" },
+      ]
+    }]
+  },
+
+  "Hendricks County": {
+    type: "list", phase: "p1", phaseLabel: "Phase 1", cssClass: "phase1",
+    sections: [{
+      title: "Hendricks County — County Hub + Cities",
+      pages: [
+        { name: "Hendricks County Real Estate (Hub)", keyword: "hendricks county homes for sale", phase: "p1" },
+        { name: "Avon", keyword: "avon indiana homes for sale", phase: "p1" },
+        { name: "Brownsburg", keyword: "brownsburg indiana real estate", phase: "p1" },
+        { name: "Plainfield", keyword: "plainfield indiana homes", phase: "p1" },
+        { name: "Danville", keyword: "danville indiana real estate", phase: "p2" },
+        { name: "Pittsboro", keyword: "pittsboro indiana homes", phase: "p2" },
+        { name: "Clayton", keyword: "clayton indiana real estate", phase: "p3" },
+        { name: "North Salem", keyword: "north salem indiana real estate", phase: "p3" },
+        { name: "Lizton", keyword: "lizton indiana homes", phase: "p4" },
+      ]
+    }]
+  },
+
+  "Hancock County": {
+    type: "list", phase: "p2", phaseLabel: "Phase 2", cssClass: "phase2",
+    sections: [{
+      title: "Hancock County — County Hub + Cities",
+      pages: [
+        { name: "Hancock County Real Estate (Hub)", keyword: "hancock county real estate", phase: "p2" },
+        { name: "McCordsville", keyword: "mccordsville indiana real estate", phase: "p1" },
+        { name: "Greenfield", keyword: "greenfield indiana real estate", phase: "p2" },
+        { name: "Fortville", keyword: "fortville indiana homes for sale", phase: "p2" },
+        { name: "New Palestine", keyword: "new palestine indiana real estate", phase: "p2" },
+        { name: "Cumberland", keyword: "cumberland indiana homes", phase: "p2" },
+        { name: "Shirley", keyword: "shirley indiana real estate", phase: "p3" },
+        { name: "Wilkinson", keyword: "wilkinson indiana homes", phase: "p4" },
+      ]
+    }]
+  },
+
+  "Boone County": {
+    type: "list", phase: "p2", phaseLabel: "Phase 2", cssClass: "phase2",
+    sections: [{
+      title: "Boone County — County Hub + Cities",
+      pages: [
+        { name: "Boone County Real Estate (Hub)", keyword: "boone county homes for sale indiana", phase: "p2" },
+        { name: "Zionsville", keyword: "zionsville in homes for sale", phase: "p1" },
+        { name: "Whitestown", keyword: "whitestown indiana real estate", phase: "p2" },
+        { name: "Lebanon", keyword: "lebanon indiana homes for sale", phase: "p2" },
+        { name: "Thorntown", keyword: "thorntown indiana real estate", phase: "p3" },
+        { name: "Jamestown", keyword: "jamestown indiana homes", phase: "p3" },
+        { name: "Advance", keyword: "advance indiana real estate", phase: "p4" },
+      ]
+    }]
+  },
+
+  "Madison County": {
+    type: "list", phase: "p2", phaseLabel: "Phase 2", cssClass: "phase2",
+    sections: [{
+      title: "Madison County — County Hub + Cities",
+      pages: [
+        { name: "Madison County Real Estate (Hub)", keyword: "madison county indiana real estate", phase: "p2" },
+        { name: "Anderson", keyword: "anderson indiana real estate", phase: "p2" },
+        { name: "Pendleton", keyword: "pendleton indiana homes for sale", phase: "p2" },
+        { name: "Lapel", keyword: "lapel indiana real estate", phase: "p2" },
+        { name: "Alexandria", keyword: "alexandria indiana real estate", phase: "p3" },
+        { name: "Elwood", keyword: "elwood indiana homes", phase: "p3" },
+        { name: "Chesterfield", keyword: "chesterfield indiana real estate", phase: "p3" },
+        { name: "Markleville", keyword: "markleville indiana homes", phase: "p4" },
+      ]
+    }]
+  },
+
+  "Shelby County": {
+    type: "list", phase: "p2", phaseLabel: "Phase 2", cssClass: "phase2",
+    sections: [{
+      title: "Shelby County — County Hub + Cities",
+      pages: [
+        { name: "Shelby County Real Estate (Hub)", keyword: "shelby county indiana homes", phase: "p2" },
+        { name: "Shelbyville", keyword: "shelbyville indiana homes for sale", phase: "p1" },
+        { name: "Fairland", keyword: "fairland indiana real estate", phase: "p2" },
+        { name: "Morristown", keyword: "morristown indiana homes", phase: "p2" },
+        { name: "Waldron", keyword: "waldron indiana real estate", phase: "p3" },
+        { name: "St. Paul", keyword: "st paul indiana homes", phase: "p3" },
+        { name: "Boggstown", keyword: "boggstown indiana real estate", phase: "p4" },
+      ]
+    }]
+  },
+
+  "More Counties": {
+    type: "list", phase: "p3", phaseLabel: "Phase 3–4", cssClass: "phase3",
+    sections: [
+      {
+        title: "Morgan County (Phase 2–3)",
+        pages: [
+          { name: "Morgan County Real Estate (Hub)", keyword: "morgan county indiana real estate", phase: "p3" },
+          { name: "Mooresville", keyword: "mooresville indiana homes for sale", phase: "p2" },
+          { name: "Martinsville", keyword: "martinsville indiana real estate", phase: "p3" },
+          { name: "Monrovia", keyword: "monrovia indiana homes", phase: "p3" },
+          { name: "Brooklyn", keyword: "brooklyn indiana real estate", phase: "p3" },
+          { name: "Morgantown", keyword: "morgantown indiana homes", phase: "p4" },
+        ]
+      },
+      {
+        title: "Montgomery County (Phase 3)",
+        pages: [
+          { name: "Montgomery County Real Estate (Hub)", keyword: "montgomery county indiana real estate", phase: "p3" },
+          { name: "Crawfordsville", keyword: "crawfordsville indiana real estate", phase: "p3" },
+          { name: "Ladoga", keyword: "ladoga indiana homes", phase: "p3" },
+          { name: "Waveland", keyword: "waveland indiana real estate", phase: "p3" },
+          { name: "Linden", keyword: "linden indiana homes", phase: "p4" },
+          { name: "New Market", keyword: "new market indiana real estate", phase: "p4" },
+          { name: "Waynetown", keyword: "waynetown indiana homes", phase: "p4" },
+          { name: "Darlington", keyword: "darlington indiana real estate", phase: "p4" },
+        ]
+      },
+      {
+        title: "Decatur County (Phase 3)",
+        pages: [
+          { name: "Decatur County Real Estate (Hub)", keyword: "decatur county indiana homes", phase: "p3" },
+          { name: "Greensburg", keyword: "greensburg indiana real estate", phase: "p3" },
+          { name: "Westport", keyword: "westport indiana homes", phase: "p3" },
+          { name: "New Point", keyword: "new point indiana real estate", phase: "p4" },
+          { name: "St. Paul (Decatur)", keyword: "st paul decatur county indiana", phase: "p4" },
+          { name: "Millhousen", keyword: "millhousen indiana homes", phase: "p4" },
+        ]
+      },
+      {
+        title: "Brown County (Phase 3)",
+        pages: [
+          { name: "Brown County Real Estate (Hub)", keyword: "brown county indiana real estate", phase: "p3" },
+          { name: "Nashville", keyword: "nashville indiana real estate", phase: "p3" },
+          { name: "Bean Blossom", keyword: "bean blossom indiana homes", phase: "p3" },
+          { name: "Helmsburg", keyword: "helmsburg indiana real estate", phase: "p4" },
+          { name: "Trevlac", keyword: "trevlac indiana homes", phase: "p4" },
+        ]
+      },
+      {
+        title: "Putnam County (Phase 4)",
+        pages: [
+          { name: "Putnam County Real Estate (Hub)", keyword: "putnam county indiana homes", phase: "p4" },
+          { name: "Greencastle", keyword: "greencastle indiana real estate", phase: "p4" },
+          { name: "Cloverdale", keyword: "cloverdale indiana homes", phase: "p4" },
+          { name: "Bainbridge", keyword: "bainbridge indiana real estate", phase: "p4" },
+          { name: "Russellville", keyword: "russellville indiana homes", phase: "p4" },
+        ]
+      },
+      {
+        title: "Parke County (Phase 4)",
+        pages: [
+          { name: "Parke County Real Estate (Hub)", keyword: "parke county indiana real estate", phase: "p4" },
+          { name: "Rockville", keyword: "rockville indiana real estate", phase: "p4" },
+          { name: "Montezuma", keyword: "montezuma indiana homes", phase: "p4" },
+          { name: "Rosedale", keyword: "rosedale indiana real estate", phase: "p4" },
+          { name: "Marshall", keyword: "marshall indiana homes", phase: "p4" },
+          { name: "Mecca", keyword: "mecca indiana real estate", phase: "p4" },
+          { name: "Bloomingdale", keyword: "bloomingdale indiana homes", phase: "p4" },
+        ]
+      },
+      {
+        title: "BLC Extended Counties (Phase 4)",
+        pages: [
+          { name: "Bartholomew County Real Estate (Hub)", keyword: "bartholomew county indiana real estate", phase: "p4" },
+          { name: "Columbus Indiana Real Estate", keyword: "columbus indiana homes for sale", phase: "p4" },
+          { name: "Jackson County Real Estate (Hub)", keyword: "jackson county indiana real estate", phase: "p4" },
+          { name: "Seymour Indiana Real Estate", keyword: "seymour indiana homes for sale", phase: "p4" },
+          { name: "Jennings County Real Estate (Hub)", keyword: "jennings county indiana real estate", phase: "p4" },
+          { name: "North Vernon Indiana Real Estate", keyword: "north vernon indiana homes", phase: "p4" },
+        ]
+      }
+    ]
+  },
+
+  "Blog Posts": {
+    type: "list", phase: "blg", phaseLabel: "Blog", cssClass: "blog",
+    sections: [
+      {
+        title: "Weeks 1–4 — Foundation Posts",
+        pages: [
+          { name: "Indianapolis Real Estate Market Update 2026", keyword: "indianapolis housing market 2026", phase: "p1" },
+          { name: "Best Neighborhoods to Buy in Indianapolis", keyword: "best neighborhoods indianapolis", phase: "p1" },
+          { name: "How to Sell Your Home Fast in Greenwood Indiana", keyword: "sell home fast greenwood in", phase: "p1" },
+          { name: "First Time Home Buyer Guide — Indianapolis 2026", keyword: "first time home buyer indianapolis", phase: "p1" },
+          { name: "Living in Carmel Indiana — What to Know Before You Move", keyword: "living in carmel indiana", phase: "p1" },
+          { name: "What Is My Home Worth in Indianapolis?", keyword: "home value indianapolis", phase: "p1" },
+          { name: "Fishers Indiana — One of America's Best Places to Live", keyword: "fishers indiana real estate", phase: "p1" },
+          { name: "Why Join a Real Estate Team Instead of Going Independent", keyword: "join real estate team indianapolis", phase: "p1" },
+        ]
+      },
+      {
+        title: "Weeks 5–8 — Growing Authority",
+        pages: [
+          { name: "Buying New Construction in Central Indiana", keyword: "new construction homes indianapolis", phase: "p1" },
+          { name: "Closing Costs in Indiana — What Sellers Need to Know", keyword: "closing costs indiana seller", phase: "p1" },
+          { name: "Zionsville Indiana — Small Town Luxury Living", keyword: "zionsville in homes for sale", phase: "p1" },
+          { name: "Investment Property in Indianapolis — Is Now a Good Time?", keyword: "investment property indianapolis", phase: "p1" },
+          { name: "How the Buyer Compensation Agreement Works in Indiana", keyword: "buyer compensation agreement indiana", phase: "p1" },
+          { name: "Top 5 Things That Kill a Home Sale in Indianapolis", keyword: "sell home indianapolis tips", phase: "p1" },
+          { name: "Avon Indiana — Why Families Love Hendricks County", keyword: "avon indiana homes for sale", phase: "p1" },
+          { name: "YRL Commission Structure — What Agents Need to Know", keyword: "real estate commission split indianapolis", phase: "p1" },
+        ]
+      },
+      {
+        title: "Weeks 9–12 — Specialty Content",
+        pages: [
+          { name: "McCordsville Indiana — Hancock County's Fastest Growing City", keyword: "mccordsville indiana real estate", phase: "p1" },
+          { name: "Home Staging Tips for Indianapolis Sellers", keyword: "home staging indianapolis", phase: "p1" },
+          { name: "Geist Reservoir — Waterfront Homes Near Indianapolis", keyword: "geist indiana homes for sale", phase: "p1" },
+          { name: "Indianapolis Housing Market Forecast — What to Expect", keyword: "indianapolis housing market forecast", phase: "p1" },
+          { name: "Shelbyville Indiana — Affordable Living Near Indy", keyword: "shelbyville indiana homes for sale", phase: "p2" },
+          { name: "How to Choose the Right Real Estate Agent in Indianapolis", keyword: "best real estate agent indianapolis", phase: "p2" },
+          { name: "Plainfield Indiana — Hendricks County's Retail Hub", keyword: "plainfield indiana real estate", phase: "p2" },
+          { name: "Year in Review — Central Indiana Real Estate 2025", keyword: "central indiana real estate 2025", phase: "p2" },
+        ]
+      },
+      {
+        title: "Weeks 13–18 — Niche & Long-Tail",
+        pages: [
+          { name: "My Home Expired — What Should I Do Next?", keyword: "expired listing agent indianapolis", phase: "p1" },
+          { name: "Why FSBO Homes Sell for Less in Indianapolis", keyword: "for sale by owner indianapolis", phase: "p1" },
+          { name: "Selling a Home During a Divorce in Indiana", keyword: "selling home during divorce indiana", phase: "p1" },
+          { name: "Probate and Estate Home Sales in Indianapolis", keyword: "estate sale home indianapolis", phase: "p1" },
+          { name: "Down Payment Assistance Programs in Indiana 2026", keyword: "down payment assistance indiana", phase: "p1" },
+          { name: "Brownsburg Indiana Real Estate — Racing Town, Growing Suburbs", keyword: "brownsburg indiana real estate", phase: "p1" },
+          { name: "Noblesville Indiana — Hamilton County's County Seat", keyword: "noblesville in real estate", phase: "p2" },
+          { name: "What Is a Short Sale in Indiana?", keyword: "short sale indianapolis", phase: "p2" },
+          { name: "Broad Ripple — Indianapolis's Most Vibrant Neighborhood", keyword: "broad ripple homes for sale", phase: "p2" },
+          { name: "Irvington Indianapolis — Historic Charm on the East Side", keyword: "irvington indianapolis real estate", phase: "p2" },
+          { name: "VA Loans in Indiana — A Complete Guide for Veterans", keyword: "va loan homes indianapolis", phase: "p2" },
+          { name: "Westfield Indiana Real Estate — Home of Grand Park", keyword: "westfield indiana homes for sale", phase: "p2" },
+        ]
+      }
+    ]
+  }
+};
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+const TRACKER_KEY = 'yrl-tracker-progress';
+
+let checked = {};
+try { checked = JSON.parse(localStorage.getItem('yrl-tracker') || '{}'); } catch(e) {}
+
+function save() {
+  localStorage.setItem('yrl-tracker', JSON.stringify(checked));
+  saveHubContent(TRACKER_KEY, checked); // fire-and-forget cross-device sync
+}
+
+function toggleItem(id) {
+  checked[id] = !checked[id];
+  save();
+  render();
+}
+
+function resetAll() {
+  if (!confirm('Reset all progress? This cannot be undone.')) return;
+  checked = {};
+  save();
+  render();
+}
+
+// ═══════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════
+function allPages() {
+  let pages = [];
+  Object.entries(DATA).forEach(([tabKey, tab]) => {
+    if (tab.type === 'summary') return;
+    tab.sections.forEach(sec => {
+      sec.pages.forEach(p => {
+        pages.push({ id: tabKey + '_' + sec.title + '_' + p.name, ...p });
+      });
+    });
+  });
+  return pages;
+}
+
+function makeId(tabKey, secTitle, name) {
+  return tabKey + '_' + secTitle + '_' + name;
+}
+
+// ═══════════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════════
+let activeTab = 'Summary';
+
+function render() {
+  const pages = allPages();
+  const total = pages.length;
+  const done = pages.filter(p => checked[p.id]).length;
+
+  document.getElementById('totalCount').textContent = total;
+  document.getElementById('builtCount').textContent = done;
+  document.getElementById('checkedCount').textContent = done;
+  document.getElementById('remainCount').textContent = total - done;
+
+  renderTabs();
+  renderPanels();
+}
+
+function renderTabs() {
+  const bar = document.getElementById('tabBar');
+  bar.innerHTML = Object.keys(DATA).map(key =>
+    `<button class="tab-btn ${key === activeTab ? 'active' : ''}" onclick="switchTab('${key}')">${key}</button>`
+  ).join('');
+}
+
+function switchTab(key) {
+  activeTab = key;
+  render();
+}
+
+function renderPanels() {
+  const container = document.getElementById('tabPanels');
+  container.innerHTML = '';
+  Object.entries(DATA).forEach(([tabKey, tab]) => {
+    const div = document.createElement('div');
+    div.className = 'tab-panel' + (tabKey === activeTab ? ' active' : '');
+    div.innerHTML = tab.type === 'summary' ? renderSummary() : renderList(tabKey, tab);
+    container.appendChild(div);
+  });
+}
+
+function renderSummary() {
+  const cats = Object.entries(DATA).filter(([k]) => k !== 'Summary');
+  const cards = cats.map(([key, tab]) => {
+    const pages = tab.sections.flatMap(s => s.pages);
+    const total = pages.length;
+    const done = pages.filter(p => checked[makeId(key, tab.sections.find(s=>s.pages.includes(p)).title, p.name)]).length;
+    const pct = total === 0 ? 0 : Math.round(done / total * 100);
+    return `
+      <div class="cat-card ${tab.cssClass}" onclick="switchTab('${key}')">
+        <h3>${key}</h3>
+        <div class="cat-meta">${done} / ${total} checked · ${done} built</div>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+      </div>`;
+  }).join('');
+
+  return `<div style="margin-bottom:12px"><h2 style="font-size:15px;font-weight:700;color:#333;margin-bottom:4px">Progress by Category</h2></div>
+    <div class="cat-grid">${cards}</div>`;
+}
+
+function renderList(tabKey, tab) {
+  // Filter bar
+  let filterHtml = `
+    <div class="filter-bar">
+      <input type="text" placeholder="Search pages..." id="search_${tabKey}" oninput="applyFilter('${tabKey}')">
+      <select class="filter-select" id="filter_${tabKey}" onchange="applyFilter('${tabKey}')">
+        <option value="all">All Phases</option>
+        <option value="p1">Phase 1</option>
+        <option value="p2">Phase 2</option>
+        <option value="p3">Phase 3</option>
+        <option value="p4">Phase 4</option>
+      </select>
+      <select class="filter-select" id="status_${tabKey}" onchange="applyFilter('${tabKey}')">
+        <option value="all">All Status</option>
+        <option value="todo">To Do</option>
+        <option value="done">Done</option>
+      </select>
+    </div>`;
+
+  const sections = tab.sections.map(sec => {
+    const items = sec.pages.map(p => {
+      const id = makeId(tabKey, sec.title, p.name);
+      const isDone = !!checked[id];
+      const badgeClass = p.phase;
+      const badgeLabels = { p1:'Phase 1', p2:'Phase 2', p3:'Phase 3', p4:'Phase 4', svc:'Service' };
+      return `
+        <div class="page-item ${isDone ? 'checked' : ''}" data-id="${id}" data-phase="${p.phase}" data-status="${isDone?'done':'todo'}" onclick="toggleItem('${id}')">
+          <div class="checkbox">${isDone ? '✓' : ''}</div>
+          <div class="page-info">
+            <div class="page-name">${p.name}</div>
+            <div class="page-keyword">${p.keyword}</div>
+          </div>
+          <div class="page-badges">
+            <span class="badge ${badgeClass}">${badgeLabels[p.phase]||p.phase}</span>
+            ${isDone ? '<span class="built-badge">✓ Built</span>' : ''}
+          </div>
+        </div>`;
+    }).join('');
+
+    return `
+      <div class="subsection">
+        <div class="subsection-title">${sec.title}</div>
+        <div class="page-list" id="list_${tabKey}_${sec.title.replace(/\W+/g,'_')}">${items}</div>
+      </div>`;
+  }).join('');
+
+  const pages = tab.sections.flatMap(s => s.pages);
+  const total = pages.length;
+  const done  = pages.filter(p => checked[makeId(tabKey, tab.sections.find(s=>s.pages.includes(p)).title, p.name)]).length;
+
+  return `
+    <div class="section-header">
+      <h2>${tabKey}</h2>
+      <span class="count-badge">${done} / ${total}</span>
+      <span class="phase-tag ${tab.phase}">${tab.phaseLabel}</span>
+    </div>
+    ${filterHtml}
+    <div id="sections_${tabKey}">${sections}</div>`;
+}
+
+function applyFilter(tabKey) {
+  const search = (document.getElementById(`search_${tabKey}`)?.value || '').toLowerCase();
+  const phase  = document.getElementById(`filter_${tabKey}`)?.value || 'all';
+  const status = document.getElementById(`status_${tabKey}`)?.value || 'all';
+  document.querySelectorAll(`#sections_${tabKey} .page-item`).forEach(item => {
+    const name = item.querySelector('.page-name')?.textContent.toLowerCase() || '';
+    const kw   = item.querySelector('.page-keyword')?.textContent.toLowerCase() || '';
+    const itemPhase  = item.dataset.phase;
+    const itemStatus = item.dataset.status;
+    const matchSearch = !search || name.includes(search) || kw.includes(search);
+    const matchPhase  = phase === 'all' || itemPhase === phase;
+    const matchStatus = status === 'all' || itemStatus === status;
+    item.style.display = (matchSearch && matchPhase && matchStatus) ? 'flex' : 'none';
+  });
+}
+
+// ── INIT ──
+async function init() {
+  try {
+    const remote = await loadHubContent(TRACKER_KEY);
+    if (remote && typeof remote === 'object') {
+      checked = remote;
+      localStorage.setItem('yrl-tracker', JSON.stringify(checked));
+    }
+  } catch(e) { /* fall back to localStorage already loaded above */ }
+  render();
+}
+init();
+</script>
+</body>
+</html>

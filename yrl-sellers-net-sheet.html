@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller's Net Sheet — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --red:        #c03926;
+            --red-light:  #d94a35;
+            --red-dark:   #9e2e1e;
+            --gray:       #6e6e70;
+            --bg:         #f2f4f7;
+            --surface:    #ffffff;
+            --surface-2:  #f7f8fa;
+            --surface-3:  #eef0f3;
+            --border:     #e2e5ea;
+            --text:       #1a1d22;
+            --text-sec:   #5a6270;
+            --text-muted: #9ca3af;
+            --radius:     12px;
+            --shadow:     0 4px 20px rgba(0,0,0,0.08);
+            --shadow-red: 0 6px 28px rgba(192,57,38,0.22);
+            --green:      #16a34a;
+        }
+
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; overflow-x:hidden; }
+        a { text-decoration:none; color:inherit; }
+
+        /* ── HEADER ── */
+        .page-header {
+            background: linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);
+            padding: 28px 24px 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .page-header::before {
+            content:''; position:absolute; inset:0;
+            background-image:radial-gradient(rgba(255,255,255,0.08) 1px,transparent 1px);
+            background-size:28px 28px; pointer-events:none;
+        }
+        .header-inner {
+            max-width:1200px; margin:0 auto;
+            display:flex; align-items:center; justify-content:space-between; gap:16px;
+            position:relative; z-index:1;
+        }
+        .header-left { display:flex; align-items:center; gap:16px; }
+        .back-btn {
+            display:inline-flex; align-items:center; gap:7px;
+            background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3);
+            color:#fff; padding:8px 14px; border-radius:100px;
+            font-size:12.5px; font-weight:600; transition:all 0.2s;
+        }
+        .back-btn:hover { background:rgba(255,255,255,0.25); }
+        .header-title { color:#fff; }
+        .header-title h1 {
+            font-family:'Bebas Neue',sans-serif; font-size:clamp(22px,4vw,34px);
+            letter-spacing:2px; line-height:1;
+        }
+        .header-title p { font-size:13px; color:rgba(255,255,255,0.75); margin-top:3px; }
+        .header-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+        .btn-header {
+            display:inline-flex; align-items:center; gap:7px;
+            padding:9px 18px; border-radius:100px; font-size:13px; font-weight:600;
+            cursor:pointer; border:none; font-family:'Inter',sans-serif; transition:all 0.2s;
+            white-space:nowrap;
+        }
+        .btn-print { background:#fff; color:var(--red); }
+        .btn-print:hover { background:rgba(255,255,255,0.9); box-shadow:var(--shadow-red); }
+        .btn-reset { background:rgba(255,255,255,0.15); color:#fff; border:1px solid rgba(255,255,255,0.3); }
+        .btn-reset:hover { background:rgba(255,255,255,0.25); }
+
+        /* ── MODE TOGGLE ── */
+        .mode-bar {
+            background:var(--surface); border-bottom:1px solid var(--border);
+            padding:12px 24px;
+        }
+        .mode-inner {
+            max-width:1200px; margin:0 auto;
+            display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+        }
+        .mode-label { font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-right:4px; }
+        .mode-btn {
+            display:inline-flex; align-items:center; gap:7px;
+            padding:7px 16px; border-radius:100px; font-size:12.5px; font-weight:600;
+            cursor:pointer; border:1.5px solid var(--border); background:var(--surface-2);
+            color:var(--text-sec); font-family:'Inter',sans-serif; transition:all 0.2s;
+        }
+        .mode-btn.active { background:var(--red); border-color:var(--red); color:#fff; }
+        .mode-btn:not(.active):hover { border-color:rgba(192,57,38,0.4); color:var(--red); }
+        .mode-note { font-size:12px; color:var(--text-muted); margin-left:auto; }
+
+        /* ── LAYOUT ── */
+        .layout {
+            max-width:1200px; margin:0 auto; padding:28px 20px 80px;
+            display:grid; grid-template-columns:1fr 360px; gap:24px; align-items:start;
+        }
+        @media (max-width:900px) { .layout { grid-template-columns:1fr; } }
+
+        /* ── FORM SECTIONS ── */
+        .form-section {
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:var(--radius); margin-bottom:16px; overflow:hidden;
+        }
+        .sec-toggle {
+            width:100%; display:flex; align-items:center; gap:14px;
+            padding:18px 20px; background:none; border:none; cursor:pointer;
+            font-family:'Inter',sans-serif; text-align:left; transition:background 0.15s;
+        }
+        .sec-toggle:hover { background:var(--surface-2); }
+        .sec-toggle-icon {
+            width:40px; height:40px; border-radius:10px;
+            background:rgba(192,57,38,0.1); color:var(--red);
+            display:flex; align-items:center; justify-content:center;
+            font-size:17px; flex-shrink:0;
+        }
+        .sec-toggle-text { flex:1; }
+        .sec-toggle-text h3 { font-size:14.5px; font-weight:700; color:var(--text); }
+        .sec-toggle-text p { font-size:12px; color:var(--text-muted); margin-top:1px; }
+        .sec-toggle-caret { color:var(--text-muted); font-size:13px; transition:transform 0.25s; flex-shrink:0; }
+        .sec-toggle.open .sec-toggle-caret { transform:rotate(180deg); }
+        .sec-body { display:none; padding:0 20px 20px; border-top:1px solid var(--border); }
+        .sec-body.open { display:block; }
+
+        /* ── FORM FIELDS ── */
+        .field-group { margin-top:16px; }
+        .field-group label {
+            display:block; font-size:11px; font-weight:700; text-transform:uppercase;
+            letter-spacing:1px; color:var(--text-sec); margin-bottom:5px;
+        }
+        .field-group input, .field-group select {
+            width:100%; background:var(--surface-3); border:1.5px solid var(--border);
+            border-radius:8px; padding:10px 13px; font-size:14px;
+            font-family:'Inter',sans-serif; color:var(--text); outline:none;
+            transition:border-color 0.2s;
+        }
+        .field-group input:focus, .field-group select:focus { border-color:var(--red); }
+        .field-group .hint { font-size:11.5px; color:var(--text-muted); margin-top:5px; }
+        .field-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+        .field-row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+        @media (max-width:600px) { .field-row { grid-template-columns:1fr; } .field-row-3 { grid-template-columns:1fr 1fr; } }
+
+        /* Input prefix/suffix */
+        .input-wrap { position:relative; }
+        .input-wrap .prefix {
+            position:absolute; left:13px; top:50%; transform:translateY(-50%);
+            font-size:14px; color:var(--text-muted); pointer-events:none; font-weight:600;
+        }
+        .input-wrap.has-prefix input { padding-left:26px; }
+        .input-wrap .suffix {
+            position:absolute; right:13px; top:50%; transform:translateY(-50%);
+            font-size:13px; color:var(--text-muted); pointer-events:none;
+        }
+        .input-wrap.has-suffix input { padding-right:32px; }
+
+        /* Toggle row */
+        .toggle-row {
+            display:flex; align-items:center; justify-content:space-between;
+            margin-top:16px; gap:12px;
+        }
+        .toggle-row label { font-size:13px; font-weight:600; color:var(--text); margin:0; }
+        .toggle-row .sub { font-size:11.5px; color:var(--text-muted); }
+        .toggle-switch { position:relative; width:42px; height:24px; flex-shrink:0; }
+        .toggle-switch input { opacity:0; width:0; height:0; }
+        .toggle-slider {
+            position:absolute; inset:0; background:var(--border); border-radius:100px;
+            cursor:pointer; transition:background 0.2s;
+        }
+        .toggle-slider::before {
+            content:''; position:absolute; width:18px; height:18px; background:#fff;
+            border-radius:50%; left:3px; top:3px; transition:transform 0.2s;
+            box-shadow:0 1px 4px rgba(0,0,0,0.2);
+        }
+        .toggle-switch input:checked + .toggle-slider { background:var(--red); }
+        .toggle-switch input:checked + .toggle-slider::before { transform:translateX(18px); }
+
+        /* Payer select */
+        .payer-select {
+            display:inline-flex; border:1.5px solid var(--border); border-radius:8px;
+            overflow:hidden; flex-shrink:0;
+        }
+        .payer-opt {
+            padding:6px 12px; font-size:11.5px; font-weight:600; cursor:pointer;
+            color:var(--text-sec); background:var(--surface-2); transition:all 0.15s;
+            border:none; font-family:'Inter',sans-serif;
+        }
+        .payer-opt + .payer-opt { border-left:1.5px solid var(--border); }
+        .payer-opt.active { background:var(--red); color:#fff; }
+
+        /* Repeatable line items */
+        .repeatable-list { margin-top:14px; display:flex; flex-direction:column; gap:8px; }
+        .repeatable-item {
+            display:grid; grid-template-columns:1fr auto auto; gap:8px; align-items:center;
+        }
+        .repeatable-item input {
+            width:100%; background:var(--surface-3); border:1.5px solid var(--border);
+            border-radius:8px; padding:9px 12px; font-size:13.5px;
+            font-family:'Inter',sans-serif; color:var(--text); outline:none;
+            transition:border-color 0.2s;
+        }
+        .repeatable-item input:focus { border-color:var(--red); }
+        .repeatable-item .amt-wrap { position:relative; width:130px; }
+        .repeatable-item .amt-wrap .prefix {
+            position:absolute; left:11px; top:50%; transform:translateY(-50%);
+            font-size:14px; color:var(--text-muted); pointer-events:none; font-weight:600;
+        }
+        .repeatable-item .amt-wrap input { padding-left:24px; }
+        .btn-remove-item {
+            width:30px; height:30px; background:#fee2e2; border:none; border-radius:6px;
+            color:#dc2626; cursor:pointer; font-size:13px; display:flex;
+            align-items:center; justify-content:center; transition:background 0.15s; flex-shrink:0;
+        }
+        .btn-remove-item:hover { background:#fca5a5; }
+        .btn-add-item {
+            display:inline-flex; align-items:center; gap:6px; margin-top:10px;
+            background:none; border:1.5px dashed rgba(192,57,38,0.35); border-radius:8px;
+            padding:7px 14px; font-size:12.5px; font-weight:600; color:var(--red);
+            cursor:pointer; font-family:'Inter',sans-serif; transition:all 0.2s;
+        }
+        .btn-add-item:hover { border-color:var(--red); background:rgba(192,57,38,0.04); }
+
+        /* Conditional section */
+        .cond-section { display:none; }
+        .cond-section.visible { display:block; }
+        .cond-divider { height:1px; background:var(--border); margin:18px 0; }
+
+        /* ── SUMMARY PANEL ── */
+        .summary-panel {
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:var(--radius); position:sticky; top:16px;
+            box-shadow:var(--shadow);
+        }
+        .summary-header {
+            padding:18px 20px; border-bottom:1px solid var(--border);
+            display:flex; align-items:center; gap:12px;
+        }
+        .summary-header-icon {
+            width:42px; height:42px; background:var(--red); border-radius:10px;
+            display:flex; align-items:center; justify-content:center;
+            color:#fff; font-size:18px; flex-shrink:0;
+        }
+        .summary-header h2 {
+            font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:1.5px; line-height:1;
+        }
+        .summary-header p { font-size:11.5px; color:var(--text-muted); margin-top:2px; }
+
+        .summary-body { padding:16px 20px; }
+
+        .sum-line {
+            display:flex; justify-content:space-between; align-items:baseline;
+            padding:7px 0; border-bottom:1px solid var(--surface-3);
+            font-size:13px;
+        }
+        .sum-line:last-child { border-bottom:none; }
+        .sum-line .label { color:var(--text-sec); flex:1; padding-right:8px; }
+        .sum-line .val { font-weight:600; color:var(--text); white-space:nowrap; }
+        .sum-line .val.neg { color:#dc2626; }
+        .sum-line .val.pos { color:var(--green); }
+        .sum-line.subtotal { background:var(--surface-2); border-radius:6px; padding:6px 10px; margin:4px -10px; }
+        .sum-line.subtotal .label { font-weight:600; color:var(--text); font-size:12px; text-transform:uppercase; letter-spacing:0.5px; }
+        .sum-line.subtotal .val { font-size:12px; }
+
+        .sum-separator { height:1px; background:var(--border); margin:12px 0; }
+
+        .net-box {
+            background:linear-gradient(135deg,rgba(192,57,38,0.06),rgba(192,57,38,0.1));
+            border:2px solid rgba(192,57,38,0.25); border-radius:10px;
+            padding:18px; margin-top:16px; text-align:center;
+        }
+        .net-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--red); margin-bottom:6px; }
+        .net-amount { font-family:'Bebas Neue',sans-serif; font-size:46px; letter-spacing:2px; line-height:1; }
+        .net-amount.positive { color:var(--green); }
+        .net-amount.negative { color:#dc2626; }
+        .net-pct { font-size:12px; color:var(--text-muted); margin-top:4px; }
+
+        .summary-footer { padding:0 20px 20px; }
+        .btn-print-full {
+            width:100%; padding:12px; background:var(--red); color:#fff; border:none;
+            border-radius:10px; font-size:14px; font-weight:700; cursor:pointer;
+            font-family:'Inter',sans-serif; display:flex; align-items:center;
+            justify-content:center; gap:8px; transition:background 0.2s; margin-top:16px;
+        }
+        .btn-print-full:hover { background:var(--red-light); }
+
+        .disclaimer {
+            font-size:10.5px; color:var(--text-muted); margin-top:12px;
+            line-height:1.6; text-align:center;
+        }
+
+        /* ── REVERSE CALCULATOR MODE ── */
+        .reverse-panel {
+            display:none; background:var(--surface); border:1px solid var(--border);
+            border-radius:var(--radius); padding:24px; margin-bottom:16px;
+        }
+        .reverse-panel.visible { display:block; }
+        .reverse-panel h3 {
+            font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:1.5px;
+            margin-bottom:6px; color:var(--text);
+        }
+        .reverse-panel > p { font-size:13px; color:var(--text-sec); margin-bottom:20px; }
+        .reverse-result {
+            background:var(--surface-2); border:1.5px solid var(--border);
+            border-radius:10px; padding:16px; margin-top:16px;
+        }
+        .reverse-result .rev-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:4px; }
+        .reverse-result .rev-amount { font-family:'Bebas Neue',sans-serif; font-size:38px; letter-spacing:2px; color:var(--red); line-height:1; }
+        .reverse-result .rev-note { font-size:12px; color:var(--text-muted); margin-top:6px; }
+
+        /* ── PRINT STYLES ── */
+        @media print {
+            .page-header, .mode-bar, .back-btn, .header-actions,
+            .btn-print, .btn-print-full, .btn-reset, .sec-toggle-caret,
+            .btn-add-item, .btn-remove-item, .summary-footer .btn-print-full,
+            .summary-panel { display:none !important; }
+
+            body { background:#fff; color:#000; font-size:12px; }
+            .layout { grid-template-columns:1fr; padding:0; max-width:100%; }
+            .form-section { break-inside:avoid; border:1px solid #ccc; box-shadow:none; }
+            .sec-body { display:block !important; }
+            .sec-toggle { pointer-events:none; }
+
+            .print-header { display:block !important; }
+            .net-box { border:2px solid #333; background:#f9f9f9; }
+            .net-amount { font-size:36px; }
+
+            .summary-panel {
+                display:block !important; position:static !important;
+                box-shadow:none; border:1px solid #ccc;
+                page-break-before:always;
+            }
+        }
+
+        .print-header {
+            display:none;
+            font-family:'Inter',sans-serif;
+        }
+
+        /* ── SCENARIO TABS ── */
+        .scenario-bar {
+            display:flex; gap:8px; align-items:center; margin-bottom:16px; flex-wrap:wrap;
+        }
+        .scenario-tab {
+            padding:7px 16px; border-radius:100px; font-size:12.5px; font-weight:600;
+            border:1.5px solid var(--border); background:var(--surface-2);
+            color:var(--text-sec); cursor:pointer; font-family:'Inter',sans-serif;
+            transition:all 0.2s;
+        }
+        .scenario-tab.active { background:var(--red); border-color:var(--red); color:#fff; }
+        .scenario-tab:not(.active):hover { border-color:rgba(192,57,38,0.4); color:var(--red); }
+
+        /* ── ALERTS ── */
+        .alert {
+            padding:12px 16px; border-radius:8px; font-size:12.5px;
+            display:flex; align-items:flex-start; gap:10px; margin-top:14px;
+        }
+        .alert-warn { background:#fef9c3; border:1px solid #fde047; color:#713f12; }
+        .alert-info { background:#eff6ff; border:1px solid #bfdbfe; color:#1e40af; }
+        .alert i { flex-shrink:0; margin-top:1px; }
+    </style>
+    <script src="yrl-auth.js"></script>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     HEADER
+═══════════════════════════════════════ -->
+<header class="page-header">
+    <div class="header-inner">
+        <div class="header-left">
+            <a href="yrl-agent-hub.html" class="back-btn">
+                <i class="fa-solid fa-arrow-left"></i> Hub
+            </a>
+            <div class="header-title">
+                <h1>Seller's Net Sheet</h1>
+                <p>Indiana — Estimate seller proceeds at closing</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn-header btn-print" onclick="window.print()">
+                <i class="fa-solid fa-print"></i> Print / PDF
+            </button>
+            <button class="btn-header btn-reset" onclick="confirmReset()">
+                <i class="fa-solid fa-rotate-left"></i> Reset
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- ═══════════════════════════════════════
+     MODE TOGGLE
+═══════════════════════════════════════ -->
+<div class="mode-bar">
+    <div class="mode-inner">
+        <span class="mode-label">Mode</span>
+        <button class="mode-btn active" id="modeForward" onclick="setMode('forward')">
+            <i class="fa-solid fa-calculator"></i> Net Sheet
+        </button>
+        <button class="mode-btn" id="modeReverse" onclick="setMode('reverse')">
+            <i class="fa-solid fa-arrows-left-right"></i> Reverse Calculator
+        </button>
+        <span class="mode-note"><i class="fa-solid fa-circle-info"></i> All fields auto-save in your browser</span>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MAIN LAYOUT
+═══════════════════════════════════════ -->
+<div class="layout">
+
+    <!-- ────────────────────────
+         LEFT: FORM COLUMNS
+    ──────────────────────────── -->
+    <div class="form-col">
+
+        <!-- REVERSE CALCULATOR PANEL -->
+        <div class="reverse-panel" id="reversePanel">
+            <h3>Reverse Calculator</h3>
+            <p>Enter the seller's target net proceeds and we'll calculate the minimum sale price needed to walk away with that amount.</p>
+            <div class="field-row">
+                <div class="field-group">
+                    <label>Target Net Proceeds</label>
+                    <div class="input-wrap has-prefix">
+                        <span class="prefix">$</span>
+                        <input type="number" id="rev_target" placeholder="0" oninput="calcReverse()">
+                    </div>
+                    <div class="hint">What the seller needs to walk away with</div>
+                </div>
+                <div class="field-group">
+                    <label>Remaining Loan Balance</label>
+                    <div class="input-wrap has-prefix">
+                        <span class="prefix">$</span>
+                        <input type="number" id="rev_payoff" placeholder="0" oninput="calcReverse()">
+                    </div>
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field-group">
+                    <label>Total Commission %</label>
+                    <div class="input-wrap has-suffix">
+                        <input type="number" id="rev_commission" step="0.1" value="5.5" oninput="calcReverse()">
+                        <span class="suffix">%</span>
+                    </div>
+                </div>
+                <div class="field-group">
+                    <label>Est. Closing Costs</label>
+                    <div class="input-wrap has-prefix">
+                        <span class="prefix">$</span>
+                        <input type="number" id="rev_costs" value="3500" oninput="calcReverse()">
+                    </div>
+                    <div class="hint">Title, recording, prorations, etc.</div>
+                </div>
+            </div>
+            <div class="reverse-result">
+                <div class="rev-label">Required Sale Price</div>
+                <div class="rev-amount" id="rev_result">$0</div>
+                <div class="rev-note" id="rev_note">Enter a target net above to calculate</div>
+            </div>
+        </div>
+
+        <!-- ─── SECTION 1: PROPERTY & TRANSACTION ─── -->
+        <div class="form-section">
+            <button class="sec-toggle open" onclick="toggleSection(this)">
+                <div class="sec-toggle-icon"><i class="fa-solid fa-house"></i></div>
+                <div class="sec-toggle-text">
+                    <h3>Property &amp; Transaction</h3>
+                    <p>Basic property and closing details</p>
+                </div>
+                <i class="fa-solid fa-chevron-down sec-toggle-caret"></i>
+            </button>
+            <div class="sec-body open">
+                <div class="field-group">
+                    <label>Property Address</label>
+                    <input type="text" id="prop_address" placeholder="123 Main St, Indianapolis, IN 46227" oninput="saveAndCalc()">
+                </div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label>County</label>
+                        <select id="prop_county" onchange="saveAndCalc()">
+                            <option value="Marion">Marion County</option>
+                            <option value="Hamilton">Hamilton County</option>
+                            <option value="Johnson">Johnson County</option>
+                            <option value="Hendricks">Hendricks County</option>
+                            <option value="Hancock">Hancock County</option>
+                            <option value="Boone">Boone County</option>
+                            <option value="Madison">Madison County</option>
+                            <option value="Shelby">Shelby County</option>
+                            <option value="Morgan">Morgan County</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label>Property Type</label>
+                        <select id="prop_type" onchange="saveAndCalc()">
+                            <option value="sfr">Single Family</option>
+                            <option value="condo">Condo / Townhome</option>
+                            <option value="multi">Multi-Family</option>
+                            <option value="land">Land / Lot</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label>Estimated Sale Price</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="sale_price" placeholder="300000" oninput="saveAndCalc()">
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <label>Estimated Closing Date</label>
+                        <input type="date" id="closing_date" oninput="saveAndCalc()">
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label>Seller Name(s)</label>
+                        <input type="text" id="seller_name" placeholder="John & Jane Doe" oninput="saveAndCalc()">
+                    </div>
+                    <div class="field-group">
+                        <label>Prepared By (Agent)</label>
+                        <input type="text" id="agent_name" placeholder="Janet Giles-Schultz" oninput="saveAndCalc()">
+                    </div>
+                </div>
+                <div class="toggle-row" style="margin-top:14px;">
+                    <div>
+                        <label style="font-size:13px;font-weight:600;color:var(--text);">Foreign Seller (FIRPTA applies)</label>
+                        <div class="sub">Non-US citizen / non-resident alien</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="firpta" onchange="saveAndCalc()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── SECTION 2: LOAN PAYOFFS ─── -->
+        <div class="form-section">
+            <button class="sec-toggle open" onclick="toggleSection(this)">
+                <div class="sec-toggle-icon"><i class="fa-solid fa-landmark"></i></div>
+                <div class="sec-toggle-text">
+                    <h3>Loan Payoffs &amp; Liens</h3>
+                    <p>Mortgages, HELOCs, and other debts on title</p>
+                </div>
+                <i class="fa-solid fa-chevron-down sec-toggle-caret"></i>
+            </button>
+            <div class="sec-body open">
+                <div class="field-row">
+                    <div class="field-group">
+                        <label>First Mortgage Payoff Balance</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="payoff_1" placeholder="0" oninput="saveAndCalc()">
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <label>Daily Interest (Per Diem)</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="payoff_1_perdiem" step="0.01" placeholder="0.00" oninput="saveAndCalc()">
+                        </div>
+                        <div class="hint">Daily interest × days to payoff</div>
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label>Payoff Statement Fee</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="payoff_1_fee" placeholder="50" oninput="saveAndCalc()">
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <label>Wire Fee (Payoff)</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="payoff_wire" placeholder="30" oninput="saveAndCalc()">
+                        </div>
+                    </div>
+                </div>
+                <div class="cond-divider"></div>
+                <div class="toggle-row">
+                    <div>
+                        <label style="font-size:13px;font-weight:600;color:var(--text);">Second Mortgage / HELOC</label>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="has_second" onchange="toggleCond('secondMortgage'); saveAndCalc()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="cond-section" id="secondMortgage">
+                    <div class="field-row" style="margin-top:14px;">
+                        <div class="field-group">
+                            <label>Second Mortgage Payoff</label>
+                            <div class="input-wrap has-prefix">
+                                <span class="prefix">$</span>
+                                <input type="number" id="payoff_2" placeholder="0" oninput="saveAndCalc()">
+                            </div>
+                        </div>
+                        <div class="field-group">
+                            <label>Per Diem (2nd)</label>
+                            <div class="input-wrap has-prefix">
+                                <span class="prefix">$</span>
+                                <input type="number" id="payoff_2_perdiem" step="0.01" placeholder="0.00" oninput="saveAndCalc()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cond-divider"></div>
+                <div class="toggle-row">
+                    <div>
+                        <label style="font-size:13px;font-weight:600;color:var(--text);">Prepayment Penalty</label>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="has_prepay" onchange="toggleCond('prepaySection'); saveAndCalc()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="cond-section" id="prepaySection">
+                    <div class="field-group" style="margin-top:14px;">
+                        <label>Prepayment Penalty Amount</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="prepay_amt" placeholder="0" oninput="saveAndCalc()">
+                        </div>
+                    </div>
+                </div>
+                <div class="cond-divider"></div>
+                <div><label style="display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-sec);margin-bottom:8px;">Other Liens / Judgments</label></div>
+                <div class="repeatable-list" id="lienList"></div>
+                <button class="btn-add-item" onclick="addLien()"><i class="fa-solid fa-plus"></i> Add Lien / Judgment</button>
+            </div>
+        </div>
+
+        <!-- ─── SECTION 3: COMMISSIONS ─── -->
+        <div class="form-section">
+            <button class="sec-toggle open" onclick="toggleSection(this)">
+                <div class="sec-toggle-icon"><i class="fa-solid fa-percent"></i></div>
+                <div class="sec-toggle-text">
+                    <h3>Commissions &amp; Brokerage Fees</h3>
+                    <p>Listing side, buyer agent, and admin fees</p>
+                </div>
+                <i class="fa-solid fa-chevron-down sec-toggle-caret"></i>
+            </button>
+            <div class="sec-body open">
+                <div class="field-row">
+                    <div class="field-group">
+                        <label>Listing Side Commission</label>
+                        <div class="input-wrap has-suffix">
+                            <input type="number" id="comm_listing" step="0.1" value="3.0" oninput="saveAndCalc()">
+                            <span class="suffix">%</span>
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <label>Buyer Agent Commission</label>
+                        <div class="input-wrap has-suffix">
+                            <input type="number" id="comm_buyer" step="0.1" value="2.5" oninput="saveAndCalc()">
+                            <span class="suffix">%</span>
+                        </div>
+                        <div class="hint">Post-NAR: negotiated separately — 0% if seller not paying</div>
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label>Total Commission $</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="comm_total_display" placeholder="0" disabled style="background:var(--surface-2);color:var(--text-muted);">
+                        </div>
+                        <div class="hint">Auto-calculated from sale price</div>
+                    </div>
+                    <div class="field-group">
+                        <label>Transaction / Admin Fee</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="comm_admin" value="395" oninput="saveAndCalc()">
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-info">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>Post-NAR settlement: buyer agent compensation is a negotiated concession. Set buyer commission to 0% if the seller is not contributing to buyer's agent fees.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── SECTION 4: TITLE & CLOSING ─── -->
+        <div class="form-section">
+            <button class="sec-toggle open" onclick="toggleSection(this)">
+                <div class="sec-toggle-icon"><i class="fa-solid fa-file-contract"></i></div>
+                <div class="sec-toggle-text">
+                    <h3>Title &amp; Closing Costs</h3>
+                    <p>Indiana defaults — adjust who pays each item</p>
+                </div>
+                <i class="fa-solid fa-chevron-down sec-toggle-caret"></i>
+            </button>
+            <div class="sec-body open">
+
+                <!-- Owner's Title Insurance -->
+                <div style="margin-top:8px;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+                        <div class="field-group" style="flex:1;min-width:160px;">
+                            <label>Owner's Title Insurance</label>
+                            <div class="input-wrap has-prefix">
+                                <span class="prefix">$</span>
+                                <input type="number" id="title_owners" placeholder="0" oninput="saveAndCalc()">
+                            </div>
+                            <div class="hint">Use rate calculator or enter from title co.</div>
+                        </div>
+                        <div style="margin-top:20px;">
+                            <div style="font-size:10.5px;color:var(--text-muted);margin-bottom:5px;text-align:center;">Who Pays?</div>
+                            <div class="payer-select" id="payer_owners">
+                                <button class="payer-opt active" onclick="setPayer('payer_owners','seller',this); saveAndCalc()">Seller</button>
+                                <button class="payer-opt" onclick="setPayer('payer_owners','buyer',this); saveAndCalc()">Buyer</button>
+                                <button class="payer-opt" onclick="setPayer('payer_owners','split',this); saveAndCalc()">Split</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Title Search -->
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:14px;">
+                    <div class="field-group" style="flex:1;min-width:160px;">
+                        <label>Title Search &amp; Exam</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="title_search" value="185" oninput="saveAndCalc()">
+                        </div>
+                    </div>
+                    <div style="margin-top:20px;">
+                        <div style="font-size:10.5px;color:var(--text-muted);margin-bottom:5px;text-align:center;">Who Pays?</div>
+                        <div class="payer-select" id="payer_search">
+                            <button class="payer-opt active" onclick="setPayer('payer_search','seller',this); saveAndCalc()">Seller</button>
+                            <button class="payer-opt" onclick="setPayer('payer_search','buyer',this); saveAndCalc()">Buyer</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Closing Fee -->
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:14px;">
+                    <div class="field-group" style="flex:1;min-width:160px;">
+                        <label>Closing / Settlement Fee</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="title_closing_fee" value="500" oninput="saveAndCalc()">
+                        </div>
+                    </div>
+                    <div style="margin-top:20px;">
+                        <div style="font-size:10.5px;color:var(--text-muted);margin-bottom:5px;text-align:center;">Who Pays?</div>
+                        <div class="payer-select" id="payer_closing_fee">
+                            <button class="payer-opt active" onclick="setPayer('payer_closing_fee','seller',this); saveAndCalc()">Seller</button>
+                            <button class="payer-opt" onclick="setPayer('payer_closing_fee','buyer',this); saveAndCalc()">Buyer</button>
+                            <button class="payer-opt" onclick="setPayer('payer_closing_fee','split',this); saveAndCalc()">Split</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field-row" style="margin-top:14px;">
+                    <div class="field-group">
+                        <label>Deed Preparation Fee</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="title_deed_prep" value="125" oninput="saveAndCalc()">
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <label>Wire / Courier Fees</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="title_wire" value="35" oninput="saveAndCalc()">
+                        </div>
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label>Notary Fees</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="title_notary" value="25" oninput="saveAndCalc()">
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <label>Release / Lien Satisfaction Recording</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="title_release" value="30" oninput="saveAndCalc()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── SECTION 5: GOVERNMENT FEES ─── -->
+        <div class="form-section">
+            <button class="sec-toggle" onclick="toggleSection(this)">
+                <div class="sec-toggle-icon"><i class="fa-solid fa-landmark-dome"></i></div>
+                <div class="sec-toggle-text">
+                    <h3>Government &amp; Recording Fees</h3>
+                    <p>Indiana: no state transfer tax — sales disclosure $10</p>
+                </div>
+                <i class="fa-solid fa-chevron-down sec-toggle-caret"></i>
+            </button>
+            <div class="sec-body">
+                <div class="field-row" style="margin-top:8px;">
+                    <div class="field-group">
+                        <label>State Transfer Tax</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="gov_state_tax" value="0" oninput="saveAndCalc()">
+                        </div>
+                        <div class="hint">Indiana: $0 — no state transfer tax</div>
+                    </div>
+                    <div class="field-group">
+                        <label>County / Local Fee</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="gov_county_fee" value="0" oninput="saveAndCalc()">
+                        </div>
+                        <div class="hint">Rare in IN — leave $0 if not applicable</div>
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label>Sales Disclosure Form Fee</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="gov_disclosure" value="10" oninput="saveAndCalc()">
+                        </div>
+                        <div class="hint">Indiana — $10 required at closing</div>
+                    </div>
+                    <div class="field-group">
+                        <label>Deed Recording Fee</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="gov_recording" value="25" oninput="saveAndCalc()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── SECTION 6: TAX & HOA PRORATIONS ─── -->
+        <div class="form-section">
+            <button class="sec-toggle" onclick="toggleSection(this)">
+                <div class="sec-toggle-icon"><i class="fa-solid fa-calendar-days"></i></div>
+                <div class="sec-toggle-text">
+                    <h3>Tax &amp; HOA Prorations</h3>
+                    <p>Indiana taxes are paid in arrears — usually a seller debit</p>
+                </div>
+                <i class="fa-solid fa-chevron-down sec-toggle-caret"></i>
+            </button>
+            <div class="sec-body">
+                <div class="alert alert-warn" style="margin-top:8px;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>Indiana property taxes are paid in arrears. The seller owes a proration credit to the buyer for the period they owned but taxes weren't paid yet. This is almost always a <strong>debit</strong> to the seller.</span>
+                </div>
+                <div class="field-row" style="margin-top:14px;">
+                    <div class="field-group">
+                        <label>Annual Property Taxes</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="tax_annual" placeholder="0" oninput="saveAndCalc()">
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <label>Taxes Paid Through Date</label>
+                        <input type="date" id="tax_paid_thru" oninput="saveAndCalc()">
+                        <div class="hint">Last date taxes were paid up to</div>
+                    </div>
+                </div>
+                <div class="field-group">
+                    <label>Tax Proration (Seller Debit)</label>
+                    <div class="input-wrap has-prefix">
+                        <span class="prefix">$</span>
+                        <input type="number" id="tax_proration_display" placeholder="0" disabled style="background:var(--surface-2);color:var(--text-muted);">
+                    </div>
+                    <div class="hint">Auto-calculated: days seller owes × daily tax rate. Override below if needed.</div>
+                </div>
+                <div class="toggle-row">
+                    <div>
+                        <label style="font-size:13px;font-weight:600;color:var(--text);">Override proration amount manually</label>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="tax_override_toggle" onchange="toggleCond('taxOverride'); saveAndCalc()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="cond-section" id="taxOverride">
+                    <div class="field-group" style="margin-top:14px;">
+                        <label>Manual Proration Override</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="tax_proration_override" placeholder="0" oninput="saveAndCalc()">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cond-divider"></div>
+                <div class="toggle-row">
+                    <div>
+                        <label style="font-size:13px;font-weight:600;color:var(--text);">HOA</label>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="has_hoa" onchange="toggleCond('hoaSection'); saveAndCalc()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="cond-section" id="hoaSection">
+                    <div class="field-row" style="margin-top:14px;">
+                        <div class="field-group">
+                            <label>HOA Dues Amount</label>
+                            <div class="input-wrap has-prefix">
+                                <span class="prefix">$</span>
+                                <input type="number" id="hoa_dues" placeholder="0" oninput="saveAndCalc()">
+                            </div>
+                        </div>
+                        <div class="field-group">
+                            <label>Frequency</label>
+                            <select id="hoa_freq" onchange="saveAndCalc()">
+                                <option value="monthly">Monthly</option>
+                                <option value="quarterly">Quarterly</option>
+                                <option value="annual">Annual</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label>HOA Transfer / Estoppel Fee</label>
+                            <div class="input-wrap has-prefix">
+                                <span class="prefix">$</span>
+                                <input type="number" id="hoa_transfer" placeholder="200" oninput="saveAndCalc()">
+                            </div>
+                        </div>
+                        <div class="field-group">
+                            <label>Special Assessments</label>
+                            <div class="input-wrap has-prefix">
+                                <span class="prefix">$</span>
+                                <input type="number" id="hoa_assessments" placeholder="0" oninput="saveAndCalc()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── SECTION 7: SELLER CONCESSIONS ─── -->
+        <div class="form-section">
+            <button class="sec-toggle" onclick="toggleSection(this)">
+                <div class="sec-toggle-icon"><i class="fa-solid fa-handshake"></i></div>
+                <div class="sec-toggle-text">
+                    <h3>Seller Concessions &amp; Credits</h3>
+                    <p>Credits to buyer, warranties, repairs, etc.</p>
+                </div>
+                <i class="fa-solid fa-chevron-down sec-toggle-caret"></i>
+            </button>
+            <div class="sec-body">
+                <div class="field-row" style="margin-top:8px;">
+                    <div class="field-group">
+                        <label>Seller Credit to Buyer (Closing Costs)</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="con_closing_credit" placeholder="0" oninput="saveAndCalc()">
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <label>Repair Credit / Allowance</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="con_repair" placeholder="0" oninput="saveAndCalc()">
+                        </div>
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label>Rate Buydown Contribution</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="con_buydown" placeholder="0" oninput="saveAndCalc()">
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <label>Home Warranty</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="con_warranty" placeholder="0" oninput="saveAndCalc()">
+                        </div>
+                        <div class="hint">Typical IN range: $375–$500</div>
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label>Survey</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="con_survey" placeholder="0" oninput="saveAndCalc()">
+                        </div>
+                        <div class="hint">If seller-paid; IN typical: $400–$600</div>
+                    </div>
+                    <div class="field-group">
+                        <label>Termite / WDI Inspection</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="con_termite" placeholder="0" oninput="saveAndCalc()">
+                        </div>
+                    </div>
+                </div>
+                <div><label style="display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-sec);margin-bottom:8px;margin-top:6px;">Other Concessions</label></div>
+                <div class="repeatable-list" id="concessionList"></div>
+                <button class="btn-add-item" onclick="addConcession()"><i class="fa-solid fa-plus"></i> Add Concession</button>
+            </div>
+        </div>
+
+        <!-- ─── SECTION 8: SPECIAL SITUATIONS ─── -->
+        <div class="form-section">
+            <button class="sec-toggle" onclick="toggleSection(this)">
+                <div class="sec-toggle-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+                <div class="sec-toggle-text">
+                    <h3>Special Situations</h3>
+                    <p>FIRPTA, attorney fees, estate, short sale, etc.</p>
+                </div>
+                <i class="fa-solid fa-chevron-down sec-toggle-caret"></i>
+            </button>
+            <div class="sec-body">
+                <!-- FIRPTA - shown when FIRPTA toggle is on -->
+                <div id="firptaSection" class="cond-section" style="margin-top:8px;">
+                    <div class="field-group">
+                        <label>FIRPTA Withholding (15% of sale price)</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="firpta_amount" disabled style="background:var(--surface-2);color:var(--text-muted);">
+                        </div>
+                        <div class="hint">Auto-calculated at 15% of sale price for foreign sellers</div>
+                    </div>
+                    <div class="cond-divider"></div>
+                </div>
+
+                <div class="toggle-row" style="margin-top:8px;">
+                    <div>
+                        <label style="font-size:13px;font-weight:600;color:var(--text);">Attorney Fees</label>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="has_attorney" onchange="toggleCond('attorneySection'); saveAndCalc()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="cond-section" id="attorneySection">
+                    <div class="field-group" style="margin-top:12px;">
+                        <label>Attorney Fees</label>
+                        <div class="input-wrap has-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="attorney_fees" placeholder="300" oninput="saveAndCalc()">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cond-divider"></div>
+                <div class="toggle-row">
+                    <div>
+                        <label style="font-size:13px;font-weight:600;color:var(--text);">Other Deductions / Miscellaneous</label>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="has_misc" onchange="toggleCond('miscSection'); saveAndCalc()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="cond-section" id="miscSection">
+                    <div class="repeatable-list" id="miscList" style="margin-top:12px;"></div>
+                    <button class="btn-add-item" onclick="addMisc()"><i class="fa-solid fa-plus"></i> Add Item</button>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- end form-col -->
+
+    <!-- ────────────────────────
+         RIGHT: SUMMARY PANEL
+    ──────────────────────────── -->
+    <div class="summary-col">
+        <div class="summary-panel" id="summaryPanel">
+            <div class="summary-header">
+                <div class="summary-header-icon"><i class="fa-solid fa-receipt"></i></div>
+                <div>
+                    <h2>Net Sheet</h2>
+                    <p id="summary_address">Enter address above</p>
+                </div>
+            </div>
+            <div class="summary-body">
+                <div class="sum-line">
+                    <span class="label">Sale Price</span>
+                    <span class="val" id="s_sale_price">$0</span>
+                </div>
+
+                <div class="sum-separator"></div>
+
+                <div class="sum-line subtotal">
+                    <span class="label"><i class="fa-solid fa-minus" style="font-size:10px;margin-right:4px;"></i> Commissions</span>
+                    <span class="val neg" id="s_comm_total">$0</span>
+                </div>
+                <div class="sum-line" style="padding-left:8px;">
+                    <span class="label" style="font-size:12px;">Listing side</span>
+                    <span class="val" id="s_comm_listing">$0</span>
+                </div>
+                <div class="sum-line" style="padding-left:8px;">
+                    <span class="label" style="font-size:12px;">Buyer agent</span>
+                    <span class="val" id="s_comm_buyer">$0</span>
+                </div>
+                <div class="sum-line" style="padding-left:8px;">
+                    <span class="label" style="font-size:12px;">Admin / transaction fee</span>
+                    <span class="val" id="s_comm_admin">$0</span>
+                </div>
+
+                <div class="sum-separator"></div>
+
+                <div class="sum-line subtotal">
+                    <span class="label"><i class="fa-solid fa-minus" style="font-size:10px;margin-right:4px;"></i> Title &amp; Closing</span>
+                    <span class="val neg" id="s_title_total">$0</span>
+                </div>
+                <div class="sum-line" style="padding-left:8px;">
+                    <span class="label" style="font-size:12px;">Owner's title insurance</span>
+                    <span class="val" id="s_title_owners">$0</span>
+                </div>
+                <div class="sum-line" style="padding-left:8px;">
+                    <span class="label" style="font-size:12px;">Title search &amp; exam</span>
+                    <span class="val" id="s_title_search">$0</span>
+                </div>
+                <div class="sum-line" style="padding-left:8px;">
+                    <span class="label" style="font-size:12px;">Closing / settlement fee</span>
+                    <span class="val" id="s_title_closing">$0</span>
+                </div>
+                <div class="sum-line" style="padding-left:8px;">
+                    <span class="label" style="font-size:12px;">Deed prep + wire + notary</span>
+                    <span class="val" id="s_title_misc">$0</span>
+                </div>
+                <div class="sum-line" style="padding-left:8px;">
+                    <span class="label" style="font-size:12px;">Release / recording</span>
+                    <span class="val" id="s_title_release">$0</span>
+                </div>
+
+                <div class="sum-separator"></div>
+
+                <div class="sum-line subtotal">
+                    <span class="label"><i class="fa-solid fa-minus" style="font-size:10px;margin-right:4px;"></i> Govt &amp; Recording</span>
+                    <span class="val neg" id="s_gov_total">$0</span>
+                </div>
+
+                <div class="sum-separator"></div>
+
+                <div class="sum-line subtotal">
+                    <span class="label"><i class="fa-solid fa-minus" style="font-size:10px;margin-right:4px;"></i> Prorations &amp; HOA</span>
+                    <span class="val neg" id="s_pror_total">$0</span>
+                </div>
+                <div class="sum-line" style="padding-left:8px;" id="s_tax_row">
+                    <span class="label" style="font-size:12px;">Property tax proration</span>
+                    <span class="val" id="s_tax_pror">$0</span>
+                </div>
+                <div class="sum-line" style="padding-left:8px;" id="s_hoa_row" style="display:none;">
+                    <span class="label" style="font-size:12px;">HOA + transfer fees</span>
+                    <span class="val" id="s_hoa_total">$0</span>
+                </div>
+
+                <div class="sum-separator"></div>
+
+                <div class="sum-line subtotal">
+                    <span class="label"><i class="fa-solid fa-minus" style="font-size:10px;margin-right:4px;"></i> Concessions</span>
+                    <span class="val neg" id="s_con_total">$0</span>
+                </div>
+
+                <div class="sum-separator"></div>
+
+                <div class="sum-line subtotal">
+                    <span class="label"><i class="fa-solid fa-minus" style="font-size:10px;margin-right:4px;"></i> Loan Payoffs</span>
+                    <span class="val neg" id="s_payoff_total">$0</span>
+                </div>
+
+                <div class="sum-line subtotal" id="s_firpta_row" style="display:none;">
+                    <span class="label"><i class="fa-solid fa-minus" style="font-size:10px;margin-right:4px;"></i> FIRPTA Withholding</span>
+                    <span class="val neg" id="s_firpta_total">$0</span>
+                </div>
+
+                <div class="sum-line subtotal" id="s_special_row" style="display:none;">
+                    <span class="label"><i class="fa-solid fa-minus" style="font-size:10px;margin-right:4px;"></i> Other Deductions</span>
+                    <span class="val neg" id="s_special_total">$0</span>
+                </div>
+
+                <div class="net-box">
+                    <div class="net-label">Estimated Net Proceeds</div>
+                    <div class="net-amount positive" id="s_net_amount">$0</div>
+                    <div class="net-pct" id="s_net_pct">—</div>
+                </div>
+            </div>
+            <div class="summary-footer">
+                <button class="btn-print-full" onclick="window.print()">
+                    <i class="fa-solid fa-print"></i> Print / Save as PDF
+                </button>
+                <div class="disclaimer">
+                    Estimate only — not a guarantee. Final figures determined by title company at closing. Prepared by Your Realty Link.
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div><!-- end layout -->
+
+<script>
+/* ════════════════════════════════════════
+   STATE
+═══════════════════════════════════════ */
+let currentMode = 'forward';
+const PAYER_STATE = {};
+let lienCount = 0;
+let concessionCount = 0;
+let miscCount = 0;
+
+/* ════════════════════════════════════════
+   SECTION TOGGLE
+═══════════════════════════════════════ */
+function toggleSection(btn) {
+    btn.classList.toggle('open');
+    const body = btn.nextElementSibling;
+    body.classList.toggle('open');
+}
+
+/* ════════════════════════════════════════
+   CONDITIONAL SECTIONS
+═══════════════════════════════════════ */
+function toggleCond(id) {
+    document.getElementById(id).classList.toggle('visible');
+}
+
+/* ════════════════════════════════════════
+   PAYER BUTTONS
+═══════════════════════════════════════ */
+function setPayer(groupId, value, btn) {
+    PAYER_STATE[groupId] = value;
+    const group = document.getElementById(groupId);
+    group.querySelectorAll('.payer-opt').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+}
+function getPayer(groupId) {
+    return PAYER_STATE[groupId] || 'seller';
+}
+
+/* ════════════════════════════════════════
+   REPEATABLE LINE ITEMS
+═══════════════════════════════════════ */
+function addLien() {
+    lienCount++;
+    const list = document.getElementById('lienList');
+    const div = document.createElement('div');
+    div.className = 'repeatable-item';
+    div.id = `lien_${lienCount}`;
+    div.innerHTML = `
+        <input type="text" placeholder="Description (e.g., IRS Lien)" oninput="saveAndCalc()">
+        <div class="amt-wrap"><span class="prefix">$</span><input type="number" placeholder="0" oninput="saveAndCalc()"></div>
+        <button class="btn-remove-item" onclick="removeItem('lien_${lienCount}')"><i class="fa-solid fa-xmark"></i></button>`;
+    list.appendChild(div);
+}
+
+function addConcession() {
+    concessionCount++;
+    const list = document.getElementById('concessionList');
+    const div = document.createElement('div');
+    div.className = 'repeatable-item';
+    div.id = `con_${concessionCount}`;
+    div.innerHTML = `
+        <input type="text" placeholder="Description" oninput="saveAndCalc()">
+        <div class="amt-wrap"><span class="prefix">$</span><input type="number" placeholder="0" oninput="saveAndCalc()"></div>
+        <button class="btn-remove-item" onclick="removeItem('con_${concessionCount}')"><i class="fa-solid fa-xmark"></i></button>`;
+    list.appendChild(div);
+}
+
+function addMisc() {
+    miscCount++;
+    const list = document.getElementById('miscList');
+    const div = document.createElement('div');
+    div.className = 'repeatable-item';
+    div.id = `misc_${miscCount}`;
+    div.innerHTML = `
+        <input type="text" placeholder="Description" oninput="saveAndCalc()">
+        <div class="amt-wrap"><span class="prefix">$</span><input type="number" placeholder="0" oninput="saveAndCalc()"></div>
+        <button class="btn-remove-item" onclick="removeItem('misc_${miscCount}')"><i class="fa-solid fa-xmark"></i></button>`;
+    list.appendChild(div);
+}
+
+function removeItem(id) {
+    const el = document.getElementById(id);
+    if (el) { el.remove(); saveAndCalc(); }
+}
+
+function getRepeatableTotal(listId) {
+    let total = 0;
+    document.getElementById(listId).querySelectorAll('.repeatable-item').forEach(item => {
+        const inputs = item.querySelectorAll('input[type="number"]');
+        if (inputs.length) total += n(inputs[0].value);
+    });
+    return total;
+}
+
+/* ════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════ */
+const n = v => parseFloat(v) || 0;
+const fmt = v => v < 0
+    ? `-$${Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})}`
+    : `$${v.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})}`;
+
+function setEl(id, text, cls) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = text;
+    if (cls) { el.className = 'val ' + cls; }
+}
+
+function proratedDays(annualAmt, paidThruDate, closingDate) {
+    if (!annualAmt || !paidThruDate || !closingDate) return 0;
+    const paid = new Date(paidThruDate);
+    const close = new Date(closingDate);
+    if (close <= paid) return 0;
+    const days = Math.round((close - paid) / (1000*60*60*24));
+    const daily = annualAmt / 365;
+    return Math.round(daily * days);
+}
+
+/* ════════════════════════════════════════
+   MAIN CALCULATION
+═══════════════════════════════════════ */
+function calc() {
+    const salePrice = n(document.getElementById('sale_price').value);
+
+    // ── COMMISSIONS ──
+    const commListingPct = n(document.getElementById('comm_listing').value) / 100;
+    const commBuyerPct   = n(document.getElementById('comm_buyer').value) / 100;
+    const commAdmin      = n(document.getElementById('comm_admin').value);
+    const commListing    = salePrice * commListingPct;
+    const commBuyer      = salePrice * commBuyerPct;
+    const commTotal      = commListing + commBuyer + commAdmin;
+    document.getElementById('comm_total_display').value = Math.round(commTotal);
+
+    // ── TITLE & CLOSING ──
+    const ownersInsurance = n(document.getElementById('title_owners').value);
+    const titleSearch     = n(document.getElementById('title_search').value);
+    const closingFee      = n(document.getElementById('title_closing_fee').value);
+    const deedPrep        = n(document.getElementById('title_deed_prep').value);
+    const wire            = n(document.getElementById('title_wire').value);
+    const notary          = n(document.getElementById('title_notary').value);
+    const release         = n(document.getElementById('title_release').value);
+
+    const ownersPayer  = getPayer('payer_owners');
+    const searchPayer  = getPayer('payer_search');
+    const closingPayer = getPayer('payer_closing_fee');
+
+    const sellerOwners  = ownersPayer === 'buyer' ? 0 : ownersPayer === 'split' ? ownersInsurance / 2 : ownersInsurance;
+    const sellerSearch  = searchPayer === 'buyer' ? 0 : titleSearch;
+    const sellerClosing = closingPayer === 'buyer' ? 0 : closingPayer === 'split' ? closingFee / 2 : closingFee;
+
+    const titleTotal = sellerOwners + sellerSearch + sellerClosing + deedPrep + wire + notary + release;
+
+    // ── GOVERNMENT FEES ──
+    const govState    = n(document.getElementById('gov_state_tax').value);
+    const govCounty   = n(document.getElementById('gov_county_fee').value);
+    const govDisclose = n(document.getElementById('gov_disclosure').value);
+    const govRecord   = n(document.getElementById('gov_recording').value);
+    const govTotal    = govState + govCounty + govDisclose + govRecord;
+
+    // ── PRORATIONS ──
+    const taxAnnual   = n(document.getElementById('tax_annual').value);
+    const taxPaidThru = document.getElementById('tax_paid_thru').value;
+    const closingDate = document.getElementById('closing_date').value;
+
+    let taxProration;
+    if (document.getElementById('tax_override_toggle').checked) {
+        taxProration = n(document.getElementById('tax_proration_override').value);
+    } else {
+        taxProration = proratedDays(taxAnnual, taxPaidThru, closingDate);
+    }
+    document.getElementById('tax_proration_display').value = taxProration;
+
+    let hoaTotal = 0;
+    if (document.getElementById('has_hoa').checked) {
+        const hoaDues      = n(document.getElementById('hoa_dues').value);
+        const hoaFreq      = document.getElementById('hoa_freq').value;
+        const hoaTransfer  = n(document.getElementById('hoa_transfer').value);
+        const hoaAssess    = n(document.getElementById('hoa_assessments').value);
+        // rough proration: half-month average
+        const monthlyDues  = hoaFreq === 'annual' ? hoaDues/12 : hoaFreq === 'quarterly' ? hoaDues/3 : hoaDues;
+        const dueProration = closingDate ? (monthlyDues / 30) * 15 : 0; // approx
+        hoaTotal = dueProration + hoaTransfer + hoaAssess;
+    }
+
+    const prorTotal = taxProration + hoaTotal;
+
+    // ── CONCESSIONS ──
+    const conClosing  = n(document.getElementById('con_closing_credit').value);
+    const conRepair   = n(document.getElementById('con_repair').value);
+    const conBuydown  = n(document.getElementById('con_buydown').value);
+    const conWarranty = n(document.getElementById('con_warranty').value);
+    const conSurvey   = n(document.getElementById('con_survey').value);
+    const conTermite  = n(document.getElementById('con_termite').value);
+    const conOther    = getRepeatableTotal('concessionList');
+    const conTotal    = conClosing + conRepair + conBuydown + conWarranty + conSurvey + conTermite + conOther;
+
+    // ── LOAN PAYOFFS ──
+    const payoff1      = n(document.getElementById('payoff_1').value);
+    const payoff1pd    = n(document.getElementById('payoff_1_perdiem').value);
+    const payoff1fee   = n(document.getElementById('payoff_1_fee').value);
+    const payoffWire   = n(document.getElementById('payoff_wire').value);
+    let payoff2 = 0, payoff2pd = 0;
+    if (document.getElementById('has_second').checked) {
+        payoff2   = n(document.getElementById('payoff_2').value);
+        payoff2pd = n(document.getElementById('payoff_2_perdiem').value);
+    }
+    let prepay = 0;
+    if (document.getElementById('has_prepay').checked) {
+        prepay = n(document.getElementById('prepay_amt').value);
+    }
+    const liensOther   = getRepeatableTotal('lienList');
+    const payoffTotal  = payoff1 + payoff1pd + payoff1fee + payoffWire + payoff2 + payoff2pd + prepay + liensOther;
+
+    // ── FIRPTA ──
+    let firptaAmt = 0;
+    const isFirpta = document.getElementById('firpta').checked;
+    if (isFirpta) {
+        firptaAmt = salePrice * 0.15;
+        document.getElementById('firpta_amount').value = Math.round(firptaAmt);
+        document.getElementById('firptaSection').classList.add('visible');
+    } else {
+        document.getElementById('firpta_amount').value = '';
+        document.getElementById('firptaSection').classList.remove('visible');
+    }
+
+    // ── SPECIAL ──
+    let specialTotal = 0;
+    if (document.getElementById('has_attorney').checked) {
+        specialTotal += n(document.getElementById('attorney_fees').value);
+    }
+    if (document.getElementById('has_misc').checked) {
+        specialTotal += getRepeatableTotal('miscList');
+    }
+
+    // ── NET ──
+    const totalDeductions = commTotal + titleTotal + govTotal + prorTotal + conTotal + payoffTotal + firptaAmt + specialTotal;
+    const net = salePrice - totalDeductions;
+    const netPct = salePrice > 0 ? ((net / salePrice) * 100).toFixed(1) : 0;
+
+    // ── UPDATE SUMMARY ──
+    const addr = document.getElementById('prop_address').value || 'Enter address above';
+    document.getElementById('summary_address').textContent = addr;
+
+    setEl('s_sale_price', fmt(salePrice));
+    setEl('s_comm_total', `-${fmt(commTotal)}`, 'neg');
+    setEl('s_comm_listing', fmt(commListing));
+    setEl('s_comm_buyer', fmt(commBuyer));
+    setEl('s_comm_admin', fmt(commAdmin));
+    setEl('s_title_total', `-${fmt(titleTotal)}`, 'neg');
+    setEl('s_title_owners', fmt(sellerOwners));
+    setEl('s_title_search', fmt(sellerSearch));
+    setEl('s_title_closing', fmt(sellerClosing));
+    setEl('s_title_misc', fmt(deedPrep + wire + notary));
+    setEl('s_title_release', fmt(release));
+    setEl('s_gov_total', `-${fmt(govTotal)}`, 'neg');
+    setEl('s_pror_total', `-${fmt(prorTotal)}`, 'neg');
+    setEl('s_tax_pror', fmt(taxProration));
+    setEl('s_hoa_total', fmt(hoaTotal));
+    document.getElementById('s_hoa_row').style.display = document.getElementById('has_hoa').checked ? '' : 'none';
+    setEl('s_con_total', `-${fmt(conTotal)}`, 'neg');
+    setEl('s_payoff_total', `-${fmt(payoffTotal)}`, 'neg');
+
+    const firptaRow = document.getElementById('s_firpta_row');
+    firptaRow.style.display = isFirpta && firptaAmt > 0 ? '' : 'none';
+    setEl('s_firpta_total', `-${fmt(firptaAmt)}`, 'neg');
+
+    const specialRow = document.getElementById('s_special_row');
+    specialRow.style.display = specialTotal > 0 ? '' : 'none';
+    setEl('s_special_total', `-${fmt(specialTotal)}`, 'neg');
+
+    const netEl = document.getElementById('s_net_amount');
+    netEl.textContent = fmt(net);
+    netEl.className = 'net-amount ' + (net >= 0 ? 'positive' : 'negative');
+    document.getElementById('s_net_pct').textContent = salePrice > 0 ? `${netPct}% of sale price` : '—';
+}
+
+/* ════════════════════════════════════════
+   REVERSE CALCULATOR
+═══════════════════════════════════════ */
+function calcReverse() {
+    const target     = n(document.getElementById('rev_target').value);
+    const payoff     = n(document.getElementById('rev_payoff').value);
+    const commPct    = n(document.getElementById('rev_commission').value) / 100;
+    const otherCosts = n(document.getElementById('rev_costs').value);
+
+    if (target === 0) {
+        document.getElementById('rev_result').textContent = '$0';
+        document.getElementById('rev_note').textContent = 'Enter a target net above to calculate';
+        return;
+    }
+
+    // sale_price × (1 - commPct) - payoff - otherCosts = target
+    // sale_price = (target + payoff + otherCosts) / (1 - commPct)
+    const required = (target + payoff + otherCosts) / (1 - commPct);
+    document.getElementById('rev_result').textContent = fmt(required);
+    document.getElementById('rev_note').textContent =
+        `At ${(commPct*100).toFixed(1)}% commission + $${otherCosts.toLocaleString()} costs + $${payoff.toLocaleString()} payoff`;
+}
+
+/* ════════════════════════════════════════
+   MODE SWITCH
+═══════════════════════════════════════ */
+function setMode(mode) {
+    currentMode = mode;
+    document.getElementById('modeForward').classList.toggle('active', mode === 'forward');
+    document.getElementById('modeReverse').classList.toggle('active', mode === 'reverse');
+    document.getElementById('reversePanel').classList.toggle('visible', mode === 'reverse');
+}
+
+/* ════════════════════════════════════════
+   SAVE & CALC (localStorage persistence)
+═══════════════════════════════════════ */
+function saveAndCalc() {
+    calc();
+    // Save core fields to localStorage
+    const fields = ['sale_price','closing_date','prop_address','prop_county','prop_type',
+        'seller_name','agent_name','payoff_1','payoff_1_perdiem','payoff_1_fee','payoff_wire',
+        'comm_listing','comm_buyer','comm_admin','title_owners','title_search','title_closing_fee',
+        'title_deed_prep','title_wire','title_notary','title_release','gov_state_tax',
+        'gov_county_fee','gov_disclosure','gov_recording','tax_annual','tax_paid_thru',
+        'tax_proration_override','hoa_dues','hoa_freq','hoa_transfer','hoa_assessments',
+        'con_closing_credit','con_repair','con_buydown','con_warranty','con_survey','con_termite',
+        'payoff_2','payoff_2_perdiem','prepay_amt','attorney_fees',
+        'rev_target','rev_payoff','rev_commission','rev_costs'];
+    const data = {};
+    fields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && !el.disabled) data[id] = el.value;
+    });
+    const checkboxes = ['firpta','has_second','has_prepay','has_hoa','tax_override_toggle','has_attorney','has_misc'];
+    checkboxes.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) data[id] = el.checked;
+    });
+    data['_payer_state'] = PAYER_STATE;
+    try { localStorage.setItem('yrl_net_sheet', JSON.stringify(data)); } catch(e) {}
+}
+
+function loadSaved() {
+    try {
+        const raw = localStorage.getItem('yrl_net_sheet');
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        Object.entries(data).forEach(([id, val]) => {
+            if (id === '_payer_state') {
+                Object.assign(PAYER_STATE, val);
+                // Re-apply payer button states
+                Object.entries(val).forEach(([groupId, payer]) => {
+                    const group = document.getElementById(groupId);
+                    if (!group) return;
+                    group.querySelectorAll('.payer-opt').forEach(btn => {
+                        btn.classList.toggle('active', btn.textContent.toLowerCase().includes(payer));
+                    });
+                });
+                return;
+            }
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (typeof val === 'boolean') {
+                el.checked = val;
+                // trigger dependent sections
+                const condMap = {
+                    has_second: 'secondMortgage', has_prepay: 'prepaySection',
+                    has_hoa: 'hoaSection', tax_override_toggle: 'taxOverride',
+                    has_attorney: 'attorneySection', has_misc: 'miscSection'
+                };
+                if (val && condMap[id]) {
+                    document.getElementById(condMap[id]).classList.add('visible');
+                }
+            } else {
+                el.value = val;
+            }
+        });
+        calc();
+    } catch(e) {}
+}
+
+function confirmReset() {
+    if (confirm('Clear all fields and start a fresh net sheet?')) {
+        try { localStorage.removeItem('yrl_net_sheet'); } catch(e) {}
+        location.reload();
+    }
+}
+
+/* ════════════════════════════════════════
+   INIT
+═══════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+    loadSaved();
+    calc();
+});
+</script>
+
+</body>
+</html>

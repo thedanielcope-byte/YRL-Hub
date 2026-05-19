@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Agent Onboarding — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --red:        #c03926;
+            --red-light:  #d94a35;
+            --red-dark:   #9e2e1e;
+            --bg:         #f2f4f7;
+            --surface:    #ffffff;
+            --surface-2:  #f7f8fa;
+            --surface-3:  #eef0f3;
+            --border:     #e2e5ea;
+            --text:       #1a1d22;
+            --text-sec:   #5a6270;
+            --text-muted: #9ca3af;
+            --green:      #16a34a;
+            --orange:     #ea580c;
+            --radius:     12px;
+            --radius-lg:  20px;
+        }
+
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+        a { text-decoration:none; color:inherit; }
+        img { display:block; max-width:100%; }
+
+        /* ── Subpage header ── */
+        .sub-header {
+            background: linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);
+            padding: 28px 20px; border-bottom: 4px solid rgba(0,0,0,0.15);
+            position: relative; overflow: hidden;
+        }
+        .sub-header::before {
+            content:''; position:absolute; inset:0;
+            background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
+            background-size: 28px 28px; pointer-events:none;
+        }
+        .sub-header-inner {
+            max-width:1100px; margin:0 auto;
+            display:flex; align-items:center; justify-content:space-between;
+            position:relative; z-index:1;
+        }
+        .sub-header-left { display:flex; align-items:center; gap:20px; }
+        .sub-header-logo { max-width:120px; background:#fff; border-radius:10px; padding:10px 16px; box-shadow:0 4px 16px rgba(0,0,0,0.2); }
+        .sub-header-text h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(28px,5vw,42px); letter-spacing:2px; color:#fff; line-height:1; }
+        .sub-header-text p { color:rgba(255,255,255,0.7); font-size:13px; margin-top:4px; }
+        .back-btn {
+            display:inline-flex; align-items:center; gap:7px;
+            background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.35);
+            color:#fff; padding:9px 18px; border-radius:100px;
+            font-size:12.5px; font-weight:600; transition:all 0.2s ease; white-space:nowrap;
+        }
+        .back-btn:hover { background:rgba(255,255,255,0.3); transform:translateY(-1px); }
+
+        /* ── Main ── */
+        .main { max-width:1100px; margin:0 auto; padding:48px 20px 90px; }
+
+        /* ── Page header ── */
+        .page-header-row { display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:28px; }
+        .page-header-left h2 { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:1.5px; color:var(--text); }
+        .page-header-left p { font-size:13px; color:var(--text-muted); margin-top:3px; }
+        .page-header-right { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+        .save-flash { font-size:12px; font-weight:600; color:var(--green); opacity:0; transition:opacity 0.3s; white-space:nowrap; }
+        .save-flash.show { opacity:1; }
+        .btn-edit {
+            display:inline-flex; align-items:center; gap:6px;
+            background:rgba(192,57,38,0.08); color:var(--red);
+            border:1.5px solid var(--red); border-radius:8px;
+            padding:8px 16px; font-size:13px; font-weight:600;
+            font-family:'Inter',sans-serif; cursor:pointer; transition:all 0.15s;
+        }
+        .btn-edit:hover { background:rgba(192,57,38,0.15); }
+        .btn-edit.active { background:var(--red); color:#fff; }
+        .btn-edit.active:hover { background:var(--red-dark); }
+
+        /* ── Welcome banner ── */
+        .welcome-banner {
+            background: linear-gradient(135deg,#1a1d22 0%,#2d3139 100%);
+            border-radius: var(--radius-lg); padding: 28px 32px; margin-bottom: 24px;
+            display: flex; align-items: center; gap: 24px;
+            position: relative; overflow: hidden;
+        }
+        .welcome-banner::before {
+            content:''; position:absolute; inset:0;
+            background-image: radial-gradient(rgba(192,57,38,0.15) 1px, transparent 1px);
+            background-size: 24px 24px; pointer-events:none;
+        }
+        .welcome-icon {
+            width:60px; height:60px; border-radius:14px; background:var(--red); flex-shrink:0;
+            display:flex; align-items:center; justify-content:center; font-size:26px; color:#fff;
+            box-shadow:0 6px 20px rgba(192,57,38,0.4); position:relative; z-index:1;
+        }
+        .welcome-text { position:relative; z-index:1; }
+        .welcome-text h3 { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:1.5px; color:#fff; line-height:1; margin-bottom:6px; }
+        .welcome-text p { font-size:13px; color:rgba(255,255,255,0.6); line-height:1.5; }
+
+        /* ── Progress bar ── */
+        .progress-card {
+            background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+            padding:18px 22px; margin-bottom:28px; display:flex; align-items:center; gap:20px;
+        }
+        .progress-text { flex-shrink:0; }
+        .progress-count { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:1px; color:var(--text); line-height:1; }
+        .progress-label { font-size:11px; color:var(--text-muted); margin-top:2px; }
+        .progress-bar-wrap { flex:1; }
+        .progress-bar-track { height:8px; background:var(--surface-3); border-radius:100px; overflow:hidden; }
+        .progress-bar-fill { height:100%; background:var(--green); border-radius:100px; transition:width 0.4s ease; }
+        .progress-pct { font-size:12px; font-weight:700; color:var(--green); margin-top:6px; text-align:right; }
+        .btn-reset-progress {
+            background:none; border:1px solid var(--border); border-radius:8px; padding:6px 12px;
+            font-size:11px; color:var(--text-muted); font-family:'Inter',sans-serif; cursor:pointer;
+            white-space:nowrap; flex-shrink:0; transition:all 0.15s;
+        }
+        .btn-reset-progress:hover { border-color:var(--red); color:var(--red); }
+
+        /* ── Phase pills ── */
+        .phase-pills { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:32px; }
+        .phase-pill {
+            display:inline-flex; align-items:center; gap:6px;
+            background:var(--surface); border:1px solid var(--border); border-radius:100px;
+            padding:6px 14px; font-size:12px; font-weight:600; color:var(--text-sec);
+            cursor:pointer; transition:all 0.15s; text-decoration:none;
+        }
+        .phase-pill:hover { border-color:var(--red); color:var(--red); background:rgba(192,57,38,0.05); }
+        .phase-pill i { font-size:11px; }
+
+        /* ── Guide section ── */
+        .guide-section { margin-bottom:36px; }
+        .guide-section-label { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:1.5px; color:var(--text); margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+        .step-number { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; background:var(--red); color:#fff; font-family:'Inter',sans-serif; font-size:12px; font-weight:700; flex-shrink:0; }
+
+        /* ── Guide grid ── */
+        .guide-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:10px; }
+
+        /* ── Guide tile ── */
+        .guide-tile {
+            background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+            padding:14px 16px; display:flex; align-items:center; gap:10px;
+            font-size:13.5px; font-weight:500; color:var(--text-sec); position:relative;
+            text-decoration:none; transition:border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+            box-shadow:0 1px 4px rgba(0,0,0,0.05);
+        }
+        a.guide-tile:hover { border-color:rgba(192,57,38,0.4); box-shadow:0 2px 10px rgba(192,57,38,0.12); transform:translateY(-2px); color:var(--text); }
+        .guide-tile.editable { cursor:pointer; border-color:rgba(192,57,38,0.25); }
+        .guide-tile.editable:hover { border-color:var(--red); }
+        .tile-main { flex:1; min-width:0; }
+        .tile-title { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .edit-hint { font-size:10px; color:var(--text-muted); font-style:italic; margin-top:2px; }
+
+        /* ── Required tile highlight ── */
+        .guide-tile.tile-required {
+            border-left: 3px solid #eab308;
+            background: rgba(234,179,8,0.05);
+        }
+        .guide-tile.tile-required:hover { border-left-color: #ca9a07; }
+        .badge-required {
+            background:#eab308; color:#000; font-size:9px; font-weight:800;
+            padding:2px 7px; border-radius:20px; letter-spacing:0.05em;
+            text-transform:uppercase; white-space:nowrap; flex-shrink:0;
+        }
+
+        /* ── Special tile ── */
+        .guide-tile.tile-special { border-color:rgba(192,57,38,0.3); background:linear-gradient(135deg,rgba(192,57,38,0.03),rgba(192,57,38,0.07)); cursor:pointer; }
+        .guide-tile.tile-special:hover { border-color:var(--red); box-shadow:0 2px 12px rgba(192,57,38,0.15); transform:translateY(-2px); }
+        .guide-tile.tile-special.tile-notset { cursor:default; opacity:0.65; }
+        .guide-tile.tile-special.tile-notset:hover { transform:none; box-shadow:none; border-color:rgba(192,57,38,0.3); }
+        .special-icon { width:36px; height:36px; border-radius:9px; background:var(--red); color:#fff; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
+        .special-label { font-size:10px; color:var(--red); font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:1px; }
+        .special-title { font-size:13.5px; font-weight:600; color:var(--text); }
+        .special-sub { font-size:11.5px; color:var(--text-muted); margin-top:1px; }
+        .guide-tile.special-submitted .special-icon { background:var(--green); }
+        .guide-tile.special-submitted .special-label { color:var(--green); }
+        .guide-tile.tile-special.tile-ext .special-icon { background:var(--red); }
+
+        /* ── Inline edit form ── */
+        .guide-tile-editing { background:var(--surface); border:1.5px solid var(--red); border-radius:var(--radius); padding:14px 16px; box-shadow:0 2px 12px rgba(192,57,38,0.12); display:flex; flex-direction:column; gap:8px; }
+        .tile-edit-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--red); margin-bottom:1px; }
+        .tile-edit-input { width:100%; border:1px solid var(--border); border-radius:8px; padding:7px 10px; font-size:13px; font-family:'Inter',sans-serif; color:var(--text); outline:none; background:var(--surface-3); }
+        .tile-edit-input:focus { border-color:var(--red); background:var(--surface); }
+        .tile-edit-input::placeholder { color:var(--text-muted); }
+        .tile-edit-actions { display:flex; gap:6px; margin-top:2px; }
+        .btn-tile-save { background:var(--red); color:#fff; border:none; border-radius:7px; padding:6px 14px; font-size:12px; font-weight:600; font-family:'Inter',sans-serif; cursor:pointer; }
+        .btn-tile-save:hover { background:var(--red-dark); }
+        .btn-tile-save:disabled { opacity:0.5; cursor:not-allowed; }
+        .tile-upload-row { display:flex; align-items:center; gap:8px; margin-top:6px; }
+        .btn-upload-file { display:inline-flex; align-items:center; gap:5px; background:rgba(192,57,38,0.08); color:var(--red); border:1.5px dashed var(--red); border-radius:7px; padding:5px 11px; font-size:11.5px; font-weight:600; font-family:'Inter',sans-serif; cursor:pointer; white-space:nowrap; transition:all 0.15s; flex-shrink:0; }
+        .btn-upload-file:hover { background:rgba(192,57,38,0.15); }
+        .upload-status { font-size:11.5px; font-weight:500; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:160px; }
+        .upload-status.uploading { color:#ea580c; }
+        .upload-status.success   { color:var(--green); }
+        .upload-status.error     { color:#ef4444; }
+        .btn-tile-cancel { background:none; color:var(--text-muted); border:1px solid var(--border); border-radius:7px; padding:6px 12px; font-size:12px; font-family:'Inter',sans-serif; cursor:pointer; }
+        .btn-tile-cancel:hover { background:var(--surface-3); }
+
+        /* ── Badges ── */
+        .badge-coming { font-size:10px; font-weight:700; padding:2px 9px; border-radius:20px; background:var(--surface-3); color:var(--text-muted); white-space:nowrap; flex-shrink:0; }
+        .badge-available { font-size:10px; font-weight:700; padding:2px 9px; border-radius:20px; background:rgba(192,57,38,0.1); color:var(--red); white-space:nowrap; flex-shrink:0; }
+
+        /* ── Delete button ── */
+        .btn-del-tile { position:absolute; top:-7px; right:-7px; width:20px; height:20px; border-radius:50%; background:#ef4444; color:#fff; border:none; font-size:13px; line-height:1; display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; box-shadow:0 1px 4px rgba(0,0,0,0.2); transition:background 0.12s; z-index:2; flex-shrink:0; }
+        .btn-del-tile:hover { background:#b91c1c; }
+
+        /* ── Add row ── */
+        .add-guide-row { display:flex; gap:8px; align-items:center; margin-top:10px; flex-wrap:wrap; }
+        .add-guide-input { flex:1; min-width:140px; border:1px solid var(--border); border-radius:8px; padding:8px 11px; font-size:13px; font-family:'Inter',sans-serif; color:var(--text); background:var(--surface); outline:none; }
+        .add-guide-input:focus { border-color:var(--red); }
+        .add-guide-input::placeholder { color:var(--text-muted); }
+        .btn-add-save { background:var(--red); color:#fff; border:none; border-radius:8px; padding:8px 16px; font-size:13px; font-weight:600; font-family:'Inter',sans-serif; cursor:pointer; white-space:nowrap; }
+        .btn-add-save:hover { background:var(--red-dark); }
+        .btn-add-cancel { background:none; color:var(--text-muted); border:1px solid var(--border); border-radius:8px; padding:8px 13px; font-size:13px; font-family:'Inter',sans-serif; cursor:pointer; }
+        .btn-add-cancel:hover { background:var(--surface-3); }
+        .btn-add-open { display:flex; align-items:center; justify-content:center; gap:5px; background:rgba(192,57,38,0.05); color:var(--red); border:1px dashed var(--red); border-radius:8px; padding:10px 16px; font-size:12px; font-weight:600; font-family:'Inter',sans-serif; cursor:pointer; width:100%; margin-top:10px; }
+        .btn-add-open:hover { background:rgba(192,57,38,0.1); }
+        .btn-add-form { display:flex; align-items:center; justify-content:center; gap:5px; background:rgba(22,163,74,0.05); color:var(--green); border:1px dashed rgba(22,163,74,0.5); border-radius:8px; padding:10px 16px; font-size:12px; font-weight:600; font-family:'Inter',sans-serif; cursor:pointer; width:100%; margin-top:6px; }
+        .btn-add-form:hover { background:rgba(22,163,74,0.12); }
+
+        /* ── View submissions button ── */
+        .btn-view-submissions { display:inline-flex; align-items:center; gap:6px; background:rgba(22,163,74,0.1); color:var(--green); border:1px solid rgba(22,163,74,0.3); border-radius:8px; padding:6px 12px; font-size:12px; font-weight:600; font-family:'Inter',sans-serif; cursor:pointer; margin-top:8px; }
+        .btn-view-submissions:hover { background:rgba(22,163,74,0.18); }
+
+        /* ── Modal overlay ── */
+        .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center; padding:20px; }
+        .modal-overlay.open { display:flex; }
+        .modal { background:var(--surface); border-radius:16px; padding:28px; width:100%; max-width:540px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2); position:relative; }
+        .modal-title { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:1.5px; color:var(--text); margin-bottom:6px; }
+        .modal-sub { font-size:13px; color:var(--text-muted); margin-bottom:22px; line-height:1.5; }
+        .modal-close { position:absolute; top:16px; right:16px; background:none; border:none; font-size:20px; color:var(--text-muted); cursor:pointer; line-height:1; }
+        .modal-close:hover { color:var(--text); }
+        .modal-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+        .modal-field { display:flex; flex-direction:column; gap:4px; }
+        .modal-field.full { grid-column:1/-1; }
+        .modal-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--red); }
+        .modal-input { border:1px solid var(--border); border-radius:8px; padding:9px 12px; font-size:13px; font-family:'Inter',sans-serif; color:var(--text); outline:none; background:var(--surface-3); transition:border-color 0.15s; }
+        .modal-input:focus { border-color:var(--red); background:var(--surface); }
+        .modal-input::placeholder { color:var(--text-muted); }
+        textarea.modal-input { resize:vertical; min-height:80px; }
+        .modal-actions { display:flex; gap:8px; margin-top:20px; justify-content:flex-end; }
+        .btn-modal-save { background:var(--red); color:#fff; border:none; border-radius:8px; padding:10px 22px; font-size:13px; font-weight:600; font-family:'Inter',sans-serif; cursor:pointer; }
+        .btn-modal-save:hover { background:var(--red-dark); }
+        .btn-modal-cancel { background:none; color:var(--text-muted); border:1px solid var(--border); border-radius:8px; padding:10px 18px; font-size:13px; font-family:'Inter',sans-serif; cursor:pointer; }
+        .btn-modal-cancel:hover { background:var(--surface-3); }
+
+        /* ── Config form field builder ── */
+        .config-field-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+        .config-field-label { flex:1; border:1px solid var(--border); border-radius:8px; padding:8px 10px; font-size:13px; font-family:'Inter',sans-serif; color:var(--text); outline:none; background:var(--surface-3); }
+        .config-field-label:focus { border-color:var(--red); background:var(--surface); }
+        .config-field-type { border:1px solid var(--border); border-radius:8px; padding:8px 10px; font-size:13px; font-family:'Inter',sans-serif; color:var(--text); outline:none; background:var(--surface-3); cursor:pointer; }
+        .config-field-type:focus { border-color:var(--red); }
+        .btn-del-field { background:none; border:1px solid var(--border); border-radius:7px; padding:6px 10px; font-size:13px; color:var(--text-muted); cursor:pointer; flex-shrink:0; }
+        .btn-del-field:hover { background:#fef2f2; border-color:#ef4444; color:#ef4444; }
+        .btn-add-field { display:flex; align-items:center; gap:5px; background:rgba(192,57,38,0.05); color:var(--red); border:1px dashed var(--red); border-radius:8px; padding:8px 14px; font-size:12px; font-weight:600; font-family:'Inter',sans-serif; cursor:pointer; margin-top:4px; }
+        .btn-add-field:hover { background:rgba(192,57,38,0.1); }
+
+        /* ── Submissions list ── */
+        .submissions-list { display:flex; flex-direction:column; gap:12px; margin-top:4px; }
+        .submission-card { background:var(--surface-2); border:1px solid var(--border); border-radius:10px; padding:14px 16px; }
+        .submission-card h4 { font-size:14px; font-weight:700; color:var(--text); margin-bottom:6px; }
+        .submission-field { font-size:12.5px; color:var(--text-sec); line-height:1.8; }
+        .submission-field strong { color:var(--text); font-weight:600; }
+        .submission-time { font-size:11px; color:var(--text-muted); margin-top:8px; }
+
+        /* ── Loading ── */
+        .loading-state { text-align:center; padding:60px 20px; color:var(--text-muted); font-size:13px; }
+        .loading-state i { font-size:28px; margin-bottom:12px; display:block; opacity:0.4; }
+
+        /* ── Footer ── */
+        .footer { background:var(--surface); border-top:1px solid var(--border); padding:32px 20px; text-align:center; }
+        .footer-logo { max-width:100px; margin:0 auto 12px; opacity:0.4; }
+        .footer p { font-size:12px; color:var(--text-muted); }
+        .footer a { color:var(--red); }
+
+        /* ── Responsive ── */
+        @media (max-width:640px) {
+            .sub-header { padding:20px 16px; }
+            .sub-header-inner { flex-direction:column; gap:16px; text-align:center; }
+            .sub-header-left { flex-direction:column; align-items:center; }
+            .sub-header-logo { max-width:90px; }
+            .main { padding:36px 16px 70px; }
+            .guide-grid { grid-template-columns:1fr; }
+            .modal-grid { grid-template-columns:1fr; }
+            .welcome-banner { flex-direction:column; text-align:center; padding:24px 20px; }
+            .progress-card { flex-wrap:wrap; }
+        }
+    </style>
+    <script src="yrl-auth.js"></script>
+</head>
+<body>
+
+<!-- ── Subpage Header ── -->
+<header class="sub-header">
+    <div class="sub-header-inner">
+        <div class="sub-header-left">
+            <img src="https://yrlagent.com/wp-content/uploads/2026/04/Your-Realty-Link-ver6.6-4-final.png"
+                 alt="Your Realty Link" class="sub-header-logo">
+            <div class="sub-header-text">
+                <h1>New Agent Onboarding</h1>
+                <p>Everything you need to get set up and hit the ground running</p>
+            </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+            <span id="yrl-user-name" style="color:rgba(255,255,255,0.75);font-size:12.5px;font-weight:500;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+            <button onclick="yrlSignOut()" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:7px 14px;border-radius:100px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+            </button>
+            <a href="yrl-agent-hub.html" class="back-btn">
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to Hub
+            </a>
+        </div>
+    </div>
+</header>
+
+<!-- ── Main ── -->
+<main class="main">
+    <div class="page-header-row">
+        <div class="page-header-left">
+            <h2>Onboarding Checklist</h2>
+            <p>Track your progress. Use Edit Mode to add or update resources.</p>
+        </div>
+        <div class="page-header-right">
+            <span class="save-flash" id="saveFlash">&#10003; Saved!</span>
+            <button class="btn-edit" id="btnEdit" onclick="toggleEditMode()">
+                <i class="fa-solid fa-pen"></i> Edit Mode
+            </button>
+        </div>
+    </div>
+
+    <!-- Welcome banner -->
+    <div class="welcome-banner">
+        <div class="welcome-icon"><i class="fa-solid fa-hand-wave"></i></div>
+        <div class="welcome-text">
+            <h3>Welcome to Your Realty Link!</h3>
+            <p>We're excited to have you on the team. Work through each phase below and mark items complete as you go. Your broker and office manager are here to help.</p>
+        </div>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="progress-card">
+        <div class="progress-text">
+            <div class="progress-count" id="progressCount">0</div>
+            <div class="progress-label">of 6 required steps</div>
+        </div>
+        <div class="progress-bar-wrap">
+            <div class="progress-bar-track">
+                <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+            </div>
+            <div class="progress-pct" id="progressPct">0%</div>
+        </div>
+        <button class="btn-reset-progress" onclick="confirmReset()">
+            <i class="fa-solid fa-rotate-left"></i> Reset
+        </button>
+    </div>
+
+    <!-- Agent Progress Panel (Edit Mode only, populated by JS) -->
+    <div id="agentProgressPanel" style="display:none;"></div>
+
+    <!-- Personal Items Section (populated by JS when agent has personal tiles) -->
+    <div id="personalItemsSection" style="display:none;margin-bottom:24px;"></div>
+
+    <!-- Phase pills -->
+    <div class="phase-pills">
+        <a class="phase-pill" href="#phase-before"><i class="fa-solid fa-file-pen"></i> Before You Start</a>
+        <a class="phase-pill" href="#phase-day1"><i class="fa-solid fa-key"></i> Day 1 Setup</a>
+        <a class="phase-pill" href="#phase-tools"><i class="fa-solid fa-toolbox"></i> Tools & Tech</a>
+        <a class="phase-pill" href="#phase-training"><i class="fa-solid fa-graduation-cap"></i> Training</a>
+        <a class="phase-pill" href="#phase-branding"><i class="fa-solid fa-star"></i> Branding</a>
+        <a class="phase-pill" href="#phase-contacts"><i class="fa-solid fa-address-book"></i> Key Contacts</a>
+    </div>
+
+    <div id="onboardingContainer">
+        <div class="loading-state">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            Loading onboarding resources…
+        </div>
+    </div>
+</main>
+
+<!-- ── Footer ── -->
+<footer class="footer">
+    <img src="https://yrlagent.com/wp-content/uploads/2026/04/Your-Realty-Link-ver6.6-4-final.png"
+         alt="Your Realty Link" class="footer-logo" onerror="this.style.display='none'">
+    <p>&copy; 2026 Your Realty Link &nbsp;&middot;&nbsp; All Rights Reserved &nbsp;&middot;&nbsp;
+       <a href="https://www.yourrealtylink.com" target="_blank">yourrealtylink.com</a></p>
+</footer>
+
+<!-- ── Welcome / Name Capture Modal (no close button — required) ── -->
+<div class="modal-overlay" id="welcomeModal" style="z-index:200;">
+    <div class="modal" style="max-width:400px;text-align:center;">
+        <div style="width:60px;height:60px;border-radius:14px;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;margin:0 auto 18px;box-shadow:0 6px 20px rgba(192,57,38,0.35);">
+            <i class="fa-solid fa-hand-wave"></i>
+        </div>
+        <div class="modal-title" style="text-align:center;">Welcome to YRL!</div>
+        <div class="modal-sub" style="text-align:center;">Enter your full name to get started. This helps us track your onboarding progress.</div>
+        <div class="modal-field full" style="text-align:left;margin-bottom:20px;">
+            <label class="modal-label">Your Full Name *</label>
+            <input class="modal-input" id="welcome-name" type="text" placeholder="Jane Smith" autocomplete="name"
+                   onkeydown="if(event.key==='Enter')submitWelcomeName()">
+        </div>
+        <button class="btn-modal-save" onclick="submitWelcomeName()" style="width:100%;justify-content:center;font-size:14px;padding:12px 22px;">
+            Get Started <i class="fa-solid fa-arrow-right" style="margin-left:6px;"></i>
+        </button>
+    </div>
+</div>
+
+<!-- ── Agent Info Modal ── -->
+<div class="modal-overlay" id="agentInfoModal" onclick="handleOverlayClick(event,'agentInfoModal')">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal('agentInfoModal')">&times;</button>
+        <div class="modal-title">Agent Information Form</div>
+        <div class="modal-sub">This information is used to create your business cards, email signature, roster listing, and marketing materials.</div>
+        <div class="modal-grid">
+            <div class="modal-field"><label class="modal-label">First Name *</label><input class="modal-input" id="ai-first" type="text" placeholder="Jane"></div>
+            <div class="modal-field"><label class="modal-label">Last Name *</label><input class="modal-input" id="ai-last" type="text" placeholder="Smith"></div>
+            <div class="modal-field full"><label class="modal-label">Name on Business Cards *</label><input class="modal-input" id="ai-cardname" type="text" placeholder="e.g. Jane Smith, REALTOR®"></div>
+            <div class="modal-field"><label class="modal-label">Cell Phone *</label><input class="modal-input" id="ai-phone" type="tel" placeholder="317-555-1234"></div>
+            <div class="modal-field"><label class="modal-label">Email Address *</label><input class="modal-input" id="ai-email" type="email" placeholder="jane@yourrealtylink.com"></div>
+            <div class="modal-field full"><label class="modal-label">Indiana Real Estate License # *</label><input class="modal-input" id="ai-license" type="text" placeholder="RB12345678"></div>
+            <div class="modal-field full"><label class="modal-label">Mailing / Home Address *</label><input class="modal-input" id="ai-address" type="text" placeholder="123 Main St, Indianapolis, IN 46201"></div>
+            <div class="modal-field full"><label class="modal-label">Tagline / Bio (for marketing) *</label><textarea class="modal-input" id="ai-bio" placeholder="A short personal tagline or bio…"></textarea></div>
+            <div class="modal-field"><label class="modal-label">Emergency Contact Name *</label><input class="modal-input" id="ai-ecname" type="text" placeholder="John Smith"></div>
+            <div class="modal-field"><label class="modal-label">Emergency Contact Phone *</label><input class="modal-input" id="ai-ecphone" type="tel" placeholder="317-555-5678"></div>
+            <div class="modal-field full"><label class="modal-label">Agent Bio - 3 to 5 Sentences *</label><textarea class="modal-input" id="ai-notes" placeholder="Write a short professional bio describing your background, experience, and what makes you unique as a REALTOR®. (3–5 sentences)"></textarea></div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-modal-cancel" onclick="closeModal('agentInfoModal')">Cancel</button>
+            <button class="btn-modal-save" onclick="submitAgentInfo()">Submit Information</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Custom Form Fill Modal (agents) ── -->
+<div class="modal-overlay" id="customFormModal" onclick="handleOverlayClick(event,'customFormModal')">
+    <div class="modal" style="max-width:480px;">
+        <button class="modal-close" onclick="closeModal('customFormModal')">&times;</button>
+        <div class="modal-title" id="cfModalTitle">Form</div>
+        <div class="modal-sub" id="cfModalSub">Fill out all required fields and hit Submit.</div>
+        <div id="cfModalFields" style="display:flex;flex-direction:column;gap:12px;"></div>
+        <div class="modal-actions">
+            <button class="btn-modal-cancel" onclick="closeModal('customFormModal')">Cancel</button>
+            <button class="btn-modal-save" id="cfSubmitBtn" onclick="submitCustomForm()">Submit</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Configure Form Modal (admin/edit mode) ── -->
+<div class="modal-overlay" id="configFormModal" onclick="handleOverlayClick(event,'configFormModal')">
+    <div class="modal" style="max-width:500px;">
+        <button class="modal-close" onclick="closeModal('configFormModal')">&times;</button>
+        <div class="modal-title">Configure Form</div>
+        <div class="modal-sub">Set the form title and define the fields agents will fill out.</div>
+        <div class="modal-field full" style="margin-bottom:16px;">
+            <label class="modal-label">Form Title *</label>
+            <input class="modal-input" id="cfg-title" type="text" placeholder="e.g. Emergency Contact Form">
+        </div>
+        <div class="modal-label" style="margin-bottom:8px;">Fields &nbsp;<span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted);font-size:11px;">(Your Name is always included first)</span></div>
+        <div id="cfgFieldsList"></div>
+        <button class="btn-add-field" onclick="addConfigField()">
+            <i class="fa-solid fa-plus"></i> Add Field
+        </button>
+        <div class="modal-actions">
+            <button class="btn-modal-cancel" onclick="closeModal('configFormModal')">Cancel</button>
+            <button class="btn-modal-save" onclick="saveConfigForm()">Save Form</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Submissions Viewer Modal ── -->
+<div class="modal-overlay" id="submissionsModal" onclick="handleOverlayClick(event,'submissionsModal')">
+    <div class="modal" style="max-width:600px;">
+        <button class="modal-close" onclick="closeModal('submissionsModal')">&times;</button>
+        <div class="modal-title" id="submissionsTitle">Submissions</div>
+        <div class="modal-sub" id="submissionsSub"></div>
+        <div class="submissions-list" id="submissionsList"></div>
+    </div>
+</div>
+
+<script src="yrl-hub.js"></script>
+<script>
+/* ============================================================
+   New Agent Onboarding
+   ============================================================ */
+
+const ONBOARDING_KEY     = 'yrl-onboarding-state';
+const SUBMISSIONS_KEY    = 'yrl-onboarding-submissions';
+const PROGRESS_LS_KEY    = 'yrl-onboarding-progress';
+const AGENT_NAME_KEY     = 'yrl-onboarding-agent-name';    /* stores email — stable identity key */
+const AGENT_DISPLAY_KEY  = 'yrl-onboarding-agent-display'; /* stores human display name for forms */
+const PERSONAL_TILES_KEY = 'yrl-onboarding-personal-tiles';
+/* IDs that count toward the required-steps progress bar */
+const REQUIRED_IDS = ['b-agentinfo', 'd-headshot', 'b3', 'b5', 'd4', 'd1'];
+const AGENT_PROGRESS_KEY = 'yrl-onboarding-agent-progress';
+
+const DEFAULT_STATE = {
+    categories: [
+        {
+            id:'before', anchor:'phase-before', step:1,
+            name:'📋 Before You Start',
+            guides:[
+                { id:'b1',  title:'Independent Contractor Agreement',       link:null },
+                { id:'b2',  title:'W-9 Form',                              link:null },
+                { id:'b3',  title:'Direct Deposit Setup Form',             link:null },
+                { id:'b4',  title:'E&O Insurance Enrollment',              link:null },
+                { id:'b5',  title:'License Transfer to YRL — IPLA Portal', link:null },
+                { id:'b6',  title:'Emergency Contact Form',                link:null },
+                { id:'b-agentinfo', title:'Agent Information Form',        link:null, type:'agent-info' },
+            ]
+        },
+        {
+            id:'day1', anchor:'phase-day1', step:2,
+            name:'🔑 Day 1 — Access & Setup',
+            guides:[
+                { id:'d1', title:'Office Key Fob Request',         link:null },
+                { id:'d2', title:'MIBOR / MLS Access Setup',       link:null },
+                { id:'d3', title:'YRL Email Account Setup',        link:null },
+                { id:'d4', title:'Business Card Order Form',       link:null },
+                { id:'d5', title:'Office Tour & Parking Info',     link:null },
+                { id:'d6', title:'New Agent Welcome Packet',       link:null },
+                { id:'d-headshot', title:'Submit Your Headshot',   link:null, type:'headshot' },
+            ]
+        },
+        {
+            id:'tools', anchor:'phase-tools', step:3,
+            name:'🛠️ Tools & Technology Setup',
+            guides:[
+                { id:'t1', title:'Dotloop / DocuSign Setup Guide',        link:null },
+                { id:'t2', title:'ShowingTime Setup & Tutorial',          link:null },
+                { id:'t3', title:'CRM Setup Guide',                       link:null },
+                { id:'t4', title:'Supra / Lockbox App Setup',             link:null },
+                { id:'t5', title:'MIBOR Portal — Full Tutorial',          link:null },
+                { id:'t6', title:'YRL Agent Hub — How to Use',            link:null },
+                { id:'t7', title:'Canva for Real Estate — YRL Templates', link:null },
+            ]
+        },
+        {
+            id:'training', anchor:'phase-training', step:4,
+            name:'🎓 Training & Development',
+            guides:[
+                { id:'tr1', title:'Tiger Training Enrollment',                  link:null },
+                { id:'tr2', title:'Your First Year Plan',                       link:null },
+                { id:'tr3', title:'Mentor / Accountability Partner Assignment', link:null },
+                { id:'tr4', title:'First 30 Days Schedule',                    link:null },
+                { id:'tr5', title:'Monthly Agent Meeting Schedule',             link:null },
+                { id:'tr6', title:'YRL Training Video Library',                 link:null },
+            ]
+        },
+        {
+            id:'branding', anchor:'phase-branding', step:5,
+            name:'⭐ Branding & Marketing',
+            guides:[
+                { id:'br1', title:'Business Card Template',           link:null },
+                { id:'br2', title:'Yard Sign & Rider Order Form',     link:null },
+                { id:'br3', title:'Social Media Bio Template',        link:null },
+                { id:'br4', title:'Personal Branding Guidelines',     link:null },
+                { id:'br5', title:'YRL Logo & Brand Asset Downloads', link:null },
+                { id:'br6', title:'Listing Presentation Template',    link:null },
+            ]
+        },
+        {
+            id:'contacts', anchor:'phase-contacts', step:6,
+            name:'📞 Key Contacts & Resources',
+            guides:[
+                { id:'c1', title:'Staff Directory — Who to Call for What', link:null },
+                { id:'c2', title:'Broker Contact Information',             link:null },
+                { id:'c3', title:'Office Manager Contact',                link:null },
+                { id:'c4', title:'MLS / MIBOR Support Line',              link:null },
+                { id:'c5', title:'Transaction Coordinator Info',          link:null },
+                { id:'c6', title:'YRL Agent Talk — Facebook Group', link:'https://www.facebook.com/groups/181988872242749' },
+            ]
+        },
+    ]
+};
+
+let state        = null;
+let editMode     = false;
+let addingIn     = null;
+let editingTile  = null;
+let cfGuideId    = null; // active custom form guide ID for agent submission
+let cfgGuideId   = null; // active guide ID in config modal
+let cfgCatId     = null; // active cat ID in config modal
+
+/* ── Progress (localStorage) ── */
+function loadProgress() { try { return JSON.parse(localStorage.getItem(PROGRESS_LS_KEY)) || {}; } catch { return {}; } }
+function saveProgress(p) { localStorage.setItem(PROGRESS_LS_KEY, JSON.stringify(p)); }
+function updateProgress() {
+    if (!state) return;
+    const prog = loadProgress();
+    let done = 0;
+    for (const cat of state.categories) {
+        for (const guide of cat.guides) {
+            if (!REQUIRED_IDS.includes(guide.id)) continue;
+            const t = guide.type || 'regular';
+            if (t === 'agent-info' || t === 'headshot' || t === 'custom-form') {
+                if (prog[guide.id + '-submitted']) done++;
+            } else {
+                if (guide.link && guide.link.trim()) done++;
+            }
+        }
+    }
+    const total = REQUIRED_IDS.length;
+    const pct   = total ? Math.round((done/total)*100) : 0;
+    document.getElementById('progressCount').textContent = done;
+    document.getElementById('progressFill').style.width  = pct + '%';
+    document.getElementById('progressPct').textContent   = pct + '%';
+}
+function confirmReset() {
+    if (confirm('Reset all your progress? This only clears your device.')) {
+        localStorage.removeItem(PROGRESS_LS_KEY); updateProgress(); render();
+    }
+}
+
+/* ── Utilities ── */
+function uid() { return Math.random().toString(36).slice(2,9); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmt(ts) { return ts ? new Date(ts).toLocaleString() : ''; }
+
+/* ── Personal Tiles ── */
+let personalTiles = [];
+
+async function loadPersonalTiles() {
+    const agentName = localStorage.getItem(AGENT_NAME_KEY);
+    if (!agentName) return;
+    try {
+        const data = await loadHubContent(PERSONAL_TILES_KEY);
+        personalTiles = (data && Array.isArray(data[agentName])) ? data[agentName] : [];
+    } catch { personalTiles = []; }
+    renderPersonalSection();
+}
+
+function renderPersonalSection() {
+    const section = document.getElementById('personalItemsSection');
+    if (!section) return;
+    if (personalTiles.length === 0) { section.style.display = 'none'; return; }
+    const prog = loadProgress();
+    section.style.display = '';
+    section.innerHTML = `
+        <div class="phase-block">
+            <div class="phase-header">
+                <span class="phase-badge" style="background:var(--red);color:#fff;">Personal</span>
+                <span class="phase-name">⭐ Your Personal Items</span>
+            </div>
+            <div class="guide-grid">${personalTiles.map(tile => {
+                const hasLink = tile.link && tile.link.trim();
+                const tag    = hasLink ? 'a' : 'div';
+                const href   = hasLink ? ` href="${esc(tile.link)}" target="_blank" rel="noopener"` : '';
+                const badge  = hasLink ? '<span class="badge-available">Available</span>' : '';
+                return `<${tag} class="guide-tile"${href}>
+                    <span class="tile-title">${esc(tile.title)}</span>
+                    ${badge}
+                </${tag}>`;
+            }).join('')}</div>
+        </div>`;
+}
+
+/* ── Load / Save ── */
+async function init() {
+    const data = await loadHubContent(ONBOARDING_KEY);
+    if (data && data.categories && Array.isArray(data.categories)) {
+        state = data;
+    } else {
+        state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+        await saveHubContent(ONBOARDING_KEY, state);
+    }
+    updateProgress(); render();
+    if (localStorage.getItem(AGENT_NAME_KEY)) {
+        restoreProgressFromSupabase(); /* sync cross-device progress on every load */
+        loadPersonalTiles();           /* load broker-assigned personal items */
+    }
+    /* No welcome modal needed — identity comes from Supabase auth (see yrl-auth-ready listener) */
+}
+
+async function persist() {
+    const ok = await saveHubContent(ONBOARDING_KEY, state);
+    if (ok) {
+        const f = document.getElementById('saveFlash');
+        if (f) { f.classList.add('show'); setTimeout(()=>f.classList.remove('show'),2500); }
+    }
+    return ok;
+}
+
+/* ── Edit mode ── */
+function toggleEditMode() {
+    editMode = !editMode; addingIn = null; editingTile = null;
+    const btn   = document.getElementById('btnEdit');
+    const panel = document.getElementById('agentProgressPanel');
+    btn.innerHTML = editMode ? '<i class="fa-solid fa-xmark"></i> Done Editing' : '<i class="fa-solid fa-pen"></i> Edit Mode';
+    editMode ? btn.classList.add('active') : btn.classList.remove('active');
+    if (panel) {
+        panel.style.display = editMode ? 'block' : 'none';
+        if (editMode) loadAgentProgress();
+    }
+    render();
+}
+
+
+/* ── Render ── */
+function render() {
+    const container = document.getElementById('onboardingContainer');
+    if (!state) { container.innerHTML='<div class="loading-state"><i class="fa-solid fa-spinner fa-spin"></i>Loading…</div>'; return; }
+
+    let html = '';
+    const prog = loadProgress();
+
+    state.categories.forEach((cat, idx) => {
+        const anchor  = cat.anchor || cat.id;
+        const stepNum = cat.step   || (idx+1);
+        const isAddingHere = addingIn === cat.id;
+
+        html += `<div class="guide-section" id="${esc(anchor)}">
+            <div class="guide-section-label"><span class="step-number">${stepNum}</span>${esc(cat.name)}</div>
+            <div class="guide-grid">`;
+
+        cat.guides.forEach(guide => {
+            const isEditingThis = editingTile && editingTile.catId===cat.id && editingTile.guideId===guide.id;
+            const tileType = guide.type || 'regular';
+
+            /* ── EDIT MODE: INLINE FORM ── */
+            if (editMode && isEditingThis) {
+                const showLink = tileType === 'regular' || tileType === 'headshot';
+                const linkLabel = tileType === 'headshot' ? 'Dropbox File Request URL' : 'Link';
+                const linkPlaceholder = tileType === 'headshot'
+                    ? 'https://www.dropbox.com/request/…'
+                    : 'Paste link…';
+                html += `<div class="guide-tile-editing">
+                    <button class="btn-del-tile" onclick="deleteTile('${cat.id}','${guide.id}')">&times;</button>
+                    <div><div class="tile-edit-label">Title</div>
+                        <input class="tile-edit-input" id="editTitle-${guide.id}" type="text" value="${esc(guide.title)}">
+                    </div>
+                    ${showLink ? `<div>
+                        <div class="tile-edit-label">${linkLabel} <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted)">(optional)</span></div>
+                        <input class="tile-edit-input" id="editLink-${guide.id}" type="url" value="${esc(guide.link||'')}" placeholder="${linkPlaceholder}">
+                        <div class="tile-upload-row">
+                            <input type="file" id="fileInput-${guide.id}" style="display:none" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" onchange="handleTileFileUpload('${guide.id}')">
+                            <button class="btn-upload-file" type="button" onclick="document.getElementById('fileInput-${guide.id}').click()">
+                                <i class="fa-solid fa-arrow-up-from-bracket"></i> Upload file
+                            </button>
+                            <span class="upload-status" id="uploadStatus-${guide.id}">or paste URL above</span>
+                        </div>
+                    </div>` : ''}
+                    <div class="tile-edit-actions">
+                        <button class="btn-tile-save" data-guide="${guide.id}" onclick="saveEditTile('${cat.id}','${guide.id}')">Save</button>
+                        <button class="btn-tile-cancel" onclick="cancelTileEdit()">Cancel</button>
+                    </div>
+                </div>`;
+
+            /* ── EDIT MODE: HEADSHOT TILE ── */
+            } else if (editMode && tileType === 'headshot') {
+                const hasLink = guide.link && guide.link.trim();
+                html += `<div class="guide-tile tile-special editable" onclick="openTileEdit('${cat.id}','${guide.id}')">
+                    <button class="btn-del-tile" onclick="event.stopPropagation();deleteTile('${cat.id}','${guide.id}')">&times;</button>
+                    <div class="special-icon"><i class="fa-solid fa-camera"></i></div>
+                    <div style="flex:1;min-width:0;">
+                        <div class="special-label">Headshot Upload</div>
+                        <div class="special-title">${esc(guide.title)}</div>
+                        <div class="edit-hint">${hasLink ? '✓ Dropbox link set' : 'Click to add Dropbox link'}</div>
+                    </div>
+                </div>`;
+
+            /* ── EDIT MODE: AGENT-INFO TILE ── */
+            } else if (editMode && tileType === 'agent-info') {
+                html += `<div class="guide-tile tile-special editable" onclick="openTileEdit('${cat.id}','${guide.id}')">
+                    <button class="btn-del-tile" onclick="event.stopPropagation();deleteTile('${cat.id}','${guide.id}')">&times;</button>
+                    <div class="special-icon"><i class="fa-solid fa-id-card"></i></div>
+                    <div style="flex:1;min-width:0;">
+                        <div class="special-label">Agent Info Form</div>
+                        <div class="special-title">${esc(guide.title)}</div>
+                        <div class="edit-hint">Click to rename</div>
+                    </div>
+                </div>
+                <button class="btn-view-submissions" onclick="viewSubmissions('agent-info', null, 'Agent Information')">
+                    <i class="fa-solid fa-inbox"></i> View Submissions
+                </button>`;
+
+            /* ── EDIT MODE: CUSTOM-FORM TILE ── */
+            } else if (editMode && tileType === 'custom-form') {
+                const fieldCount = guide.fields ? guide.fields.length : 0;
+                html += `<div class="guide-tile tile-special editable" onclick="openConfigModal('${cat.id}','${guide.id}')">
+                    <button class="btn-del-tile" onclick="event.stopPropagation();deleteTile('${cat.id}','${guide.id}')">&times;</button>
+                    <div class="special-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+                    <div style="flex:1;min-width:0;">
+                        <div class="special-label">Custom Form</div>
+                        <div class="special-title">${esc(guide.title)}</div>
+                        <div class="edit-hint">${fieldCount} field${fieldCount!==1?'s':''} — click to configure</div>
+                    </div>
+                </div>
+                <button class="btn-view-submissions" onclick="viewSubmissions('custom-form','${guide.id}','${esc(guide.title)}')">
+                    <i class="fa-solid fa-inbox"></i> View Submissions
+                </button>`;
+
+            /* ── EDIT MODE: REGULAR TILE ── */
+            } else if (editMode) {
+                const hasLink = guide.link && guide.link.trim();
+                const badge = hasLink ? `<span class="badge-available">Available</span>` : `<span class="badge-coming">Coming Soon</span>`;
+                html += `<div class="guide-tile editable" onclick="openTileEdit('${cat.id}','${guide.id}')">
+                    <button class="btn-del-tile" onclick="event.stopPropagation();deleteTile('${cat.id}','${guide.id}')">&times;</button>
+                    <div class="tile-main"><div class="tile-title">${esc(guide.title)}</div><div class="edit-hint">Click to edit</div></div>
+                    ${badge}
+                </div>`;
+
+            /* ── VIEW MODE: HEADSHOT TILE ── */
+            } else if (tileType === 'headshot') {
+                const hasLink   = guide.link && guide.link.trim();
+                const submitted = prog[guide.id+'-submitted'];
+                if (hasLink) {
+                    const isReq = REQUIRED_IDS.includes(guide.id);
+                    html += `<a class="guide-tile tile-special tile-ext ${submitted?'special-submitted':''}${isReq&&!submitted?' tile-required':''}" href="${esc(guide.link)}" target="_blank" rel="noopener">
+                        <div class="special-icon"><i class="fa-solid ${submitted?'fa-check':'fa-camera'}"></i></div>
+                        <div style="flex:1;min-width:0;">
+                            <div class="special-label">${submitted?'✓ Submitted':'Headshot Upload'}</div>
+                            <div class="special-title">${esc(guide.title)}</div>
+                            <div class="special-sub">Click to upload via Dropbox</div>
+                        </div>
+                        ${isReq&&!submitted?'<span class="badge-required">Required</span>':''}
+                    </a>`;
+                } else {
+                    html += `<div class="guide-tile tile-special tile-notset${REQUIRED_IDS.includes(guide.id)?' tile-required':''}">
+                        <div class="special-icon"><i class="fa-solid fa-camera"></i></div>
+                        <div style="flex:1;min-width:0;">
+                            <div class="special-label">Headshot Upload</div>
+                            <div class="special-title">${esc(guide.title)}</div>
+                            <div class="special-sub">Not set up yet — check back soon</div>
+                        </div>
+                        ${REQUIRED_IDS.includes(guide.id)?'<span class="badge-required">Required</span>':''}
+                    </div>`;
+                }
+
+            /* ── VIEW MODE: AGENT-INFO TILE ── */
+            } else if (tileType === 'agent-info') {
+                const submitted = prog[guide.id+'-submitted'];
+                const reqClass  = REQUIRED_IDS.includes(guide.id) ? ' tile-required' : '';
+                html += `<div class="guide-tile tile-special ${submitted?'special-submitted':''}${reqClass}" onclick="openAgentInfoModal()">
+                    <div class="special-icon"><i class="fa-solid ${submitted?'fa-check':'fa-id-card'}"></i></div>
+                    <div style="flex:1;min-width:0;">
+                        <div class="special-label">${submitted?'✓ Submitted':'Agent Info Form'}</div>
+                        <div class="special-title">${esc(guide.title)}</div>
+                        <div class="special-sub">${submitted?'Click to update':'Click to fill out'}</div>
+                    </div>
+                    ${REQUIRED_IDS.includes(guide.id)&&!submitted?'<span class="badge-required">Required</span>':''}
+                </div>`;
+
+            /* ── VIEW MODE: CUSTOM-FORM TILE ── */
+            } else if (tileType === 'custom-form') {
+                const submitted = prog[guide.id+'-submitted'];
+                const reqClass  = REQUIRED_IDS.includes(guide.id) ? ' tile-required' : '';
+                html += `<div class="guide-tile tile-special ${submitted?'special-submitted':''}${reqClass}" onclick="openCustomForm('${guide.id}')">
+                    <div class="special-icon"><i class="fa-solid ${submitted?'fa-check':'fa-clipboard-list'}"></i></div>
+                    <div style="flex:1;min-width:0;">
+                        <div class="special-label">${submitted?'✓ Submitted':'Fill Out Form'}</div>
+                        <div class="special-title">${esc(guide.title)}</div>
+                        <div class="special-sub">${submitted?'Click to update':'Click to open'}</div>
+                    </div>
+                    ${REQUIRED_IDS.includes(guide.id)&&!submitted?'<span class="badge-required">Required</span>':''}
+                </div>`;
+
+            /* ── VIEW MODE: REGULAR TILE ── */
+            } else {
+                const hasLink  = guide.link && guide.link.trim();
+                const isReq    = REQUIRED_IDS.includes(guide.id);
+                const reqClass = isReq ? ' tile-required' : '';
+                const badge    = hasLink ? `<span class="badge-available">Available</span>` : ``;
+                const reqBadge = isReq && !hasLink ? `<span class="badge-required">Required</span>` : '';
+                const inner    = `<div class="tile-main"><div class="tile-title">${esc(guide.title)}</div></div>${badge}${reqBadge}`;
+                if (hasLink) {
+                    html += `<a class="guide-tile${reqClass}" href="${esc(guide.link)}" target="_blank" rel="noopener">${inner}</a>`;
+                } else {
+                    html += `<div class="guide-tile${reqClass}">${inner}</div>`;
+                }
+            }
+        });
+
+        html += `</div>`; /* /guide-grid */
+
+        /* ── Edit mode add buttons ── */
+        if (editMode) {
+            if (isAddingHere) {
+                html += `<div class="add-guide-row">
+                    <input class="add-guide-input" id="addTitle-${cat.id}" type="text" placeholder="Item title (required)" autocomplete="off">
+                    <input class="add-guide-input" id="addLink-${cat.id}" type="url" placeholder="Link (optional)" autocomplete="off">
+                    <button class="btn-add-save" onclick="saveNewTile('${cat.id}')">Add</button>
+                    <button class="btn-add-cancel" onclick="cancelAdd()">Cancel</button>
+                </div>`;
+            } else {
+                html += `<button class="btn-add-open" onclick="openAddForm('${cat.id}')">+ Add Item</button>`;
+                html += `<button class="btn-add-form" onclick="addCustomForm('${cat.id}')"><i class="fa-solid fa-plus"></i> Add Custom Form</button>`;
+            }
+        }
+
+        html += `</div>`; /* /guide-section */
+    });
+
+    container.innerHTML = html;
+
+    if (editingTile) {
+        const inp = document.getElementById('editTitle-'+editingTile.guideId);
+        if (inp) { inp.focus(); inp.select(); }
+    } else if (addingIn) {
+        const inp = document.getElementById('addTitle-'+addingIn);
+        if (inp) inp.focus();
+    }
+}
+
+/* ── Tile edit / delete / add ── */
+function openTileEdit(catId, guideId) { addingIn=null; editingTile={catId,guideId}; render(); }
+function cancelTileEdit() { editingTile=null; render(); }
+async function saveEditTile(catId, guideId) {
+    const titleEl = document.getElementById('editTitle-'+guideId);
+    const linkEl  = document.getElementById('editLink-' +guideId);
+    const title   = titleEl ? titleEl.value.trim() : '';
+    const link    = linkEl  ? linkEl.value.trim()  : '';
+    if (!title) { if (titleEl) { titleEl.style.borderColor='#ef4444'; titleEl.focus(); } return; }
+    const cat   = state.categories.find(c=>c.id===catId); if (!cat) return;
+    const guide = cat.guides.find(g=>g.id===guideId);     if (!guide) return;
+    guide.title = title;
+    /* allow link for regular tiles and headshot tile */
+    if (guide.type !== 'agent-info' && guide.type !== 'custom-form') guide.link = link||null;
+    editingTile = null;
+    render(); /* show new title immediately */
+    const ok = await persist();
+    if (ok === false) alert('⚠️ Title saved locally but failed to sync — check your connection and try again.');
+}
+async function handleTileFileUpload(guideId) {
+    const fileInput = document.getElementById('fileInput-' + guideId);
+    const linkInput = document.getElementById('editLink-'  + guideId);
+    const statusEl  = document.getElementById('uploadStatus-' + guideId);
+    const saveBtn   = document.querySelector(`.btn-tile-save[data-guide="${guideId}"]`);
+    if (!fileInput?.files?.[0]) return;
+    const file = fileInput.files[0];
+    if (file.size > 50 * 1024 * 1024) {
+        statusEl.textContent = '✗ File too large (max 50 MB)';
+        statusEl.className = 'upload-status error';
+        fileInput.value = ''; return;
+    }
+    statusEl.textContent = 'Uploading…'; statusEl.className = 'upload-status uploading';
+    if (saveBtn) saveBtn.disabled = true;
+    try {
+        const url = await uploadHubFile(file, 'guides');
+        if (linkInput) linkInput.value = url;
+        const name = file.name.length > 28 ? file.name.slice(0, 25) + '…' : file.name;
+        statusEl.textContent = '✓ Saved: ' + name; statusEl.className = 'upload-status success';
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.click(); }
+    } catch(err) {
+        statusEl.textContent = '✗ ' + (err.message || 'Upload failed');
+        statusEl.className = 'upload-status error';
+        fileInput.value = '';
+        if (saveBtn) saveBtn.disabled = false;
+    }
+}
+function deleteTile(catId, guideId) {
+    const cat = state.categories.find(c=>c.id===catId); if (!cat) return;
+    cat.guides = cat.guides.filter(g=>g.id!==guideId);
+    if (editingTile && editingTile.guideId===guideId) editingTile=null;
+    persist(); render();
+}
+function openAddForm(catId) { editingTile=null; addingIn=catId; render(); }
+function cancelAdd()        { addingIn=null; render(); }
+function saveNewTile(catId) {
+    const titleEl = document.getElementById('addTitle-'+catId);
+    const linkEl  = document.getElementById('addLink-' +catId);
+    const title   = titleEl ? titleEl.value.trim() : '';
+    const link    = linkEl  ? linkEl.value.trim()  : '';
+    if (!title) { if (titleEl) { titleEl.style.borderColor='#ef4444'; titleEl.focus(); } return; }
+    const cat = state.categories.find(c=>c.id===catId); if (!cat) return;
+    cat.guides.push({ id:uid(), title, link:link||null });
+    addingIn=null; persist(); render();
+}
+
+/* ── Add Custom Form (edit mode) ── */
+function addCustomForm(catId) {
+    const newGuide = { id:uid(), title:'New Form', type:'custom-form', fields:[] };
+    const cat = state.categories.find(c=>c.id===catId); if (!cat) return;
+    cat.guides.push(newGuide);
+    persist();
+    render();
+    // Auto-open configure modal
+    openConfigModal(catId, newGuide.id);
+}
+
+/* ── Configure Form Modal ── */
+let cfgTempFields = [];
+function openConfigModal(catId, guideId) {
+    cfgGuideId = guideId; cfgCatId = catId;
+    const cat   = state.categories.find(c=>c.id===catId);
+    const guide = cat ? cat.guides.find(g=>g.id===guideId) : null;
+    document.getElementById('cfg-title').value = guide ? (guide.title||'') : '';
+    cfgTempFields = guide && guide.fields ? JSON.parse(JSON.stringify(guide.fields)) : [];
+    renderConfigFields();
+    openModal('configFormModal');
+}
+function renderConfigFields() {
+    const list = document.getElementById('cfgFieldsList');
+    if (!list) return;
+    list.innerHTML = cfgTempFields.map((f,i) => `
+        <div class="config-field-row">
+            <input class="config-field-label" type="text" value="${esc(f.label)}" placeholder="Field label" oninput="cfgTempFields[${i}].label=this.value">
+            <select class="config-field-type" onchange="cfgTempFields[${i}].ftype=this.value">
+                <option value="text"     ${f.ftype==='text'?'selected':''}>Text</option>
+                <option value="tel"      ${f.ftype==='tel'?'selected':''}>Phone</option>
+                <option value="email"    ${f.ftype==='email'?'selected':''}>Email</option>
+                <option value="textarea" ${f.ftype==='textarea'?'selected':''}>Paragraph</option>
+            </select>
+            <button class="btn-del-field" onclick="removeConfigField(${i})" title="Remove field">&times;</button>
+        </div>`).join('');
+}
+function addConfigField() {
+    if (cfgTempFields.length >= 10) { alert('Maximum 10 fields per form.'); return; }
+    cfgTempFields.push({ id:uid(), label:'', ftype:'text' });
+    renderConfigFields();
+}
+function removeConfigField(i) { cfgTempFields.splice(i,1); renderConfigFields(); }
+function saveConfigForm() {
+    const titleEl = document.getElementById('cfg-title');
+    const title   = titleEl ? titleEl.value.trim() : '';
+    if (!title) { titleEl.style.borderColor='#ef4444'; titleEl.focus(); return; }
+    const cat   = state.categories.find(c=>c.id===cfgCatId); if (!cat) return;
+    const guide = cat.guides.find(g=>g.id===cfgGuideId);     if (!guide) return;
+    guide.title  = title;
+    guide.fields = cfgTempFields.map(f => ({ id:f.id||uid(), label:f.label||'Field', ftype:f.ftype||'text' }));
+    closeModal('configFormModal');
+    persist(); render();
+}
+
+/* ── Custom Form: agent fill-out ── */
+function openCustomForm(guideId) {
+    // Find the guide across all categories
+    let guide = null;
+    for (const cat of state.categories) {
+        guide = cat.guides.find(g=>g.id===guideId);
+        if (guide) break;
+    }
+    if (!guide) return;
+    cfGuideId = guideId;
+    document.getElementById('cfModalTitle').textContent = guide.title || 'Form';
+    document.getElementById('cfModalSub').textContent   = 'Fill out all fields and click Submit.';
+
+    const storedName = localStorage.getItem(AGENT_DISPLAY_KEY) || localStorage.getItem(AGENT_NAME_KEY) || '';
+    let fieldsHtml = `<div class="modal-field full">
+        <label class="modal-label">Your Name *</label>
+        <input class="modal-input" id="cf-yourname" type="text" value="${esc(storedName)}" placeholder="Jane Smith">
+    </div>`;
+    (guide.fields||[]).forEach(f => {
+        const inputId = 'cf-'+f.id;
+        if (f.ftype === 'textarea') {
+            fieldsHtml += `<div class="modal-field full"><label class="modal-label">${esc(f.label)}</label><textarea class="modal-input" id="${inputId}" placeholder="${esc(f.label)}…"></textarea></div>`;
+        } else {
+            fieldsHtml += `<div class="modal-field full"><label class="modal-label">${esc(f.label)}</label><input class="modal-input" id="${inputId}" type="${f.ftype}" placeholder="${esc(f.label)}…"></div>`;
+        }
+    });
+    document.getElementById('cfModalFields').innerHTML = fieldsHtml;
+    openModal('customFormModal');
+    document.getElementById('cf-yourname').focus();
+}
+
+async function submitCustomForm() {
+    const nameEl = document.getElementById('cf-yourname');
+    if (!nameEl || !nameEl.value.trim()) { nameEl.style.borderColor='#ef4444'; nameEl.focus(); return; }
+
+    let guide = null;
+    for (const cat of state.categories) {
+        guide = cat.guides.find(g=>g.id===cfGuideId);
+        if (guide) break;
+    }
+    if (!guide) return;
+
+    const data = { 'Your Name': nameEl.value.trim() };
+    (guide.fields||[]).forEach(f => {
+        const el = document.getElementById('cf-'+f.id);
+        data[f.label] = el ? el.value.trim() : '';
+    });
+
+    await appendSubmission({
+        id:uid(), type:'custom-form', formId:guide.id,
+        formTitle: guide.title, timestamp: new Date().toISOString(), data
+    });
+
+    const p = loadProgress(); p[cfGuideId+'-submitted']=true; saveProgress(p);
+    closeModal('customFormModal');
+    render();
+    alert('✓ Form submitted successfully!');
+}
+
+/* ── Agent Info submission ── */
+async function submitAgentInfo() {
+    const fields = [
+        { id:'ai-first',   label:'First Name' },
+        { id:'ai-last',    label:'Last Name' },
+        { id:'ai-cardname',label:'Name on Business Cards' },
+        { id:'ai-phone',   label:'Cell Phone' },
+        { id:'ai-email',   label:'Email Address' },
+        { id:'ai-license', label:'Indiana Real Estate License #' },
+        { id:'ai-address', label:'Mailing / Home Address' },
+        { id:'ai-bio',     label:'Tagline / Bio' },
+        { id:'ai-ecname',  label:'Emergency Contact Name' },
+        { id:'ai-ecphone', label:'Emergency Contact Phone' },
+        { id:'ai-notes',   label:'Agent Bio' },
+    ];
+    for (const f of fields) {
+        const el = document.getElementById(f.id);
+        if (!el.value.trim()) {
+            el.style.borderColor = '#ef4444';
+            el.focus();
+            el.scrollIntoView({ behavior:'smooth', block:'center' });
+            return;
+        }
+        el.style.borderColor = '';
+    }
+    const first = document.getElementById('ai-first').value.trim();
+    const last  = document.getElementById('ai-last').value.trim();
+    await appendSubmission({
+        id:uid(), type:'agent-info', timestamp: new Date().toISOString(),
+        data: {
+            name: first+' '+last,
+            cardname: document.getElementById('ai-cardname').value.trim(),
+            phone:    document.getElementById('ai-phone').value.trim(),
+            email:    document.getElementById('ai-email').value.trim(),
+            license:  document.getElementById('ai-license').value.trim(),
+            address:  document.getElementById('ai-address').value.trim(),
+            bio:      document.getElementById('ai-bio').value.trim(),
+            ecname:   document.getElementById('ai-ecname').value.trim(),
+            ecphone:  document.getElementById('ai-ecphone').value.trim(),
+            notes:    document.getElementById('ai-notes').value.trim(),
+        }
+    });
+    const p = loadProgress(); p['b-agentinfo-submitted']=true; saveProgress(p);
+    closeModal('agentInfoModal');
+    render();
+    alert('✓ Information submitted! Your broker will receive it shortly.');
+}
+
+/* ── Shared submission helpers ── */
+async function appendSubmission(entry) {
+    const existing = await loadHubContent(SUBMISSIONS_KEY);
+    const list = Array.isArray(existing) ? existing : [];
+    list.push(entry);
+    await saveHubContent(SUBMISSIONS_KEY, list);
+}
+
+async function viewSubmissions(type, formId, formTitle) {
+    const all  = await loadHubContent(SUBMISSIONS_KEY);
+    let list = Array.isArray(all) ? all : [];
+    if (type === 'custom-form') {
+        list = list.filter(s => s.type==='custom-form' && s.formId===formId);
+    } else {
+        list = list.filter(s => s.type===type);
+    }
+    document.getElementById('submissionsTitle').textContent = (formTitle||'') + ' Submissions';
+    document.getElementById('submissionsSub').textContent   = `${list.length} submission${list.length!==1?'s':''} received`;
+
+    if (list.length === 0) {
+        document.getElementById('submissionsList').innerHTML = '<p style="color:var(--text-muted);font-size:13px;">No submissions yet.</p>';
+    } else {
+        document.getElementById('submissionsList').innerHTML = list.slice().reverse().map(s => {
+            if (s.type === 'agent-info') {
+                const d = s.data;
+                return `<div class="submission-card">
+                    <h4>${esc(d.name)}</h4>
+                    <div class="submission-field">
+                        ${d.cardname?`<strong>Card Name:</strong> ${esc(d.cardname)}<br>`:''}
+                        ${d.phone?`<strong>Phone:</strong> ${esc(d.phone)}<br>`:''}
+                        ${d.email?`<strong>Email:</strong> ${esc(d.email)}<br>`:''}
+                        ${d.license?`<strong>License #:</strong> ${esc(d.license)}<br>`:''}
+                        ${d.address?`<strong>Address:</strong> ${esc(d.address)}<br>`:''}
+                        ${d.bio?`<strong>Bio:</strong> ${esc(d.bio)}<br>`:''}
+                        ${d.ecname?`<strong>Emergency:</strong> ${esc(d.ecname)} — ${esc(d.ecphone)}<br>`:''}
+                        ${d.notes?`<strong>Notes:</strong> ${esc(d.notes)}`:''}
+                    </div>
+                    <div class="submission-time">${fmt(s.timestamp)}</div>
+                </div>`;
+            } else {
+                /* custom-form: render key/value pairs dynamically */
+                const rows = Object.entries(s.data||{}).map(([k,v]) =>
+                    v ? `<strong>${esc(k)}:</strong> ${esc(v)}<br>` : ''
+                ).join('');
+                const submitter = s.data?.['Your Name'] || 'Unknown';
+                return `<div class="submission-card">
+                    <h4>${esc(submitter)}</h4>
+                    <div class="submission-field">${rows}</div>
+                    <div class="submission-time">${fmt(s.timestamp)}</div>
+                </div>`;
+            }
+        }).join('');
+    }
+    openModal('submissionsModal');
+}
+
+/* ── Welcome / Name Capture ── */
+function checkWelcome() {
+    const name = localStorage.getItem(AGENT_NAME_KEY);
+    if (!name) {
+        openModal('welcomeModal');
+        setTimeout(() => { document.getElementById('welcome-name')?.focus(); }, 80);
+    }
+}
+function submitWelcomeName() {
+    const el   = document.getElementById('welcome-name');
+    const name = el ? el.value.trim() : '';
+    if (!name) { if (el) { el.style.borderColor='#ef4444'; el.focus(); } return; }
+    localStorage.setItem(AGENT_NAME_KEY, name);
+    closeModal('welcomeModal');
+    restoreProgressFromSupabase(); /* pull their progress from Supabase on new device */
+}
+
+/* ── Restore agent progress from Supabase (cross-device sync) ── */
+async function restoreProgressFromSupabase() {
+    const agentName = localStorage.getItem(AGENT_NAME_KEY);
+    if (!agentName) return;
+    try {
+        const map       = (await loadHubContent(AGENT_PROGRESS_KEY)) || {};
+        const agentData = map[agentName];
+        if (!agentData || !agentData.statuses) return;
+        /* Merge Supabase statuses into localStorage — Supabase is source of truth */
+        const p = loadProgress();
+        Object.assign(p, agentData.statuses);
+        saveProgress(p);
+        updateProgress();
+        render();
+    } catch(e) { /* silent fail — local progress still intact */ }
+}
+
+/* ── Open Agent Info Modal (pre-fills name) ── */
+function openAgentInfoModal() {
+    const stored = localStorage.getItem(AGENT_DISPLAY_KEY) || localStorage.getItem(AGENT_NAME_KEY) || '';
+    if (stored) {
+        const parts = stored.trim().split(/\s+/);
+        const first = parts[0] || '';
+        const last  = parts.slice(1).join(' ') || '';
+        const fEl = document.getElementById('ai-first');
+        const lEl = document.getElementById('ai-last');
+        if (fEl && !fEl.value) fEl.value = first;
+        if (lEl && !lEl.value) lEl.value = last;
+    }
+    openModal('agentInfoModal');
+}
+
+/* ── Sync agent status to Supabase (fire-and-forget) ── */
+async function syncAgentProgress(guideId, status) {
+    const agentName = localStorage.getItem(AGENT_NAME_KEY);
+    if (!agentName) return;
+    try {
+        const map = (await loadHubContent(AGENT_PROGRESS_KEY)) || {};
+        if (!map[agentName]) map[agentName] = { statuses:{}, lastSeen:null };
+        map[agentName].statuses[guideId] = status;
+        map[agentName].lastSeen = new Date().toISOString();
+        await saveHubContent(AGENT_PROGRESS_KEY, map);
+    } catch(e) { /* silent fail — local progress still saved */ }
+}
+
+/* ── Admin: load & render agent progress dashboard ── */
+async function loadAgentProgress() {
+    const panel = document.getElementById('agentProgressPanel');
+    if (!panel) return;
+    const total = state ? state.categories.reduce((n,c)=>n+c.guides.length,0) : 0;
+
+    panel.innerHTML = `
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;margin-bottom:28px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.5px;color:var(--text);">👥 Agent Progress</div>
+                <button onclick="loadAgentProgress()" style="background:none;border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-size:12px;font-family:'Inter',sans-serif;cursor:pointer;color:var(--text-sec);"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
+            </div>
+            <div id="agentProgressRows" style="font-size:13px;color:var(--text-muted);font-style:italic;">Loading…</div>
+        </div>`;
+
+    try {
+        const map     = (await loadHubContent(AGENT_PROGRESS_KEY)) || {};
+        const agents  = Object.entries(map);
+        const rowsEl  = document.getElementById('agentProgressRows');
+        if (!rowsEl) return;
+
+        if (agents.length === 0) {
+            rowsEl.innerHTML = '<p style="color:var(--text-muted);font-size:13px;font-style:italic;">No agents have started onboarding yet — they will appear here once they begin.</p>';
+            return;
+        }
+
+        /* Sort by lastSeen descending */
+        agents.sort((a,b) => ((b[1].lastSeen||'') > (a[1].lastSeen||'')) ? 1 : -1);
+
+        rowsEl.style.fontStyle = 'normal';
+        rowsEl.innerHTML = agents.map(([name, data]) => {
+            const statuses  = data.statuses || {};
+            const completed = Object.values(statuses).filter(s=>s==='completed').length;
+            const pct       = total ? Math.round((completed/total)*100) : 0;
+            const lastDate  = data.lastSeen
+                ? new Date(data.lastSeen).toLocaleDateString('en-US',{month:'short',day:'numeric'})
+                : '—';
+            const barColor  = pct === 100 ? 'var(--green)' : 'var(--red)';
+            return `<div style="display:flex;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid var(--border);">
+                <div style="font-weight:600;color:var(--text);min-width:140px;flex-shrink:0;">${esc(name)}</div>
+                <div style="flex:1;min-width:60px;">
+                    <div style="height:6px;background:var(--surface-3);border-radius:100px;overflow:hidden;">
+                        <div style="height:100%;width:${pct}%;background:${barColor};border-radius:100px;transition:width 0.4s;"></div>
+                    </div>
+                </div>
+                <div style="font-size:12px;color:var(--text-sec);white-space:nowrap;flex-shrink:0;">${completed}/${total} &nbsp;·&nbsp; ${pct}%</div>
+                <div style="font-size:11px;color:var(--text-muted);white-space:nowrap;flex-shrink:0;">Last seen ${lastDate}</div>
+            </div>`;
+        }).join('');
+    } catch(e) {
+        const rowsEl = document.getElementById('agentProgressRows');
+        if (rowsEl) rowsEl.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Could not load progress data — check your connection.</p>';
+    }
+}
+
+/* ── Modals ── */
+function openModal(id) { document.getElementById(id)?.classList.add('open'); }
+function closeModal(id) { document.getElementById(id)?.classList.remove('open'); }
+function handleOverlayClick(e, id) { if (e.target===document.getElementById(id)) closeModal(id); }
+
+/* ── Keyboard ── */
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+        ['agentInfoModal','customFormModal','configFormModal','submissionsModal'].forEach(closeModal);
+        if (editingTile) { cancelTileEdit(); return; }
+        if (addingIn)    { cancelAdd();      return; }
+    }
+});
+
+/* ── Bootstrap after Supabase auth confirms identity ── */
+document.addEventListener('yrl-auth-ready', function (e) {
+    const user = e.detail?.user || window.yrlUser;
+    if (user) {
+        const email   = user.email || '';
+        const display = user.user_metadata?.full_name
+                     || user.user_metadata?.name
+                     || email.split('@')[0];
+        /* Email is the stable identity key used in Supabase progress maps */
+        localStorage.setItem(AGENT_NAME_KEY,    email);
+        /* Display name is used only for form pre-fills */
+        localStorage.setItem(AGENT_DISPLAY_KEY, display);
+    }
+    init();
+});
+</script>
+
+</body>
+</html>

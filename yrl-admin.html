@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Tools — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <style>
+        :root {
+            --red:        #c03926;
+            --red-light:  #d94a35;
+            --red-dark:   #9e2e1e;
+            --bg:         #f2f4f7;
+            --surface:    #ffffff;
+            --surface-2:  #f7f8fa;
+            --surface-3:  #eef0f3;
+            --border:     #e2e5ea;
+            --text:       #1a1d22;
+            --text-sec:   #5a6270;
+            --text-muted: #9ca3af;
+            --green:      #16a34a;
+            --orange:     #ea580c;
+            --blue:       #1d4ed8;
+            --radius:     12px;
+            --radius-lg:  20px;
+        }
+
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; }
+        body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+        a { text-decoration:none; color:inherit; }
+
+        /* ── PIN Gate ── */
+        #pinGate {
+            display:none; position:fixed; inset:0;
+            background:linear-gradient(150deg,#1a1d22 0%,#2d3139 100%);
+            z-index:500; align-items:center; justify-content:center; padding:20px;
+        }
+        #pinGate.show { display:flex; }
+        .pin-box {
+            background:var(--surface); border-radius:20px; padding:40px 36px;
+            width:100%; max-width:380px; text-align:center;
+            box-shadow:0 24px 60px rgba(0,0,0,0.35);
+        }
+        .pin-icon {
+            width:64px; height:64px; border-radius:16px; background:var(--red);
+            display:flex; align-items:center; justify-content:center;
+            font-size:28px; color:#fff; margin:0 auto 20px;
+            box-shadow:0 6px 20px rgba(192,57,38,0.4);
+        }
+        .pin-title { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:2px; color:var(--text); margin-bottom:6px; }
+        .pin-sub { font-size:13px; color:var(--text-muted); margin-bottom:28px; }
+        .pin-input {
+            width:100%; border:2px solid var(--border); border-radius:10px;
+            padding:14px 16px; font-size:28px; font-family:'Bebas Neue',sans-serif;
+            letter-spacing:10px; text-align:center; color:var(--text); outline:none;
+            background:var(--surface-3); margin-bottom:16px; transition:border-color 0.15s;
+        }
+        .pin-input:focus { border-color:var(--red); background:var(--surface); }
+        .pin-input.shake { animation:shake 0.35s ease; border-color:#ef4444; }
+        @keyframes shake {
+            0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)}
+            60%{transform:translateX(-6px)} 80%{transform:translateX(6px)}
+        }
+        .pin-error { font-size:12px; color:#ef4444; margin-bottom:12px; min-height:18px; }
+        .btn-pin-submit {
+            width:100%; background:var(--red); color:#fff; border:none; border-radius:10px;
+            padding:13px; font-size:15px; font-weight:700; font-family:'Inter',sans-serif;
+            cursor:pointer; transition:background 0.15s;
+        }
+        .btn-pin-submit:hover { background:var(--red-dark); }
+        .pin-back { display:inline-block; margin-top:16px; font-size:12px; color:var(--text-muted); cursor:pointer; }
+        .pin-back:hover { color:var(--red); }
+
+        /* ── Subpage header ── */
+        .sub-header {
+            background: linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);
+            padding: 28px 20px; border-bottom: 4px solid rgba(0,0,0,0.15);
+            position: relative; overflow: hidden;
+        }
+        .sub-header::before {
+            content:''; position:absolute; inset:0;
+            background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
+            background-size: 28px 28px; pointer-events:none;
+        }
+        .sub-header-inner {
+            max-width:1100px; margin:0 auto;
+            display:flex; align-items:center; justify-content:space-between;
+            position:relative; z-index:1;
+        }
+        .sub-header-left { display:flex; align-items:center; gap:20px; }
+        .sub-header-logo { max-width:120px; background:#fff; border-radius:10px; padding:10px 16px; box-shadow:0 4px 16px rgba(0,0,0,0.2); }
+        .sub-header-text h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(28px,5vw,42px); letter-spacing:2px; color:#fff; line-height:1; }
+        .sub-header-text p { color:rgba(255,255,255,0.7); font-size:13px; margin-top:4px; }
+        .back-btn {
+            display:inline-flex; align-items:center; gap:7px;
+            background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.35);
+            color:#fff; padding:9px 18px; border-radius:100px;
+            font-size:12.5px; font-weight:600; transition:all 0.2s ease; white-space:nowrap;
+        }
+        .back-btn:hover { background:rgba(255,255,255,0.3); transform:translateY(-1px); }
+
+        /* ── Main ── */
+        .main { max-width:1100px; margin:0 auto; padding:48px 20px 90px; }
+
+        /* ── Section ── */
+        .admin-section { margin-bottom:40px; }
+        .section-label {
+            font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:1.5px;
+            color:var(--text); margin-bottom:14px; display:flex; align-items:center; gap:10px;
+        }
+        .section-label i { font-size:15px; color:var(--red); }
+
+        /* ── Link grid ── */
+        .link-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:10px; }
+
+        /* ── Platform card ── */
+        .platform-card {
+            display:flex; align-items:center; gap:14px;
+            background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+            padding:16px 18px; transition:all 0.15s; cursor:pointer;
+            box-shadow:0 1px 4px rgba(0,0,0,0.05);
+        }
+        .platform-card:hover { border-color:rgba(192,57,38,0.4); box-shadow:0 3px 12px rgba(192,57,38,0.1); transform:translateY(-2px); }
+        .platform-icon {
+            width:40px; height:40px; border-radius:10px; flex-shrink:0;
+            display:flex; align-items:center; justify-content:center;
+            font-size:17px; color:#fff;
+        }
+        .platform-icon.red    { background:var(--red); }
+        .platform-icon.dark   { background:#1a1d22; }
+        .platform-icon.green  { background:var(--green); }
+        .platform-icon.blue   { background:var(--blue); }
+        .platform-icon.orange { background:var(--orange); }
+        .platform-icon.purple { background:#7c3aed; }
+        .platform-icon.slate  { background:#475569; }
+        .platform-icon.teal   { background:#0d9488; }
+        .platform-text h4 { font-size:13.5px; font-weight:600; color:var(--text); line-height:1.2; }
+        .platform-text p { font-size:11.5px; color:var(--text-muted); margin-top:2px; }
+        .platform-arrow { margin-left:auto; font-size:11px; color:var(--text-muted); flex-shrink:0; }
+
+        /* ── Tracker card (wider) ── */
+        .tracker-card {
+            display:flex; align-items:center; gap:16px;
+            background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+            padding:18px 20px; transition:all 0.15s;
+            box-shadow:0 1px 4px rgba(0,0,0,0.05);
+        }
+        .tracker-card:hover { border-color:rgba(192,57,38,0.4); box-shadow:0 3px 12px rgba(192,57,38,0.1); transform:translateY(-2px); }
+        .tracker-card-icon {
+            width:44px; height:44px; border-radius:11px; flex-shrink:0;
+            display:flex; align-items:center; justify-content:center;
+            font-size:19px; color:#fff; background:var(--red);
+        }
+        .tracker-card-text h4 { font-size:14px; font-weight:700; color:var(--text); }
+        .tracker-card-text p { font-size:12px; color:var(--text-muted); margin-top:2px; }
+
+        /* ── Submissions ── */
+        .submissions-controls { display:flex; align-items:center; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
+        .sub-filter-btn {
+            background:var(--surface); border:1px solid var(--border); border-radius:8px;
+            padding:7px 14px; font-size:12.5px; font-weight:600; font-family:'Inter',sans-serif;
+            cursor:pointer; color:var(--text-sec); transition:all 0.15s;
+        }
+        .sub-filter-btn:hover { border-color:var(--red); color:var(--red); }
+        .sub-filter-btn.active { background:var(--red); color:#fff; border-color:var(--red); }
+        .btn-refresh-subs {
+            margin-left:auto; background:none; border:1px solid var(--border); border-radius:8px;
+            padding:7px 14px; font-size:12px; font-family:'Inter',sans-serif;
+            cursor:pointer; color:var(--text-muted); transition:all 0.15s;
+        }
+        .btn-refresh-subs:hover { border-color:var(--red); color:var(--red); }
+        .submissions-list { display:flex; flex-direction:column; gap:10px; }
+        .submission-card {
+            background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+            padding:16px 18px;
+        }
+        .submission-card h4 { font-size:14px; font-weight:700; color:var(--text); margin-bottom:6px; }
+        .submission-card .sub-type-badge {
+            display:inline-block; font-size:10px; font-weight:700; padding:2px 8px;
+            border-radius:20px; background:rgba(192,57,38,0.1); color:var(--red);
+            margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;
+        }
+        .submission-field { font-size:12.5px; color:var(--text-sec); line-height:1.9; }
+        .submission-field strong { color:var(--text); font-weight:600; }
+        .submission-time { font-size:11px; color:var(--text-muted); margin-top:8px; }
+        .no-subs { font-size:13px; color:var(--text-muted); font-style:italic; padding:20px 0; }
+
+        /* ── Marketing Requests ── */
+        .mktg-card {
+            background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+            padding:16px 18px; display:flex; flex-direction:column; gap:6px; position:relative;
+        }
+        .mktg-card.status-done { opacity:0.55; }
+        .mktg-card-header { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+        .mktg-card-name { font-size:14px; font-weight:700; color:var(--text); }
+        .mktg-card-actions { display:flex; align-items:center; gap:6px; flex-shrink:0; }
+        .mktg-status-badge {
+            display:inline-block; font-size:10px; font-weight:700; padding:3px 9px;
+            border-radius:20px; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer;
+            transition:all 0.15s; border:none; font-family:'Inter',sans-serif;
+        }
+        .mktg-status-badge.new     { background:rgba(234,88,12,0.12); color:#ea580c; }
+        .mktg-status-badge.in-progress { background:rgba(29,78,216,0.1); color:#1d4ed8; }
+        .mktg-status-badge.done    { background:rgba(22,163,74,0.12); color:#16a34a; }
+        .mktg-type-badge {
+            display:inline-block; font-size:10px; font-weight:700; padding:2px 8px;
+            border-radius:20px; background:rgba(192,57,38,0.1); color:var(--red);
+            text-transform:uppercase; letter-spacing:0.05em;
+        }
+        .mktg-field { font-size:12.5px; color:var(--text-sec); line-height:1.9; }
+        .mktg-field strong { color:var(--text); font-weight:600; }
+        .mktg-time { font-size:11px; color:var(--text-muted); margin-top:4px; }
+        .btn-mktg-del {
+            width:24px; height:24px; border-radius:6px; border:1px solid var(--border);
+            background:var(--surface-3); color:var(--text-muted); cursor:pointer;
+            font-size:11px; display:flex; align-items:center; justify-content:center;
+            transition:all 0.15s;
+        }
+        .btn-mktg-del:hover { background:#ef4444; color:#fff; border-color:#ef4444; }
+        .mktg-filter-row { display:flex; align-items:center; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
+
+        /* ── Agent progress table ── */
+        .agent-table {
+            background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+            overflow:hidden;
+        }
+        .agent-table-row {
+            display:flex; align-items:center; gap:16px; padding:13px 18px;
+            border-bottom:1px solid var(--border);
+        }
+        .agent-table-row:last-child { border-bottom:none; }
+        .agent-name { font-weight:600; color:var(--text); min-width:150px; flex-shrink:0; font-size:13.5px; }
+        .agent-bar-wrap { flex:1; }
+        .agent-bar-track { height:7px; background:var(--surface-3); border-radius:100px; overflow:hidden; }
+        .agent-bar-fill  { height:100%; border-radius:100px; transition:width 0.4s; }
+        .agent-stats { font-size:12px; color:var(--text-sec); white-space:nowrap; flex-shrink:0; }
+        .agent-lastseen { font-size:11px; color:var(--text-muted); white-space:nowrap; flex-shrink:0; }
+        .no-agents { font-size:13px; color:var(--text-muted); font-style:italic; padding:20px 18px; }
+
+        /* ── Lock screen ── */
+        #adminContent { display:none; }
+        #adminContent.show { display:block; }
+
+        /* ── Footer ── */
+        .footer { background:var(--surface); border-top:1px solid var(--border); padding:28px 20px; text-align:center; }
+        .footer p { font-size:12px; color:var(--text-muted); }
+
+        /* ── Edit mode ── */
+        .btn-edit-mode {
+            display:inline-flex; align-items:center; gap:7px;
+            background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.35);
+            color:#fff; padding:9px 18px; border-radius:100px;
+            font-size:12.5px; font-weight:600; cursor:pointer; white-space:nowrap; transition:all 0.2s;
+        }
+        .btn-edit-mode:hover { background:rgba(255,255,255,0.3); }
+        .btn-edit-mode.active { background:rgba(255,255,255,0.9); color:var(--red); }
+
+        /* ── Save flash ── */
+        #saveFlash {
+            position:fixed; top:20px; right:20px; z-index:999;
+            background:var(--green); color:#fff; padding:10px 20px; border-radius:10px;
+            font-size:13px; font-weight:600; opacity:0; transform:translateY(-8px);
+            transition:all 0.25s; pointer-events:none; box-shadow:0 4px 16px rgba(22,163,74,0.35);
+        }
+        #saveFlash.show { opacity:1; transform:translateY(0); }
+
+        /* ── Section header row ── */
+        .section-header-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+        .section-header-row .section-label { margin-bottom:0; }
+        .btn-add-card {
+            display:inline-flex; align-items:center; gap:6px;
+            background:var(--red); color:#fff; border:none; border-radius:8px;
+            padding:7px 14px; font-size:12px; font-weight:600; font-family:'Inter',sans-serif;
+            cursor:pointer; transition:background 0.15s;
+        }
+        .btn-add-card:hover { background:var(--red-dark); }
+
+        /* ── Card edit overlay ── */
+        .card-wrap { position:relative; }
+        .card-edit-btns {
+            position:absolute; top:8px; right:8px; display:flex; gap:5px; z-index:2;
+        }
+        .btn-card-edit, .btn-card-del {
+            width:26px; height:26px; border-radius:6px; border:none; cursor:pointer;
+            font-size:11px; display:flex; align-items:center; justify-content:center;
+            transition:all 0.15s;
+        }
+        .btn-card-edit { background:var(--surface-3); color:var(--text-sec); }
+        .btn-card-edit:hover { background:var(--blue); color:#fff; }
+        .btn-card-del  { background:var(--surface-3); color:var(--text-sec); }
+        .btn-card-del:hover  { background:#ef4444; color:#fff; }
+
+        /* ── SOP section ── */
+        .sop-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:10px; }
+        .sop-tile {
+            display:flex; align-items:center; justify-content:space-between; gap:10px;
+            background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+            padding:14px 16px; font-size:13.5px; font-weight:500; color:var(--text);
+            box-shadow:0 1px 4px rgba(0,0,0,0.05); cursor:pointer; transition:all 0.15s;
+            text-decoration:none;
+        }
+        .sop-tile:hover { border-color:rgba(192,57,38,0.4); box-shadow:0 3px 12px rgba(192,57,38,0.1); transform:translateY(-1px); }
+        .sop-tile-editing {
+            background:var(--surface-2); border:1.5px solid var(--red); border-radius:var(--radius);
+            padding:14px 16px; display:flex; flex-direction:column; gap:10px;
+        }
+        .sop-edit-input {
+            width:100%; border:1.5px solid var(--border); border-radius:8px;
+            padding:8px 11px; font-size:13px; font-family:'Inter',sans-serif;
+            color:var(--text); outline:none; background:var(--surface);
+        }
+        .sop-edit-input:focus { border-color:var(--red); }
+        .sop-edit-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+        .btn-sop-save { background:var(--red); color:#fff; border:none; border-radius:7px; padding:6px 14px; font-size:12.5px; font-weight:600; font-family:'Inter',sans-serif; cursor:pointer; }
+        .btn-sop-save:hover { background:var(--red-dark); }
+        .btn-sop-cancel { background:none; border:1px solid var(--border); border-radius:7px; padding:6px 12px; font-size:12.5px; font-weight:500; font-family:'Inter',sans-serif; cursor:pointer; color:var(--text-muted); }
+        .btn-sop-del { background:none; border:none; color:var(--text-muted); font-size:13px; cursor:pointer; margin-left:auto; }
+        .btn-sop-del:hover { color:#ef4444; }
+        .sop-badge-available { background:rgba(22,163,74,0.1); color:var(--green); font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; white-space:nowrap; }
+        .tile-upload-row { display:flex; align-items:center; gap:8px; margin-top:4px; }
+        .btn-upload-file { display:inline-flex; align-items:center; gap:5px; background:rgba(192,57,38,0.08); color:var(--red); border:1.5px dashed var(--red); border-radius:7px; padding:5px 11px; font-size:11.5px; font-weight:600; font-family:'Inter',sans-serif; cursor:pointer; white-space:nowrap; transition:all 0.15s; }
+        .btn-upload-file:hover { background:rgba(192,57,38,0.15); }
+        .upload-status { font-size:11.5px; font-weight:500; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px; }
+        .upload-status.uploading { color:#ea580c; }
+        .upload-status.success   { color:var(--green); }
+        .upload-status.error     { color:#ef4444; }
+
+        /* ── Personal tile button ── */
+        .btn-add-personal {
+            display:inline-flex; align-items:center; gap:5px;
+            background:rgba(192,57,38,0.08); color:var(--red);
+            border:1px dashed var(--red); border-radius:7px;
+            padding:4px 10px; font-size:11.5px; font-weight:600;
+            font-family:'Inter',sans-serif; cursor:pointer; white-space:nowrap;
+            transition:all 0.15s; flex-shrink:0;
+        }
+        .btn-add-personal:hover { background:rgba(192,57,38,0.15); }
+
+        /* ── Modal overlay ── */
+        .modal-overlay {
+            display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45);
+            z-index:400; align-items:center; justify-content:center; padding:20px;
+        }
+        .modal-overlay.show { display:flex; }
+        .modal-box {
+            background:var(--surface); border-radius:16px; padding:28px 28px 24px;
+            width:100%; max-width:460px; box-shadow:0 24px 60px rgba(0,0,0,0.25);
+        }
+        .modal-box h3 { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:1.5px; margin-bottom:18px; color:var(--text); }
+        .modal-field { margin-bottom:14px; }
+        .modal-label { font-size:11.5px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--text-sec); margin-bottom:5px; display:block; }
+        .modal-input {
+            width:100%; border:1.5px solid var(--border); border-radius:9px;
+            padding:9px 13px; font-size:13.5px; font-family:'Inter',sans-serif;
+            color:var(--text); outline:none; background:var(--surface-2);
+        }
+        .modal-input:focus { border-color:var(--red); background:var(--surface); }
+        .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; }
+        .btn-modal-save { background:var(--red); color:#fff; border:none; border-radius:9px; padding:10px 22px; font-size:13.5px; font-weight:700; font-family:'Inter',sans-serif; cursor:pointer; }
+        .btn-modal-save:hover { background:var(--red-dark); }
+        .btn-modal-cancel { background:none; border:1.5px solid var(--border); border-radius:9px; padding:10px 18px; font-size:13px; font-weight:600; font-family:'Inter',sans-serif; cursor:pointer; color:var(--text-muted); }
+        .btn-modal-cancel:hover { border-color:var(--red); color:var(--red); }
+
+        /* ── VOH cards ── */
+        .voh-card {
+            background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+            padding:16px 18px; margin-bottom:12px;
+        }
+        .voh-card-header { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:10px; }
+        .voh-card-title { font-size:15px; font-weight:700; color:var(--text); }
+        .voh-card-sub { font-size:12px; color:var(--text-muted); margin-top:2px; }
+        .voh-status {
+            display:inline-block; font-size:10px; font-weight:700; padding:3px 10px;
+            border-radius:20px; text-transform:uppercase; letter-spacing:0.05em; white-space:nowrap;
+        }
+        .voh-status.submitted   { background:rgba(234,88,12,0.12);  color:#ea580c; }
+        .voh-status.in_setup    { background:rgba(29,78,216,0.10);  color:#1d4ed8; }
+        .voh-status.ready       { background:rgba(124,58,237,0.10); color:#7c3aed; }
+        .voh-status.live        { background:rgba(192,57,38,0.12);  color:var(--red); }
+        .voh-status.post_event  { background:rgba(13,148,136,0.10); color:#0d9488; }
+        .voh-status.complete    { background:rgba(22,163,74,0.12);  color:var(--green); }
+        .voh-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:8px 16px; font-size:12.5px; color:var(--text-sec); margin-bottom:10px; }
+        .voh-grid strong { color:var(--text); font-weight:600; display:block; font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-muted); margin-bottom:2px; }
+        .voh-toggle-row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 12px; border:1px solid var(--border); border-radius:8px; background:var(--surface-2); margin-bottom:6px; font-size:12.5px; }
+        .voh-toggle-row.done { background:rgba(22,163,74,0.06); border-color:rgba(22,163,74,0.3); }
+        .voh-toggle-btn {
+            background:var(--surface); border:1px solid var(--border); border-radius:6px;
+            padding:4px 10px; font-size:11px; font-weight:600; font-family:'Inter',sans-serif;
+            cursor:pointer; color:var(--text-sec);
+        }
+        .voh-toggle-btn.done { background:var(--green); color:#fff; border-color:var(--green); }
+        .voh-input {
+            width:100%; border:1.5px solid var(--border); border-radius:8px;
+            padding:8px 11px; font-size:13px; font-family:'Inter',sans-serif;
+            color:var(--text); outline:none; background:var(--surface-2);
+        }
+        .voh-input:focus { border-color:var(--red); background:var(--surface); }
+        .voh-field-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-sec); display:block; margin-bottom:4px; }
+        .voh-section-title { font-size:13px; font-weight:700; color:var(--text); margin:14px 0 8px; padding-top:12px; border-top:1px solid var(--border); }
+        .voh-section-title:first-child { border-top:none; padding-top:0; margin-top:0; }
+        .voh-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; padding-top:12px; border-top:1px solid var(--border); }
+        .voh-btn {
+            background:var(--red); color:#fff; border:none; border-radius:8px;
+            padding:8px 14px; font-size:12.5px; font-weight:600; font-family:'Inter',sans-serif; cursor:pointer;
+        }
+        .voh-btn:hover { background:var(--red-dark); }
+        .voh-btn.secondary { background:var(--surface-3); color:var(--text); }
+        .voh-btn.secondary:hover { background:var(--border); }
+        .voh-btn.danger { background:#ef4444; }
+        .voh-expand-btn {
+            background:none; border:1px solid var(--border); border-radius:8px;
+            padding:6px 12px; font-size:11.5px; font-weight:600; font-family:'Inter',sans-serif;
+            cursor:pointer; color:var(--text-sec);
+        }
+        .voh-expand-btn:hover { border-color:var(--red); color:var(--red); }
+        .voh-detail { display:none; margin-top:12px; padding-top:12px; border-top:1px solid var(--border); }
+        .voh-detail.show { display:block; }
+
+        /* ── Responsive ── */
+        @media (max-width:640px) {
+            .sub-header-inner { flex-direction:column; gap:16px; text-align:center; }
+            .sub-header-left { flex-direction:column; align-items:center; }
+            .main { padding:32px 16px 70px; }
+            .link-grid { grid-template-columns:1fr; }
+            .agent-table-row { flex-wrap:wrap; gap:8px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── PIN Gate ── -->
+<div id="pinGate" class="show">
+    <div class="pin-box">
+        <div class="pin-icon"><i class="fa-solid fa-lock"></i></div>
+        <div class="pin-title">Admin Access</div>
+        <div class="pin-sub">Enter your PIN to continue</div>
+        <input class="pin-input" id="pinInput" type="password" maxlength="4" inputmode="numeric"
+               placeholder="••••" autocomplete="off"
+               oninput="if(this.value.length===4) checkPin()"
+               onkeydown="if(event.key==='Enter') checkPin()">
+        <div class="pin-error" id="pinError"></div>
+        <button class="btn-pin-submit" onclick="checkPin()">Unlock</button>
+        <div class="pin-back" onclick="window.location='yrl-agent-hub.html'">
+            <i class="fa-solid fa-arrow-left"></i> Back to Hub
+        </div>
+    </div>
+</div>
+
+<!-- ── Admin Content ── -->
+<div id="adminContent">
+
+    <!-- Subpage Header -->
+    <header class="sub-header">
+        <div class="sub-header-inner">
+            <div class="sub-header-left">
+                <img src="https://yrlagent.com/wp-content/uploads/2026/04/Your-Realty-Link-ver6.6-4-final.png"
+                     alt="Your Realty Link" class="sub-header-logo">
+                <div class="sub-header-text">
+                    <h1>Admin Tools</h1>
+                    <p>Broker access only &mdash; Daniel Cope</p>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+                <button id="btnEditMode" class="btn-edit-mode" onclick="toggleEditMode()">
+                    <i class="fa-solid fa-pen"></i> Edit Mode
+                </button>
+                <button onclick="lockAdmin()" style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.35);color:#fff;padding:9px 18px;border-radius:100px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;">
+                    <i class="fa-solid fa-lock"></i> Lock
+                </button>
+                <a href="yrl-agent-hub.html" class="back-btn">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Hub
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div id="saveFlash"><i class="fa-solid fa-check"></i> Saved</div>
+
+    <main class="main">
+
+        <!-- ── PLATFORM ACCESS ── -->
+        <div class="admin-section" id="sectionPlatform">
+            <div class="section-header-row">
+                <div class="section-label"><i class="fa-solid fa-server"></i> Platform Access</div>
+                <button class="btn-add-card edit-only" style="display:none" onclick="openCardModal('platform')"><i class="fa-solid fa-plus"></i> Add Link</button>
+            </div>
+            <div class="link-grid" id="gridPlatform"></div>
+        </div>
+
+        <!-- ── TRACKING TOOLS ── -->
+        <div class="admin-section" id="sectionTracking">
+            <div class="section-header-row">
+                <div class="section-label"><i class="fa-solid fa-chart-bar"></i> Tracking Tools</div>
+                <button class="btn-add-card edit-only" style="display:none" onclick="openCardModal('tracking')"><i class="fa-solid fa-plus"></i> Add Link</button>
+            </div>
+            <div class="link-grid" id="gridTracking"></div>
+        </div>
+
+        <!-- ── SOPs ── -->
+        <div class="admin-section" id="sectionSops">
+            <div class="section-header-row">
+                <div class="section-label"><i class="fa-solid fa-book-open"></i> Standard Operating Procedures</div>
+                <button class="btn-add-card edit-only" style="display:none" onclick="addSopItem()"><i class="fa-solid fa-plus"></i> Add SOP</button>
+            </div>
+            <div class="sop-grid" id="gridSops"><div style="font-size:13px;color:var(--text-muted);font-style:italic;">Loading…</div></div>
+        </div>
+
+        <!-- ── MARKETING REQUESTS ── -->
+        <div class="admin-section">
+            <div class="section-header-row">
+                <div class="section-label"><i class="fa-solid fa-paintbrush"></i> Marketing Requests</div>
+                <button class="btn-refresh-subs" style="margin-left:0" onclick="loadMktgRequests()">
+                    <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                </button>
+            </div>
+            <div class="mktg-filter-row">
+                <button class="sub-filter-btn active" onclick="filterMktg('all',this)">All</button>
+                <button class="sub-filter-btn" onclick="filterMktg('new',this)">New</button>
+                <button class="sub-filter-btn" onclick="filterMktg('in-progress',this)">In Progress</button>
+                <button class="sub-filter-btn" onclick="filterMktg('done',this)">Done</button>
+            </div>
+            <div id="mktgRequestsList"><div class="no-subs">Loading…</div></div>
+        </div>
+
+        <!-- ── VIRTUAL OPEN HOUSE ── -->
+        <div class="admin-section">
+            <div class="section-header-row">
+                <div class="section-label"><i class="fa-solid fa-house-signal"></i> Virtual Open House Events</div>
+                <button class="btn-refresh-subs" style="margin-left:0" onclick="loadVohEvents()">
+                    <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                </button>
+            </div>
+            <div class="mktg-filter-row">
+                <button class="sub-filter-btn active" onclick="filterVoh('all',this)">All</button>
+                <button class="sub-filter-btn" onclick="filterVoh('submitted',this)">New</button>
+                <button class="sub-filter-btn" onclick="filterVoh('in_setup',this)">In Setup</button>
+                <button class="sub-filter-btn" onclick="filterVoh('ready',this)">Ready</button>
+                <button class="sub-filter-btn" onclick="filterVoh('live',this)">Live</button>
+                <button class="sub-filter-btn" onclick="filterVoh('post_event',this)">Post-Event</button>
+                <button class="sub-filter-btn" onclick="filterVoh('complete',this)">Complete</button>
+            </div>
+            <div id="vohEventsList"><div class="no-subs">Loading…</div></div>
+        </div>
+
+        <!-- ── AGENT ONBOARDING PROGRESS ── -->
+        <div class="admin-section">
+            <div class="section-label"><i class="fa-solid fa-users"></i> Agent Onboarding Progress</div>
+            <div style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:12px;">
+                <button class="btn-refresh-subs" onclick="loadAgentProgress()">
+                    <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                </button>
+            </div>
+            <div id="agentProgressWrap">
+                <div class="no-agents">Loading…</div>
+            </div>
+        </div>
+
+        <!-- ── AGENT SUBMISSIONS ── -->
+        <div class="admin-section">
+            <div class="section-label"><i class="fa-solid fa-inbox"></i> Agent Submissions</div>
+            <div class="submissions-controls">
+                <button class="sub-filter-btn active" onclick="filterSubs('all', this)">All</button>
+                <button class="sub-filter-btn" onclick="filterSubs('agent-info', this)">Agent Info Forms</button>
+                <button class="sub-filter-btn" onclick="filterSubs('custom-form', this)">Custom Forms</button>
+                <button class="btn-refresh-subs" onclick="loadSubmissions()">
+                    <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                </button>
+            </div>
+            <div class="submissions-list" id="submissionsList">
+                <div class="no-subs">Loading…</div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 Your Realty Link &nbsp;&middot;&nbsp; Admin Panel</p>
+    </footer>
+
+</div><!-- /adminContent -->
+
+<!-- ── Card edit modal (platform / tracking links) ── -->
+<div class="modal-overlay" id="cardModal">
+    <div class="modal-box">
+        <h3 id="cardModalTitle">Add Link</h3>
+        <div class="modal-field">
+            <label class="modal-label">Title *</label>
+            <input class="modal-input" id="cardTitle" type="text" placeholder="e.g. Cloudways">
+        </div>
+        <div class="modal-field">
+            <label class="modal-label">Description</label>
+            <input class="modal-input" id="cardDesc" type="text" placeholder="Short description">
+        </div>
+        <div class="modal-field">
+            <label class="modal-label">URL *</label>
+            <input class="modal-input" id="cardUrl" type="url" placeholder="https://…">
+        </div>
+        <div class="modal-field">
+            <label class="modal-label">Icon color</label>
+            <select class="modal-input" id="cardColor">
+                <option value="red">Red (YRL)</option>
+                <option value="dark">Dark</option>
+                <option value="green">Green</option>
+                <option value="blue">Blue</option>
+                <option value="orange">Orange</option>
+                <option value="purple">Purple</option>
+                <option value="slate">Slate</option>
+                <option value="teal">Teal</option>
+            </select>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-modal-cancel" onclick="closeCardModal()">Cancel</button>
+            <button class="btn-modal-save" onclick="saveCard()">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Personal tile modal ── -->
+<div class="modal-overlay" id="personalModal">
+    <div class="modal-box">
+        <h3 id="personalModalTitle">Add Personal Item</h3>
+        <div class="modal-field">
+            <label class="modal-label">Agent</label>
+            <input class="modal-input" id="personalAgent" type="text" readonly style="background:var(--surface-3);color:var(--text-sec);">
+        </div>
+        <div class="modal-field">
+            <label class="modal-label">Item Title *</label>
+            <input class="modal-input" id="personalTitle" type="text" placeholder="e.g. Upload Front of Business Card">
+        </div>
+        <div class="modal-field">
+            <label class="modal-label">Link / File URL <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted)">(optional)</span></label>
+            <input class="modal-input" id="personalUrl" type="url" placeholder="Paste link or upload a file">
+            <div class="tile-upload-row" style="margin-top:8px;">
+                <input type="file" id="personalFileInput" style="display:none" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" onchange="handlePersonalFileUpload()">
+                <button class="btn-upload-file" type="button" onclick="document.getElementById('personalFileInput').click()"><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload file</button>
+                <span class="upload-status" id="personalUploadStatus">or paste URL above</span>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-modal-cancel" onclick="closePersonalModal()">Cancel</button>
+            <button class="btn-modal-save" onclick="savePersonalTile()">Add Item</button>
+        </div>
+    </div>
+</div>
+
+<script src="yrl-hub.js"></script>
+<script>
+/* ============================================================
+   YRL Admin Tools
+   ============================================================ */
+
+const ADMIN_AUTH_KEY     = 'yrl_admin_auth';
+const ADMIN_PIN          = '1984';
+const SUBMISSIONS_KEY    = 'yrl-onboarding-submissions';
+const AGENT_PROGRESS_KEY = 'yrl-onboarding-agent-progress';
+const ONBOARDING_KEY     = 'yrl-onboarding-state';
+const ADMIN_LINKS_KEY    = 'yrl-admin-links';
+const SOP_KEY            = 'yrl-admin-sops';
+const PERSONAL_TILES_KEY = 'yrl-onboarding-personal-tiles';
+const REQUIRED_IDS       = ['b-agentinfo', 'd-headshot', 'b3', 'b5', 'd4', 'd1'];
+
+let allSubmissions = [];
+let activeFilter   = 'all';
+let adminEditMode  = false;
+let adminLinks     = null;   /* { platform:[...], tracking:[...] } */
+let sopItems       = [];     /* flat array of SOP tiles */
+let personalTiles  = {};     /* { "Agent Name": [...tiles] } */
+let editingCardSection = null;
+let editingCardId      = null;
+let editingSopId       = null;
+let personalModalAgent = null;
+
+/* ── uid / esc helpers ── */
+function uid() { return Math.random().toString(36).slice(2,9); }
+
+const DEFAULT_LINKS = {
+    platform: [
+        { id:'p1', title:'Cloudways',            desc:'Hosting & server management',        url:'https://my.cloudways.com',                                    icon:'fa-cloud',          color:'dark'  },
+        { id:'p2', title:'Supabase',             desc:'Database & hub content',             url:'https://app.supabase.com/project/khhfkxfxefjgunhrihyx',       icon:'fa-database',       color:'green' },
+        { id:'p3', title:'Domain Registrar',     desc:'DNS & domain settings',             url:'https://godaddy.com',                                          icon:'fa-globe',          color:'blue'  },
+        { id:'p4', title:'WordPress',            desc:'yrlagent.com site admin',            url:'https://wordpress.com/home/yrlagent.com',                      icon:'fa-brands fa-wordpress', color:'blue', colorHex:'#21759b' },
+        { id:'p5', title:'Dropbox File Requests',desc:'Agent headshot uploads',            url:'https://www.dropbox.com/requests',                             icon:'fa-brands fa-dropbox',   color:'blue', colorHex:'#0061ff' },
+        { id:'p6', title:'FormSubmit',           desc:'Marketing request form handler',     url:'https://formsubmit.co',                                        icon:'fa-paper-plane',    color:'slate' },
+    ],
+    tracking: [
+        { id:'t1', title:'Task Board',                             desc:'YRL internal task management',                    url:'yrl-tasks.html',        icon:'fa-clipboard-check', color:'red'  },
+        { id:'t2', title:'Indy Property Guide — Page Tracker',    desc:'Track pages for indypropertyguide.com',           url:'yrl-page-tracker.html', icon:'fa-list-check',      color:'red'  },
+    ]
+};
+
+/* ── Edit Mode ── */
+function toggleEditMode() {
+    adminEditMode = !adminEditMode;
+    const btn = document.getElementById('btnEditMode');
+    btn.innerHTML = adminEditMode
+        ? '<i class="fa-solid fa-xmark"></i> Done Editing'
+        : '<i class="fa-solid fa-pen"></i> Edit Mode';
+    btn.classList.toggle('active', adminEditMode);
+    document.querySelectorAll('.edit-only').forEach(el => {
+        el.style.display = adminEditMode ? '' : 'none';
+    });
+
+    /* When exiting edit mode, auto-save any open SOP edit form then persist */
+    if (!adminEditMode) {
+        if (editingSopId) {
+            /* Commit whatever is typed in the open edit form */
+            const item    = sopItems.find(s => s.id === editingSopId);
+            const titleEl = document.getElementById('sopTitle-' + editingSopId);
+            const linkEl  = document.getElementById('sopLink-'  + editingSopId);
+            if (item) {
+                if (titleEl) item.title = titleEl.value.trim() || item.title;
+                if (linkEl)  item.link  = linkEl.value.trim();
+            }
+            editingSopId = null;
+        }
+        saveSops(); /* persist to localStorage + Supabase */
+    }
+
+    renderPlatformSection();
+    renderTrackingSection();
+    renderSopSection();
+}
+
+function showSaveFlash() {
+    const f = document.getElementById('saveFlash');
+    if (!f) return;
+    f.classList.add('show');
+    setTimeout(() => f.classList.remove('show'), 2200);
+}
+
+/* ── Platform / Tracking sections ── */
+async function initAdminLinks() {
+    const saved = await loadHubContent(ADMIN_LINKS_KEY);
+    adminLinks = (saved && saved.platform && saved.tracking) ? saved : JSON.parse(JSON.stringify(DEFAULT_LINKS));
+    renderPlatformSection();
+    renderTrackingSection();
+}
+
+async function saveAdminLinks() {
+    const ok = await saveHubContent(ADMIN_LINKS_KEY, adminLinks);
+    if (ok) showSaveFlash();
+}
+
+function renderCardGrid(gridId, section) {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
+    const cards = adminLinks[section] || [];
+    if (cards.length === 0 && !adminEditMode) { grid.innerHTML = '<div style="font-size:13px;color:var(--text-muted);font-style:italic;">No links yet — enter Edit Mode to add some.</div>'; return; }
+    grid.innerHTML = cards.map(c => {
+        const iconStyle = c.colorHex ? `background:${c.colorHex}` : '';
+        const editBtns = adminEditMode ? `<div class="card-edit-btns">
+            <button class="btn-card-edit" onclick="event.preventDefault();event.stopPropagation();openCardModal('${section}','${c.id}')" title="Edit"><i class="fa-solid fa-pen"></i></button>
+            <button class="btn-card-del"  onclick="event.preventDefault();event.stopPropagation();deleteCard('${section}','${c.id}')" title="Delete"><i class="fa-solid fa-xmark"></i></button>
+        </div>` : '';
+        const target = c.url.startsWith('http') ? ' target="_blank" rel="noopener"' : '';
+        return `<div class="card-wrap">
+            ${editBtns}
+            <a href="${esc(c.url)}"${target} class="platform-card" style="${adminEditMode?'padding-right:72px;':''}">
+                <div class="platform-icon ${c.color}" style="${iconStyle}"><i class="fa-solid ${c.icon}"></i></div>
+                <div class="platform-text"><h4>${esc(c.title)}</h4><p>${esc(c.desc||'')}</p></div>
+                <i class="fa-solid fa-arrow-up-right-from-square platform-arrow"></i>
+            </a>
+        </div>`;
+    }).join('');
+}
+
+function renderPlatformSection() { renderCardGrid('gridPlatform', 'platform'); }
+function renderTrackingSection() { renderCardGrid('gridTracking', 'tracking'); }
+
+/* ── Card Modal ── */
+function openCardModal(section, id) {
+    editingCardSection = section;
+    editingCardId = id || null;
+    const card = id ? (adminLinks[section]||[]).find(c=>c.id===id) : null;
+    document.getElementById('cardModalTitle').textContent = card ? 'Edit Link' : 'Add Link';
+    document.getElementById('cardTitle').value  = card ? card.title : '';
+    document.getElementById('cardDesc').value   = card ? (card.desc||'') : '';
+    document.getElementById('cardUrl').value    = card ? card.url : '';
+    document.getElementById('cardColor').value  = card ? card.color : 'red';
+    document.getElementById('cardModal').classList.add('show');
+    document.getElementById('cardTitle').focus();
+}
+function closeCardModal() { document.getElementById('cardModal').classList.remove('show'); }
+
+function saveCard() {
+    const title = document.getElementById('cardTitle').value.trim();
+    const url   = document.getElementById('cardUrl').value.trim();
+    if (!title || !url) {
+        if (!title) document.getElementById('cardTitle').style.borderColor = '#ef4444';
+        if (!url)   document.getElementById('cardUrl').style.borderColor   = '#ef4444';
+        return;
+    }
+    document.getElementById('cardTitle').style.borderColor = '';
+    document.getElementById('cardUrl').style.borderColor   = '';
+    const card = {
+        id:    editingCardId || uid(),
+        title, url,
+        desc:  document.getElementById('cardDesc').value.trim(),
+        color: document.getElementById('cardColor').value,
+        icon:  'fa-link',
+    };
+    const list = adminLinks[editingCardSection] || [];
+    if (editingCardId) {
+        const idx = list.findIndex(c=>c.id===editingCardId);
+        if (idx > -1) list[idx] = card; else list.push(card);
+    } else {
+        list.push(card);
+    }
+    adminLinks[editingCardSection] = list;
+    closeCardModal();
+    saveAdminLinks();
+    if (editingCardSection === 'platform') renderPlatformSection();
+    else renderTrackingSection();
+}
+
+function deleteCard(section, id) {
+    if (!confirm('Remove this link?')) return;
+    adminLinks[section] = (adminLinks[section]||[]).filter(c=>c.id!==id);
+    saveAdminLinks();
+    if (section === 'platform') renderPlatformSection();
+    else renderTrackingSection();
+}
+
+/* ── SOP Section ── */
+async function initSops() {
+    /* Show localStorage instantly so there's no blank flash */
+    try {
+        const cached = localStorage.getItem(SOP_KEY);
+        if (cached) { sopItems = JSON.parse(cached); renderSopSection(); }
+    } catch {}
+    /* Then sync from Supabase */
+    try {
+        const remote = await loadHubContent(SOP_KEY);
+        if (Array.isArray(remote)) {
+            sopItems = remote;
+            localStorage.setItem(SOP_KEY, JSON.stringify(sopItems));
+            renderSopSection();
+        }
+    } catch {}
+}
+
+async function saveSops() {
+    /* Always write localStorage first so a Supabase hiccup can't wipe data */
+    localStorage.setItem(SOP_KEY, JSON.stringify(sopItems));
+    const ok = await saveHubContent(SOP_KEY, sopItems);
+    if (ok) showSaveFlash();
+}
+
+function renderSopSection() {
+    const grid = document.getElementById('gridSops');
+    if (!grid) return;
+    if (sopItems.length === 0 && !adminEditMode) {
+        grid.innerHTML = '<div style="font-size:13px;color:var(--text-muted);font-style:italic;">No SOPs yet — enter Edit Mode and click "Add SOP".</div>';
+        return;
+    }
+    grid.innerHTML = sopItems.map(item => {
+        if (adminEditMode && editingSopId === item.id) {
+            return `<div class="sop-tile-editing">
+                <input class="sop-edit-input" id="sopTitle-${item.id}" type="text" value="${esc(item.title)}" placeholder="SOP title">
+                <input class="sop-edit-input" id="sopLink-${item.id}" type="url" value="${esc(item.link||'')}" placeholder="Paste link or upload below">
+                <div class="tile-upload-row">
+                    <input type="file" id="sopFile-${item.id}" style="display:none" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" onchange="handleSopFileUpload('${item.id}')">
+                    <button class="btn-upload-file" type="button" onclick="document.getElementById('sopFile-${item.id}').click()"><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload file</button>
+                    <span class="upload-status" id="sopUploadStatus-${item.id}">or paste URL above</span>
+                </div>
+                <div class="sop-edit-actions">
+                    <button class="btn-sop-save" onclick="saveSopItem('${item.id}')">Save</button>
+                    <button class="btn-sop-cancel" onclick="cancelSopEdit()">Cancel</button>
+                    <button class="btn-sop-del" onclick="deleteSopItem('${item.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
+                </div>
+            </div>`;
+        }
+        const hasLink = item.link && item.link.trim();
+        const tag = hasLink ? 'a' : 'div';
+        const href = hasLink ? ` href="${esc(item.link)}" target="_blank" rel="noopener"` : '';
+        const badge = hasLink ? '<span class="sop-badge-available">Available</span>' : '';
+        const editBtn = adminEditMode ? `<button style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:12px;flex-shrink:0;" onclick="event.preventDefault();editingSopId='${item.id}';renderSopSection()" title="Edit"><i class="fa-solid fa-pen"></i></button>` : '';
+        return `<${tag} class="sop-tile"${href}><span>${esc(item.title)}</span>${badge}${editBtn}</${tag}>`;
+    }).join('');
+}
+
+function addSopItem() {
+    const item = { id: uid(), title: 'New SOP', link: '' };
+    sopItems.push(item);
+    editingSopId = item.id;
+    renderSopSection();
+    const el = document.getElementById('sopTitle-' + item.id);
+    if (el) { el.focus(); el.select(); }
+}
+
+function saveSopItem(id) {
+    const item = sopItems.find(s=>s.id===id);
+    if (!item) return;
+    const titleEl = document.getElementById('sopTitle-'+id);
+    const linkEl  = document.getElementById('sopLink-'+id);
+    item.title = titleEl ? titleEl.value.trim() || item.title : item.title;
+    item.link  = linkEl  ? linkEl.value.trim()  : item.link;
+    editingSopId = null;
+    saveSops();
+    renderSopSection();
+}
+
+function cancelSopEdit() { editingSopId = null; renderSopSection(); }
+
+function deleteSopItem(id) {
+    if (!confirm('Remove this SOP?')) return;
+    sopItems = sopItems.filter(s=>s.id!==id);
+    editingSopId = null;
+    saveSops();
+    renderSopSection();
+}
+
+async function handleSopFileUpload(sopId) {
+    const fileInput = document.getElementById('sopFile-'+sopId);
+    const linkInput = document.getElementById('sopLink-'+sopId);
+    const statusEl  = document.getElementById('sopUploadStatus-'+sopId);
+    if (!fileInput?.files?.[0]) return;
+    const file = fileInput.files[0];
+    if (file.size > 50*1024*1024) { statusEl.textContent='✗ File too large (max 50 MB)'; statusEl.className='upload-status error'; return; }
+    statusEl.textContent='Uploading…'; statusEl.className='upload-status uploading';
+    try {
+        const url = await uploadHubFile(file, 'sops');
+        if (linkInput) linkInput.value = url;
+        const name = file.name.length>28 ? file.name.slice(0,25)+'…' : file.name;
+        statusEl.textContent='✓ '+name; statusEl.className='upload-status success';
+    } catch(err) {
+        statusEl.textContent='✗ '+(err.message||'Upload failed'); statusEl.className='upload-status error';
+    }
+}
+
+/* ── Personal Tiles ── */
+async function initPersonalTiles() {
+    const saved = await loadHubContent(PERSONAL_TILES_KEY);
+    personalTiles = (saved && typeof saved==='object') ? saved : {};
+}
+
+async function savePersonalTilesData() {
+    const ok = await saveHubContent(PERSONAL_TILES_KEY, personalTiles);
+    if (ok) showSaveFlash();
+    return ok;
+}
+
+function openAddPersonalModal(agentName) {
+    personalModalAgent = agentName;
+    document.getElementById('personalModalTitle').textContent = 'Add Personal Item for ' + agentName;
+    document.getElementById('personalAgent').value = agentName;
+    document.getElementById('personalTitle').value = '';
+    document.getElementById('personalUrl').value   = '';
+    document.getElementById('personalUploadStatus').textContent = 'or paste URL above';
+    document.getElementById('personalUploadStatus').className  = 'upload-status';
+    document.getElementById('personalModal').classList.add('show');
+    document.getElementById('personalTitle').focus();
+}
+function closePersonalModal() { document.getElementById('personalModal').classList.remove('show'); personalModalAgent=null; }
+
+async function savePersonalTile() {
+    const title = document.getElementById('personalTitle').value.trim();
+    const url   = document.getElementById('personalUrl').value.trim();
+    if (!title) { document.getElementById('personalTitle').style.borderColor='#ef4444'; return; }
+    document.getElementById('personalTitle').style.borderColor='';
+    if (!personalTiles[personalModalAgent]) personalTiles[personalModalAgent] = [];
+    personalTiles[personalModalAgent].push({ id: uid(), title, link: url||null });
+    await savePersonalTilesData();
+    closePersonalModal();
+}
+
+async function handlePersonalFileUpload() {
+    const fileInput = document.getElementById('personalFileInput');
+    const linkInput = document.getElementById('personalUrl');
+    const statusEl  = document.getElementById('personalUploadStatus');
+    if (!fileInput?.files?.[0]) return;
+    const file = fileInput.files[0];
+    if (file.size > 50*1024*1024) { statusEl.textContent='✗ File too large'; statusEl.className='upload-status error'; return; }
+    statusEl.textContent='Uploading…'; statusEl.className='upload-status uploading';
+    try {
+        const url = await uploadHubFile(file, 'personal');
+        if (linkInput) linkInput.value = url;
+        const name = file.name.length>28 ? file.name.slice(0,25)+'…' : file.name;
+        statusEl.textContent='✓ '+name; statusEl.className='upload-status success';
+    } catch(err) {
+        statusEl.textContent='✗ '+(err.message||'Upload failed'); statusEl.className='upload-status error';
+    }
+}
+
+/* ── PIN Auth ── */
+function checkPin() {
+    const val = document.getElementById('pinInput').value.trim();
+    if (val === ADMIN_PIN) {
+        localStorage.setItem(ADMIN_AUTH_KEY, ADMIN_PIN);
+        document.getElementById('pinGate').classList.remove('show');
+        document.getElementById('adminContent').classList.add('show');
+        loadAll();
+    } else {
+        const inp = document.getElementById('pinInput');
+        inp.classList.add('shake');
+        document.getElementById('pinError').textContent = 'Incorrect PIN — try again';
+        inp.value = '';
+        setTimeout(() => { inp.classList.remove('shake'); inp.focus(); }, 400);
+    }
+}
+
+function lockAdmin() {
+    localStorage.removeItem(ADMIN_AUTH_KEY);
+    document.getElementById('adminContent').classList.remove('show');
+    document.getElementById('pinGate').classList.add('show');
+    document.getElementById('pinInput').value = '';
+    document.getElementById('pinError').textContent = '';
+    document.getElementById('pinInput').focus();
+}
+
+/* ── Load everything ── */
+function loadAll() {
+    initAdminLinks();
+    initSops();
+    initPersonalTiles();
+    loadSubmissions();
+    loadAgentProgress();
+    loadMktgRequests();
+    loadVohEvents();
+}
+
+/* ── Agent Progress ── */
+async function loadAgentProgress() {
+    const wrap = document.getElementById('agentProgressWrap');
+    wrap.innerHTML = '<div class="no-agents">Loading…</div>';
+    try {
+        const total   = REQUIRED_IDS.length; /* 6 required steps */
+        const map     = (await loadHubContent(AGENT_PROGRESS_KEY)) || {};
+        const agents  = Object.entries(map);
+
+        if (agents.length === 0) {
+            wrap.innerHTML = '<div class="no-agents">No agents have started onboarding yet.</div>';
+            return;
+        }
+
+        /* Sort by lastSeen desc */
+        agents.sort((a,b) => ((b[1].lastSeen||'') > (a[1].lastSeen||'')) ? 1 : -1);
+
+        wrap.innerHTML = `<div class="agent-table">${
+            agents.map(([name, data]) => {
+                const statuses  = data.statuses || {};
+                const completed = REQUIRED_IDS.filter(id => statuses[id]==='completed').length;
+                const inprog    = REQUIRED_IDS.filter(id => statuses[id]==='in-progress').length;
+                const pct       = Math.round((completed/total)*100);
+                const barColor  = pct===100 ? 'var(--green)' : pct>50 ? 'var(--orange)' : 'var(--red)';
+                const lastDate  = data.lastSeen
+                    ? new Date(data.lastSeen).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})
+                    : '—';
+                return `<div class="agent-table-row">
+                    <div class="agent-name">${esc(name)}</div>
+                    <div class="agent-bar-wrap">
+                        <div class="agent-bar-track">
+                            <div class="agent-bar-fill" style="width:${pct}%;background:${barColor};"></div>
+                        </div>
+                    </div>
+                    <div class="agent-stats">${completed}/${total} required &nbsp;·&nbsp; ${pct}% &nbsp;<span style="color:var(--text-muted);font-size:11px;">(${inprog} in progress)</span></div>
+                    <div class="agent-lastseen">Last seen ${lastDate}</div>
+                    <button class="btn-add-personal" onclick="openAddPersonalModal('${esc(name)}')"><i class="fa-solid fa-plus"></i> Personal Item</button>
+                </div>`;
+            }).join('')
+        }</div>`;
+    } catch(e) {
+        wrap.innerHTML = '<div class="no-agents">Could not load progress data.</div>';
+    }
+}
+
+/* ── Submissions ── */
+async function loadSubmissions() {
+    document.getElementById('submissionsList').innerHTML = '<div class="no-subs">Loading…</div>';
+    try {
+        const data = await loadHubContent(SUBMISSIONS_KEY);
+        allSubmissions = Array.isArray(data) ? data : [];
+        renderSubmissions();
+    } catch(e) {
+        document.getElementById('submissionsList').innerHTML = '<div class="no-subs">Could not load submissions.</div>';
+    }
+}
+
+function filterSubs(type, btn) {
+    activeFilter = type;
+    document.querySelectorAll('.sub-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderSubmissions();
+}
+
+function renderSubmissions() {
+    const list = activeFilter === 'all'
+        ? allSubmissions
+        : allSubmissions.filter(s => s.type === activeFilter);
+
+    const el = document.getElementById('submissionsList');
+    if (list.length === 0) {
+        el.innerHTML = '<div class="no-subs">No submissions yet for this filter.</div>';
+        return;
+    }
+
+    el.innerHTML = list.slice().reverse().map(s => {
+        if (s.type === 'agent-info') {
+            const d = s.data || {};
+            const rows = [
+                d.cardname  && `<strong>Card Name:</strong> ${esc(d.cardname)}`,
+                d.phone     && `<strong>Phone:</strong> ${esc(d.phone)}`,
+                d.email     && `<strong>Email:</strong> ${esc(d.email)}`,
+                d.license   && `<strong>License #:</strong> ${esc(d.license)}`,
+                d.address   && `<strong>Address:</strong> ${esc(d.address)}`,
+                d.bio       && `<strong>Bio:</strong> ${esc(d.bio)}`,
+                d.ecname    && `<strong>Emergency Contact:</strong> ${esc(d.ecname)} — ${esc(d.ecphone||'')}`,
+                d.notes     && `<strong>Notes:</strong> ${esc(d.notes)}`,
+            ].filter(Boolean).join('<br>');
+            return `<div class="submission-card">
+                <div class="sub-type-badge">Agent Info Form</div>
+                <h4>${esc(d.name||'Unknown')}</h4>
+                <div class="submission-field">${rows}</div>
+                <div class="submission-time">${fmt(s.timestamp)}</div>
+            </div>`;
+        } else {
+            const d = s.data || {};
+            const rows = Object.entries(d).map(([k,v]) =>
+                v ? `<strong>${esc(k)}:</strong> ${esc(v)}` : ''
+            ).filter(Boolean).join('<br>');
+            const submitter = d['Your Name'] || 'Unknown';
+            return `<div class="submission-card">
+                <div class="sub-type-badge">${esc(s.formTitle||'Custom Form')}</div>
+                <h4>${esc(submitter)}</h4>
+                <div class="submission-field">${rows}</div>
+                <div class="submission-time">${fmt(s.timestamp)}</div>
+            </div>`;
+        }
+    }).join('');
+}
+
+/* ── Marketing Requests ── */
+const MKTG_REQUESTS_KEY = 'yrl-marketing-requests';
+let mktgRequests   = [];
+let mktgFilter     = 'all';
+
+async function loadMktgRequests() {
+    document.getElementById('mktgRequestsList').innerHTML = '<div class="no-subs">Loading…</div>';
+    try {
+        const data = await loadHubContent(MKTG_REQUESTS_KEY);
+        mktgRequests = Array.isArray(data) ? data : [];
+        renderMktgRequests();
+    } catch(e) {
+        document.getElementById('mktgRequestsList').innerHTML = '<div class="no-subs">Could not load requests.</div>';
+    }
+}
+
+function filterMktg(f, btn) {
+    mktgFilter = f;
+    document.querySelectorAll('.mktg-filter-row .sub-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderMktgRequests();
+}
+
+function renderMktgRequests() {
+    const el   = document.getElementById('mktgRequestsList');
+    const list = mktgFilter === 'all' ? mktgRequests : mktgRequests.filter(r => r.status === mktgFilter);
+    if (list.length === 0) {
+        el.innerHTML = `<div class="no-subs">${mktgFilter === 'all' ? 'No marketing requests yet.' : 'No requests with status "' + mktgFilter + '".'}</div>`;
+        return;
+    }
+    el.innerHTML = list.map(r => {
+        const statusCycle = { new:'in-progress', 'in-progress':'done', done:'new' };
+        const statusLabel = { new:'New', 'in-progress':'In Progress', done:'Done' };
+        const status      = r.status || 'new';
+        const rows = [
+            r.email          && `<strong>Email:</strong> ${esc(r.email)}`,
+            r.phone          && `<strong>Phone:</strong> ${esc(r.phone)}`,
+            r.requestType    && `<strong>Type:</strong> ${esc(r.requestType)}`,
+            r.propertyAddress && `<strong>Property:</strong> ${esc(r.propertyAddress)}`,
+            r.details        && `<strong>Details:</strong> ${esc(r.details)}`,
+        ].filter(Boolean).join('<br>');
+        return `<div class="mktg-card status-${esc(status)}" id="mktg-${esc(r.id)}">
+            <div class="mktg-card-header">
+                <div>
+                    <div class="mktg-card-name">${esc(r.name || 'Unknown')}</div>
+                    <span class="mktg-type-badge">${esc(r.requestType || 'Marketing Request')}</span>
+                </div>
+                <div class="mktg-card-actions">
+                    <button class="mktg-status-badge ${esc(status)}"
+                        onclick="cycleMktgStatus('${esc(r.id)}')"
+                        title="Click to advance status">
+                        ${esc(statusLabel[status] || status)}
+                    </button>
+                    <button class="btn-mktg-del" onclick="deleteMktgRequest('${esc(r.id)}')" title="Delete">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="mktg-field">${rows}</div>
+            <div class="mktg-time">${fmt(r.submittedAt)}</div>
+        </div>`;
+    }).join('');
+}
+
+async function cycleMktgStatus(id) {
+    const r = mktgRequests.find(x => x.id === id);
+    if (!r) return;
+    const cycle = { new:'in-progress', 'in-progress':'done', done:'new' };
+    r.status = cycle[r.status || 'new'] || 'new';
+    await saveHubContent(MKTG_REQUESTS_KEY, mktgRequests);
+    renderMktgRequests();
+}
+
+async function deleteMktgRequest(id) {
+    if (!confirm('Delete this marketing request?')) return;
+    mktgRequests = mktgRequests.filter(r => r.id !== id);
+    await saveHubContent(MKTG_REQUESTS_KEY, mktgRequests);
+    renderMktgRequests();
+}
+
+/* ── Virtual Open House ── */
+const VOH_SB_URL = 'https://khhfkxfxefjgunhrihyx.supabase.co';
+const VOH_SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtoaGZreGZ4ZWZqZ3VuaHJpaHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3NzYwMjcsImV4cCI6MjA5MTM1MjAyN30.bYW68xMDUEXBRC1bxOLdj77xCcjXb3wIuHbPAPFdSGo';
+
+const EMAILJS_PUBLIC_KEY    = 'p_Faa-dt1o_ljx_Yt';
+const EMAILJS_SERVICE_ID    = 'service_uv12biu';
+const EMAILJS_READY_TEMPLATE = 'template_6xlu54p';
+let vohEvents = [];
+let vohFilter = 'all';
+let vohExpanded = new Set();
+
+const VOH_STATUS_LABEL = {
+    submitted:'New', in_setup:'In Setup', ready:'Ready', live:'Live', post_event:'Post-Event', complete:'Complete'
+};
+
+async function loadVohEvents() {
+    const el = document.getElementById('vohEventsList');
+    el.innerHTML = '<div class="no-subs">Loading…</div>';
+    try {
+        const res = await fetch(`${VOH_SB_URL}/rest/v1/voh_events?select=*&order=created_at.desc`, {
+            headers: { 'apikey': VOH_SB_KEY, 'Authorization': `Bearer ${VOH_SB_KEY}` }
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        vohEvents = await res.json();
+        renderVohEvents();
+    } catch(e) {
+        el.innerHTML = '<div class="no-subs">Could not load events: ' + esc(e.message) + '</div>';
+    }
+}
+
+function filterVoh(f, btn) {
+    vohFilter = f;
+    btn.parentElement.querySelectorAll('.sub-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderVohEvents();
+}
+
+function renderVohEvents() {
+    const el = document.getElementById('vohEventsList');
+    const list = vohFilter === 'all' ? vohEvents : vohEvents.filter(e => e.status === vohFilter);
+    if (list.length === 0) {
+        el.innerHTML = `<div class="no-subs">No events ${vohFilter==='all'?'yet':'with status "'+VOH_STATUS_LABEL[vohFilter]+'"'}.</div>`;
+        return;
+    }
+    el.innerHTML = list.map(renderVohCard).join('');
+}
+
+function renderVohCard(e) {
+    const status = e.status || 'submitted';
+    const isOpen = vohExpanded.has(e.id);
+    const eventDate = e.event_date ? new Date(e.event_date+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'}) : 'No date set';
+    return `<div class="voh-card" id="voh-${e.id}">
+        <div class="voh-card-header">
+            <div>
+                <div class="voh-card-title">${esc(e.property_address || 'Untitled property')}</div>
+                <div class="voh-card-sub">${esc(e.agent_name || '')}${e.agent_email?' · '+esc(e.agent_email):''} · ${esc(eventDate)} · ${esc(e.event_time||'')}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+                <span class="voh-status ${esc(status)}">${esc(VOH_STATUS_LABEL[status]||status)}</span>
+                <button class="voh-expand-btn" onclick="toggleVohExpand('${e.id}')">${isOpen?'Collapse':'Manage'}</button>
+            </div>
+        </div>
+        <div class="voh-grid">
+            <div><strong>MLS</strong>${esc(e.mls_number||'—')}</div>
+            <div><strong>Asking</strong>${esc(e.asking_price||'—')}</div>
+            <div><strong>Bd / Ba</strong>${esc(e.bedrooms||'—')} / ${esc(e.bathrooms||'—')}</div>
+            <div><strong>Sq Ft</strong>${esc(e.square_footage||'—')}</div>
+            <div><strong>Phone</strong>${esc(e.agent_phone||'—')}</div>
+            <div><strong>FB Page</strong>${e.agent_fb_page?`<a href="${esc(e.agent_fb_page)}" target="_blank" rel="noopener" style="color:var(--red);">link</a>`:'—'}</div>
+        </div>
+        <div class="voh-detail ${isOpen?'show':''}">${isOpen?renderVohEditor(e):''}</div>
+    </div>`;
+}
+
+function toggleVohExpand(id) {
+    if (vohExpanded.has(id)) vohExpanded.delete(id); else vohExpanded.add(id);
+    renderVohEvents();
+}
+
+function renderVohEditor(e) {
+    const v = (k) => esc(e[k]||'');
+    const features = [e.top_feature_1, e.top_feature_2, e.top_feature_3].filter(Boolean);
+    const qa = [
+        ['What does HOA cover?', e.qa_hoa_covers],
+        ['Roof / HVAC age', e.qa_roof_hvac],
+        ['Avg utilities', e.qa_utilities],
+        ['Other offers', e.qa_other_offers],
+        ['Close timeline', e.qa_close_timeline],
+    ].filter(r=>r[1]);
+    const tog = (field, label) => `<div class="voh-toggle-row ${e[field]?'done':''}">
+        <span>${label}</span>
+        <button class="voh-toggle-btn ${e[field]?'done':''}" onclick="toggleVohFlag('${e.id}','${field}',${!e[field]})">${e[field]?'✓ Done':'Mark done'}</button>
+    </div>`;
+
+    return `
+    <div class="voh-section-title">Submission Details</div>
+    <div class="voh-grid" style="margin-bottom:14px;">
+        ${e.headshot_url ? `<div><strong>Headshot</strong><a href="${esc(e.headshot_url)}" target="_blank" rel="noopener" style="color:var(--red);">View</a></div>`:''}
+        ${e.hoa_fee?`<div><strong>HOA Fee</strong>${v('hoa_fee')}</div>`:''}
+        ${e.property_taxes?`<div><strong>Taxes</strong>${v('property_taxes')}</div>`:''}
+        ${e.year_built?`<div><strong>Year Built</strong>${v('year_built')}</div>`:''}
+        ${e.age_of_roof?`<div><strong>Roof Age</strong>${v('age_of_roof')}</div>`:''}
+        ${e.age_of_hvac?`<div><strong>HVAC Age</strong>${v('age_of_hvac')}</div>`:''}
+        ${e.parking_details?`<div><strong>Parking</strong>${v('parking_details')}</div>`:''}
+        ${e.pet_restrictions?`<div><strong>Pets</strong>${v('pet_restrictions')}</div>`:''}
+        ${e.rental_restrictions?`<div><strong>Rentals</strong>${v('rental_restrictions')}</div>`:''}
+    </div>
+    ${features.length?`<div style="font-size:12.5px;margin-bottom:10px;"><strong style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);">Top Features</strong><br>${features.map(esc).join(' · ')}</div>`:''}
+    ${qa.length?`<div style="font-size:12.5px;margin-bottom:10px;"><strong style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);display:block;margin-bottom:4px;">Q&A Prep</strong>${qa.map(r=>`<div style="margin-bottom:3px;"><strong style="color:var(--text);">${esc(r[0])}:</strong> ${esc(r[1])}</div>`).join('')}</div>`:''}
+
+    <div class="voh-section-title">Zoom & Setup Credentials</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+        <div><label class="voh-field-label">Zoom Meeting ID</label><input class="voh-input" id="vf-${e.id}-zoom_meeting_id" value="${v('zoom_meeting_id')}" placeholder="123 4567 8901"></div>
+        <div><label class="voh-field-label">Passcode</label><input class="voh-input" id="vf-${e.id}-zoom_passcode" value="${v('zoom_passcode')}" placeholder="abc123"></div>
+        <div style="grid-column:1/-1;"><label class="voh-field-label">Zoom Join Link</label><input class="voh-input" id="vf-${e.id}-zoom_join_link" value="${v('zoom_join_link')}" placeholder="https://us02web.zoom.us/j/…"></div>
+        <div style="grid-column:1/-1;"><label class="voh-field-label">Calendar Invite Link</label><input class="voh-input" id="vf-${e.id}-zoom_calendar_link" value="${v('zoom_calendar_link')}" placeholder="https://calendar.google.com/…"></div>
+        <div style="grid-column:1/-1;">
+            <label class="voh-field-label">Buyer Interest Form URL</label>
+            <div style="display:flex;gap:8px;align-items:center;">
+                <input class="voh-input" id="vf-${e.id}-interest_form_url" value="${v('interest_form_url') || 'yrl-voh-interest.html?event='+e.id}" style="flex:1;font-size:12px;">
+                <button class="voh-btn secondary" onclick="copyVohLink('vf-${e.id}-interest_form_url')" title="Copy link" style="flex-shrink:0;padding:8px 12px;">
+                    <i class="fa-solid fa-copy"></i>
+                </button>
+                <a href="yrl-voh-interest.html?event=${e.id}" target="_blank" class="voh-btn secondary" style="flex-shrink:0;padding:8px 12px;text-decoration:none;" title="Preview form">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+            </div>
+            <span style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block;">Share this URL with buyers during the event</span>
+        </div>
+    </div>
+    <button class="voh-btn" onclick="saveVohFields('${e.id}',['zoom_meeting_id','zoom_passcode','zoom_join_link','zoom_calendar_link','interest_form_url'])">Save Credentials</button>
+
+    <div class="voh-section-title">Setup Checklist</div>
+    ${tog('setup_zoom_done','Zoom meeting created')}
+    ${tog('setup_calendar_done','Calendar invite sent to agent')}
+    ${tog('setup_graphic_done','Promotional graphic created in Canva')}
+    ${tog('setup_fb_ad_done','Facebook lead-gen ad launched')}
+    ${tog('setup_ghl_done','GHL workflow / pipeline configured')}
+
+    <div class="voh-section-title">Ad / Outreach Schedule</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;">
+        <div><label class="voh-field-label">FB Ad Launch Date</label><input class="voh-input" type="date" id="vf-${e.id}-fb_ad_launch_date" value="${v('fb_ad_launch_date')}"></div>
+        <div><label class="voh-field-label">FB Ad Budget</label><input class="voh-input" id="vf-${e.id}-fb_ad_budget" value="${v('fb_ad_budget')}" placeholder="$50"></div>
+        <div><label class="voh-field-label">Email Blast Date</label><input class="voh-input" type="date" id="vf-${e.id}-email_blast_date" value="${v('email_blast_date')}"></div>
+    </div>
+    <button class="voh-btn" onclick="saveVohFields('${e.id}',['fb_ad_launch_date','fb_ad_budget','email_blast_date'])">Save Schedule</button>
+
+    <div class="voh-section-title">Post-Event Results</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+        <div style="grid-column:1/-1;"><label class="voh-field-label">YouTube Replay URL</label><input class="voh-input" id="vf-${e.id}-youtube_url" value="${v('youtube_url')}" placeholder="https://youtu.be/…"></div>
+        <div><label class="voh-field-label">YouTube 7-Day Views</label><input class="voh-input" type="number" id="vf-${e.id}-youtube_views_7day" value="${v('youtube_views_7day')}"></div>
+        <div><label class="voh-field-label">FB Leads Count</label><input class="voh-input" type="number" id="vf-${e.id}-fb_leads_count" value="${v('fb_leads_count')}"></div>
+        <div><label class="voh-field-label">Zoom Registrants</label><input class="voh-input" type="number" id="vf-${e.id}-zoom_registrants" value="${v('zoom_registrants')}"></div>
+        <div><label class="voh-field-label">Zoom Live Attendees</label><input class="voh-input" type="number" id="vf-${e.id}-zoom_live_attendees" value="${v('zoom_live_attendees')}"></div>
+        <div><label class="voh-field-label">Interest Form Submissions</label><input class="voh-input" type="number" id="vf-${e.id}-interest_submissions" value="${v('interest_submissions')}"></div>
+        <div><label class="voh-field-label">Showings Booked</label><input class="voh-input" type="number" id="vf-${e.id}-showings_booked" value="${v('showings_booked')}"></div>
+        <div><label class="voh-field-label">Offers Received</label><input class="voh-input" type="number" id="vf-${e.id}-offers_received" value="${v('offers_received')}"></div>
+        <div><label class="voh-field-label">Ad Spend ($)</label><input class="voh-input" type="number" step="0.01" id="vf-${e.id}-ad_spend_actual" value="${v('ad_spend_actual')}"></div>
+        <div><label class="voh-field-label">Cost / Lead ($)</label><input class="voh-input" type="number" step="0.01" id="vf-${e.id}-cost_per_lead" value="${v('cost_per_lead')}"></div>
+        <div><label class="voh-field-label">Ad Impressions</label><input class="voh-input" type="number" id="vf-${e.id}-ad_impressions" value="${v('ad_impressions')}"></div>
+        <div><label class="voh-field-label">Ad Clicks</label><input class="voh-input" type="number" id="vf-${e.id}-ad_clicks" value="${v('ad_clicks')}"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;">
+        <div><label class="voh-field-label">Intent: More Info</label><input class="voh-input" type="number" id="vf-${e.id}-intent_more_info" value="${v('intent_more_info')}"></div>
+        <div><label class="voh-field-label">Intent: Showing</label><input class="voh-input" type="number" id="vf-${e.id}-intent_showing" value="${v('intent_showing')}"></div>
+        <div><label class="voh-field-label">Intent: Offer</label><input class="voh-input" type="number" id="vf-${e.id}-intent_offer" value="${v('intent_offer')}"></div>
+        <div><label class="voh-field-label">Intent: Financing</label><input class="voh-input" type="number" id="vf-${e.id}-intent_financing" value="${v('intent_financing')}"></div>
+        <div><label class="voh-field-label">Intent: Exploring</label><input class="voh-input" type="number" id="vf-${e.id}-intent_exploring" value="${v('intent_exploring')}"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;">
+        <div><label class="voh-field-label">FB Leads CSV URL</label><input class="voh-input" id="vf-${e.id}-fb_leads_csv_url" value="${v('fb_leads_csv_url')}"></div>
+        <div><label class="voh-field-label">Zoom CSV URL</label><input class="voh-input" id="vf-${e.id}-zoom_csv_url" value="${v('zoom_csv_url')}"></div>
+        <div><label class="voh-field-label">WPForms CSV URL</label><input class="voh-input" id="vf-${e.id}-wpforms_csv_url" value="${v('wpforms_csv_url')}"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+        <div><label class="voh-field-label">What Worked</label><textarea class="voh-input" id="vf-${e.id}-notes_what_worked" rows="2">${v('notes_what_worked')}</textarea></div>
+        <div><label class="voh-field-label">What to Improve</label><textarea class="voh-input" id="vf-${e.id}-notes_improve" rows="2">${v('notes_improve')}</textarea></div>
+    </div>
+    <button class="voh-btn" onclick="saveVohFields('${e.id}',['youtube_url','youtube_views_7day','fb_leads_count','zoom_registrants','zoom_live_attendees','interest_submissions','showings_booked','offers_received','ad_spend_actual','cost_per_lead','ad_impressions','ad_clicks','intent_more_info','intent_showing','intent_offer','intent_financing','intent_exploring','fb_leads_csv_url','zoom_csv_url','wpforms_csv_url','notes_what_worked','notes_improve'])">Save Results</button>
+
+    <div class="voh-actions">
+        <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);align-self:center;margin-right:4px;">Advance Status:</span>
+        ${['submitted','in_setup','ready','live','post_event','complete'].map(s =>
+            `<button class="voh-btn ${e.status===s?'':'secondary'}" onclick="setVohStatus('${e.id}','${s}')">${VOH_STATUS_LABEL[s]}</button>`
+        ).join('')}
+        <button class="voh-btn danger" style="margin-left:auto;" onclick="deleteVohEvent('${e.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
+    </div>`;
+}
+
+async function patchVoh(id, body) {
+    const res = await fetch(`${VOH_SB_URL}/rest/v1/voh_events?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: {
+            'apikey': VOH_SB_KEY, 'Authorization': `Bearer ${VOH_SB_KEY}`,
+            'Content-Type': 'application/json', 'Prefer': 'return=representation'
+        },
+        body: JSON.stringify(body)
+    });
+    if (!res.ok) { alert('Save failed: HTTP ' + res.status); return null; }
+    const rows = await res.json();
+    return rows[0];
+}
+
+async function saveVohFields(id, fields) {
+    const body = {};
+    fields.forEach(f => {
+        const el = document.getElementById('vf-'+id+'-'+f);
+        if (!el) return;
+        let val = el.value.trim();
+        if (val === '') val = null;
+        else if (el.type === 'number') val = Number(val);
+        body[f] = val;
+    });
+    const updated = await patchVoh(id, body);
+    if (updated) {
+        const idx = vohEvents.findIndex(x => x.id === id);
+        if (idx > -1) vohEvents[idx] = updated;
+        showSaveFlash();
+        renderVohEvents();
+    }
+}
+
+async function toggleVohFlag(id, field, newVal) {
+    const updated = await patchVoh(id, { [field]: newVal });
+    if (updated) {
+        const idx = vohEvents.findIndex(x => x.id === id);
+        if (idx > -1) vohEvents[idx] = updated;
+        showSaveFlash();
+        renderVohEvents();
+    }
+}
+
+async function setVohStatus(id, status) {
+    const updated = await patchVoh(id, { status });
+    if (updated) {
+        const idx = vohEvents.findIndex(x => x.id === id);
+        if (idx > -1) vohEvents[idx] = updated;
+        if (status === 'ready')    sendVohReadyEmail(updated);
+        if (status === 'complete') sendVohCompleteWebhook(updated);
+        showSaveFlash();
+        renderVohEvents();
+    }
+}
+
+const GHL_COMPLETE_WEBHOOK = 'https://services.leadconnectorhq.com/hooks/iOT1nopTL5CnKPq44zFI/webhook-trigger/e72bef37-be09-45f7-a664-68d4dccaad39';
+
+function sendVohCompleteWebhook(e) {
+    const payload = {
+        source:               'VOH Event Complete',
+        agent_name:           e.agent_name           || '',
+        agent_email:          e.agent_email          || '',
+        property_address:     e.property_address     || '',
+        event_date:           e.event_date            || '',
+        event_time:           e.event_time            || '',
+        zoom_live_attendees:  e.zoom_live_attendees   || 0,
+        fb_leads_count:       e.fb_leads_count        || 0,
+        interest_submissions: e.interest_submissions  || 0,
+        zoom_registrants:     e.zoom_registrants      || 0,
+        showings_booked:      e.showings_booked       || 0,
+        offers_received:      e.offers_received       || 0,
+        youtube_url:          e.youtube_url           || '',
+        ad_spend_actual:      e.ad_spend_actual       || '',
+        cost_per_lead:        e.cost_per_lead         || '',
+    };
+    fetch(GHL_COMPLETE_WEBHOOK, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+}
+
+function sendVohReadyEmail(e) {
+    if (!e.agent_email) return;
+    const [ts, te] = (e.event_time || '').split('–').map(s => s.trim());
+    try {
+        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_READY_TEMPLATE, {
+            agent_name:       e.agent_name        || '',
+            agent_email:      e.agent_email       || '',
+            property_address: e.property_address  || '',
+            event_date:       e.event_date         || '',
+            time_start:       ts                   || '',
+            time_end:         te                   || '',
+            zoom_link:        e.zoom_join_link     || '',
+            zoom_meeting_id:  e.zoom_meeting_id    || '',
+            zoom_passcode:    e.zoom_passcode      || '',
+            interest_form_url: e.interest_form_url || `https://yrlagent.com/yrl-voh-interest.html?event=${e.id}`,
+        }, EMAILJS_PUBLIC_KEY);
+    } catch(err) { console.warn('EmailJS ready email error:', err); }
+}
+
+function copyVohLink(inputId) {
+    const el = document.getElementById(inputId);
+    if (!el) return;
+    navigator.clipboard.writeText(el.value).then(() => showSaveFlash());
+}
+
+async function deleteVohEvent(id) {
+    if (!confirm('Permanently delete this event?')) return;
+    const res = await fetch(`${VOH_SB_URL}/rest/v1/voh_events?id=eq.${id}`, {
+        method: 'DELETE',
+        headers: { 'apikey': VOH_SB_KEY, 'Authorization': `Bearer ${VOH_SB_KEY}` }
+    });
+    if (!res.ok) { alert('Delete failed'); return; }
+    vohEvents = vohEvents.filter(x => x.id !== id);
+    vohExpanded.delete(id);
+    renderVohEvents();
+}
+
+/* ── Utilities ── */
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmt(ts) { return ts ? new Date(ts).toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}) : ''; }
+
+/* ── Init ── */
+document.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem(ADMIN_AUTH_KEY) === ADMIN_PIN) {
+        document.getElementById('pinGate').classList.remove('show');
+        document.getElementById('adminContent').classList.add('show');
+        loadAll();
+    } else {
+        document.getElementById('pinInput').focus();
+    }
+});
+
+/* Enter key on PIN input */
+document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && document.getElementById('pinGate').classList.contains('show')) {
+        checkPin();
+    }
+});
+</script>
+</body>
+</html>

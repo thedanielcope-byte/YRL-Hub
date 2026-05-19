@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Access — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --red:       #c03926;
+            --red-light: #d94a35;
+            --red-dark:  #9e2e1e;
+            --bg:        #f2f4f7;
+            --surface:   #ffffff;
+            --border:    #e2e5ea;
+            --text:      #1a1d22;
+            --text-sec:  #5a6270;
+            --text-muted:#9ca3af;
+            --radius:    12px;
+            --shadow:    0 4px 20px rgba(0,0,0,0.08);
+            --shadow-red:0 6px 28px rgba(192,57,38,0.22);
+        }
+
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html, body { height: 100%; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .pin-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 48px 40px;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        /* Red top bar */
+        .pin-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--red-dark), var(--red), var(--red-light));
+            border-radius: 20px 20px 0 0;
+        }
+
+        .pin-logo {
+            max-width: 140px;
+            margin: 0 auto 28px;
+        }
+
+        .pin-card h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 30px;
+            letter-spacing: 2px;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .pin-card p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+        }
+
+        .pin-input-wrap {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .pin-input {
+            width: 100%;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            font-size: 28px;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 12px;
+            text-align: center;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s;
+            -webkit-text-security: disc;
+        }
+
+        .pin-input:focus {
+            border-color: var(--red);
+        }
+
+        .pin-input.error {
+            border-color: #ef4444;
+            animation: shake 0.35s ease;
+        }
+
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            20%      { transform: translateX(-8px); }
+            40%      { transform: translateX(8px); }
+            60%      { transform: translateX(-6px); }
+            80%      { transform: translateX(6px); }
+        }
+
+        .pin-error {
+            font-size: 12.5px;
+            color: #ef4444;
+            font-weight: 600;
+            min-height: 18px;
+            margin-bottom: 16px;
+        }
+
+        .pin-btn {
+            width: 100%;
+            background: var(--red);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius);
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pin-btn:hover {
+            background: var(--red-light);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-red);
+        }
+
+        .pin-footer {
+            margin-top: 28px;
+            font-size: 11.5px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+<div class="pin-card">
+    <img src="https://yrlagent.com/wp-content/uploads/2026/04/Your-Realty-Link-ver6.6-4-final.png"
+         alt="Your Realty Link" class="pin-logo"
+         onerror="this.style.display='none'">
+
+    <h1>Agent Access</h1>
+    <p>Enter your PIN to continue</p>
+
+    <div class="pin-input-wrap">
+        <input type="password" class="pin-input" id="pinInput"
+               maxlength="4" inputmode="numeric" pattern="[0-9]*"
+               placeholder="••••" autocomplete="off">
+    </div>
+
+    <div class="pin-error" id="pinError"></div>
+
+    <button class="pin-btn" onclick="checkPin()">Unlock</button>
+
+    <div class="pin-footer">Your Realty Link &nbsp;·&nbsp; Agent Hub</div>
+</div>
+
+<script>
+    const CORRECT = '2302';
+    const KEY     = 'yrl_hub_auth';
+
+    function checkPin() {
+        const input = document.getElementById('pinInput');
+        const error = document.getElementById('pinError');
+        const val   = input.value.replace(/\s/g, '');
+
+        if (val === CORRECT) {
+            try { localStorage.setItem(KEY, CORRECT); } catch(e) {}
+            const dest = sessionStorage.getItem('yrl_redirect') || 'yrl-company-policies.html';
+            try { sessionStorage.removeItem('yrl_redirect'); } catch(e) {}
+            window.location.href = dest;
+        } else {
+            error.textContent = 'Incorrect PIN. Please try again.';
+            input.classList.add('error');
+            input.value = '';
+            setTimeout(() => {
+                input.classList.remove('error');
+                error.textContent = '';
+            }, 1500);
+            input.focus();
+        }
+    }
+
+    // Enter key submits
+    document.getElementById('pinInput').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') checkPin();
+    });
+
+    document.getElementById('pinInput').focus();
+</script>
+
+</body>
+</html>

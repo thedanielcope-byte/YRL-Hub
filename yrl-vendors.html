@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Directory — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --red:        #c03926;
+            --red-light:  #d94a35;
+            --red-dark:   #9e2e1e;
+            --bg:         #f2f4f7;
+            --surface:    #ffffff;
+            --surface-2:  #f7f8fa;
+            --surface-3:  #eef0f3;
+            --border:     #e2e5ea;
+            --text:       #1a1d22;
+            --text-sec:   #5a6270;
+            --text-muted: #9ca3af;
+            --radius:     12px;
+            --shadow:     0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+        a { text-decoration:none; color:inherit; }
+        img { display:block; max-width:100%; }
+
+        /* ── Subpage header ── */
+        .sub-header {
+            background: linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);
+            padding: 28px 20px;
+            border-bottom: 4px solid rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        .sub-header::before {
+            content:'';
+            position:absolute; inset:0;
+            background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
+            background-size: 28px 28px;
+            pointer-events: none;
+        }
+        .sub-header-inner {
+            max-width:1200px; margin:0 auto;
+            display:flex; align-items:center; justify-content:space-between;
+            position:relative; z-index:1;
+        }
+        .sub-header-left { display:flex; align-items:center; gap:20px; }
+        .sub-header-logo {
+            max-width:120px; background:#fff; border-radius:10px;
+            padding:10px 16px; box-shadow:0 4px 16px rgba(0,0,0,0.2);
+        }
+        .sub-header-text h1 {
+            font-family:'Bebas Neue',sans-serif;
+            font-size:clamp(28px,5vw,42px);
+            letter-spacing:2px; color:#fff; line-height:1;
+        }
+        .sub-header-text p { color:rgba(255,255,255,0.7); font-size:13px; margin-top:4px; }
+        .back-btn {
+            display:inline-flex; align-items:center; gap:7px;
+            background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.35);
+            color:#fff; padding:9px 18px; border-radius:100px;
+            font-size:12.5px; font-weight:600; transition:all 0.2s ease; white-space:nowrap;
+        }
+        .back-btn:hover { background:rgba(255,255,255,0.3); transform:translateY(-1px); }
+
+        /* ── Main ── */
+        .main { max-width:1200px; margin:0 auto; padding:48px 20px 90px; }
+
+        /* ── Page header row ── */
+        .page-header-row {
+            display:flex; align-items:flex-start; justify-content:space-between;
+            flex-wrap:wrap; gap:12px; margin-bottom:36px;
+        }
+        .page-header-left h2 {
+            font-family:'Bebas Neue',sans-serif;
+            font-size:22px; letter-spacing:1.5px; color:var(--text);
+        }
+        .page-header-left p { font-size:13px; color:var(--text-muted); margin-top:3px; }
+        .page-header-right { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+        .save-flash {
+            font-size:12px; font-weight:600; color:#16a34a;
+            opacity:0; transition:opacity 0.3s; white-space:nowrap;
+        }
+        .save-flash.show { opacity:1; }
+
+        .btn-edit {
+            display:inline-flex; align-items:center; gap:6px;
+            background:rgba(192,57,38,0.08); color:var(--red);
+            border:1.5px solid var(--red); border-radius:8px;
+            padding:8px 16px; font-size:13px; font-weight:600;
+            font-family:'Inter',sans-serif; cursor:pointer; transition:all 0.15s;
+        }
+        .btn-edit:hover { background:rgba(192,57,38,0.15); }
+        .btn-edit.active { background:var(--red); color:#fff; }
+        .btn-edit.active:hover { background:var(--red-dark); }
+
+        /* ── Category section ── */
+        .vendor-section { margin-bottom:44px; }
+        .vendor-section-label {
+            font-family:'Bebas Neue',sans-serif;
+            font-size:18px; letter-spacing:1.5px; color:var(--text);
+            margin-bottom:14px;
+            display:flex; align-items:center; gap:8px;
+        }
+
+        /* ── Vendor grid ── */
+        .vendor-grid {
+            display:grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap:14px;
+        }
+
+        /* ── Vendor card ── */
+        .vendor-card {
+            background:var(--surface);
+            border:1px solid var(--border);
+            border-radius:var(--radius);
+            padding:20px;
+            box-shadow:0 1px 4px rgba(0,0,0,0.05);
+            transition:border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+            position:relative;
+        }
+        .vendor-card:hover {
+            border-color:rgba(192,57,38,0.3);
+            box-shadow:0 4px 16px rgba(192,57,38,0.1);
+            transform:translateY(-2px);
+        }
+        .vendor-card.editable { cursor:pointer; border-color:rgba(192,57,38,0.2); }
+        .vendor-card.editable:hover { border-color:var(--red); }
+
+        /* ── Vendor card top ── */
+        .vendor-card-top {
+            display:flex; align-items:center; gap:14px; margin-bottom:14px;
+        }
+        .vendor-avatar {
+            width:56px; height:56px; border-radius:10px; flex-shrink:0;
+            overflow:hidden; background:var(--surface-3);
+            display:flex; align-items:center; justify-content:center;
+            font-family:'Bebas Neue',sans-serif; font-size:20px;
+            color:var(--red); letter-spacing:1px;
+            border:1px solid var(--border);
+        }
+        .vendor-avatar img {
+            width:100%; height:100%; object-fit:cover;
+        }
+        .vendor-name-block { flex:1; min-width:0; }
+        .vendor-company {
+            font-weight:700; font-size:15px; color:var(--text);
+            white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+        }
+        .vendor-contact {
+            font-size:12.5px; color:var(--text-muted); margin-top:2px;
+        }
+
+        /* ── Vendor info rows ── */
+        .vendor-info { display:flex; flex-direction:column; gap:6px; }
+        .vendor-info-row {
+            display:flex; align-items:center; gap:10px;
+            font-size:13px; color:var(--text-sec);
+            white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+        }
+        .vendor-info-row i {
+            width:16px; text-align:center; color:var(--red);
+            flex-shrink:0; font-size:12px;
+        }
+        .vendor-info-row a {
+            color:var(--red); overflow:hidden; text-overflow:ellipsis;
+            white-space:nowrap;
+        }
+        .vendor-info-row a:hover { text-decoration:underline; }
+        .vendor-notes {
+            margin-top:12px; padding-top:12px; border-top:1px solid var(--border);
+            font-size:12.5px; color:var(--text-muted); line-height:1.5;
+        }
+
+        /* ── Edit hint ── */
+        .edit-hint {
+            font-size:10px; color:var(--text-muted);
+            font-style:italic; margin-top:4px;
+        }
+
+        /* ── Delete button ── */
+        .btn-del-vendor {
+            position:absolute; top:-8px; right:-8px;
+            width:22px; height:22px; border-radius:50%;
+            background:#ef4444; color:#fff; border:none;
+            font-size:14px; line-height:1;
+            display:flex; align-items:center; justify-content:center;
+            cursor:pointer; padding:0;
+            box-shadow:0 1px 4px rgba(0,0,0,0.2);
+            transition:background 0.12s; z-index:2;
+        }
+        .btn-del-vendor:hover { background:#b91c1c; }
+
+        /* ── Add vendor button ── */
+        .btn-add-vendor {
+            display:flex; align-items:center; justify-content:center; gap:6px;
+            background:rgba(192,57,38,0.05); color:var(--red);
+            border:1px dashed var(--red); border-radius:var(--radius);
+            padding:20px 16px; font-size:13px; font-weight:600;
+            font-family:'Inter',sans-serif; cursor:pointer; width:100%;
+            margin-top:4px; transition:background 0.15s;
+            min-height:80px;
+        }
+        .btn-add-vendor:hover { background:rgba(192,57,38,0.1); }
+
+        /* ── Vendor modal overlay ── */
+        .modal-overlay {
+            display:none; position:fixed; inset:0;
+            background:rgba(0,0,0,0.45); z-index:100;
+            align-items:center; justify-content:center;
+            padding:20px;
+        }
+        .modal-overlay.open { display:flex; }
+        .modal {
+            background:var(--surface); border-radius:16px;
+            padding:28px; width:100%; max-width:520px;
+            max-height:90vh; overflow-y:auto;
+            box-shadow:0 20px 60px rgba(0,0,0,0.2);
+            position:relative;
+        }
+        .modal-title {
+            font-family:'Bebas Neue',sans-serif;
+            font-size:20px; letter-spacing:1.5px; color:var(--text);
+            margin-bottom:20px;
+        }
+        .modal-grid {
+            display:grid; grid-template-columns:1fr 1fr; gap:12px;
+        }
+        .modal-field { display:flex; flex-direction:column; gap:4px; }
+        .modal-field.full { grid-column:1/-1; }
+        .modal-label {
+            font-size:11px; font-weight:700; text-transform:uppercase;
+            letter-spacing:0.06em; color:var(--red);
+        }
+        .modal-input {
+            border:1px solid var(--border); border-radius:8px;
+            padding:9px 12px; font-size:13px;
+            font-family:'Inter',sans-serif; color:var(--text);
+            outline:none; background:var(--surface-3);
+            transition:border-color 0.15s;
+        }
+        .modal-input:focus { border-color:var(--red); background:var(--surface); }
+        .modal-input::placeholder { color:var(--text-muted); }
+        textarea.modal-input { resize:vertical; min-height:72px; }
+        .modal-actions {
+            display:flex; gap:8px; margin-top:20px; justify-content:flex-end;
+        }
+        .btn-modal-save {
+            background:var(--red); color:#fff; border:none;
+            border-radius:8px; padding:10px 22px;
+            font-size:13px; font-weight:600;
+            font-family:'Inter',sans-serif; cursor:pointer;
+        }
+        .btn-modal-save:hover { background:var(--red-dark); }
+        .vendor-upload-row { display:flex; align-items:center; gap:8px; margin-top:6px; }
+        .btn-upload-file { display:inline-flex; align-items:center; gap:5px; background:rgba(192,57,38,0.08); color:var(--red); border:1.5px dashed var(--red); border-radius:7px; padding:5px 11px; font-size:11.5px; font-weight:600; font-family:'Inter',sans-serif; cursor:pointer; white-space:nowrap; transition:all 0.15s; flex-shrink:0; }
+        .btn-upload-file:hover { background:rgba(192,57,38,0.15); }
+        .upload-status { font-size:11.5px; font-weight:500; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px; }
+        .upload-status.uploading { color:#ea580c; }
+        .upload-status.success   { color:var(--green); }
+        .upload-status.error     { color:#ef4444; }
+        .btn-modal-cancel {
+            background:none; color:var(--text-muted);
+            border:1px solid var(--border); border-radius:8px;
+            padding:10px 18px; font-size:13px;
+            font-family:'Inter',sans-serif; cursor:pointer;
+        }
+        .btn-modal-cancel:hover { background:var(--surface-3); }
+        .modal-close {
+            position:absolute; top:16px; right:16px;
+            background:none; border:none; font-size:20px;
+            color:var(--text-muted); cursor:pointer; line-height:1;
+        }
+        .modal-close:hover { color:var(--text); }
+
+        /* ── Empty state ── */
+        .empty-state {
+            text-align:center; padding:40px 20px;
+            color:var(--text-muted); font-size:13px;
+            border:1px dashed var(--border); border-radius:var(--radius);
+            background:var(--surface);
+        }
+        .empty-state i { font-size:28px; margin-bottom:10px; display:block; opacity:0.3; }
+
+        /* ── Loading ── */
+        .loading-state {
+            text-align:center; padding:60px 20px;
+            color:var(--text-muted); font-size:13px;
+        }
+        .loading-state i { font-size:28px; margin-bottom:12px; display:block; opacity:0.4; }
+
+        /* ── Footer ── */
+        .footer {
+            background:var(--surface); border-top:1px solid var(--border);
+            padding:32px 20px; text-align:center;
+        }
+        .footer-logo { max-width:100px; margin:0 auto 12px; opacity:0.4; }
+        .footer p { font-size:12px; color:var(--text-muted); }
+        .footer a { color:var(--red); }
+
+        /* ── Responsive ── */
+        @media (max-width:640px) {
+            .sub-header { padding:20px 16px; }
+            .sub-header-inner { flex-direction:column; gap:16px; text-align:center; }
+            .sub-header-left { flex-direction:column; align-items:center; }
+            .sub-header-logo { max-width:90px; }
+            .main { padding:36px 16px 70px; }
+            .vendor-grid { grid-template-columns:1fr; }
+            .modal-grid { grid-template-columns:1fr; }
+        }
+
+        /* ── PIN Modal ── */
+        .pin-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:1000; align-items:center; justify-content:center; padding:20px; }
+        .pin-overlay.open { display:flex; }
+        .pin-modal { background:#fff; border:1px solid #e2e5ea; border-radius:20px; padding:40px 36px; width:100%; max-width:360px; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.4); }
+        .pin-lock-icon { width:56px; height:56px; background:rgba(192,57,38,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:22px; color:#c03926; }
+        .pin-modal h3 { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:1.5px; margin-bottom:6px; }
+        .pin-modal p { font-size:13px; color:#9ca3af; margin-bottom:20px; }
+        .pin-input { width:100%; background:#eef0f3; border:2px solid #e2e5ea; border-radius:10px; padding:12px 16px; font-size:22px; text-align:center; letter-spacing:6px; font-family:'Inter',sans-serif; color:#1a1d22; outline:none; margin-bottom:12px; transition:border-color 0.2s; }
+        .pin-input:focus { border-color:#c03926; }
+        .pin-input.shake { animation:pinShake 0.4s ease; border-color:#ef4444; }
+        @keyframes pinShake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
+        .pin-submit { width:100%; background:#c03926; color:#fff; border:none; border-radius:10px; padding:12px; font-size:15px; font-weight:700; font-family:'Inter',sans-serif; cursor:pointer; transition:background 0.2s; display:flex; align-items:center; justify-content:center; gap:8px; }
+        .pin-submit:hover { background:#d94a35; }
+        .pin-error { color:#ef4444; font-size:12px; font-weight:600; margin-top:10px; display:none; }
+
+        /* ── Vendor drag states ── */
+        .vendor-card.v-dragging { opacity:0.35; transform:scale(0.97); }
+        .vendor-card.v-drag-over { outline:2px dashed #c03926; outline-offset:2px; background:rgba(192,57,38,0.04); }
+    </style>
+    <script src="yrl-auth.js"></script>
+</head>
+<body>
+
+<!-- ── Subpage Header ── -->
+<header class="sub-header">
+    <div class="sub-header-inner">
+        <div class="sub-header-left">
+            <img src="https://yrlagent.com/wp-content/uploads/2026/04/Your-Realty-Link-ver6.6-4-final.png"
+                 alt="Your Realty Link" class="sub-header-logo">
+            <div class="sub-header-text">
+                <h1>Vendor Directory</h1>
+                <p>Preferred vendor contacts, websites, and resources</p>
+            </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+            <span id="yrl-user-name" style="color:rgba(255,255,255,0.75);font-size:12.5px;font-weight:500;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+            <button onclick="yrlSignOut()" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:7px 14px;border-radius:100px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+            </button>
+            <a href="yrl-agent-hub.html" class="back-btn">
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to Hub
+            </a>
+        </div>
+    </div>
+</header>
+
+<!-- ── Main ── -->
+<main class="main">
+
+    <div class="page-header-row">
+        <div class="page-header-left">
+            <h2>Preferred Vendors</h2>
+            <p>Click any phone, email, or website to connect. Use Edit Mode to add or update vendors.</p>
+        </div>
+        <div class="page-header-right">
+            <span class="save-flash" id="saveFlash">&#10003; Saved!</span>
+            <button class="btn-edit" id="btnEdit" onclick="toggleEditMode()">
+                <i class="fa-solid fa-pen"></i> Edit Mode
+            </button>
+        </div>
+    </div>
+
+    <div id="vendorsContainer">
+        <div class="loading-state">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            Loading vendors…
+        </div>
+    </div>
+
+</main>
+
+<!-- ── Footer ── -->
+<footer class="footer">
+    <img src="https://yrlagent.com/wp-content/uploads/2026/04/Your-Realty-Link-ver6.6-4-final.png"
+         alt="Your Realty Link" class="footer-logo"
+         onerror="this.style.display='none'">
+    <p>&copy; 2026 Your Realty Link &nbsp;&middot;&nbsp; All Rights Reserved &nbsp;&middot;&nbsp;
+       <a href="https://www.yourrealtylink.com" target="_blank">yourrealtylink.com</a>
+    </p>
+</footer>
+
+<!-- ── Vendor Modal ── -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+    <div class="modal" id="modal">
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <div class="modal-title" id="modalTitle">Add Vendor</div>
+        <div class="modal-grid">
+            <div class="modal-field full">
+                <label class="modal-label">Company Name *</label>
+                <input class="modal-input" id="f-company" type="text" placeholder="ABC Title Company">
+            </div>
+            <div class="modal-field full">
+                <label class="modal-label">Contact Name</label>
+                <input class="modal-input" id="f-contact" type="text" placeholder="Jane Smith">
+            </div>
+            <div class="modal-field">
+                <label class="modal-label">Phone</label>
+                <input class="modal-input" id="f-phone" type="tel" placeholder="317-555-1234">
+            </div>
+            <div class="modal-field">
+                <label class="modal-label">Email</label>
+                <input class="modal-input" id="f-email" type="email" placeholder="jane@company.com">
+            </div>
+            <div class="modal-field full">
+                <label class="modal-label">Website</label>
+                <input class="modal-input" id="f-website" type="url" placeholder="https://company.com">
+            </div>
+            <div class="modal-field full">
+                <label class="modal-label">Order / Request Form Link</label>
+                <input class="modal-input" id="f-formlink" type="url" placeholder="https://company.com/order">
+                <div class="vendor-upload-row">
+                    <input type="file" id="fileInput-formlink" style="display:none" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" onchange="handleVendorFileUpload('formlink','f-formlink')">
+                    <button class="btn-upload-file" type="button" onclick="document.getElementById('fileInput-formlink').click()"><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload file</button>
+                    <span class="upload-status" id="uploadStatus-formlink">or paste URL above</span>
+                </div>
+            </div>
+
+            <!-- ── Extra links ── -->
+            <div class="modal-field" style="grid-column:1/-1;margin-top:4px;">
+                <label class="modal-label" style="color:var(--text-sec);">Additional Links — enter a label and URL for each</label>
+            </div>
+            <div class="modal-field">
+                <label class="modal-label">Link 1 Label</label>
+                <input class="modal-input" id="f-link1label" type="text" placeholder="e.g. Instagram, Scheduling, Zillow">
+            </div>
+            <div class="modal-field">
+                <label class="modal-label">Link 1 URL</label>
+                <input class="modal-input" id="f-link1url" type="url" placeholder="https://…">
+            </div>
+            <div class="modal-field">
+                <label class="modal-label">Link 2 Label</label>
+                <input class="modal-input" id="f-link2label" type="text" placeholder="e.g. Reviews, Portfolio, Facebook">
+            </div>
+            <div class="modal-field">
+                <label class="modal-label">Link 2 URL</label>
+                <input class="modal-input" id="f-link2url" type="url" placeholder="https://…">
+            </div>
+            <div class="modal-field">
+                <label class="modal-label">Link 3 Label</label>
+                <input class="modal-input" id="f-link3label" type="text" placeholder="e.g. Calendar, Brochure, YouTube">
+            </div>
+            <div class="modal-field">
+                <label class="modal-label">Link 3 URL</label>
+                <input class="modal-input" id="f-link3url" type="url" placeholder="https://…">
+            </div>
+
+            <div class="modal-field full">
+                <label class="modal-label">Logo / Photo URL</label>
+                <input class="modal-input" id="f-photo" type="url" placeholder="https://… (paste image link)">
+                <div class="vendor-upload-row">
+                    <input type="file" id="fileInput-photo" style="display:none" accept=".png,.jpg,.jpeg,.gif,.webp" onchange="handleVendorFileUpload('photo','f-photo')">
+                    <button class="btn-upload-file" type="button" onclick="document.getElementById('fileInput-photo').click()"><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload image</button>
+                    <span class="upload-status" id="uploadStatus-photo">or paste URL above</span>
+                </div>
+            </div>
+            <div class="modal-field full">
+                <label class="modal-label">Notes / Description</label>
+                <textarea class="modal-input" id="f-notes" placeholder="Specialty, turnaround time, promo code, anything agents should know…"></textarea>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-modal-cancel" onclick="closeModal()">Cancel</button>
+            <button class="btn-modal-save" onclick="saveVendor()">Save Vendor</button>
+        </div>
+    </div>
+</div>
+
+<div class="pin-overlay" id="vendorPinOverlay">
+    <div class="pin-modal">
+        <div class="pin-lock-icon"><i class="fa-solid fa-lock"></i></div>
+        <h3>Broker Access</h3>
+        <p>Enter your PIN to edit the vendor directory</p>
+        <input type="password" inputmode="numeric" maxlength="10" class="pin-input" id="vendorPinInput"
+               placeholder="• • • •" autocomplete="off"
+               onkeydown="if(event.key==='Enter')submitVendorPin()">
+        <button class="pin-submit" onclick="submitVendorPin()">
+            <i class="fa-solid fa-unlock"></i> Unlock
+        </button>
+        <p class="pin-error" id="vendorPinError">Incorrect PIN. Try again.</p>
+        <button onclick="closeVendorPinModal()" style="margin-top:14px;background:none;border:none;color:#9ca3af;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;">Cancel</button>
+    </div>
+</div>
+
+<script src="yrl-hub.js"></script>
+<script>
+/* ============================================================
+   Vendor Directory
+   ============================================================ */
+
+const BROKER_PIN = '2302';
+const PIN_KEY    = 'yrl_broker_auth';
+
+function isAuthed() { return sessionStorage.getItem(PIN_KEY) === BROKER_PIN; }
+
+function openVendorPinModal() {
+    document.getElementById('vendorPinInput').value = '';
+    document.getElementById('vendorPinError').style.display = 'none';
+    document.getElementById('vendorPinOverlay').classList.add('open');
+    setTimeout(() => document.getElementById('vendorPinInput').focus(), 80);
+}
+function closeVendorPinModal() {
+    document.getElementById('vendorPinOverlay').classList.remove('open');
+}
+function submitVendorPin() {
+    const val = document.getElementById('vendorPinInput').value.trim();
+    if (val === BROKER_PIN) {
+        sessionStorage.setItem(PIN_KEY, BROKER_PIN);
+        closeVendorPinModal();
+        enterEditMode();
+    } else {
+        const inp = document.getElementById('vendorPinInput');
+        inp.classList.add('shake');
+        document.getElementById('vendorPinError').style.display = 'block';
+        inp.value = '';
+        setTimeout(() => inp.classList.remove('shake'), 450);
+    }
+}
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('vendorPinOverlay').addEventListener('click', function(e) {
+        if (e.target === this) closeVendorPinModal();
+    });
+});
+
+const VENDORS_KEY = 'yrl-vendors-state';
+
+const DEFAULT_STATE = {
+    categories: [
+        { id: 'title',       name: '🏛️ Title & Closing',       vendors: [] },
+        { id: 'inspectors',  name: '🔍 Home Inspectors',        vendors: [] },
+        { id: 'lenders',     name: '💰 Lenders & Mortgage',     vendors: [] },
+        { id: 'photography', name: '📸 Photography & Media',    vendors: [] },
+        { id: 'contractors', name: '🔧 Contractors & Repairs',  vendors: [] },
+        { id: 'staging',     name: '🛋️ Staging & Design',       vendors: [] },
+        { id: 'cleaning',    name: '🧹 Cleaning Services',      vendors: [] },
+        { id: 'warranty',    name: '🏗️ Home Warranty',          vendors: [] },
+        { id: 'legal',       name: '⚖️ Attorneys & Legal',      vendors: [] },
+        { id: 'moving',      name: '🚚 Moving Companies',       vendors: [] },
+    ]
+};
+
+let state    = null;
+let editMode = false;
+
+let dragVendorCatId = null;
+let dragVendorId    = null;
+let _vendorWasDragging = false;
+
+/* modal state */
+let modalCatId    = null;
+let modalVendorId = null; /* null = adding new */
+
+/* ── Utilities ── */
+function uid() { return Math.random().toString(36).slice(2, 9); }
+function esc(s) {
+    return String(s||'')
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function initials(name) {
+    return (name||'?').trim().split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
+}
+
+/* ── Load / Save ── */
+async function init() {
+    const data = await loadHubContent(VENDORS_KEY);
+    if (data && data.categories && Array.isArray(data.categories)) {
+        state = data;
+    } else {
+        state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+        await saveHubContent(VENDORS_KEY, state);
+    }
+    render();
+}
+
+async function persist() {
+    const ok = await saveHubContent(VENDORS_KEY, state);
+    if (ok) {
+        const flash = document.getElementById('saveFlash');
+        if (flash) { flash.classList.add('show'); setTimeout(()=>flash.classList.remove('show'),2500); }
+    }
+}
+
+/* ── Edit mode ── */
+function toggleEditMode() {
+    if (editMode) {
+        exitEditMode();
+    } else {
+        if (isAuthed()) {
+            enterEditMode();
+        } else {
+            openVendorPinModal();
+        }
+    }
+}
+function enterEditMode() {
+    editMode = true;
+    const btn = document.getElementById('btnEdit');
+    btn.innerHTML = '<i class="fa-solid fa-check"></i> Done Editing';
+    btn.classList.add('active');
+    render();
+}
+function exitEditMode() {
+    editMode = false;
+    const btn = document.getElementById('btnEdit');
+    btn.innerHTML = '<i class="fa-solid fa-pen"></i> Edit Mode';
+    btn.classList.remove('active');
+    render();
+}
+
+/* ── Drag and drop ── */
+function vendorDragStart(e, catId, vendorId) {
+    dragVendorCatId = catId;
+    dragVendorId    = vendorId;
+    _vendorWasDragging = true;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', vendorId);
+    setTimeout(() => {
+        const el = document.querySelector(`.vendor-card[data-vendor-id="${vendorId}"]`);
+        if (el) el.classList.add('v-dragging');
+    }, 0);
+}
+function vendorDragEnd(e) {
+    document.querySelectorAll('.vendor-card.v-dragging, .vendor-card.v-drag-over').forEach(el => {
+        el.classList.remove('v-dragging', 'v-drag-over');
+    });
+    dragVendorCatId = null;
+    dragVendorId    = null;
+}
+function vendorDragOver(e, catId, vendorId) {
+    if (!dragVendorId || vendorId === dragVendorId) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    document.querySelectorAll('.vendor-card.v-drag-over').forEach(el => el.classList.remove('v-drag-over'));
+    const el = document.querySelector(`.vendor-card[data-vendor-id="${vendorId}"]`);
+    if (el) el.classList.add('v-drag-over');
+}
+function vendorDragLeave(e) {
+    e.currentTarget.classList.remove('v-drag-over');
+}
+function vendorDrop(e, toCatId, toVendorId) {
+    e.preventDefault();
+    document.querySelectorAll('.vendor-card.v-drag-over').forEach(el => el.classList.remove('v-drag-over'));
+    if (!dragVendorId || dragVendorId === toVendorId) return;
+
+    const fromCat = state.categories.find(c => c.id === dragVendorCatId);
+    const toCat   = state.categories.find(c => c.id === toCatId);
+    if (!fromCat || !toCat) return;
+
+    const fromIdx = fromCat.vendors.findIndex(v => v.id === dragVendorId);
+    if (fromIdx === -1) return;
+    const [moved] = fromCat.vendors.splice(fromIdx, 1);
+
+    const toIdx = toCat.vendors.findIndex(v => v.id === toVendorId);
+    toCat.vendors.splice(toIdx, 0, moved);
+
+    persist();
+    render();
+}
+
+/* ── Render ── */
+function render() {
+    const container = document.getElementById('vendorsContainer');
+    if (!state) {
+        container.innerHTML = '<div class="loading-state"><i class="fa-solid fa-spinner fa-spin"></i>Loading…</div>';
+        return;
+    }
+
+    let html = '';
+
+    state.categories.forEach(cat => {
+        html += `<div class="vendor-section">
+            <div class="vendor-section-label">${esc(cat.name)}</div>
+            <div class="vendor-grid">`;
+
+        if (cat.vendors.length === 0 && !editMode) {
+            html += `<div class="empty-state">
+                <i class="fa-solid fa-store-slash"></i>
+                No vendors added yet
+            </div>`;
+        } else {
+            cat.vendors.forEach(v => {
+                const avatarInner = v.photo
+                    ? `<img src="${esc(v.photo)}" alt="${esc(v.company)}" onerror="this.parentNode.innerHTML='${initials(v.company)}';">`
+                    : initials(v.company);
+
+                let infoRows = '';
+                if (v.phone)    infoRows += `<div class="vendor-info-row"><i class="fa-solid fa-phone"></i><a href="tel:${esc(v.phone)}">${esc(v.phone)}</a></div>`;
+                if (v.email)    infoRows += `<div class="vendor-info-row"><i class="fa-solid fa-envelope"></i><a href="mailto:${esc(v.email)}">${esc(v.email)}</a></div>`;
+                if (v.website)  infoRows += `<div class="vendor-info-row"><i class="fa-solid fa-globe"></i><a href="${esc(v.website)}" target="_blank" rel="noopener">${esc(v.website.replace(/^https?:\/\//,''))}</a></div>`;
+                if (v.formlink) infoRows += `<div class="vendor-info-row"><i class="fa-solid fa-file-lines"></i><a href="${esc(v.formlink)}" target="_blank" rel="noopener">Order / Request Form</a></div>`;
+                if (v.link1url) infoRows += `<div class="vendor-info-row"><i class="fa-solid fa-link"></i><a href="${esc(v.link1url)}" target="_blank" rel="noopener">${esc(v.link1label||'Additional Link 1')}</a></div>`;
+                if (v.link2url) infoRows += `<div class="vendor-info-row"><i class="fa-solid fa-link"></i><a href="${esc(v.link2url)}" target="_blank" rel="noopener">${esc(v.link2label||'Additional Link 2')}</a></div>`;
+                if (v.link3url) infoRows += `<div class="vendor-info-row"><i class="fa-solid fa-link"></i><a href="${esc(v.link3url)}" target="_blank" rel="noopener">${esc(v.link3label||'Additional Link 3')}</a></div>`;
+
+                const notes = v.notes ? `<div class="vendor-notes">${esc(v.notes)}</div>` : '';
+                const delBtn = editMode ? `<button class="btn-del-vendor" onclick="event.stopPropagation();deleteVendor('${cat.id}','${v.id}')" title="Remove">&times;</button>` : '';
+                const editClass = editMode ? ' editable' : '';
+                const clickHandler = editMode ? ` onclick="openModal('${cat.id}','${v.id}')"` : '';
+                const dragAttrs = editMode
+                    ? ` draggable="true"
+                        data-vendor-id="${v.id}"
+                        ondragstart="vendorDragStart(event,'${cat.id}','${v.id}')"
+                        ondragend="vendorDragEnd(event)"
+                        ondragover="vendorDragOver(event,'${cat.id}','${v.id}')"
+                        ondragleave="vendorDragLeave(event)"
+                        ondrop="vendorDrop(event,'${cat.id}','${v.id}')"` : '';
+
+                html += `<div class="vendor-card${editClass}" data-vendor-id="${v.id}"${clickHandler}${dragAttrs}>
+                    ${delBtn}
+                    <div class="vendor-card-top">
+                        <div class="vendor-avatar">${avatarInner}</div>
+                        <div class="vendor-name-block">
+                            <div class="vendor-company">${esc(v.company)}</div>
+                            ${v.contact ? `<div class="vendor-contact">${esc(v.contact)}</div>` : ''}
+                            ${editMode ? '<div class="edit-hint">Click to edit</div>' : ''}
+                        </div>
+                    </div>
+                    <div class="vendor-info">${infoRows}</div>
+                    ${notes}
+                </div>`;
+            });
+        }
+
+        if (editMode) {
+            html += `<button class="btn-add-vendor" onclick="openModal('${cat.id}',null)">
+                <i class="fa-solid fa-plus"></i> Add Vendor
+            </button>`;
+        }
+
+        html += `</div></div>`; /* /vendor-grid /vendor-section */
+    });
+
+    container.innerHTML = html;
+}
+
+/* ── Modal ── */
+function openModal(catId, vendorId) {
+    modalCatId    = catId;
+    modalVendorId = vendorId;
+
+    const cat    = state.categories.find(c=>c.id===catId);
+    const vendor = vendorId ? cat.vendors.find(v=>v.id===vendorId) : null;
+
+    document.getElementById('modalTitle').textContent = vendor ? 'Edit Vendor' : 'Add Vendor';
+
+    const fields = ['company','contact','phone','email','website','formlink',
+                    'link1label','link1url','link2label','link2url','link3label','link3url',
+                    'photo','notes'];
+    fields.forEach(f => {
+        const el = document.getElementById('f-'+f);
+        el.value = vendor ? (vendor[f]||'') : '';
+        el.style.borderColor = '';
+    });
+
+    document.getElementById('modalOverlay').classList.add('open');
+    document.getElementById('f-company').focus();
+}
+
+function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    modalCatId = modalVendorId = null;
+}
+
+function handleOverlayClick(e) {
+    if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+function saveVendor() {
+    const company  = document.getElementById('f-company').value.trim();
+    if (!company) {
+        const el = document.getElementById('f-company');
+        el.style.borderColor = '#ef4444'; el.focus(); return;
+    }
+
+    const vendor = {
+        id:         modalVendorId || uid(),
+        company,
+        contact:    document.getElementById('f-contact').value.trim(),
+        phone:      document.getElementById('f-phone').value.trim(),
+        email:      document.getElementById('f-email').value.trim(),
+        website:    document.getElementById('f-website').value.trim(),
+        formlink:   document.getElementById('f-formlink').value.trim(),
+        link1label: document.getElementById('f-link1label').value.trim(),
+        link1url:   document.getElementById('f-link1url').value.trim(),
+        link2label: document.getElementById('f-link2label').value.trim(),
+        link2url:   document.getElementById('f-link2url').value.trim(),
+        link3label: document.getElementById('f-link3label').value.trim(),
+        link3url:   document.getElementById('f-link3url').value.trim(),
+        photo:      document.getElementById('f-photo').value.trim(),
+        notes:      document.getElementById('f-notes').value.trim(),
+    };
+
+    const cat = state.categories.find(c=>c.id===modalCatId);
+    if (!cat) return;
+
+    if (modalVendorId) {
+        const idx = cat.vendors.findIndex(v=>v.id===modalVendorId);
+        if (idx > -1) cat.vendors[idx] = vendor;
+    } else {
+        cat.vendors.push(vendor);
+    }
+
+    closeModal();
+    persist();
+    render();
+}
+
+async function handleVendorFileUpload(inputSuffix, fieldId) {
+    const fileInput = document.getElementById('fileInput-' + inputSuffix);
+    const linkInput = document.getElementById(fieldId);
+    const statusEl  = document.getElementById('uploadStatus-' + inputSuffix);
+    if (!fileInput?.files?.[0]) return;
+    const file = fileInput.files[0];
+    if (file.size > 50 * 1024 * 1024) {
+        statusEl.textContent = '✗ File too large (max 50 MB)';
+        statusEl.className = 'upload-status error';
+        fileInput.value = ''; return;
+    }
+    statusEl.textContent = 'Uploading…'; statusEl.className = 'upload-status uploading';
+    try {
+        const folder = inputSuffix === 'photo' ? 'vendor-photos' : 'guides';
+        const url = await uploadHubFile(file, folder);
+        if (linkInput) linkInput.value = url;
+        const name = file.name.length > 28 ? file.name.slice(0,25) + '…' : file.name;
+        statusEl.textContent = '✓ ' + name; statusEl.className = 'upload-status success';
+    } catch(err) {
+        statusEl.textContent = '✗ ' + (err.message || 'Upload failed');
+        statusEl.className = 'upload-status error';
+        fileInput.value = '';
+    }
+}
+
+function deleteVendor(catId, vendorId) {
+    const cat = state.categories.find(c=>c.id===catId);
+    if (!cat) return;
+    cat.vendors = cat.vendors.filter(v=>v.id!==vendorId);
+    persist();
+    render();
+}
+
+/* ── Keyboard ── */
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+    if (e.key === 'Enter' && document.getElementById('modalOverlay').classList.contains('open')) {
+        if (e.target.tagName !== 'TEXTAREA') saveVendor();
+    }
+});
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>

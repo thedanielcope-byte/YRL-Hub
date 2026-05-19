@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Open House — Your Realty Link</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="yrl-auth.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --red:#c03926; --red-light:#d94a35; --red-dark:#9e2e1e;
+            --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f7f8fa;
+            --surface-3:#eef0f3; --border:#e2e5ea; --border-light:#d0d4da;
+            --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+            --green:#16a34a; --orange:#ea580c; --blue:#1d4ed8;
+            --radius:12px; --radius-lg:20px;
+            --shadow:0 4px 20px rgba(0,0,0,0.08);
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        html{scroll-behavior:smooth;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
+        a{text-decoration:none;color:inherit;}
+
+        /* ── Header ── */
+        .sub-header{
+            background:linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);
+            padding:28px 20px 24px; color:#fff; position:relative; overflow:hidden;
+        }
+        .sub-header::before{
+            content:''; position:absolute; inset:0;
+            background-image:radial-gradient(rgba(255,255,255,0.07) 1px,transparent 1px);
+            background-size:28px 28px; pointer-events:none;
+        }
+        .sub-header-inner{max-width:920px;margin:0 auto;position:relative;z-index:1;}
+        .back-btn{
+            display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;
+            color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.12);
+            border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:7px 14px;
+            margin-bottom:18px;transition:all 0.2s;cursor:pointer;
+        }
+        .back-btn:hover{background:rgba(255,255,255,0.2);color:#fff;}
+        .header-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+        .header-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1.5px;}
+        .header-sub{font-size:13px;opacity:0.75;margin-top:3px;}
+        .btn-new{
+            display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--red);
+            border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:700;
+            cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;white-space:nowrap;
+            box-shadow:0 4px 16px rgba(0,0,0,0.15); flex-shrink:0;
+        }
+        .btn-new:hover{background:#fff3f1;transform:translateY(-1px);}
+
+        /* ── Layout ── */
+        .main{max-width:920px;margin:0 auto;padding:28px 16px 80px;}
+
+        /* ── Status pills ── */
+        .pill{
+            display:inline-flex;align-items:center;gap:5px;padding:3px 10px;
+            border-radius:20px;font-size:11px;font-weight:700;
+            text-transform:uppercase;letter-spacing:0.5px;
+        }
+        .pill-submitted {background:#fef3c7;color:#92400e;}
+        .pill-in_setup  {background:#dbeafe;color:#1e40af;}
+        .pill-ready     {background:#dcfce7;color:#15803d;}
+        .pill-live      {background:#fee2e2;color:#b91c1c;}
+        .pill-post_event{background:#f3e8ff;color:#7e22ce;}
+        .pill-complete  {background:#d1fae5;color:#065f46;}
+
+        /* ── Buttons ── */
+        .btn{
+            display:inline-flex;align-items:center;gap:7px;padding:10px 20px;
+            border-radius:9px;font-size:13px;font-weight:700;
+            font-family:'Inter',sans-serif;border:none;cursor:pointer;transition:all 0.2s;
+        }
+        .btn-red{background:var(--red);color:#fff;}
+        .btn-red:hover{background:var(--red-light);transform:translateY(-1px);}
+        .btn-red:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+        .btn-ghost{background:var(--surface-3);color:var(--text);border:1px solid var(--border);}
+        .btn-ghost:hover{border-color:var(--red);color:var(--red);}
+
+        /* ── LIST VIEW ── */
+        .events-empty{
+            text-align:center;padding:60px 20px;background:var(--surface);
+            border:1px solid var(--border);border-radius:var(--radius-lg);
+        }
+        .empty-icon{font-size:48px;margin-bottom:16px;opacity:0.25;}
+        .events-empty h3{font-size:18px;font-weight:700;margin-bottom:8px;}
+        .events-empty p{font-size:13px;color:var(--text-sec);margin-bottom:24px;max-width:400px;margin-left:auto;margin-right:auto;}
+
+        .event-card{
+            background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+            padding:18px 22px;margin-bottom:10px;display:flex;align-items:center;
+            gap:18px;cursor:pointer;transition:all 0.2s;
+        }
+        .event-card:hover{border-color:rgba(192,57,38,0.3);box-shadow:var(--shadow);transform:translateY(-1px);}
+        .event-card-icon{
+            width:46px;height:46px;background:rgba(192,57,38,0.08);border-radius:12px;
+            display:flex;align-items:center;justify-content:center;color:var(--red);
+            font-size:18px;flex-shrink:0;
+        }
+        .event-card-info{flex:1;min-width:0;}
+        .event-card-address{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .event-card-date{font-size:12px;color:var(--text-muted);margin-top:2px;}
+        .event-card-arrow{color:var(--text-muted);font-size:13px;flex-shrink:0;}
+        .event-card:hover .event-card-arrow{color:var(--red);}
+
+        /* ── FORM VIEW ── */
+        .form-card{
+            background:var(--surface);border:1px solid var(--border);
+            border-radius:var(--radius-lg);padding:28px 32px;margin-bottom:16px;
+        }
+        .form-card h2{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:4px;}
+        .form-desc{font-size:13px;color:var(--text-sec);margin-bottom:22px;line-height:1.6;}
+
+        /* Step bar */
+        .step-bar{display:flex;align-items:center;margin-bottom:0;}
+        .step-item{display:flex;align-items:center;gap:8px;flex:1;}
+        .step-item:last-child{flex:none;}
+        .step-num{
+            width:28px;height:28px;border-radius:50%;font-size:12px;font-weight:700;
+            display:flex;align-items:center;justify-content:center;flex-shrink:0;
+            background:var(--surface-3);color:var(--text-muted);border:2px solid var(--border);
+            transition:all 0.2s;
+        }
+        .step-item.active .step-num{background:var(--red);color:#fff;border-color:var(--red);}
+        .step-item.done .step-num{background:var(--green);color:#fff;border-color:var(--green);}
+        .step-label{font-size:11px;font-weight:600;color:var(--text-muted);white-space:nowrap;}
+        .step-item.active .step-label{color:var(--red);}
+        .step-item.done .step-label{color:var(--green);}
+        .step-line{flex:1;height:2px;background:var(--border);margin:0 6px;}
+        .step-line.done{background:var(--green);}
+
+        /* Fields */
+        .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+        .form-grid.cols-1{grid-template-columns:1fr;}
+        @media(max-width:600px){.form-grid{grid-template-columns:1fr;}}
+        .form-group{display:flex;flex-direction:column;gap:6px;}
+        .form-group.full{grid-column:1/-1;}
+        .form-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--text);}
+        .form-label .req{color:var(--red);}
+        .form-input,.form-select,.form-textarea{
+            width:100%;border:1.5px solid var(--border);border-radius:8px;
+            padding:10px 14px;font-size:14px;font-family:'Inter',sans-serif;
+            color:var(--text);background:var(--surface-3);outline:none;transition:border-color 0.15s;
+        }
+        .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--red);background:var(--surface);}
+        .form-input.error,.form-select.error{border-color:#ef4444;}
+        .form-textarea{resize:vertical;min-height:78px;}
+        .form-hint{font-size:11px;color:var(--text-muted);line-height:1.4;}
+
+        .upload-zone{
+            border:2px dashed var(--border);border-radius:10px;padding:24px;
+            text-align:center;cursor:pointer;transition:all 0.2s;background:var(--surface-3);
+        }
+        .upload-zone:hover{border-color:var(--red);background:rgba(192,57,38,0.04);}
+        .upload-icon{font-size:28px;color:var(--text-muted);margin-bottom:8px;}
+        .upload-zone p{font-size:13px;color:var(--text-sec);}
+        .upload-zone .upload-hint{font-size:11px;color:var(--text-muted);margin-top:4px;}
+        .upload-preview{width:80px;height:80px;border-radius:50%;object-fit:cover;margin:0 auto 8px;display:block;}
+
+        .feature-inputs{display:flex;flex-direction:column;gap:10px;}
+        .feature-row{display:flex;gap:10px;align-items:center;}
+        .feature-num{
+            width:24px;height:24px;background:var(--red);color:#fff;border-radius:50%;
+            font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+        }
+
+        .form-nav{display:flex;gap:12px;justify-content:flex-end;margin-top:24px;flex-wrap:wrap;}
+
+        /* ── DETAIL VIEW ── */
+        .back-btn-inline{
+            display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;
+            color:var(--text-sec);background:var(--surface);border:1px solid var(--border);
+            border-radius:8px;padding:7px 14px;margin-bottom:16px;cursor:pointer;transition:all 0.2s;
+        }
+        .back-btn-inline:hover{border-color:var(--red);color:var(--red);}
+
+        .detail-header{
+            background:var(--surface);border:1px solid var(--border);
+            border-radius:var(--radius-lg);padding:22px 24px;margin-bottom:14px;
+        }
+        .detail-address{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;margin-bottom:6px;}
+        .detail-meta{font-size:13px;color:var(--text-sec);display:flex;gap:16px;flex-wrap:wrap;align-items:center;}
+        .detail-meta i{color:var(--red);font-size:12px;}
+
+        /* Pipeline */
+        .pipeline{
+            background:var(--surface);border:1px solid var(--border);
+            border-radius:var(--radius-lg);padding:20px 24px;margin-bottom:14px;overflow-x:auto;
+        }
+        .pipeline-track{display:flex;align-items:flex-start;min-width:520px;}
+        .pipe-step{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;}
+        .pipe-dot{
+            width:32px;height:32px;border-radius:50%;display:flex;align-items:center;
+            justify-content:center;font-size:12px;font-weight:700;
+            border:2px solid var(--border);background:var(--surface-3);color:var(--text-muted);
+            z-index:1;transition:all 0.3s;
+        }
+        .pipe-step.done .pipe-dot{background:var(--green);border-color:var(--green);color:#fff;}
+        .pipe-step.active .pipe-dot{background:var(--red);border-color:var(--red);color:#fff;box-shadow:0 0 0 4px rgba(192,57,38,0.15);}
+        .pipe-label{font-size:10px;font-weight:600;text-align:center;margin-top:7px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.3px;white-space:nowrap;}
+        .pipe-step.done .pipe-label{color:var(--green);}
+        .pipe-step.active .pipe-label{color:var(--red);}
+        .pipe-line{flex:1;height:2px;background:var(--border);margin:0 -2px;margin-bottom:22px;transition:background 0.3s;}
+        .pipe-line.done{background:var(--green);}
+
+        /* Status panels */
+        .status-panel{
+            background:var(--surface);border:1px solid var(--border);
+            border-radius:var(--radius-lg);padding:24px 28px;margin-bottom:14px;
+        }
+        .sec-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;}
+        .sec-icon{
+            width:36px;height:36px;background:rgba(192,57,38,0.08);border-radius:9px;
+            display:flex;align-items:center;justify-content:center;color:var(--red);
+            font-size:15px;flex-shrink:0;
+        }
+        .sec-head h3{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:1px;line-height:1.2;}
+        .sec-head p{font-size:12px;color:var(--text-sec);margin-top:2px;}
+
+        /* Notice boxes */
+        .notice{
+            border-radius:9px;padding:13px 16px;font-size:13px;
+            display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;line-height:1.6;
+        }
+        .notice-blue  {background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;}
+        .notice-green {background:#f0fdf4;border:1px solid #86efac;color:#15803d;}
+        .notice-orange{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;}
+        .notice-red   {background:#fef2f2;border:1px solid #fecaca;color:#991b1b;}
+        .notice > i   {font-size:14px;flex-shrink:0;margin-top:1px;}
+
+        /* Credential cards */
+        .creds-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+        @media(max-width:580px){.creds-grid{grid-template-columns:1fr;}}
+        .info-card{
+            background:var(--surface-3);border:1px solid var(--border);
+            border-radius:10px;padding:14px 18px;position:relative;
+        }
+        .info-card-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:4px;}
+        .info-card-value{font-size:15px;font-weight:700;color:var(--text);word-break:break-all;padding-right:64px;}
+        .info-card-value.small{font-size:12px;}
+        .info-card-copy{
+            position:absolute;top:14px;right:14px;background:var(--red);color:#fff;border:none;
+            border-radius:6px;padding:4px 11px;font-size:11px;font-weight:700;
+            cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s;
+        }
+        .info-card-copy:hover{background:var(--red-light);}
+        .info-card-copy.copied{background:var(--green);}
+
+        /* Checklists */
+        .checklist{display:flex;flex-direction:column;gap:8px;}
+        .check-item{
+            display:flex;align-items:flex-start;gap:12px;padding:11px 14px;
+            background:var(--surface-3);border:1px solid var(--border);
+            border-radius:9px;cursor:pointer;transition:all 0.2s;
+        }
+        .check-item:hover{border-color:rgba(192,57,38,0.25);}
+        .check-item.checked{background:#f0fdf4;border-color:#86efac;}
+        .check-box{
+            width:20px;height:20px;border-radius:5px;border:2px solid var(--border);
+            display:flex;align-items:center;justify-content:center;flex-shrink:0;
+            transition:all 0.15s;margin-top:1px;
+        }
+        .check-item.checked .check-box{background:var(--green);border-color:var(--green);color:#fff;}
+        .check-box i{font-size:10px;}
+        .check-text{font-size:13px;color:var(--text);flex:1;line-height:1.5;}
+        .check-item.checked .check-text{text-decoration:line-through;color:var(--text-muted);}
+        .check-sub{font-size:11px;color:var(--text-muted);display:block;margin-top:2px;font-style:italic;}
+        .check-item.checked .check-sub{text-decoration:line-through;}
+
+        /* Admin setup progress (read-only) */
+        .admin-checks{display:flex;flex-direction:column;gap:8px;}
+        .admin-check{
+            display:flex;align-items:center;gap:12px;padding:11px 14px;
+            background:var(--surface-3);border:1px solid var(--border);border-radius:9px;
+        }
+        .admin-check.done-row{background:#f0fdf4;border-color:#86efac;}
+        .admin-check-icon{
+            width:26px;height:26px;border-radius:50%;display:flex;align-items:center;
+            justify-content:center;font-size:11px;flex-shrink:0;
+        }
+        .admin-check-icon.done{background:#dcfce7;color:var(--green);}
+        .admin-check-icon.pending{background:var(--surface);border:2px solid var(--border);color:var(--text-muted);}
+        .admin-check-label{font-size:13px;font-weight:500;}
+        .admin-check.done-row .admin-check-label{color:var(--green);}
+
+        /* Metrics */
+        .metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+        @media(max-width:580px){.metrics-grid{grid-template-columns:repeat(2,1fr);}}
+        .metric-tile{
+            background:var(--surface-3);border:1px solid var(--border);
+            border-radius:10px;padding:14px;text-align:center;
+        }
+        .metric-num{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--red);line-height:1;}
+        .metric-label{font-size:10px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-top:4px;}
+
+        /* Download links */
+        .download-btn{
+            display:flex;align-items:center;gap:10px;padding:11px 14px;
+            background:var(--surface-3);border:1px solid var(--border);border-radius:9px;
+            font-size:13px;font-weight:600;color:var(--text);cursor:pointer;
+            transition:all 0.2s;margin-bottom:8px;
+        }
+        .download-btn:hover{border-color:var(--red);color:var(--red);background:rgba(192,57,38,0.04);}
+        .download-btn i{color:var(--red);font-size:14px;width:18px;text-align:center;}
+
+        /* Divider label */
+        .divider-label{
+            text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;
+            letter-spacing:1px;color:var(--text-muted);margin:18px 0 12px;
+            display:flex;align-items:center;gap:10px;
+        }
+        .divider-label::before,.divider-label::after{content:'';flex:1;height:1px;background:var(--border);}
+
+        /* Property details accordion */
+        .accordion-trigger{
+            display:flex;align-items:center;justify-content:space-between;
+            cursor:pointer;padding:4px 0;
+        }
+        .accordion-trigger i{color:var(--text-muted);transition:transform 0.2s;font-size:13px;}
+        .prop-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+        @media(max-width:580px){.prop-grid{grid-template-columns:1fr;}}
+        .prop-tile{
+            background:var(--surface-3);border:1px solid var(--border);
+            border-radius:8px;padding:10px 12px;
+        }
+        .prop-tile-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--text-muted);margin-bottom:2px;}
+        .prop-tile-value{font-size:13px;font-weight:600;color:var(--text);}
+
+        /* Loading */
+        .loading-state{text-align:center;padding:48px 20px;color:var(--text-muted);font-size:14px;}
+
+        /* Toast */
+        #toast{
+            position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:10px;
+            font-size:13px;font-weight:600;transform:translateY(80px);opacity:0;
+            transition:all 0.3s;z-index:9999;max-width:320px;display:flex;align-items:center;gap:10px;
+            background:#1a1d22;color:#fff;
+        }
+        #toast.show{transform:translateY(0);opacity:1;}
+        #toast.success{background:#15803d;}
+        #toast.error{background:#b91c1c;}
+
+        @media(max-width:600px){
+            .sub-header{padding:20px 16px;}
+            .header-title{font-size:26px;}
+            .form-card{padding:20px;}
+            .status-panel{padding:20px;}
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="sub-header">
+    <div class="sub-header-inner">
+        <a href="yrl-agent-hub.html" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i> Back to Hub
+        </a>
+        <div class="header-row">
+            <div>
+                <div class="header-title">Virtual Open House</div>
+                <div class="header-sub">Submit, track, and run your live virtual open house events</div>
+            </div>
+            <button class="btn-new" onclick="showForm()" id="btnNew">
+                <i class="fa-solid fa-plus"></i> New Request
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- ── MAIN ── -->
+<main class="main">
+
+    <!-- ══════════════════════════════════════
+         VIEW: LIST
+    ══════════════════════════════════════ -->
+    <div id="viewList">
+        <div id="eventsList" class="loading-state">
+            <i class="fa-solid fa-spinner fa-spin"></i> Loading your events…
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         VIEW: FORM
+    ══════════════════════════════════════ -->
+    <div id="viewForm" style="display:none">
+
+        <!-- Step indicator -->
+        <div class="form-card" style="padding:20px 28px">
+            <div class="step-bar">
+                <div class="step-item active" id="stepItem1">
+                    <div class="step-num">1</div>
+                    <div class="step-label">Agent Info</div>
+                </div>
+                <div class="step-line" id="stepLine1"></div>
+                <div class="step-item" id="stepItem2">
+                    <div class="step-num">2</div>
+                    <div class="step-label">Property Details</div>
+                </div>
+                <div class="step-line" id="stepLine2"></div>
+                <div class="step-item" id="stepItem3">
+                    <div class="step-num">3</div>
+                    <div class="step-label">Date & Features</div>
+                </div>
+                <div class="step-line" id="stepLine3"></div>
+                <div class="step-item" id="stepItem4">
+                    <div class="step-num">4</div>
+                    <div class="step-label">Q&amp;A Prep</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 1: Agent Info -->
+        <div id="step1" class="form-card">
+            <h2>Your Information</h2>
+            <p class="form-desc">Select your name and add your Facebook Business Page if you'd like to run your own ad alongside YRL's.</p>
+            <div class="form-grid">
+                <div class="form-group full">
+                    <label class="form-label">Agent Name <span class="req">*</span></label>
+                    <select id="f_agent_name" class="form-input">
+                        <option value="">Loading agents…</option>
+                    </select>
+                </div>
+                <div class="form-group full">
+                    <label class="form-label">Facebook Business Page URL <span style="font-weight:400;color:var(--text-muted)">(optional)</span></label>
+                    <input id="f_agent_fb" class="form-input" type="url" placeholder="https://facebook.com/yourpage">
+                    <span class="form-hint">Only needed if running your own FB ad alongside YRL's</span>
+                </div>
+            </div>
+            <div class="form-nav">
+                <button class="btn btn-ghost" onclick="cancelForm()"><i class="fa-solid fa-xmark"></i> Cancel</button>
+                <button class="btn btn-red" onclick="goStep(2)">Property Details <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <!-- Step 2: Property Details -->
+        <div id="step2" class="form-card" style="display:none">
+            <h2>Property Details</h2>
+            <p class="form-desc">Paste your listing URL to auto-fill fields, or fill them in manually below.</p>
+            <div style="display:flex;gap:8px;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border);">
+                <input id="f_listing_url" class="form-input" type="url" placeholder="https://yrlagent.com/listings/123-main-st…" style="flex:1;min-width:0;">
+                <button class="btn btn-red" id="btnFetchListing" onclick="fetchListingDetails()" style="white-space:nowrap;flex-shrink:0;">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Fill
+                </button>
+            </div>
+            <div id="fetchListingMsg" style="font-size:11.5px;min-height:14px;margin-top:-14px;margin-bottom:14px;"></div>
+            <div class="form-grid">
+                <div class="form-group full">
+                    <label class="form-label">Property Address <span class="req">*</span></label>
+                    <input id="f_address" class="form-input" type="text" placeholder="123 Main St, Indianapolis, IN 46227">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Asking Price <span class="req">*</span></label>
+                    <input id="f_price" class="form-input" type="text" placeholder="$285,000">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">MLS #</label>
+                    <input id="f_mls" class="form-input" type="text" placeholder="21912345">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Bedrooms</label>
+                    <input id="f_beds" class="form-input" type="text" placeholder="3">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Bathrooms</label>
+                    <input id="f_baths" class="form-input" type="text" placeholder="2">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Square Footage</label>
+                    <input id="f_sqft" class="form-input" type="text" placeholder="1,450">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">HOA Fee (monthly)</label>
+                    <input id="f_hoa" class="form-input" type="text" placeholder="$120/mo or None">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Property Taxes (annual)</label>
+                    <input id="f_taxes" class="form-input" type="text" placeholder="$2,400/yr">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Year Built</label>
+                    <input id="f_year" class="form-input" type="text" placeholder="1998">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Age of Roof</label>
+                    <input id="f_roof" class="form-input" type="text" placeholder="5 years (2019)">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Age of HVAC</label>
+                    <input id="f_hvac" class="form-input" type="text" placeholder="3 years (2021)">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Parking Details</label>
+                    <input id="f_parking" class="form-input" type="text" placeholder="2-car attached garage">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pet Restrictions</label>
+                    <input id="f_pets" class="form-input" type="text" placeholder="Dogs allowed, 2 max">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Rental Restrictions</label>
+                    <input id="f_rental" class="form-input" type="text" placeholder="No short-term rentals">
+                </div>
+            </div>
+            <div class="form-nav">
+                <button class="btn btn-ghost" onclick="goStep(1)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                <button class="btn btn-red" onclick="goStep(3)">Date &amp; Features <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <!-- Step 3: Date & Features -->
+        <div id="step3" class="form-card" style="display:none">
+            <h2>Event Date &amp; Top Features</h2>
+            <p class="form-desc">Sundays 2:00–4:00pm are recommended. Submit at least 7–10 days out so Admin has time to set up Zoom, create the ad, and launch marketing.</p>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Event Date <span class="req">*</span></label>
+                    <input id="f_date" class="form-input" type="date">
+                    <span class="form-hint">Sundays recommended · Min 7 days lead time</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Start Time</label>
+                    <select id="f_time_start" class="form-input">
+                        <option>9:00 AM</option><option>9:30 AM</option>
+                        <option>10:00 AM</option><option>10:30 AM</option>
+                        <option>11:00 AM</option><option>11:30 AM</option>
+                        <option>12:00 PM</option><option>12:30 PM</option>
+                        <option>1:00 PM</option><option>1:30 PM</option>
+                        <option selected>2:00 PM</option><option>2:30 PM</option>
+                        <option>3:00 PM</option><option>3:30 PM</option>
+                        <option>4:00 PM</option><option>4:30 PM</option>
+                        <option>5:00 PM</option><option>5:30 PM</option>
+                        <option>6:00 PM</option><option>6:30 PM</option>
+                        <option>7:00 PM</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">End Time</label>
+                    <select id="f_time_end" class="form-input">
+                        <option>9:00 AM</option><option>9:30 AM</option>
+                        <option>10:00 AM</option><option>10:30 AM</option>
+                        <option>11:00 AM</option><option>11:30 AM</option>
+                        <option>12:00 PM</option><option>12:30 PM</option>
+                        <option>1:00 PM</option><option>1:30 PM</option>
+                        <option>2:00 PM</option><option>2:30 PM</option>
+                        <option>3:00 PM</option><option>3:30 PM</option>
+                        <option selected>4:00 PM</option><option>4:30 PM</option>
+                        <option>5:00 PM</option><option>5:30 PM</option>
+                        <option>6:00 PM</option><option>6:30 PM</option>
+                        <option>7:00 PM</option>
+                    </select>
+                </div>
+                <div class="form-group full">
+                    <label class="form-label">Top 3 Selling Features <span class="req">*</span></label>
+                    <span class="form-hint" style="margin-bottom:10px;display:block">Used in the Facebook ad copy and your welcome intro. Be specific and compelling.</span>
+                    <div class="feature-inputs">
+                        <div class="feature-row">
+                            <div class="feature-num">1</div>
+                            <input id="f_feat1" class="form-input" type="text" placeholder="e.g. Newly renovated kitchen with quartz countertops">
+                        </div>
+                        <div class="feature-row">
+                            <div class="feature-num">2</div>
+                            <input id="f_feat2" class="form-input" type="text" placeholder="e.g. Large fenced backyard with covered deck">
+                        </div>
+                        <div class="feature-row">
+                            <div class="feature-num">3</div>
+                            <input id="f_feat3" class="form-input" type="text" placeholder="e.g. Master suite with walk-in closet and en-suite bath">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-nav">
+                <button class="btn btn-ghost" onclick="goStep(2)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                <button class="btn btn-red" onclick="goStep(4)">Q&amp;A Prep <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <!-- Step 4: Q&A Prep -->
+        <div id="step4" class="form-card" style="display:none">
+            <h2>Prepared Q&amp;A</h2>
+            <p class="form-desc">Write your answers now so you're confident during the live Q&amp;A segment. These are stored with your event and accessible on event day. Skip any you don't know yet — you can update later.</p>
+            <div class="form-grid cols-1">
+                <div class="form-group">
+                    <label class="form-label">What are the HOA fees and what do they cover?</label>
+                    <textarea id="f_qa1" class="form-textarea" placeholder="e.g. $120/month covers lawn care, exterior insurance, and community pool access."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">How old is the roof / HVAC / water heater?</label>
+                    <textarea id="f_qa2" class="form-textarea" placeholder="e.g. Roof replaced 2019, HVAC 2021, water heater 2018."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">What are estimated monthly utility costs?</label>
+                    <textarea id="f_qa3" class="form-textarea" placeholder="e.g. Seller reports approx. $150/mo electric, $80/mo gas in winter."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Has the seller received any other offers?</label>
+                    <textarea id="f_qa4" class="form-textarea" placeholder="e.g. No offers received as of today. Seller is motivated to move quickly."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">How quickly can the seller close?</label>
+                    <textarea id="f_qa5" class="form-textarea" placeholder="e.g. Seller can close in 30–45 days. Flexible on timeline if needed."></textarea>
+                </div>
+            </div>
+            <div class="form-nav">
+                <button class="btn btn-ghost" onclick="goStep(3)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                <button class="btn btn-red" id="btnSubmit" onclick="submitForm()">
+                    <i class="fa-solid fa-paper-plane"></i> Submit to Admin
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         VIEW: DETAIL
+    ══════════════════════════════════════ -->
+    <div id="viewDetail" style="display:none">
+
+        <button class="back-btn-inline" onclick="showList()">
+            <i class="fa-solid fa-arrow-left"></i> My Events
+        </button>
+
+        <!-- Event header -->
+        <div class="detail-header">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+                <div>
+                    <div class="detail-address" id="dAddress">—</div>
+                    <div class="detail-meta">
+                        <span><i class="fa-regular fa-calendar"></i> <span id="dDate">—</span></span>
+                        <span><i class="fa-regular fa-clock"></i> <span id="dTime">—</span></span>
+                        <span><i class="fa-solid fa-tag"></i> <span id="dPrice">—</span></span>
+                    </div>
+                </div>
+                <div id="dStatusPill"></div>
+            </div>
+        </div>
+
+        <!-- Status pipeline -->
+        <div class="pipeline">
+            <div class="pipeline-track" id="pipelineTrack"></div>
+        </div>
+
+        <!-- Status-specific action panel -->
+        <div id="statusPanel"></div>
+
+        <!-- Property details accordion -->
+        <div class="status-panel" style="margin-bottom:0">
+            <div class="accordion-trigger" onclick="toggleDetails()">
+                <div class="sec-head" style="margin-bottom:0">
+                    <div class="sec-icon"><i class="fa-solid fa-house"></i></div>
+                    <div>
+                        <h3>Property Details &amp; Q&amp;A</h3>
+                        <p>Your submitted info — reference on event day</p>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-down" id="detailsChevron"></i>
+            </div>
+            <div id="detailsBody" style="display:none;margin-top:18px"></div>
+        </div>
+
+    </div>
+</main>
+
+<div id="toast"><i class="fa-solid fa-check"></i> <span id="toastMsg">Saved</span></div>
+
+<script>
+/* ── Config ────────────────────────────────────────────── */
+const SB_URL = 'https://khhfkxfxefjgunhrihyx.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtoaGZreGZ4ZWZqZ3VuaHJpaHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3NzYwMjcsImV4cCI6MjA5MTM1MjAyN30.bYW68xMDUEXBRC1bxOLdj77xCcjXb3wIuHbPAPFdSGo';
+
+const EMAILJS_PUBLIC_KEY     = '5ltY2XlpVajEdK5Fz';
+const EMAILJS_SERVICE_ID     = 'service_uv12biu';
+const EMAILJS_ADMIN_TEMPLATE = 'template_u520exp';
+
+let sb = null, currentUser = null, currentEvent = null;
+let formStep = 1;
+
+/* ── Init own Supabase client (fallback if yrl-auth.js SDK not ready) ── */
+function _getOrCreateClient() {
+    if (sb) return sb;
+    if (window.yrlClient) { sb = window.yrlClient; return sb; }
+    if (window.supabase?.createClient) {
+        sb = window.supabase.createClient(SB_URL, SB_KEY);
+        return sb;
+    }
+    return null;
+}
+
+/* ── Auth ready ─────────────────────────────────────────── */
+document.addEventListener('yrl-auth-ready', async ({ detail }) => {
+    currentUser = detail.user;
+    sb = window.yrlClient || _getOrCreateClient();
+
+    await Promise.all([loadEvents(), loadAgentDropdown()]);
+
+    // Pre-select agent name from auth metadata if it matches a directory entry
+    const meta = currentUser.user_metadata || {};
+    const knownName = meta.full_name || meta.name || '';
+    if (knownName) {
+        const sel = document.getElementById('f_agent_name');
+        if (sel) {
+            const opt = Array.from(sel.options).find(o => o.value.toLowerCase() === knownName.toLowerCase());
+            if (opt) sel.value = opt.value;
+        }
+    }
+});
+
+/* ── View helpers ───────────────────────────────────────── */
+function showList() {
+    show('viewList'); hide('viewForm'); hide('viewDetail');
+    show('btnNew'); show('btnNew');
+    loadEvents();
+}
+function showForm() {
+    hide('viewList'); show('viewForm'); hide('viewDetail');
+    hide('btnNew'); goStep(1);
+    loadAgentDropdown();
+}
+function showDetail(e) {
+    currentEvent = e;
+    hide('viewList'); hide('viewForm'); show('viewDetail');
+    hide('btnNew'); renderDetail(e);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function cancelForm() { showList(); }
+function show(id) { const el = document.getElementById(id); if (el) el.style.display = ''; }
+function hide(id) { const el = document.getElementById(id); if (el) el.style.display = 'none'; }
+
+/* ── Load & render events list ──────────────────────────── */
+async function loadEvents() {
+    const el = document.getElementById('eventsList');
+    if (!el) return;
+    el.innerHTML = '<div class="loading-state"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div>';
+
+    const token = await getToken();
+    const res = await fetch(
+        `${SB_URL}/rest/v1/voh_events?agent_id=eq.${currentUser.id}&order=event_date.desc,created_at.desc`,
+        { headers: sbHeaders(token) }
+    );
+    if (!res.ok) {
+        el.innerHTML = '<div class="notice notice-red" style="margin:0"><i class="fa-solid fa-circle-exclamation"></i> Could not load events — please refresh.</div>';
+        return;
+    }
+    const events = await res.json();
+    window._vohEvents = events;
+    renderList(events);
+}
+
+function renderList(events) {
+    const el = document.getElementById('eventsList');
+    if (!events.length) {
+        el.innerHTML = `
+        <div class="events-empty">
+            <div class="empty-icon"><i class="fa-solid fa-house-chimney-crack"></i></div>
+            <h3>No virtual open houses yet</h3>
+            <p>Submit a request and Admin handles the rest — Zoom setup, Facebook ad, calendar invite, promotional graphic, and post-event leads delivery.</p>
+            <button class="btn btn-red" onclick="showForm()"><i class="fa-solid fa-plus"></i> Request Your First VOH</button>
+        </div>`;
+        return;
+    }
+    el.innerHTML = events.map(e => `
+        <div class="event-card" onclick="openEvent('${e.id}')">
+            <div class="event-card-icon"><i class="fa-solid fa-house-signal"></i></div>
+            <div class="event-card-info">
+                <div class="event-card-address">${e.property_address}</div>
+                <div class="event-card-date">${e.event_date ? fmtDate(e.event_date) : 'Date TBD'} &middot; ${e.event_time || '2:00 PM – 4:00 PM'}</div>
+            </div>
+            ${statusPill(e.status)}
+            <i class="fa-solid fa-chevron-right event-card-arrow"></i>
+        </div>`).join('');
+}
+
+async function openEvent(id) {
+    const cached = (window._vohEvents || []).find(x => x.id === id);
+    if (cached) { showDetail(cached); return; }
+    const token = await getToken();
+    const res = await fetch(`${SB_URL}/rest/v1/voh_events?id=eq.${id}`, { headers: sbHeaders(token) });
+    const data = await res.json();
+    if (data[0]) showDetail(data[0]);
+}
+
+/* ── Render detail view ─────────────────────────────────── */
+const STAGES = [
+    { key: 'submitted',  label: 'Submitted' },
+    { key: 'in_setup',   label: 'In Setup'  },
+    { key: 'ready',      label: 'Ready'     },
+    { key: 'live',       label: 'Live'      },
+    { key: 'post_event', label: 'Post-Event'},
+    { key: 'complete',   label: 'Complete'  },
+];
+
+function renderDetail(e) {
+    document.getElementById('dAddress').textContent = e.property_address;
+    document.getElementById('dDate').textContent    = e.event_date ? fmtDate(e.event_date) : 'TBD';
+    document.getElementById('dTime').textContent    = e.event_time || '2:00 PM – 4:00 PM';
+    document.getElementById('dPrice').textContent   = e.asking_price || '—';
+    document.getElementById('dStatusPill').innerHTML = statusPill(e.status);
+
+    // Pipeline
+    const idx = STAGES.findIndex(s => s.key === e.status);
+    document.getElementById('pipelineTrack').innerHTML = STAGES.map((s, i) => {
+        const cls   = i < idx ? 'done' : i === idx ? 'active' : '';
+        const inner = i < idx ? '<i class="fa-solid fa-check"></i>' : (i + 1);
+        const line  = i < STAGES.length - 1
+            ? `<div class="pipe-line ${i < idx ? 'done' : ''}"></div>` : '';
+        return `<div class="pipe-step ${cls}"><div class="pipe-dot">${inner}</div><div class="pipe-label">${s.label}</div></div>${line}`;
+    }).join('');
+
+    document.getElementById('statusPanel').innerHTML = buildStatusPanel(e);
+    renderPropDetails(e);
+}
+
+/* ── Status panels ──────────────────────────────────────── */
+function buildStatusPanel(e) {
+    switch (e.status) {
+
+        case 'submitted': return `
+        <div class="status-panel">
+            <div class="sec-head">
+                <div class="sec-icon"><i class="fa-solid fa-inbox"></i></div>
+                <div><h3>Request Submitted</h3><p>Waiting for Admin to begin setup</p></div>
+            </div>
+            <div class="notice notice-blue">
+                <i class="fa-solid fa-circle-info"></i>
+                <span><strong>Admin has your request.</strong> They'll set up the Zoom meeting, launch the Facebook ad, design the promotional graphic, and send you a Google Calendar invite — typically within 1–2 business days. You'll receive an email when everything is ready.</span>
+            </div>
+            <div class="divider-label">While You Wait</div>
+            <div class="checklist">${checklist(e.id, 'wait_sub', [
+                { id:'confirm_access', text:'Confirm property access with the seller',       sub:'Lock in the date and time — call or text them now' },
+                { id:'gather_details', text:'Gather full property details sheet',             sub:'HOA docs, tax records, system ages — have these in hand' },
+                { id:'review_playbook',text:'Review the Agent Playbook',                     sub:'Especially Sections 5 and 6 — equipment tips and live event framework' },
+            ])}</div>
+        </div>`;
+
+        case 'in_setup': return `
+        <div class="status-panel">
+            <div class="sec-head">
+                <div class="sec-icon" style="background:#dbeafe;color:#1e40af"><i class="fa-solid fa-gears"></i></div>
+                <div><h3>Admin Is Setting Up</h3><p>Zoom, ad, and marketing assets in progress</p></div>
+            </div>
+            <div class="notice notice-blue">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>You'll receive an email with your Zoom credentials and calendar link as soon as setup is complete. Sit tight — Admin is on it.</span>
+            </div>
+            <p style="font-size:13px;font-weight:700;margin-bottom:10px;color:var(--text-sec)">ADMIN SETUP PROGRESS</p>
+            <div class="admin-checks">
+                ${adminCheck(e.setup_zoom_done,     'Zoom meeting scheduled and configured')}
+                ${adminCheck(e.setup_calendar_done, 'Google Calendar invite created and sent')}
+                ${adminCheck(e.setup_graphic_done,  'Promotional graphic designed in Canva')}
+                ${adminCheck(e.setup_fb_ad_done,    'Facebook Lead Gen ad launched ($50 budget)')}
+                ${adminCheck(e.setup_ghl_done,      'GHL email blast scheduled')}
+            </div>
+        </div>`;
+
+        case 'ready': return `
+        <div class="status-panel">
+            <div class="sec-head">
+                <div class="sec-icon" style="background:#dcfce7;color:var(--green)"><i class="fa-solid fa-circle-check"></i></div>
+                <div><h3>You're Set — Complete Your Outreach</h3><p>Zoom is live, ad is running</p></div>
+            </div>
+            <div class="notice notice-green">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>Zoom is configured, the Facebook ad is running, and the promotional graphic is ready. Complete the outreach checklist below before your event.</span>
+            </div>
+            <div class="creds-grid">
+                <div class="info-card">
+                    <div class="info-card-label">Zoom Meeting ID</div>
+                    <button class="info-card-copy" onclick="copyVal('${e.zoom_meeting_id||''}',this)">Copy</button>
+                    <div class="info-card-value">${e.zoom_meeting_id || '—'}</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-label">Zoom Passcode</div>
+                    <button class="info-card-copy" onclick="copyVal('${e.zoom_passcode||''}',this)">Copy</button>
+                    <div class="info-card-value">${e.zoom_passcode || '—'}</div>
+                </div>
+            </div>
+            <div class="info-card" style="margin-bottom:10px">
+                <div class="info-card-label">Full Zoom Join Link</div>
+                <button class="info-card-copy" onclick="copyVal('${(e.zoom_join_link||'').replace(/'/g,"\\'")}',this)">Copy</button>
+                <div class="info-card-value small">${e.zoom_join_link || '—'}</div>
+            </div>
+            <div class="info-card" style="margin-bottom:20px">
+                <div class="info-card-label">Buyer Interest Form URL</div>
+                <button class="info-card-copy" onclick="copyVal('${e.interest_form_url||'https://yourrealtylink.com/open-house-interest'}',this)">Copy</button>
+                <div class="info-card-value small">${e.interest_form_url || 'https://yourrealtylink.com/open-house-interest'}</div>
+            </div>
+            <div class="divider-label">Outreach Checklist — complete 5–6 days before the event</div>
+            <div class="checklist">${checklist(e.id, 'ready', [
+                { id:'calendar_invite', text:'Send Google Calendar invite to your top 20–50 buyers',     sub:'Forward the calendar link Admin sent you — confirm they accepted' },
+                { id:'email_blast',     text:'Send email blast to your full database',                   sub:'Include highlights, date/time, and the Zoom join link' },
+                { id:'text_buyers',     text:'Text your active buyer leads with the Zoom link',          sub:'Keep it short and direct — they can join from anywhere' },
+                { id:'post_5day',       text:'Post social teaser 5 days out',                            sub:'Use the Canva graphic from Admin — tag the address' },
+                { id:'post_1day',       text:'Post reminder 1 day before the event',                    sub:'"Tomorrow! Join us live…" with the graphic' },
+                { id:'post_morning',    text:'Post morning-of (same day as the event)',                  sub:'"Today at 2pm — join us live!" with Zoom link' },
+            ])}</div>
+        </div>`;
+
+        case 'live': return `
+        <div class="status-panel">
+            <div class="sec-head">
+                <div class="sec-icon" style="background:#fee2e2;color:#b91c1c"><i class="fa-solid fa-circle-dot fa-beat"></i></div>
+                <div><h3>Event Is Today</h3><p>Check items off as you go — saved on your phone</p></div>
+            </div>
+            <div class="notice notice-red">
+                <i class="fa-solid fa-circle-dot"></i>
+                <span><strong>Your virtual open house is today.</strong> Use the checklist below — check items off on your phone as you go. Your progress is saved automatically.</span>
+            </div>
+            <div class="divider-label">1–2 Hours Before (1:50pm)</div>
+            <div class="checklist" style="margin-bottom:14px">${checklist(e.id, 'pre', [
+                { id:'arrive',   text:'Arrive early — plan your walkthrough route',             sub:'Walk through solo and decide room order before guests arrive' },
+                { id:'blinds',   text:'Open all blinds and curtains',                           sub:'Natural light is your best tool — every room' },
+                { id:'lights',   text:'Turn on every light in the house' },
+                { id:'phone',    text:'Phone charged to 100%, Do Not Disturb on' },
+                { id:'hotspot',  text:'Mobile hotspot enabled as backup' },
+                { id:'mic',      text:'Earbuds or lapel mic connected and tested',              sub:'30-second test — ask someone to listen in' },
+                { id:'zoom_app', text:'Zoom app open — meeting ID and passcode confirmed' },
+                { id:'details',  text:'Property details sheet pulled up on screen' },
+            ])}</div>
+            <div class="divider-label">At Event Start (2:00pm)</div>
+            <div class="checklist" style="margin-bottom:14px">${checklist(e.id, 'start', [
+                { id:'recording',  text:'Recording started — confirm red dot is visible',       sub:'If not visible, tap Record before admitting anyone' },
+                { id:'waiting_rm', text:'Waiting room opened 5 minutes early' },
+                { id:'form_link',  text:'Buyer interest form link pasted into Zoom chat' },
+                { id:'chat_open',  text:'Chat panel open and visible' },
+                { id:'muted',      text:'Participants muted, self-unmute disabled' },
+            ])}</div>
+            <div class="divider-label">During the Event</div>
+            <div class="checklist">${checklist(e.id, 'during', [
+                { id:'intro',      text:'Welcome intro delivered',                              sub:'Name, property address, asking price, event format' },
+                { id:'form_1',     text:'Interest form link mentioned at start of walkthrough' },
+                { id:'walkthru',   text:'Room-by-room walkthrough complete',                    sub:'Slow and narrated — pause 10–15 sec per room' },
+                { id:'form_2',     text:'Interest form link mentioned again mid-event' },
+                { id:'qa',         text:'Q&amp;A complete — all chat questions answered' },
+                { id:'close',      text:'Strong close delivered',                               sub:'Top 3 highlights, price, interest form CTA, your direct contact' },
+                { id:'stop_rec',   text:'Recording stopped before ending the meeting' },
+            ])}</div>
+        </div>`;
+
+        case 'post_event': return `
+        <div class="status-panel">
+            <div class="sec-head">
+                <div class="sec-icon" style="background:#f3e8ff;color:#7e22ce"><i class="fa-solid fa-hourglass-half"></i></div>
+                <div><h3>Admin Is Processing Results</h3><p>Leads and recording coming within 24–48 hrs</p></div>
+            </div>
+            <div class="notice notice-orange">
+                <i class="fa-solid fa-clock"></i>
+                <span>Admin is downloading the Zoom recording, trimming and uploading to YouTube, and exporting leads from Facebook, Zoom, and WPForms. You'll receive an email with all three CSV files and the YouTube link within 24–48 hours.</span>
+            </div>
+            <div class="divider-label">Do These Now — Don't Wait for the Leads Email</div>
+            <div class="checklist">${checklist(e.id, 'post', [
+                { id:'call_now',     text:'Call every lead you captured today',                 sub:'Same-day calls convert highest — call before the leads email arrives' },
+                { id:'seller_upd',   text:'Contact your seller with attendance numbers',        sub:'Live attendees, questions asked, interest shown — they want to hear from you' },
+                { id:'social_soon',  text:'Post "replay coming soon" on your social media',     sub:'"Great turnout today! Recording will be up shortly — stay tuned."' },
+            ])}</div>
+        </div>`;
+
+        case 'complete': {
+            const att  = e.zoom_live_attendees  || 0;
+            const fbL  = e.fb_leads_count        || 0;
+            const ifs  = e.interest_submissions  || 0;
+            const reg  = e.zoom_registrants      || 0;
+            const shw  = e.showings_booked       || 0;
+            const ytv  = e.youtube_views_7day    || '—';
+            return `
+            <div class="status-panel">
+                <div class="sec-head">
+                    <div class="sec-icon" style="background:#d1fae5;color:#065f46"><i class="fa-solid fa-flag-checkered"></i></div>
+                    <div><h3>Event Complete</h3><p>All leads delivered · Recording published</p></div>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric-tile"><div class="metric-num">${att}</div><div class="metric-label">Live Attendees</div></div>
+                    <div class="metric-tile"><div class="metric-num">${fbL}</div><div class="metric-label">FB Leads</div></div>
+                    <div class="metric-tile"><div class="metric-num">${ifs}</div><div class="metric-label">Interest Forms</div></div>
+                    <div class="metric-tile"><div class="metric-num">${reg}</div><div class="metric-label">Registrants</div></div>
+                    <div class="metric-tile"><div class="metric-num">${shw}</div><div class="metric-label">Showings Booked</div></div>
+                    <div class="metric-tile"><div class="metric-num">${ytv}</div><div class="metric-label">YT Views (7-day)</div></div>
+                </div>
+                ${e.youtube_url ? `<a href="${e.youtube_url}" target="_blank" class="download-btn"><i class="fa-brands fa-youtube"></i> Watch Recording on YouTube</a>` : ''}
+                ${e.fb_leads_csv_url  ? `<a href="${e.fb_leads_csv_url}"  download class="download-btn"><i class="fa-solid fa-file-csv"></i> Download Facebook Leads CSV</a>` : ''}
+                ${e.zoom_csv_url      ? `<a href="${e.zoom_csv_url}"      download class="download-btn"><i class="fa-solid fa-file-csv"></i> Download Zoom Attendance CSV</a>` : ''}
+                ${e.wpforms_csv_url   ? `<a href="${e.wpforms_csv_url}"   download class="download-btn"><i class="fa-solid fa-file-csv"></i> Download Interest Form Submissions CSV</a>` : ''}
+                <div class="divider-label">Post-Event Checklist — complete within 24–48 hours</div>
+                <div class="checklist">${checklist(e.id, 'done', [
+                    { id:'called_all',    text:'Called every lead — same day is best' },
+                    { id:'replay_email',  text:'Sent replay link to full database',               sub:'"In case you missed it — watch the recording here: [YouTube link]"' },
+                    { id:'followup_chat', text:'Followed up with Zoom chat question-askers' },
+                    { id:'post_replay',   text:'Posted replay link on personal social media' },
+                    { id:'seller_result', text:'Contacted seller with full results report',        sub:'Attendees, leads captured, showings booked' },
+                    { id:'ghl_pipeline',  text:'All leads entered into GHL pipeline with status', sub:'Within 1 week' },
+                    { id:'yt_views',      text:'Checked YouTube replay views at 7-day mark' },
+                ])}</div>
+            </div>`;
+        }
+        default: return '';
+    }
+}
+
+/* ── Checklist helpers ──────────────────────────────────── */
+function checklist(evtId, phase, items) {
+    return items.map(item => {
+        const key     = `voh_${evtId}_${phase}_${item.id}`;
+        const checked = localStorage.getItem(key) === '1';
+        return `
+        <div class="check-item ${checked ? 'checked' : ''}" onclick="toggleCheck(this,'${key}')">
+            <div class="check-box">${checked ? '<i class="fa-solid fa-check"></i>' : ''}</div>
+            <div class="check-text">
+                ${item.text}
+                ${item.sub ? `<span class="check-sub">${item.sub}</span>` : ''}
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function toggleCheck(el, key) {
+    const on = !el.classList.contains('checked');
+    el.classList.toggle('checked', on);
+    el.querySelector('.check-box').innerHTML = on ? '<i class="fa-solid fa-check"></i>' : '';
+    localStorage.setItem(key, on ? '1' : '0');
+}
+
+function adminCheck(done, label) {
+    return `
+    <div class="admin-check ${done ? 'done-row' : ''}">
+        <div class="admin-check-icon ${done ? 'done' : 'pending'}">
+            <i class="fa-solid ${done ? 'fa-check' : 'fa-ellipsis'}"></i>
+        </div>
+        <div class="admin-check-label">${label}</div>
+    </div>`;
+}
+
+/* ── Property details accordion ─────────────────────────── */
+function renderPropDetails(e) {
+    const rows = [
+        ['Asking Price', e.asking_price], ['MLS #', e.mls_number],
+        ['Bedrooms', e.bedrooms],         ['Bathrooms', e.bathrooms],
+        ['Square Footage', e.square_footage], ['HOA Fee', e.hoa_fee],
+        ['Property Taxes', e.property_taxes], ['Year Built', e.year_built],
+        ['Age of Roof', e.age_of_roof],   ['Age of HVAC', e.age_of_hvac],
+        ['Parking', e.parking_details],   ['Pet Restrictions', e.pet_restrictions],
+        ['Rental Restrictions', e.rental_restrictions],
+    ].filter(r => r[1]);
+
+    const features = [e.top_feature_1, e.top_feature_2, e.top_feature_3].filter(Boolean);
+    const qas = [
+        ['HOA Fees &amp; Coverage',      e.qa_hoa_covers],
+        ['Roof / HVAC / Water Heater',   e.qa_roof_hvac],
+        ['Monthly Utilities',            e.qa_utilities],
+        ['Other Offers',                 e.qa_other_offers],
+        ['Close Timeline',               e.qa_close_timeline],
+    ].filter(r => r[1]);
+
+    document.getElementById('detailsBody').innerHTML = `
+        <div class="prop-grid" style="margin-bottom:16px">
+            ${rows.map(([k,v]) => `
+            <div class="prop-tile">
+                <div class="prop-tile-label">${k}</div>
+                <div class="prop-tile-value">${v}</div>
+            </div>`).join('')}
+        </div>
+        ${features.length ? `
+        <div style="margin-bottom:16px">
+            <div class="divider-label">Top Selling Features</div>
+            ${features.map((f,i) => `
+            <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px">
+                <div class="feature-num">${i+1}</div>
+                <div style="font-size:13px;padding-top:4px;line-height:1.5">${f}</div>
+            </div>`).join('')}
+        </div>` : ''}
+        ${qas.length ? `
+        <div>
+            <div class="divider-label">Prepared Q&amp;A Answers</div>
+            ${qas.map(([q,a]) => `
+            <div style="margin-bottom:12px">
+                <div class="prop-tile-label">${q}</div>
+                <div style="font-size:13px;background:var(--surface-3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-top:4px;line-height:1.6">${a}</div>
+            </div>`).join('')}
+        </div>` : ''}`;
+}
+
+function toggleDetails() {
+    const body = document.getElementById('detailsBody');
+    const chev = document.getElementById('detailsChevron');
+    const open = body.style.display === 'none';
+    body.style.display = open ? '' : 'none';
+    chev.style.transform = open ? 'rotate(180deg)' : '';
+}
+
+/* ── Agent dropdown ─────────────────────────────────────── */
+async function loadAgentDropdown() {
+    const sel = document.getElementById('f_agent_name');
+    if (!sel) return;
+    try {
+        const res = await fetch(
+            `${SB_URL}/rest/v1/hub_content?content_key=eq.yrl-agent-directory&select=content_value`,
+            { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }
+        );
+        const rows = await res.json();
+        const agents = (rows[0]?.content_value || []).filter(a => a.name);
+        agents.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+        sel.innerHTML = '<option value="">Select your name…</option>' +
+            agents.map(a => `<option value="${a.name.replace(/"/g,'&quot;')}">${a.name}</option>`).join('');
+    } catch {
+        sel.innerHTML = '<option value="">Could not load — type your name</option>';
+        sel.type = 'text';
+    }
+}
+
+/* ── Listing URL auto-fill ──────────────────────────────── */
+async function fetchViaProxy(url) {
+    const proxies = [
+        { build: u => `https://corsproxy.io/?${encodeURIComponent(u)}`,                              get: r => r.text() },
+        { build: u => `https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,                 get: async r => { const d = await r.json(); return d.contents||''; } },
+        { build: u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,            get: r => r.text() },
+    ];
+    for (const p of proxies) {
+        try {
+            const r = await fetch(p.build(url), { signal: AbortSignal.timeout(12000) });
+            if (!r.ok) continue;
+            const html = await p.get(r);
+            if (html && html.length > 200) return html;
+        } catch { /* try next */ }
+    }
+    throw new Error('All proxies failed — fill in the fields manually');
+}
+
+async function fetchListingDetails() {
+    const url = document.getElementById('f_listing_url').value.trim();
+    if (!url) return;
+    const btn = document.getElementById('btnFetchListing');
+    const msg = document.getElementById('fetchListingMsg');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Fetching…';
+    msg.textContent = '';
+    msg.style.color = '';
+
+    try {
+        const html = await fetchViaProxy(url);
+        const doc  = new DOMParser().parseFromString(html, 'text/html');
+
+        let address = '', price = '', mls = '', beds = '', baths = '', sqft = '', year = '', hoa = '', taxes = '', parking = '';
+
+        // ── JSON-LD (most reliable) ──
+        doc.querySelectorAll('script[type="application/ld+json"]').forEach(s => {
+            try {
+                const ld = JSON.parse(s.textContent);
+                const items = [].concat(ld, ld['@graph'] || []);
+                items.forEach(item => {
+                    if (!address) {
+                        const a = item.address;
+                        if (a) address = typeof a === 'string' ? a
+                            : [a.streetAddress, a.addressLocality, a.addressRegion, a.postalCode].filter(Boolean).join(', ');
+                    }
+                    if (!price) {
+                        const p = item.price || item.offers?.price || item.offers?.[0]?.price;
+                        if (p) { const n = parseFloat(String(p).replace(/[^0-9.]/g,'')); price = n ? '$'+n.toLocaleString('en-US',{maximumFractionDigits:0}) : String(p); }
+                    }
+                });
+            } catch {}
+        });
+
+        // ── Address: check og:title and heading selectors ──
+        if (!address) {
+            const ogTitle = doc.querySelector('meta[property="og:title"]')?.getAttribute('content') || '';
+            const addrRe  = /\d+[^,\n]{2,50}(?:Street|Avenue|Drive|Road|Boulevard|Court|Lane|Way|Place|Circle|Trail|Parkway|Highway|Terrace|Pike|Loop|St|Ave|Dr|Rd|Blvd|Ct|Ln|Pl|Cir|Pkwy|Hwy|Ter)\b[^,\n]{0,30}(?:,\s*[A-Z]{2}\s*\d{5})?/i;
+            const m = ogTitle.match(addrRe);
+            if (m) address = m[0].trim();
+        }
+        if (!address) {
+            const selectors = ['[itemprop="streetAddress"]','[itemprop="address"]','.listing-address','.property-address','h1','h2'];
+            for (const sel of selectors) {
+                const el  = doc.querySelector(sel);
+                const txt = el?.textContent?.trim().replace(/\s+/g,' ') || '';
+                if (txt && /\d/.test(txt) && /\b(Street|Avenue|Drive|Road|Blvd|St|Ave|Dr|Rd|Ct|Ln|Way|Pl|Cir|Trail|Pkwy|Ter|Unit|Apt)\b/i.test(txt)) {
+                    address = txt.split(/[\n|—–]/)[0].trim(); break;
+                }
+            }
+        }
+
+        // ── Price: DOM selectors, then og: meta, then first large $ amount in body ──
+        if (!price) {
+            for (const sel of ['[itemprop="price"]','.listing-price','.property-price','.price','[class*="price"]','[class*="amount"]','[class*="cost"]']) {
+                const txt = doc.querySelector(sel)?.textContent?.trim() || '';
+                const m   = txt.match(/\$[\d,]+/);
+                if (m) { price = m[0]; break; }
+            }
+        }
+        if (!price) {
+            const ogPrice = doc.querySelector('meta[property="og:price:amount"], meta[property="product:price:amount"]')?.getAttribute('content');
+            if (ogPrice) { const n = parseFloat(ogPrice.replace(/[^0-9.]/g,'')); if (n) price = '$'+n.toLocaleString('en-US',{maximumFractionDigits:0}); }
+        }
+        if (!price) {
+            // Scan all elements for a standalone price — look for 6-figure $ amount (listing price)
+            const allEls = Array.from(doc.querySelectorAll('*'));
+            for (const el of allEls) {
+                if (el.children.length) continue; // leaf nodes only
+                const txt = el.textContent.trim();
+                const m   = txt.match(/^\$?([\d,]{5,10})$|^\$([\d,]{5,10})$/);
+                if (m) { const raw = (m[1]||m[2]).replace(/,/g,''); price = '$'+parseInt(raw).toLocaleString('en-US'); break; }
+            }
+        }
+        if (!price) {
+            // Last resort: first 6-digit $ amount anywhere in page text
+            const m = bodyText?.match(/\$([\d,]{6,10})\b/);
+            if (m) price = '$' + parseInt(m[1].replace(/,/g,'')).toLocaleString('en-US');
+        }
+
+        // ── Label-based extraction — works on YRL / MIBOR IDX pages ──
+        // Build a map of "Label → Value" from the structured property detail rows
+        const labeled = {};
+        doc.querySelectorAll('td, th, dt, dd, li, .detail-row, [class*="detail"], [class*="property"], p').forEach(el => {
+            const txt = el.textContent.replace(/\s+/g,' ').trim();
+            const m   = txt.match(/^([A-Za-z][A-Za-z\s#\/]{1,30}):\s*(.+)$/);
+            if (m) labeled[m[1].trim().toLowerCase()] = m[2].trim();
+        });
+
+        const lv = (...keys) => {
+            for (const k of keys) {
+                const v = labeled[k.toLowerCase()];
+                if (v && v.toLowerCase() !== 'n/a' && v.toLowerCase() !== 'no' && v !== '0') return v;
+            }
+            return '';
+        };
+
+        if (!mls)    mls    = lv('mls #','mls#','mls number','listing #','listing number').match(/\d+/)?.[0] || '';
+        if (!beds)   beds   = lv('bedrooms','beds','bed').match(/\d+/)?.[0] || '';
+        if (!baths)  baths  = lv('full baths','bathrooms','baths','bath','full bath').match(/\d+(?:\.\d)?/)?.[0] || '';
+        if (!sqft)   sqft   = lv('square feet','sq ft','sqft','living area','total sq ft').match(/[\d,]+/)?.[0]?.replace(/,/g,'') || '';
+        if (!year)   year   = lv('year built','year build','built').match(/\d{4}/)?.[0] || '';
+        if (!hoa)    { const v = lv('hoa fee','hoa','association fee'); if (v && v !== 'None') hoa = v.includes('$') ? v : '$'+v; }
+        if (!taxes)  { const v = lv('property taxes','annual taxes','taxes'); if (v) taxes = v.includes('$') ? v : '$'+v; }
+        if (!parking){ const v = lv('garage','parking','carport'); if (v && v.toLowerCase() !== 'no') parking = v; }
+
+        // ── Fallback: body text with label-colon pattern ──
+        const bodyText = doc.body?.textContent || '';
+        const labeled2 = (label, pattern) => {
+            const re = new RegExp(label + '[:\\s]+(' + pattern + ')', 'i');
+            return bodyText.match(re)?.[1]?.trim() || '';
+        };
+        if (!beds)  beds  = labeled2('Bedrooms?', '\\d+');
+        if (!baths) baths = labeled2('(?:Full\\s+)?Baths?(?:rooms?)?', '\\d+(?:\\.\\d)?');
+        if (!sqft)  sqft  = labeled2('Square\\s+(?:Feet|Ft)', '[\\d,]+')?.replace(/,/g,'');
+        if (!year)  year  = labeled2('Year\\s+[Bb]uilt', '\\d{4}');
+        if (!mls)   mls   = labeled2('MLS\\s*#?', '\\d{5,10}');
+
+        // Fill fields
+        const fill = (id, v) => { const el = document.getElementById(id); if (el && v) el.value = v; };
+        fill('f_address', address); fill('f_price',   price);
+        fill('f_mls',     mls);     fill('f_beds',    beds);
+        fill('f_baths',   baths);   fill('f_sqft',    sqft);
+        fill('f_year',    year);    fill('f_hoa',     hoa);
+        fill('f_taxes',   taxes);   fill('f_parking', parking);
+
+        const filled = [address, price, mls, beds, baths, sqft, year, hoa, taxes, parking].filter(Boolean).length;
+        if (filled === 0) throw new Error('No details found — fill in the fields manually');
+
+        msg.textContent = `✓ Auto-filled ${filled} field${filled!==1?'s':''}. Review and adjust anything below.`;
+        msg.style.color = 'var(--green)';
+    } catch(e) {
+        msg.textContent = '✗ ' + e.message;
+        msg.style.color = '#ef4444';
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Fill';
+    }
+}
+
+/* ── Form step navigation ───────────────────────────────── */
+function goStep(n) {
+    if (n > formStep && !validateStep(formStep)) return;
+    for (let i = 1; i <= 4; i++) {
+        const s = document.getElementById(`step${i}`);
+        if (s) s.style.display = i === n ? '' : 'none';
+        const item = document.getElementById(`stepItem${i}`);
+        if (item) {
+            item.classList.remove('active', 'done');
+            if (i < n) item.classList.add('done');
+            if (i === n) item.classList.add('active');
+        }
+        const line = document.getElementById(`stepLine${i}`);
+        if (line) line.classList.toggle('done', i < n);
+    }
+    formStep = n;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function validateStep(step) {
+    const required = {
+        1: ['f_agent_name'],
+        2: ['f_address', 'f_price'],
+        3: ['f_date', 'f_feat1'],
+    };
+    let ok = true;
+    (required[step] || []).forEach(id => {
+        const el = document.getElementById(id);
+        if (!el || !el.value.trim()) {
+            if (el) { el.classList.add('error'); el.addEventListener('input', () => el.classList.remove('error'), { once: true }); }
+            ok = false;
+        }
+    });
+    if (!ok) toast('Please fill in all required fields.', 'error');
+    return ok;
+}
+
+
+/* ── EmailJS notifications ──────────────────────────────── */
+function sendNewSubmissionEmail(payload) {
+    try {
+        const [ts, te] = (payload.event_time || '').split('–').map(s => s.trim());
+        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_ADMIN_TEMPLATE, {
+            agent_name:       payload.agent_name       || '',
+            property_address: payload.property_address || '',
+            asking_price:     payload.asking_price     || '',
+            beds:             payload.bedrooms         || '',
+            baths:            payload.bathrooms        || '',
+            event_date:       payload.event_date       || '',
+            time_start:       ts || '',
+            time_end:         te || '',
+            notes:            [payload.top_feature_1, payload.top_feature_2, payload.top_feature_3].filter(Boolean).join(' | '),
+        }, EMAILJS_PUBLIC_KEY);
+    } catch(e) { console.warn('EmailJS send error:', e); }
+}
+
+/* ── Submit form ────────────────────────────────────────── */
+async function submitForm() {
+    if (!validateStep(4)) return;
+    const btn = document.getElementById('btnSubmit');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting…';
+
+    try {
+        const token = await getToken();
+
+        // Ensure currentUser is set even if auth-ready event was missed
+        if (!currentUser) {
+            const client = sb || window.yrlClient;
+            const { data } = await client.auth.getSession();
+            currentUser = data.session?.user || null;
+        }
+        if (!currentUser) throw new Error('Not authenticated — please refresh');
+
+        const timeStart = val('f_time_start') || '2:00 PM';
+        const timeEnd   = val('f_time_end')   || '4:00 PM';
+        const payload = {
+            agent_id: currentUser.id,
+            agent_name: val('f_agent_name'),
+            agent_email: currentUser.email || null,
+            agent_fb_page: val('f_agent_fb'),
+            property_address: val('f_address'),  asking_price: val('f_price'),
+            mls_number: val('f_mls'),             bedrooms: val('f_beds'),
+            bathrooms: val('f_baths'),            square_footage: val('f_sqft'),
+            hoa_fee: val('f_hoa'),                property_taxes: val('f_taxes'),
+            year_built: val('f_year'),            age_of_roof: val('f_roof'),
+            age_of_hvac: val('f_hvac'),           parking_details: val('f_parking'),
+            pet_restrictions: val('f_pets'),      rental_restrictions: val('f_rental'),
+            top_feature_1: val('f_feat1'),        top_feature_2: val('f_feat2'),
+            top_feature_3: val('f_feat3'),        event_date: val('f_date') || null,
+            event_time: `${timeStart} – ${timeEnd}`,
+            qa_hoa_covers: val('f_qa1'),          qa_roof_hvac: val('f_qa2'),
+            qa_utilities: val('f_qa3'),           qa_other_offers: val('f_qa4'),
+            qa_close_timeline: val('f_qa5'),      status: 'submitted'
+        };
+
+        // Strip empty strings to null so Postgres doesn't reject type mismatches
+        Object.keys(payload).forEach(k => { if (payload[k] === '') payload[k] = null; });
+
+        const res = await fetch(`${SB_URL}/rest/v1/voh_events`, {
+            method: 'POST',
+            headers: { ...sbHeaders(token), 'Prefer': 'return=representation' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+            const errBody = await res.json().catch(() => ({}));
+            throw new Error(`HTTP ${res.status}: ${errBody.message || errBody.hint || JSON.stringify(errBody)}`);
+        }
+        toast('Request submitted! Admin will set up Zoom and marketing within 1–2 days.', 'success');
+        sendNewSubmissionEmail(payload);
+        showList();
+    } catch(e) {
+        console.error('VOH submit error:', e);
+        toast(`Submit failed: ${e.message}`, 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit to Admin';
+    }
+}
+
+/* ── Utilities ──────────────────────────────────────────── */
+function val(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+function setVal(id, v) { const el = document.getElementById(id); if (el && v) el.value = v; }
+
+async function getToken() {
+    const client = _getOrCreateClient();
+    if (!client) throw new Error('Not authenticated — please refresh the page');
+    const { data } = await client.auth.getSession();
+    if (!data.session) throw new Error('Session expired — please log in again');
+    if (!currentUser) currentUser = data.session.user;
+    return data.session.access_token;
+}
+
+/* ── DOMContentLoaded fallback — catch cases where auth-ready already fired ── */
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(async () => {
+        if (currentUser) return; // already set by auth-ready
+        const client = _getOrCreateClient();
+        if (!client) return;
+        const { data } = await client.auth.getSession();
+        if (data.session) {
+            currentUser = data.session.user;
+            sb = client;
+            loadEvents();
+            loadAgentDropdown();
+        }
+    }, 800);
+});
+
+function sbHeaders(token) {
+    return { 'apikey': SB_KEY, 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+}
+
+function fmtDate(d) {
+    if (!d) return '—';
+    const [y, m, day] = d.split('-');
+    return new Date(+y, +m - 1, +day).toLocaleDateString('en-US',
+        { weekday: 'short', month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+function statusPill(s) {
+    const labels = {
+        submitted: 'Submitted', in_setup: 'In Setup', ready: 'Ready to Go',
+        live: 'Live Today', post_event: 'Processing', complete: 'Complete'
+    };
+    return `<span class="pill pill-${s}">${labels[s] || s}</span>`;
+}
+
+function copyVal(text, btn) {
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = 'Copied!'; btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+    });
+}
+
+function toast(msg, type = '') {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    t.className = 'show' + (type ? ' ' + type : '');
+    setTimeout(() => t.classList.remove('show', 'success', 'error'), 3500);
+}
+</script>
+</body>
+</html>

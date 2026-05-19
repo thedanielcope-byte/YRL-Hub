@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listing Slideshow Maker — YRL Agent Hub</title>
+    <script src="yrl-auth.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --red:#c03926; --red-light:#d94a35; --red-dark:#9e2e1e;
+            --bg:#f2f4f7; --surface:#ffffff; --border:#e2e5ea;
+            --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+            --radius:14px; --green:#16a34a;
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);}
+        body{display:flex;flex-direction:column;overflow:hidden;}
+
+        /* Sub-header */
+        .sub-header{height:52px;background:var(--surface);border-bottom:1px solid var(--border);
+            display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;z-index:100;}
+        .back-link{color:var(--text-sec);text-decoration:none;font-size:13px;display:flex;align-items:center;gap:5px;padding:5px;}
+        .back-link:hover{color:var(--red);}
+        .sub-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;flex:1;}
+        .user-chip{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-sec);}
+        .btn-so{background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;
+            font-size:11px;font-family:'Inter',sans-serif;cursor:pointer;color:var(--text-sec);}
+        .btn-so:hover{border-color:var(--red);color:var(--red);}
+
+        /* Layout */
+        .maker-body{display:flex;flex:1;overflow:hidden;}
+
+        /* Form panel */
+        .maker-form{width:340px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);
+            overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:18px;}
+        .maker-form::-webkit-scrollbar{width:4px;}
+        .maker-form::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+        .sec-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.3px;
+            color:var(--text-muted);padding-bottom:7px;border-bottom:1px solid var(--border);margin-bottom:2px;}
+        .form-row{display:flex;flex-direction:column;gap:4px;}
+        .form-label{font-size:11.5px;font-weight:600;color:var(--text-sec);}
+        .form-input{width:100%;background:#f7f8fa;border:1.5px solid var(--border);border-radius:8px;
+            padding:8px 11px;font-size:13px;font-family:'Inter',sans-serif;color:var(--text);
+            outline:none;transition:border-color 0.2s;}
+        .form-input:focus{border-color:var(--red);}
+        .url-row{display:flex;gap:6px;}
+        .url-row .form-input{flex:1;min-width:0;}
+        .btn-fetch{background:var(--red);color:#fff;border:none;border-radius:8px;padding:8px 12px;
+            font-size:12px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;white-space:nowrap;
+            display:flex;align-items:center;gap:4px;transition:background 0.15s;flex-shrink:0;}
+        .btn-fetch:hover:not(:disabled){background:var(--red-light);}
+        .btn-fetch:disabled{opacity:0.55;cursor:not-allowed;}
+        .fetch-msg{font-size:11px;min-height:14px;margin-top:2px;}
+        .fetch-msg.ok{color:var(--green);}
+        .fetch-msg.err{color:#ef4444;}
+
+        /* Color */
+        .color-row{display:flex;align-items:center;gap:10px;}
+        .color-swatch{width:38px;height:34px;border:1.5px solid var(--border);border-radius:8px;
+            padding:3px;background:#f7f8fa;overflow:hidden;cursor:pointer;}
+        .color-swatch input[type=color]{width:calc(100%+8px);height:calc(100%+8px);
+            margin:-4px;border:none;outline:none;cursor:pointer;}
+        .presets{display:flex;gap:5px;flex-wrap:wrap;}
+        .preset{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2.5px solid transparent;
+            transition:transform 0.1s,border-color 0.1s;flex-shrink:0;}
+        .preset:hover{transform:scale(1.18);}
+        .preset.active{border-color:var(--text);}
+
+        /* Photo slots */
+        .photo-slots{display:flex;flex-direction:column;gap:10px;}
+        .photo-slot{display:flex;gap:9px;align-items:flex-start;}
+        .photo-thumb{width:52px;height:52px;border-radius:8px;border:1.5px solid var(--border);
+            background:#f7f8fa;flex-shrink:0;overflow:hidden;display:flex;align-items:center;
+            justify-content:center;color:var(--text-muted);font-size:18px;cursor:pointer;
+            transition:border-color 0.2s;}
+        .photo-thumb:hover{border-color:var(--red);}
+        .photo-thumb img{width:100%;height:100%;object-fit:cover;}
+        .slot-fields{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;}
+        .slot-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);}
+        .slot-row{display:flex;gap:4px;}
+        .slot-row .form-input{flex:1;min-width:0;font-size:12px;padding:6px 9px;}
+        .btn-up{background:none;border:1.5px dashed var(--border);border-radius:6px;
+            padding:5px 7px;font-size:11px;cursor:pointer;color:var(--text-muted);
+            flex-shrink:0;transition:all 0.15s;}
+        .btn-up:hover{border-color:var(--red);color:var(--red);}
+
+        /* Preview panel */
+        .maker-preview{flex:1;display:flex;flex-direction:column;align-items:center;
+            justify-content:center;padding:20px;gap:14px;overflow:hidden;min-width:0;}
+        .preview-wrap{width:100%;max-width:860px;}
+        .preview-stage{width:100%;position:relative;overflow:hidden;border-radius:10px;
+            box-shadow:0 8px 40px rgba(0,0,0,0.28);background:#111;}
+        .slide{position:absolute;inset:0;opacity:0;transition:opacity 0.6s;}
+        .slide.active{opacity:1;}
+        .slide-inner{position:absolute;top:0;left:0;width:1280px;height:720px;transform-origin:top left;}
+        .s-bg{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat;}
+        .s-logo{height:52px;background:rgba(255,255,255,0.93);border-radius:7px;padding:5px 9px;object-fit:contain;}
+
+        /* Controls */
+        .preview-controls{display:flex;align-items:center;gap:10px;}
+        .ctrl-btn{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+            width:34px;height:34px;display:flex;align-items:center;justify-content:center;
+            cursor:pointer;color:var(--text-sec);transition:all 0.15s;font-size:13px;}
+        .ctrl-btn:hover{border-color:var(--red);color:var(--red);}
+        .dots{display:flex;gap:6px;align-items:center;}
+        .dot{width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;
+            transition:background 0.2s,transform 0.15s;}
+        .dot.active{background:var(--red);transform:scale(1.3);}
+        .auto-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;
+            font-size:11px;font-weight:600;cursor:pointer;color:var(--text-sec);
+            font-family:'Inter',sans-serif;transition:all 0.15s;}
+        .auto-btn.on{border-color:var(--red);color:var(--red);}
+
+        /* Actions */
+        .preview-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+        .btn-dl{background:var(--red);color:#fff;border:none;border-radius:9px;padding:10px 20px;
+            font-size:13px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;
+            display:flex;align-items:center;gap:7px;transition:background 0.15s,transform 0.1s;}
+        .btn-dl:hover{background:var(--red-light);transform:translateY(-1px);}
+        .btn-canva{background:var(--surface);color:var(--text-sec);border:1.5px solid var(--border);
+            border-radius:9px;padding:10px 18px;font-size:13px;font-weight:600;
+            font-family:'Inter',sans-serif;cursor:pointer;display:flex;align-items:center;gap:7px;
+            text-decoration:none;transition:all 0.15s;}
+        .btn-canva:hover{border-color:var(--red);color:var(--red);}
+
+        /* Brand slide upload */
+        .brand-drop {
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            background: #f7f8fa;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 500;
+            transition: border-color 0.2s, background 0.2s;
+            overflow: hidden;
+        }
+        .brand-drop:hover { border-color: var(--red); background: rgba(192,57,38,0.04); }
+        .brand-drop img { width: 100%; border-radius: 6px; display: block; }
+        .btn-brand-dl {
+            width: 100%;
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: 9px;
+            padding: 9px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            color: var(--text-sec);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            transition: all 0.15s;
+        }
+        .btn-brand-dl:not(:disabled):hover { border-color: var(--red); color: var(--red); }
+        .btn-brand-dl:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        @media(max-width:720px){
+            body{overflow:auto;}
+            .maker-body{flex-direction:column;overflow:visible;}
+            .maker-form{width:100%;border-right:none;border-bottom:1px solid var(--border);}
+            .maker-preview{padding:16px;}
+        }
+    </style>
+</head>
+<body>
+
+<header class="sub-header">
+    <a class="back-link" href="yrl-agent-hub.html"><i class="fa-solid fa-arrow-left"></i> Hub</a>
+    <div class="sub-title">Listing Slideshow Maker</div>
+    <div class="user-chip">
+        <span id="yrl-user-name"></span>
+        <button class="btn-so" onclick="yrlSignOut()">Sign Out</button>
+    </div>
+</header>
+
+<div class="maker-body">
+
+<!-- ── Left: Form ── -->
+<div class="maker-form">
+
+    <div>
+        <div class="sec-title">Listing Info</div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px;">
+            <div class="form-row">
+                <div class="form-label">Listing Page URL — Auto-Fetch Photos</div>
+                <div class="url-row">
+                    <input class="form-input" id="listingUrl" type="url"
+                        placeholder="https://yrlagent.com/listing/…"
+                        onkeydown="if(event.key==='Enter')fetchPhotos()">
+                    <button class="btn-fetch" id="fetchBtn" onclick="fetchPhotos()">
+                        <i class="fa-solid fa-magnifying-glass"></i> Fetch
+                    </button>
+                </div>
+                <div class="fetch-msg" id="fetchMsg"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-label">Address</div>
+                <input class="form-input" id="inputAddress" type="text"
+                    placeholder="123 Main St, Indianapolis, IN 46227" oninput="updatePreview()">
+            </div>
+            <div class="form-row">
+                <div class="form-label">Price</div>
+                <input class="form-input" id="inputPrice" type="text"
+                    placeholder="$250,000" oninput="updatePreview()">
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="sec-title">Accent Color</div>
+        <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">
+            <div class="color-row">
+                <div class="color-swatch">
+                    <input type="color" id="accentColor" value="#c03926"
+                        oninput="onColorChange(this.value,null)">
+                </div>
+                <div class="presets" id="presets"></div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="sec-title">Photos (1 – 5)</div>
+        <div class="photo-slots" id="photoSlots" style="margin-top:10px;"></div>
+    </div>
+
+    <!-- Brand Slide -->
+    <div>
+        <div class="sec-title">Brand Slide</div>
+        <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">
+            <div class="brand-drop" id="brandDrop" onclick="document.getElementById('brandFile').click()">
+                <div id="brandPreview">
+                    <i class="fa-solid fa-image" style="font-size:22px;margin-bottom:6px;"></i>
+                    <div>Upload your generic brand slide</div>
+                    <div style="font-size:10px;margin-top:2px;opacity:0.7;">Saved permanently — upload once</div>
+                </div>
+            </div>
+            <input type="file" id="brandFile" style="display:none" accept="image/*"
+                onchange="handleBrandUpload(this)">
+            <button class="btn-brand-dl" id="brandDlBtn" onclick="downloadBrandSlide()" disabled>
+                <i class="fa-solid fa-download"></i> Download Brand Slide
+            </button>
+            <a href="yrl-agent-directory.html" class="btn-canva"
+                style="justify-content:center;font-size:12px;padding:8px 12px;">
+                <i class="fa-solid fa-address-card"></i> Agent Directory — Download Agent Slides
+            </a>
+        </div>
+    </div>
+
+</div>
+
+<!-- ── Right: Preview ── -->
+<div class="maker-preview">
+    <div class="preview-wrap">
+        <div class="preview-stage" id="previewStage"></div>
+    </div>
+
+    <div class="preview-controls">
+        <button class="ctrl-btn" onclick="goSlide(currentSlide-1)" title="Prev">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <div class="dots" id="dots"></div>
+        <button class="ctrl-btn" onclick="goSlide(currentSlide+1)" title="Next">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+        <button class="auto-btn on" id="autoBtn" onclick="toggleAuto()">
+            <i class="fa-solid fa-pause"></i> Auto
+        </button>
+    </div>
+
+    <div class="preview-actions">
+        <button class="btn-dl" onclick="downloadImages()">
+            <i class="fa-solid fa-images"></i> Download 5 PNGs
+        </button>
+        <a class="btn-canva"
+            href="https://www.canva.com/design/DAHItmTXAHM/_JAQViF3AYbrPYdEfUsuUQ/edit"
+            target="_blank" rel="noopener">
+            <i class="fa-brands fa-canva"></i> Open Canva Template
+        </a>
+    </div>
+</div>
+
+</div><!-- .maker-body -->
+
+<script>
+/* ════════════════════════════════════════════════════
+   YRL Listing Slideshow Maker
+   ════════════════════════════════════════════════════ */
+
+const LOGO = 'https://yrlagent.com/wp-content/uploads/2026/04/Your-Realty-Link-ver6.6-4-final.png';
+const CANVA_TEMPLATE = 'https://www.canva.com/design/DAHItmTXAHM/_JAQViF3AYbrPYdEfUsuUQ/edit';
+const COLOR_PRESETS  = ['#c03926','#1e3a5f','#1a6b3c','#7c3aed','#0f4c81','#b45309','#111827'];
+
+let photos      = ['','','','',''];
+let accentColor = '#c03926';
+let address     = '';
+let price       = '';
+let currentSlide = 0;
+let autoTimer    = null;
+let isPlaying    = true;
+
+/* ── Escape for HTML ── */
+function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── CSS background-image value for a photo slot ── */
+function photoBg(idx) {
+    const p = photos[idx];
+    if (p) return `url('${p.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')`;
+    return 'linear-gradient(135deg,#d1d5db 0%,#e5e7eb 100%)';
+}
+
+/* ══ COLOR PRESETS ══ */
+function buildColorPresets() {
+    document.getElementById('presets').innerHTML = COLOR_PRESETS.map(c =>
+        `<div class="preset${c===accentColor?' active':''}" style="background:${c}"
+              onclick="onColorChange('${c}',this)" title="${c}"></div>`
+    ).join('');
+}
+
+function onColorChange(color, presetEl) {
+    accentColor = color;
+    document.getElementById('accentColor').value = color;
+    document.querySelectorAll('.preset').forEach(p => p.classList.remove('active'));
+    if (presetEl) presetEl.classList.add('active');
+    updatePreview();
+}
+
+/* ══ PHOTO SLOTS ══ */
+function buildPhotoSlots() {
+    document.getElementById('photoSlots').innerHTML = Array.from({length:5},(_,i) => `
+        <div class="photo-slot">
+            <div class="photo-thumb" id="thumb-${i}" onclick="document.getElementById('file-${i}').click()">
+                <i class="fa-regular fa-image"></i>
+            </div>
+            <input type="file" id="file-${i}" style="display:none" accept="image/*"
+                onchange="handleFileUpload(${i},this)">
+            <div class="slot-fields">
+                <div class="slot-label">Photo ${i+1}</div>
+                <div class="slot-row">
+                    <input class="form-input" id="photoUrl-${i}" type="url"
+                        placeholder="Paste URL or upload →"
+                        oninput="handleUrlInput(${i},this.value)">
+                    <button class="btn-up" onclick="document.getElementById('file-${i}').click()"
+                        title="Upload from computer">
+                        <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                    </button>
+                </div>
+            </div>
+        </div>`).join('');
+}
+
+function handleUrlInput(idx, val) {
+    photos[idx] = val.trim();
+    refreshThumb(idx);
+    updatePreview();
+}
+
+function handleFileUpload(idx, input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        photos[idx] = e.target.result;
+        document.getElementById('photoUrl-'+idx).value = file.name;
+        refreshThumb(idx);
+        updatePreview();
+    };
+    reader.readAsDataURL(file);
+}
+
+function refreshThumb(idx) {
+    const thumb = document.getElementById('thumb-'+idx);
+    if (!thumb) return;
+    if (photos[idx]) {
+        thumb.innerHTML = `<img src="${esc(photos[idx])}" alt=""
+            onerror="this.parentNode.innerHTML='<i class=\\'fa-regular fa-image\\'></i>'"
+            style="width:100%;height:100%;object-fit:cover;">`;
+    } else {
+        thumb.innerHTML = `<i class="fa-regular fa-image"></i>`;
+    }
+}
+
+/* ══ SCALE PREVIEW ══ */
+function updateScale() {
+    const stage = document.getElementById('previewStage');
+    const w = stage.clientWidth;
+    const scale = w / 1280;
+    stage.style.height = (720 * scale) + 'px';
+    document.querySelectorAll('.slide-inner').forEach(el => {
+        el.style.transform = `scale(${scale})`;
+    });
+}
+
+/* ══ SLIDE BUILDERS (native 1280×720) ══ */
+
+/* Slide 1: Full-bleed, top-left price badge, bottom address banner */
+function buildSlide1(ac) {
+    const addr = esc(address || '123 Main St, Indianapolis, IN 46227');
+    const pr   = esc(price   || '$250,000');
+    return `
+    <div class="s-bg" style="background-image:${photoBg(0)};background-color:#1a1d22;"></div>
+    <div style="position:absolute;top:32px;left:40px;background:rgba(255,255,255,0.94);
+        padding:10px 24px;border-radius:7px;">
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:54px;
+            color:${ac};letter-spacing:2px;line-height:1;">${pr}</span>
+    </div>
+    <img src="${LOGO}" class="s-logo" style="position:absolute;top:26px;right:32px;"
+        onerror="this.style.display='none'">
+    <div style="position:absolute;bottom:0;left:0;right:0;background:${ac};padding:20px 40px;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:54px;color:#fff;
+            letter-spacing:2px;line-height:1.1;text-transform:uppercase;">${addr}</div>
+    </div>`;
+}
+
+/* Slide 2: Left white panel + right photo */
+function buildSlide2(ac) {
+    const addr = esc(address || '123 Main St\nIndianapolis, IN 46227').replace(/\n/g,'<br>');
+    const pr   = esc(price   || '$250,000');
+    return `
+    <div style="position:absolute;inset:0;display:flex;">
+        <div style="width:38%;background:#fff;display:flex;flex-direction:column;align-items:center;
+            justify-content:center;padding:52px 36px;gap:18px;flex-shrink:0;">
+            <img src="${LOGO}" style="max-width:148px;object-fit:contain;"
+                onerror="this.style.display='none'">
+            <div style="width:80%;height:3px;background:${ac};border-radius:2px;"></div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:68px;color:${ac};
+                letter-spacing:2px;line-height:1;text-align:center;">${pr}</div>
+            <div style="width:50%;height:1px;background:#e5e7eb;"></div>
+            <div style="font-size:22px;color:#374151;text-align:center;line-height:1.5;font-weight:500;
+                word-break:break-word;">${addr}</div>
+        </div>
+        <div style="flex:1;background-image:${photoBg(1)};background-size:cover;
+            background-position:center;background-color:#1a1d22;"></div>
+    </div>`;
+}
+
+/* Slide 3: Left panel (address + diamonds + price + logo) + right photo */
+function buildSlide3(ac) {
+    const addr = esc(address || '123 Main St, Indianapolis, IN 46227');
+    const pr   = esc(price   || '$250,000');
+    return `
+    <div style="position:absolute;inset:0;display:flex;">
+        <div style="width:36%;background:#fff;display:flex;flex-direction:column;align-items:center;
+            justify-content:center;padding:48px 28px;gap:20px;flex-shrink:0;">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:${ac};
+                letter-spacing:2px;text-align:center;font-style:italic;line-height:1.3;
+                text-transform:uppercase;word-break:break-word;">${addr}</div>
+            <svg width="124" height="38" viewBox="0 0 132 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 4 L36 20 L20 36 L4 20 Z" stroke="${ac}" stroke-width="2.5"/>
+                <path d="M66 4 L82 20 L66 36 L50 20 Z" stroke="${ac}" stroke-width="2.5"/>
+                <path d="M112 4 L128 20 L112 36 L96 20 Z" stroke="${ac}" stroke-width="2.5"/>
+            </svg>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:58px;color:${ac};
+                letter-spacing:2px;line-height:1;">${pr}</div>
+            <img src="${LOGO}" style="max-width:130px;object-fit:contain;margin-top:12px;"
+                onerror="this.style.display='none'">
+        </div>
+        <div style="flex:1;background-image:${photoBg(2)};background-size:cover;
+            background-position:center;background-color:#1a1d22;"></div>
+    </div>`;
+}
+
+/* Slide 4: Full photo + right rounded white panel */
+function buildSlide4(ac) {
+    const addr = esc(address || '123 Main St\nIndianapolis, IN 46227').replace(/\n/g,'<br>');
+    const pr   = esc(price   || '$250,000');
+    return `
+    <div class="s-bg" style="background-image:${photoBg(3)};background-color:#1a1d22;"></div>
+    <div style="position:absolute;right:40px;top:50%;transform:translateY(-50%);background:#fff;
+        border-radius:32px;padding:44px 38px;width:332px;text-align:center;
+        display:flex;flex-direction:column;align-items:center;gap:16px;
+        box-shadow:0 12px 48px rgba(0,0,0,0.2);">
+        <img src="${LOGO}" style="max-width:140px;object-fit:contain;"
+            onerror="this.style.display='none'">
+        <div style="width:70%;height:1px;background:#e5e7eb;"></div>
+        <div style="font-size:20px;color:#374151;line-height:1.55;font-weight:500;
+            word-break:break-word;">${addr}</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:52px;color:${ac};
+            letter-spacing:2px;line-height:1;">${pr}</div>
+    </div>
+    <div style="position:absolute;right:56px;bottom:calc(50% - 248px);width:50px;height:50px;
+        border-radius:50%;background:${ac};opacity:0.7;"></div>`;
+}
+
+/* Slide 5: Full-bleed, center price pill, bottom banner */
+function buildSlide5(ac) {
+    const addr = esc(address || '123 Main St Indianapolis, IN 46227');
+    const pr   = esc(price   || '$250,000');
+    return `
+    <div class="s-bg" style="background-image:${photoBg(4)};background-color:#1a1d22;"></div>
+    <div style="position:absolute;top:30px;left:50%;transform:translateX(-50%);
+        background:${ac};padding:12px 44px;border-radius:100px;white-space:nowrap;">
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:46px;color:#fff;
+            letter-spacing:3px;">${pr}</span>
+    </div>
+    <img src="${LOGO}" class="s-logo" style="position:absolute;top:26px;right:32px;"
+        onerror="this.style.display='none'">
+    <div style="position:absolute;bottom:0;left:0;right:0;background:${ac};padding:18px 40px;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:52px;color:#fff;
+            letter-spacing:2px;line-height:1;text-transform:uppercase;">${addr}</div>
+    </div>`;
+}
+
+/* ══ BUILD / REFRESH PREVIEW ══ */
+function buildSlides() {
+    const ac = accentColor;
+    const stage = document.getElementById('previewStage');
+    const builders = [buildSlide1, buildSlide2, buildSlide3, buildSlide4, buildSlide5];
+    stage.innerHTML = builders.map((fn, i) => `
+        <div class="slide${i===currentSlide?' active':''}" id="sl-${i}">
+            <div class="slide-inner">${fn(ac)}</div>
+        </div>`).join('');
+    updateScale();
+}
+
+function buildDots() {
+    document.getElementById('dots').innerHTML = Array.from({length:5},(_,i) =>
+        `<div class="dot${i===currentSlide?' active':''}" onclick="goSlide(${i})"></div>`
+    ).join('');
+}
+
+function updatePreview() {
+    address = document.getElementById('inputAddress').value.trim();
+    price   = document.getElementById('inputPrice').value.trim();
+    buildSlides();
+    buildDots();
+    // Keep currentSlide active
+    document.querySelectorAll('.slide').forEach((s,i) => {
+        s.classList.toggle('active', i === currentSlide);
+    });
+}
+
+/* ══ SLIDE NAVIGATION ══ */
+function goSlide(n, restartTimer = true) {
+    currentSlide = ((n % 5) + 5) % 5;
+    document.querySelectorAll('.slide').forEach((s,i) =>
+        s.classList.toggle('active', i === currentSlide));
+    document.querySelectorAll('.dot').forEach((d,i) =>
+        d.classList.toggle('active', i === currentSlide));
+    if (restartTimer && isPlaying) {
+        clearInterval(autoTimer);
+        autoTimer = setInterval(() => goSlide(currentSlide + 1), 4500);
+    }
+}
+
+function startAuto() {
+    clearInterval(autoTimer);
+    autoTimer = setInterval(() => goSlide(currentSlide + 1), 4500);
+    isPlaying = true;
+    const btn = document.getElementById('autoBtn');
+    btn.classList.add('on');
+    btn.innerHTML = '<i class="fa-solid fa-pause"></i> Auto';
+}
+
+function toggleAuto() {
+    if (isPlaying) {
+        clearInterval(autoTimer);
+        isPlaying = false;
+        const btn = document.getElementById('autoBtn');
+        btn.classList.remove('on');
+        btn.innerHTML = '<i class="fa-solid fa-play"></i> Auto';
+    } else {
+        startAuto();
+    }
+}
+
+/* ── Try multiple CORS proxies until one works ── */
+async function fetchViaProxy(url) {
+    const proxies = [
+        {
+            name: 'proxy 1',
+            build: u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
+            getHtml: async r => r.text()
+        },
+        {
+            name: 'proxy 2',
+            build: u => `https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,
+            getHtml: async r => { const d = await r.json(); return d.contents || ''; }
+        },
+        {
+            name: 'proxy 3',
+            build: u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+            getHtml: async r => r.text()
+        }
+    ];
+
+    for (const proxy of proxies) {
+        try {
+            const resp = await fetch(proxy.build(url), { signal: AbortSignal.timeout(12000) });
+            if (!resp.ok) continue;
+            const html = await proxy.getHtml(resp);
+            if (html && html.length > 200) return html;
+        } catch { /* try next */ }
+    }
+    throw new Error('All proxies failed — paste the image URLs manually below');
+}
+
+/* ══ AUTO-FETCH — photos, address, price from listing URL ══ */
+async function fetchPhotos() {
+    const url = document.getElementById('listingUrl').value.trim();
+    if (!url) return;
+    const btn = document.getElementById('fetchBtn');
+    const msg = document.getElementById('fetchMsg');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    msg.textContent = 'Fetching listing… (may take a few seconds)';
+    msg.className = 'fetch-msg';
+
+    try {
+        const html = await fetchViaProxy(url);
+
+        const parser = new DOMParser();
+        const doc    = parser.parseFromString(html, 'text/html');
+
+        /* ── Images ── */
+        const found = [];
+
+        // Domains / patterns that are never listing photos
+        const EXCLUDE = /logo|icon|sprite|avatar|placeholder|pixel\.gif|headshot|profile[\-_]?pic|staff[\-_]?photo|agent3000|gravatar|generic[\-_]?agent|agentphoto|realtorphoto/i;
+
+        const addImg = src => {
+            if (!src || !src.startsWith('http') || found.includes(src)) return;
+            if (EXCLUDE.test(src)) return;
+            // Skip tiny thumbnails (common in IDX contact cards)
+            if (/[_-](thumb|tn|xs|50x50|75x75|100x100)\./i.test(src)) return;
+            found.push(src);
+        };
+
+        // og:image / twitter:image (usually the hero listing photo)
+        doc.querySelectorAll('meta[property="og:image"],meta[name="og:image"],' +
+            'meta[property="og:image:url"],meta[name="twitter:image"],' +
+            'meta[property="twitter:image"]')
+           .forEach(m => addImg(m.getAttribute('content')));
+
+        // JSON-LD images
+        doc.querySelectorAll('script[type="application/ld+json"]').forEach(s => {
+            try {
+                const ld    = JSON.parse(s.textContent);
+                const items = [].concat(ld, ld['@graph'] || []);
+                items.forEach(item => {
+                    [].concat(item.image || item.photo || []).forEach(img =>
+                        addImg(typeof img === 'string' ? img : (img.url || img.contentUrl)));
+                });
+            } catch {}
+        });
+
+        // ★ Scan ALL script tag contents for listing photo URL arrays
+        // IDX galleries (Flex/MIBOR, IDX Broker, iHomefinder) store photo
+        // arrays in JS variables — this catches them even when lazy-loaded
+        doc.querySelectorAll('script:not([src])').forEach(s => {
+            const content = s.textContent || '';
+            // Match full https image URLs ending in common image extensions
+            const matches = content.match(/https?:\/\/[^\s"'\\<>]+\.(?:jpg|jpeg|png|webp)(?:\?[^\s"'\\<>]*)?/gi) || [];
+            matches.forEach(m => addImg(m));
+        });
+
+        // Gallery / listing img elements (including lazy-load data attrs)
+        doc.querySelectorAll('img').forEach(img => {
+            ['data-src','data-lazy-src','data-full','data-highres','data-original',
+             'data-photo','data-image','src'].forEach(attr => {
+                const src = img.getAttribute(attr) || '';
+                if (src.startsWith('http')) addImg(src);
+            });
+        });
+
+        /* ── Address ── */
+        let extractedAddress = '';
+
+        // 1. JSON-LD address (most reliable)
+        doc.querySelectorAll('script[type="application/ld+json"]').forEach(s => {
+            if (extractedAddress) return;
+            try {
+                const ld    = JSON.parse(s.textContent);
+                const items = [].concat(ld, ld['@graph'] || []);
+                items.forEach(item => {
+                    if (extractedAddress) return;
+                    const a = item.address;
+                    if (!a) return;
+                    if (typeof a === 'string') {
+                        extractedAddress = a;
+                    } else {
+                        const parts = [a.streetAddress, a.addressLocality, a.addressRegion, a.postalCode].filter(Boolean);
+                        if (parts.length >= 2) extractedAddress = parts.join(', ');
+                    }
+                });
+            } catch {}
+        });
+
+        // 2. itemprop / common IDX selectors
+        if (!extractedAddress) {
+            const addrSelectors = [
+                '[itemprop="streetAddress"]', '[itemprop="address"]',
+                '.listing-address', '.property-address', '.idx-listing-address',
+                '.address', '[class*="street"]', '[class*="address"]',
+                'h1', 'h2'
+            ];
+            for (const sel of addrSelectors) {
+                const el = doc.querySelector(sel);
+                const txt = el?.textContent?.trim().replace(/\s+/g,' ') || '';
+                // Must look like an address: has digits and a common suffix
+                if (txt && /\d/.test(txt) && /\b(St|Ave|Dr|Rd|Blvd|Ct|Ln|Way|Pl|Cir|Trail|Pkwy|Pike|Hwy|Ter|Loop)\b/i.test(txt)) {
+                    extractedAddress = txt.split(/[\n|—–|]/)[0].trim();
+                    break;
+                }
+            }
+        }
+
+        // 3. og:title / page title fallback
+        if (!extractedAddress) {
+            const title = (doc.querySelector('meta[property="og:title"]')?.getAttribute('content')
+                || doc.querySelector('title')?.textContent || '').trim();
+            const m = title.match(/\d+[^,|–-]*(?:St|Ave|Dr|Rd|Blvd|Ct|Ln|Way|Pl|Cir|Trail|Pkwy|Hwy|Ter)[^,|–-]*(?:,\s*[A-Z]{2}\s*\d{5})?/i);
+            if (m) extractedAddress = m[0].trim();
+        }
+
+        /* ── Price ── */
+        let extractedPrice = '';
+
+        // 1. JSON-LD price
+        doc.querySelectorAll('script[type="application/ld+json"]').forEach(s => {
+            if (extractedPrice) return;
+            try {
+                const ld    = JSON.parse(s.textContent);
+                const items = [].concat(ld, ld['@graph'] || []);
+                items.forEach(item => {
+                    if (extractedPrice) return;
+                    const p = item.price
+                        || item.offers?.price
+                        || item.offers?.lowPrice
+                        || item.offers?.[0]?.price;
+                    if (p) {
+                        const currency = item.offers?.priceCurrency || 'USD';
+                        const num = parseFloat(String(p).replace(/[^0-9.]/g, ''));
+                        extractedPrice = currency === 'USD' && num
+                            ? '$' + num.toLocaleString('en-US', {maximumFractionDigits:0})
+                            : String(p);
+                    }
+                });
+            } catch {}
+        });
+
+        // 2. itemprop / common IDX price selectors
+        if (!extractedPrice) {
+            const priceSelectors = [
+                '[itemprop="price"]', '[itemprop="offers"]',
+                '.listing-price', '.property-price', '.idx-listing-price',
+                '.price', '[class*="price"]', '.asking-price', '.list-price'
+            ];
+            for (const sel of priceSelectors) {
+                const el  = doc.querySelector(sel);
+                const txt = el?.textContent?.trim() || '';
+                const m   = txt.match(/\$[\d,]+(?:\.\d+)?/);
+                if (m) { extractedPrice = m[0]; break; }
+            }
+        }
+
+        // 3. og:description / meta description scan for price pattern
+        if (!extractedPrice) {
+            const desc = doc.querySelector('meta[name="description"],meta[property="og:description"]')
+                ?.getAttribute('content') || '';
+            const m = desc.match(/\$[\d,]{4,}/);
+            if (m) extractedPrice = m[0];
+        }
+
+        /* ── Populate fields ── */
+        if (found.length === 0 && !extractedAddress && !extractedPrice) {
+            throw new Error('Nothing found — paste image URLs, address, and price manually');
+        }
+
+        // Photos — first 5
+        found.slice(0, 5).forEach((imgUrl, i) => {
+            photos[i] = imgUrl;
+            const inp = document.getElementById('photoUrl-'+i);
+            if (inp) inp.value = imgUrl;
+            refreshThumb(i);
+        });
+
+        // Address & price
+        if (extractedAddress) document.getElementById('inputAddress').value = extractedAddress;
+        if (extractedPrice)   document.getElementById('inputPrice').value   = extractedPrice;
+
+        updatePreview();
+
+        // Build status message
+        const parts = [];
+        if (found.length)      parts.push(`${Math.min(found.length,5)} photo${found.length!==1?'s':''}`);
+        if (extractedAddress)  parts.push('address');
+        if (extractedPrice)    parts.push('price');
+        msg.textContent = parts.length ? `✓ Pulled ${parts.join(', ')}` : '✓ Done';
+        msg.className = 'fetch-msg ok';
+
+    } catch (err) {
+        msg.textContent = '✗ ' + (err.message || 'Could not fetch — fill in fields manually');
+        msg.className = 'fetch-msg err';
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Fetch';
+    }
+}
+
+/* ══ IMAGE DOWNLOAD HELPERS ══ */
+
+/* Convert any URL to a base64 data URL — tries 3 proxies then falls back to direct */
+async function toDataUrl(url) {
+    if (!url || url.startsWith('data:')) return url;
+    const rawProxies = [
+        u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
+        u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+        u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`
+    ];
+    for (const buildProxy of rawProxies) {
+        try {
+            const resp = await fetch(buildProxy(url), { signal: AbortSignal.timeout(10000) });
+            if (!resp.ok) continue;
+            const blob = await resp.blob();
+            return await new Promise((res, rej) => {
+                const r = new FileReader();
+                r.onload  = () => res(r.result);
+                r.onerror = rej;
+                r.readAsDataURL(blob);
+            });
+        } catch { /* try next */ }
+    }
+    return url; // last resort — html2canvas tries directly
+}
+
+/* ══ DOWNLOAD 5 PNGs ══ */
+async function downloadImages() {
+    address = document.getElementById('inputAddress').value.trim();
+    price   = document.getElementById('inputPrice').value.trim();
+    const ac = accentColor;
+
+    const btn  = document.querySelector('.btn-dl');
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+
+    // Off-screen render container (native 1280×720)
+    const container = document.createElement('div');
+    container.style.cssText =
+        'position:fixed;left:-9999px;top:0;width:1280px;height:720px;overflow:hidden;';
+    // Inject needed class styles so html2canvas picks them up
+    const styleEl = document.createElement('style');
+    styleEl.textContent =
+        '.s-bg{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat;}' +
+        '.s-logo{height:52px;background:rgba(255,255,255,0.93);border-radius:7px;padding:5px 9px;object-fit:contain;}';
+    document.head.appendChild(styleEl);
+    document.body.appendChild(container);
+
+    const origPhotos = [...photos];
+
+    try {
+        // Pre-convert all photos + logo to data URLs (eliminates all CORS issues)
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading photos…';
+        const [dataLogo, ...dataPhotos] = await Promise.all([
+            toDataUrl(LOGO),
+            ...photos.map(p => p ? toDataUrl(p) : Promise.resolve(''))
+        ]);
+
+        photos = dataPhotos; // temporarily use data URLs for rendering
+        const logoEscaped = LOGO.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+        await document.fonts.ready; // ensure Bebas Neue is loaded
+
+        const builders = [buildSlide1, buildSlide2, buildSlide3, buildSlide4, buildSlide5];
+        const safeAddr = (address || 'listing')
+            .replace(/[^a-zA-Z0-9 ]/g, '').trim()
+            .replace(/\s+/g, '-').toLowerCase() || 'listing';
+
+        for (let i = 0; i < 5; i++) {
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Generating ${i+1} of 5…`;
+
+            // Build slide HTML and swap LOGO constant for its data URL
+            const slideHtml = builders[i](ac)
+                .replace(new RegExp(logoEscaped, 'g'), dataLogo);
+            container.innerHTML = slideHtml;
+
+            // Brief paint settle
+            await new Promise(r => setTimeout(r, 150));
+
+            const canvas = await html2canvas(container, {
+                width:           1280,
+                height:          720,
+                scale:           1,
+                useCORS:         true,
+                allowTaint:      false,
+                logging:         false,
+                backgroundColor: '#1a1d22',
+                imageTimeout:    15000
+            });
+
+            const a = document.createElement('a');
+            a.href     = canvas.toDataURL('image/png');
+            a.download = `${safeAddr}-slide-${i + 1}.png`;
+            a.click();
+
+            await new Promise(r => setTimeout(r, 400)); // space out downloads
+        }
+
+    } catch (err) {
+        alert('Could not generate images: ' + (err.message || 'Unknown error'));
+    } finally {
+        photos = origPhotos;
+        document.body.removeChild(container);
+        document.head.removeChild(styleEl);
+        btn.disabled  = false;
+        btn.innerHTML = orig;
+    }
+}
+
+/* ══ BRAND SLIDE ══ */
+const BRAND_KEY = 'yrl-slideshow-brand';
+let brandData   = null;
+
+function loadBrandSlide() {
+    const stored = localStorage.getItem(BRAND_KEY);
+    if (stored) { brandData = stored; showBrandPreview(stored); }
+}
+
+function handleBrandUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        brandData = e.target.result;
+        try { localStorage.setItem(BRAND_KEY, brandData); } catch { /* storage full */ }
+        showBrandPreview(brandData);
+    };
+    reader.readAsDataURL(file);
+}
+
+function showBrandPreview(dataUrl) {
+    document.getElementById('brandPreview').innerHTML =
+        `<img src="${dataUrl}" alt="Brand slide">`;
+    const btn = document.getElementById('brandDlBtn');
+    btn.disabled = false;
+}
+
+function downloadBrandSlide() {
+    if (!brandData) return;
+    const a = document.createElement('a');
+    a.href     = brandData;
+    a.download = 'yrl-brand-slide.png';
+    a.click();
+}
+
+/* ══ INIT ══ */
+function init() {
+    buildColorPresets();
+    buildPhotoSlots();
+    buildSlides();
+    buildDots();
+    goSlide(0, false);
+    startAuto();
+    loadBrandSlide();
+    window.addEventListener('resize', updateScale);
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Training — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* ============================================
+           BRAND TOKENS
+           ============================================ */
+        :root {
+            --red:          #c03926;
+            --red-light:    #d94a35;
+            --red-dark:     #9e2e1e;
+            --gray:         #6e6e70;
+            --gray-light:   #9a9a9c;
+
+            --bg:           #f2f4f7;
+            --surface:      #ffffff;
+            --surface-2:    #f7f8fa;
+            --surface-3:    #eef0f3;
+            --border:       #e2e5ea;
+            --border-light: #d0d4da;
+
+            --text:         #1a1d22;
+            --text-sec:     #5a6270;
+            --text-muted:   #9ca3af;
+
+            --radius:       12px;
+            --radius-lg:    20px;
+            --shadow:       0 4px 20px rgba(0,0,0,0.08);
+            --shadow-red:   0 6px 28px rgba(192,57,38,0.22);
+        }
+
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        a { text-decoration: none; color: inherit; }
+        img { display: block; max-width: 100%; }
+
+        /* ============================================
+           SUBPAGE HEADER
+           ============================================ */
+        .sub-header {
+            background: linear-gradient(150deg, #a82f1e 0%, #c03926 45%, #9e2e1e 100%);
+            padding: 28px 20px;
+            border-bottom: 4px solid rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sub-header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
+            background-size: 28px 28px;
+            pointer-events: none;
+        }
+
+        .sub-header-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+
+        .sub-header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .sub-header-logo {
+            max-width: 120px;
+            background: #fff;
+            border-radius: 10px;
+            padding: 10px 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        }
+
+        .sub-header-text h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(28px, 5vw, 42px);
+            letter-spacing: 2px;
+            color: #fff;
+            line-height: 1;
+        }
+
+        .sub-header-text p {
+            color: rgba(255,255,255,0.7);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(255,255,255,0.18);
+            border: 1px solid rgba(255,255,255,0.35);
+            color: #fff;
+            padding: 9px 18px;
+            border-radius: 100px;
+            font-size: 12.5px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-1px);
+        }
+
+        /* ============================================
+           MAIN LAYOUT
+           ============================================ */
+        .main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 52px 20px 90px;
+        }
+
+        /* ============================================
+           SECTION HEADER
+           ============================================ */
+        .section { margin-bottom: 64px; }
+
+        .sec-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .sec-icon {
+            width: 46px;
+            height: 46px;
+            background: rgba(192,57,38,0.08);
+            border: 1px solid rgba(192,57,38,0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--red);
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .sec-header h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px;
+            letter-spacing: 2px;
+            color: var(--text);
+            line-height: 1;
+        }
+
+        .sec-header p {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        /* ============================================
+           DIVIDER
+           ============================================ */
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 64px 0;
+        }
+
+        /* ============================================
+           PROGRAM CARDS (featured, larger)
+           ============================================ */
+        .program-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+        }
+
+        .program-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 36px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .program-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: var(--red);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .program-card:hover {
+            border-color: rgba(192,57,38,0.3);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-red);
+        }
+
+        .program-card:hover::after { transform: scaleX(1); }
+
+        .program-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(192,57,38,0.1);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--red);
+            font-size: 26px;
+        }
+
+        .program-card h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            letter-spacing: 1.5px;
+            color: var(--text);
+        }
+
+        .program-card > p {
+            font-size: 13.5px;
+            color: var(--text-sec);
+            line-height: 1.6;
+            flex: 1;
+        }
+
+        .program-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 4px;
+        }
+
+        .program-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11.5px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .program-meta span i { color: var(--red); font-size: 12px; }
+
+        .pill {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--red);
+            background: rgba(192,57,38,0.1);
+            padding: 3px 9px;
+            border-radius: 5px;
+        }
+
+        .coming-soon {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray);
+            background: var(--surface-3);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        .program-card.disabled {
+            opacity: 0.55;
+            pointer-events: none;
+        }
+
+        /* ============================================
+           MEETING CARDS
+           ============================================ */
+        .meeting-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 14px;
+        }
+
+        .meeting-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .meeting-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--red);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .meeting-card:hover {
+            background: var(--surface-2);
+            border-color: rgba(192,57,38,0.3);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-red);
+        }
+
+        .meeting-card:hover::after { transform: scaleX(1); }
+
+        .meeting-date {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--red);
+        }
+
+        .meeting-card h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .meeting-card > p {
+            font-size: 12.5px;
+            color: var(--text-sec);
+            flex: 1;
+            line-height: 1.55;
+        }
+
+        .meeting-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 4px;
+        }
+
+        .meeting-footer i {
+            color: var(--text-muted);
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .meeting-card:hover .meeting-footer i {
+            color: var(--red);
+            transform: translateX(4px);
+        }
+
+        .empty-state {
+            background: var(--surface);
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 48px 24px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+            grid-column: 1 / -1;
+        }
+
+        .empty-state i {
+            font-size: 32px;
+            margin-bottom: 12px;
+            display: block;
+            opacity: 0.4;
+        }
+
+        /* ============================================
+           VIDEO LIBRARY — TABS
+           ============================================ */
+        .tab-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .tab-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 12.5px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-sec);
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        .tab-btn.active {
+            background: var(--red);
+            border-color: var(--red);
+            color: #fff;
+        }
+
+        /* ============================================
+           VIDEO CARDS
+           ============================================ */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 14px;
+        }
+
+        .video-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: all 0.25s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .video-card:hover {
+            border-color: rgba(192,57,38,0.3);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-red);
+        }
+
+        .video-thumb {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: var(--surface-3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 36px;
+            position: relative;
+        }
+
+        .video-thumb::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.05));
+        }
+
+        .video-body {
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .video-body h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .video-body p {
+            font-size: 12px;
+            color: var(--text-sec);
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .video-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+
+        .video-footer i {
+            color: var(--text-muted);
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .video-card:hover .video-footer i {
+            color: var(--red);
+            transform: translateX(4px);
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .footer {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 36px 20px;
+            text-align: center;
+        }
+
+        .footer-logo {
+            max-width: 110px;
+            margin: 0 auto 14px;
+            opacity: 0.45;
+        }
+
+        .footer p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .footer a { color: var(--red); }
+        .footer a:hover { color: var(--red-light); }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 768px) {
+            .program-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 640px) {
+            .sub-header { padding: 20px 16px; }
+            .sub-header-inner { flex-direction: column; gap: 16px; text-align: center; }
+            .sub-header-left { flex-direction: column; align-items: center; }
+            .sub-header-logo { max-width: 90px; }
+            .main { padding: 40px 16px 70px; }
+            .meeting-grid { grid-template-columns: 1fr; }
+            .video-grid { grid-template-columns: repeat(2, 1fr); }
+            .tab-bar { justify-content: center; }
+        }
+
+        @media (max-width: 420px) {
+            .video-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ── PIN Modal ── */
+        .pin-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:1000; align-items:center; justify-content:center; padding:20px; }
+        .pin-overlay.open { display:flex; }
+        .pin-modal { background:#fff; border:1px solid #e2e5ea; border-radius:20px; padding:40px 36px; width:100%; max-width:360px; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.4); }
+        .pin-lock-icon { width:56px; height:56px; background:rgba(192,57,38,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:22px; color:#c03926; }
+        .pin-modal h3 { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:1.5px; margin-bottom:6px; }
+        .pin-modal p  { font-size:13px; color:#9ca3af; margin-bottom:20px; }
+        .pin-input { width:100%; background:#eef0f3; border:2px solid #e2e5ea; border-radius:10px; padding:12px 16px; font-size:22px; text-align:center; letter-spacing:6px; font-family:'Inter',sans-serif; color:#1a1d22; outline:none; margin-bottom:12px; transition:border-color 0.2s; }
+        .pin-input:focus { border-color:#c03926; }
+        .pin-input.shake { animation:trainPinShake 0.4s ease; border-color:#ef4444; }
+        @keyframes trainPinShake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
+        .pin-submit { width:100%; background:#c03926; color:#fff; border:none; border-radius:10px; padding:12px; font-size:15px; font-weight:700; font-family:'Inter',sans-serif; cursor:pointer; transition:background 0.2s; display:flex; align-items:center; justify-content:center; gap:8px; }
+        .pin-submit:hover { background:#d94a35; }
+        .pin-error { color:#ef4444; font-size:12px; font-weight:600; margin-top:10px; display:none; }
+
+        /* ── Train edit modal ── */
+        .train-modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:900; align-items:center; justify-content:center; padding:20px; }
+        .train-modal-overlay.open { display:flex; }
+        .train-modal { background:#fff; border-radius:16px; padding:28px; width:100%; max-width:480px; box-shadow:0 20px 60px rgba(0,0,0,0.25); max-height:90vh; overflow-y:auto; position:relative; }
+        .train-modal-title { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:1.5px; margin-bottom:18px; display:flex; align-items:center; justify-content:space-between; }
+        .train-field { margin-bottom:13px; }
+        .train-field label { display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#5a6270; margin-bottom:4px; }
+        .train-field input, .train-field select, .train-field textarea { width:100%; background:#eef0f3; border:1.5px solid #e2e5ea; border-radius:8px; padding:9px 12px; font-size:13px; font-family:'Inter',sans-serif; color:#1a1d22; outline:none; transition:border-color 0.2s; }
+        .train-field input:focus, .train-field select:focus, .train-field textarea:focus { border-color:#c03926; }
+        .train-field textarea { resize:vertical; min-height:70px; }
+        .train-modal-actions { display:flex; gap:8px; margin-top:18px; }
+        .btn-train-save { flex:1; background:#c03926; color:#fff; border:none; border-radius:8px; padding:10px; font-size:13.5px; font-weight:700; font-family:'Inter',sans-serif; cursor:pointer; }
+        .btn-train-save:hover { background:#d94a35; }
+        .btn-train-cancel { padding:10px 18px; background:#eef0f3; border:1px solid #e2e5ea; border-radius:8px; font-size:13px; font-family:'Inter',sans-serif; cursor:pointer; color:#5a6270; }
+
+        /* ── Add card button ── */
+        .btn-add-train { display:none; width:100%; padding:16px; background:rgba(192,57,38,0.05); border:1.5px dashed rgba(192,57,38,0.4); border-radius:12px; color:#c03926; font-size:13px; font-weight:600; font-family:'Inter',sans-serif; cursor:pointer; margin-top:12px; transition:background 0.15s; }
+        .btn-add-train:hover { background:rgba(192,57,38,0.1); }
+        body.train-edit-mode .btn-add-train { display:block; }
+
+        /* ── Delete button on cards ── */
+        .train-del-btn { display:none; position:absolute; top:-8px; right:-8px; width:22px; height:22px; border-radius:50%; background:#ef4444; color:#fff; border:none; font-size:11px; cursor:pointer; align-items:center; justify-content:center; z-index:2; padding:0; box-shadow:0 1px 4px rgba(0,0,0,0.2); }
+        body.train-edit-mode .train-del-btn { display:flex; }
+
+        /* Edit hint on cards */
+        body.train-edit-mode .meeting-card,
+        body.train-edit-mode .video-card { cursor:pointer; border-color:rgba(192,57,38,0.2); }
+
+        /* Drag states */
+        .meeting-card.t-dragging, .video-card.t-dragging { opacity:0.35; transform:scale(0.97); }
+        .meeting-card.t-drag-over, .video-card.t-drag-over { outline:2px dashed #c03926; outline-offset:2px; }
+
+        /* Upload row */
+        .train-upload-row { display:flex; align-items:center; gap:8px; margin-top:6px; }
+        .btn-train-upload { display:inline-flex; align-items:center; gap:5px; background:rgba(192,57,38,0.08); color:#c03926; border:1.5px dashed #c03926; border-radius:7px; padding:5px 11px; font-size:11.5px; font-weight:600; font-family:'Inter',sans-serif; cursor:pointer; white-space:nowrap; }
+        .btn-train-upload:hover { background:rgba(192,57,38,0.15); }
+        .train-upload-status { font-size:11.5px; color:#9ca3af; }
+        .train-upload-status.uploading { color:#ea580c; }
+        .train-upload-status.success { color:#16a34a; }
+        .train-upload-status.error { color:#ef4444; }
+    </style>
+    <script src="yrl-auth.js"></script>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     SUBPAGE HEADER
+═══════════════════════════════════════ -->
+<header class="sub-header">
+    <div class="sub-header-inner">
+        <div class="sub-header-left">
+            <img src="https://yrlagent.com/wp-content/uploads/2026/04/Your-Realty-Link-ver6.6-4-final.png" alt="Your Realty Link" class="sub-header-logo">
+            <div class="sub-header-text">
+                <h1>Agent Training</h1>
+                <p>Programs, meetings, and video resources for your growth</p>
+            </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+            <span id="yrl-user-name" style="color:rgba(255,255,255,0.75);font-size:12.5px;font-weight:500;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+            <button onclick="yrlSignOut()" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:7px 14px;border-radius:100px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+            </button>
+            <span id="trainingSaveFlash" style="font-size:12px;font-weight:600;color:#fff;opacity:0;transition:opacity 0.3s;background:rgba(255,255,255,0.2);border-radius:6px;padding:4px 10px;white-space:nowrap;">&#10003; Saved!</span>
+            <button id="btnTrainEdit" onclick="toggleTrainEdit()" style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.35);color:#fff;padding:9px 18px;border-radius:100px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all 0.2s;white-space:nowrap;font-family:'Inter',sans-serif;">
+                <i class="fa-solid fa-pen"></i> Edit Mode
+            </button>
+            <a href="yrl-agent-hub.html" class="back-btn">
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to Hub
+            </a>
+        </div>
+    </div>
+</header>
+
+
+<!-- ═══════════════════════════════════════
+     MAIN CONTENT
+═══════════════════════════════════════ -->
+<main class="main">
+
+    <!-- ─── TRAINING PROGRAMS ─── -->
+    <section class="section">
+        <div class="sec-header">
+            <div class="sec-icon"><i class="fa-solid fa-award"></i></div>
+            <div>
+                <h2>Training Programs</h2>
+                <p>Structured courses to build your skills from day one</p>
+            </div>
+        </div>
+
+        <div class="program-grid">
+            <div class="program-card disabled">
+                <div class="program-icon"><i class="fa-solid fa-seedling"></i></div>
+                <h3>Your First Year <span class="coming-soon">Coming Soon</span></h3>
+                <p>A step-by-step program designed for new agents covering everything from getting your first listing to closing your first deal. Build confidence and momentum in your first 12 months.</p>
+                <div class="program-meta">
+                    <span><i class="fa-solid fa-book-open"></i> Multi-Module Course</span>
+                    <span><i class="fa-solid fa-user-graduate"></i> New Agents</span>
+                </div>
+            </div>
+
+            <div class="program-card disabled">
+                <div class="program-icon"><i class="fa-solid fa-fire"></i></div>
+                <h3>Tiger Training <span class="coming-soon">Coming Soon</span></h3>
+                <p>Our comprehensive training program covering advanced strategies, scripts, lead conversion, and everything you need to take your real estate career to the next level.</p>
+                <div class="program-meta">
+                    <span><i class="fa-solid fa-book-open"></i> Complete Program</span>
+                    <span><i class="fa-solid fa-users"></i> All Agents</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ─── MONTHLY MEETINGS ─── -->
+    <section class="section">
+        <div class="sec-header">
+            <div class="sec-icon"><i class="fa-solid fa-calendar-days"></i></div>
+            <div>
+                <h2>Monthly Meetings</h2>
+                <p>Recordings and recaps from our office meetings</p>
+            </div>
+        </div>
+
+        <div class="meeting-grid" id="meetingGrid"></div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ─── VIDEO LIBRARY ─── -->
+    <section class="section">
+        <div class="sec-header">
+            <div class="sec-icon"><i class="fa-solid fa-photo-film"></i></div>
+            <div>
+                <h2>Video Library</h2>
+                <p>Browse training videos by category</p>
+            </div>
+        </div>
+
+        <div class="tab-bar">
+            <button class="tab-btn active" data-tab="all">All</button>
+            <button class="tab-btn" data-tab="social-media">Social Media</button>
+            <button class="tab-btn" data-tab="how-tos">How-Tos</button>
+            <button class="tab-btn" data-tab="lead-gen">Lead Gen & Prospecting</button>
+            <button class="tab-btn" data-tab="sales">Sales & Client Skills</button>
+            <button class="tab-btn" data-tab="marketing">Marketing</button>
+            <button class="tab-btn" data-tab="technology">Technology</button>
+            <button class="tab-btn" data-tab="market">Market & Industry</button>
+            <button class="tab-btn" data-tab="business">Business & Growth</button>
+        </div>
+
+        <div class="video-grid" id="videoGrid"></div>
+    </section>
+
+</main>
+
+
+<!-- ═══════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════ -->
+<footer class="footer">
+    <img src="https://yrlagent.com/wp-content/uploads/2026/04/Your-Realty-Link-ver6.6-4-final.png" alt="Your Realty Link" class="footer-logo"
+         onerror="this.style.display='none'">
+    <p>&copy; 2026 Your Realty Link &nbsp;&middot;&nbsp; All Rights Reserved &nbsp;&middot;&nbsp;
+       <a href="https://www.yourrealtylink.com" target="_blank">yourrealtylink.com</a>
+    </p>
+</footer>
+
+
+<!-- ═══════════════════════════════════════
+     MODALS
+═══════════════════════════════════════ -->
+
+<!-- PIN modal -->
+<div class="pin-overlay" id="trainPinOverlay">
+    <div class="pin-modal">
+        <div class="pin-lock-icon"><i class="fa-solid fa-lock"></i></div>
+        <h3>Broker Access</h3>
+        <p>Enter your PIN to edit training content</p>
+        <input type="password" inputmode="numeric" maxlength="10" class="pin-input" id="trainPinInput"
+               placeholder="&#8226; &#8226; &#8226; &#8226;" autocomplete="off"
+               onkeydown="if(event.key==='Enter')submitTrainPin()">
+        <button class="pin-submit" onclick="submitTrainPin()">
+            <i class="fa-solid fa-unlock"></i> Unlock
+        </button>
+        <p class="pin-error" id="trainPinError">Incorrect PIN. Try again.</p>
+        <button onclick="closeTrainPinModal()" style="margin-top:14px;background:none;border:none;color:#9ca3af;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;">Cancel</button>
+    </div>
+</div>
+
+<!-- Meeting add/edit modal -->
+<div class="train-modal-overlay" id="meetingModalOverlay">
+    <div class="train-modal">
+        <div class="train-modal-title">
+            <span id="meetingModalTitle">Add Meeting</span>
+            <button onclick="closeMeetingModal()" style="background:none;border:none;font-size:20px;color:#9ca3af;cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <input type="hidden" id="editMeetingId">
+        <div class="train-field">
+            <label>Date *</label>
+            <input type="text" id="mDate" placeholder="e.g. April 15, 2026">
+        </div>
+        <div class="train-field">
+            <label>Title *</label>
+            <input type="text" id="mTitle" placeholder="e.g. April Office Meeting">
+        </div>
+        <div class="train-field">
+            <label>Description</label>
+            <textarea id="mDesc" placeholder="Topics covered, highlights&#8230;"></textarea>
+        </div>
+        <div class="train-field">
+            <label>Recording Link</label>
+            <input type="url" id="mLink" placeholder="https://&#8230;">
+        </div>
+        <div class="train-modal-actions">
+            <button class="btn-train-save" onclick="saveMeeting()"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+            <button class="btn-train-cancel" onclick="closeMeetingModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Video add/edit modal -->
+<div class="train-modal-overlay" id="videoModalOverlay">
+    <div class="train-modal">
+        <div class="train-modal-title">
+            <span id="videoModalTitle">Add Video</span>
+            <button onclick="closeVideoModal()" style="background:none;border:none;font-size:20px;color:#9ca3af;cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <input type="hidden" id="editVideoId">
+        <div class="train-field">
+            <label>Title *</label>
+            <input type="text" id="vTitle" placeholder="e.g. How to Use ShowingTime">
+        </div>
+        <div class="train-field">
+            <label>Description</label>
+            <textarea id="vDesc" placeholder="What agents will learn&#8230;"></textarea>
+        </div>
+        <div class="train-field">
+            <label>Category</label>
+            <select id="vCategory">
+                <option value="social-media">Social Media</option>
+                <option value="how-tos">How-Tos</option>
+                <option value="lead-gen">Lead Gen &amp; Prospecting</option>
+                <option value="sales">Sales &amp; Client Skills</option>
+                <option value="marketing">Marketing</option>
+                <option value="technology">Technology</option>
+                <option value="market">Market &amp; Industry</option>
+                <option value="business">Business &amp; Growth</option>
+            </select>
+        </div>
+        <div class="train-field">
+            <label>Video Link / URL</label>
+            <input type="url" id="vLink" placeholder="https://youtube.com/&#8230;">
+            <div class="train-upload-row">
+                <input type="file" id="vFileInput" style="display:none" accept=".pdf,.mp4,.mov,.doc,.docx" onchange="handleVideoFileUpload()">
+                <button class="btn-train-upload" type="button" onclick="document.getElementById('vFileInput').click()">
+                    <i class="fa-solid fa-arrow-up-from-bracket"></i> Upload file
+                </button>
+                <span class="train-upload-status" id="vUploadStatus">or paste URL above</span>
+            </div>
+        </div>
+        <div class="train-modal-actions">
+            <button class="btn-train-save" onclick="saveVideo()"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+            <button class="btn-train-cancel" onclick="closeVideoModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════ -->
+<script src="yrl-hub.js"></script>
+<script>
+/* =========================================================
+   Agent Training — dynamic meetings + videos + edit mode
+   ========================================================= */
+
+const TRAINING_KEY = 'yrl-training-state';
+const BROKER_PIN   = '2302';
+const PIN_KEY      = 'yrl_broker_auth';
+
+let state     = { meetings: [], videos: [] };
+let trainEdit = false;
+
+/* ── Utilities ── */
+function trainUid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function trainEsc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+/* ── Auth ── */
+function isAuthed() { return sessionStorage.getItem(PIN_KEY) === BROKER_PIN; }
+
+function openTrainPinModal() {
+    document.getElementById('trainPinInput').value = '';
+    document.getElementById('trainPinError').style.display = 'none';
+    document.getElementById('trainPinOverlay').classList.add('open');
+    setTimeout(() => document.getElementById('trainPinInput').focus(), 80);
+}
+function closeTrainPinModal() {
+    document.getElementById('trainPinOverlay').classList.remove('open');
+}
+function submitTrainPin() {
+    const val = document.getElementById('trainPinInput').value.trim();
+    if (val === BROKER_PIN) {
+        sessionStorage.setItem(PIN_KEY, BROKER_PIN);
+        closeTrainPinModal();
+        enterTrainEdit();
+    } else {
+        const inp = document.getElementById('trainPinInput');
+        inp.classList.add('shake');
+        document.getElementById('trainPinError').style.display = 'block';
+        inp.value = '';
+        setTimeout(() => inp.classList.remove('shake'), 450);
+    }
+}
+
+/* ── Edit mode ── */
+function toggleTrainEdit() {
+    if (trainEdit) {
+        exitTrainEdit();
+    } else {
+        if (isAuthed()) enterTrainEdit();
+        else openTrainPinModal();
+    }
+}
+function enterTrainEdit() {
+    trainEdit = true;
+    document.body.classList.add('train-edit-mode');
+    const btn = document.getElementById('btnTrainEdit');
+    btn.style.background = 'rgba(255,255,255,0.35)';
+    btn.innerHTML = '<i class="fa-solid fa-check"></i> Done Editing';
+    renderMeetings();
+    renderVideos();
+}
+function exitTrainEdit() {
+    trainEdit = false;
+    document.body.classList.remove('train-edit-mode');
+    const btn = document.getElementById('btnTrainEdit');
+    btn.style.background = 'rgba(255,255,255,0.18)';
+    btn.innerHTML = '<i class="fa-solid fa-pen"></i> Edit Mode';
+    renderMeetings();
+    renderVideos();
+}
+
+/* ── Load / Save ── */
+async function trainInit() {
+    try {
+        const local = JSON.parse(localStorage.getItem(TRAINING_KEY) || 'null');
+        if (local) { state = local; renderMeetings(); renderVideos(); }
+    } catch(e) {}
+
+    const remote = await loadHubContent(TRAINING_KEY);
+    if (remote && (remote.meetings || remote.videos)) {
+        state = { meetings: remote.meetings || [], videos: remote.videos || [] };
+        localStorage.setItem(TRAINING_KEY, JSON.stringify(state));
+        renderMeetings();
+        renderVideos();
+    }
+}
+
+async function trainPersist() {
+    localStorage.setItem(TRAINING_KEY, JSON.stringify(state));
+    await saveHubContent(TRAINING_KEY, state);
+    const flash = document.getElementById('trainingSaveFlash');
+    if (flash) { flash.style.opacity = '1'; setTimeout(() => flash.style.opacity = '0', 2500); }
+}
+
+/* ── Meetings render ── */
+function renderMeetings() {
+    const grid = document.getElementById('meetingGrid');
+    if (!grid) return;
+    let html = '';
+
+    if (state.meetings.length === 0) {
+        html = `<div class="empty-state" style="grid-column:1/-1;">
+            <i class="fa-solid fa-video"></i>
+            Meeting recordings will appear here as they are added.
+        </div>`;
+    } else {
+        const dragAttrs = (m) => trainEdit
+            ? `draggable="true"
+               data-meeting-id="${m.id}"
+               ondragstart="mDragStart(event,'${m.id}')"
+               ondragend="mDragEnd(event)"
+               ondragover="mDragOver(event,'${m.id}')"
+               ondragleave="mDragLeave(event)"
+               ondrop="mDrop(event,'${m.id}')"` : `data-meeting-id="${m.id}"`;
+
+        state.meetings.forEach(m => {
+            const clickAttr = trainEdit ? `onclick="openMeetingModal('${m.id}')"` : m.link ? `onclick="window.open('${trainEsc(m.link)}','_blank')"` : '';
+            html += `<div class="meeting-card" style="position:relative;" ${dragAttrs(m)} ${clickAttr}>
+                ${trainEdit ? `<button class="train-del-btn" onclick="event.stopPropagation();deleteMeeting('${m.id}')" title="Remove"><i class="fa-solid fa-xmark"></i></button>` : ''}
+                <div class="meeting-date">${trainEsc(m.date)}</div>
+                <h3>${trainEsc(m.title)}</h3>
+                ${m.desc ? `<p>${trainEsc(m.desc)}</p>` : ''}
+                <div class="meeting-footer">
+                    <span class="pill">Meeting</span>
+                    <i class="fa-solid fa-${trainEdit ? 'pencil' : 'play'}"></i>
+                </div>
+            </div>`;
+        });
+    }
+
+    grid.innerHTML = html;
+
+    // Add button
+    let addBtn = document.getElementById('addMeetingBtn');
+    if (!addBtn) {
+        addBtn = document.createElement('button');
+        addBtn.id = 'addMeetingBtn';
+        addBtn.className = 'btn-add-train';
+        addBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Add Meeting';
+        addBtn.onclick = () => openMeetingModal(null);
+        grid.parentNode.insertBefore(addBtn, grid.nextSibling);
+    }
+}
+
+/* ── Videos render ── */
+function renderVideos() {
+    const grid = document.getElementById('videoGrid');
+    if (!grid) return;
+
+    const activeTab = document.querySelector('.tab-btn.active')?.dataset.tab || 'all';
+    const filtered = activeTab === 'all' ? state.videos : state.videos.filter(v => v.category === activeTab);
+
+    let html = '';
+    if (filtered.length === 0 && !trainEdit) {
+        html = `<div class="empty-state">
+            <i class="fa-solid fa-film"></i>
+            ${activeTab === 'all' ? 'Training videos are on the way!' : 'No videos in this category yet.'}
+        </div>`;
+    } else {
+        const toShow = trainEdit ? state.videos : filtered;  // in edit mode show all so you can reorder
+        const dragAttrs = (v) => trainEdit
+            ? `draggable="true"
+               data-video-id="${v.id}"
+               ondragstart="vDragStart(event,'${v.id}')"
+               ondragend="vDragEnd(event)"
+               ondragover="vDragOver(event,'${v.id}')"
+               ondragleave="vDragLeave(event)"
+               ondrop="vDrop(event,'${v.id}')"` : `data-video-id="${v.id}"`;
+
+        toShow.forEach(v => {
+            const clickAttr = trainEdit ? `onclick="openVideoModal('${v.id}')"` : v.link ? '' : '';
+            const aOrDiv = (v.link && !trainEdit) ? 'a' : 'div';
+            const hrefAttr = (v.link && !trainEdit) ? `href="${trainEsc(v.link)}" target="_blank"` : '';
+            const catLabel = v.category ? v.category.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase()) : 'Training';
+            html += `<${aOrDiv} class="video-card" style="position:relative;" ${hrefAttr} ${dragAttrs(v)} ${clickAttr}>
+                ${trainEdit ? `<button class="train-del-btn" onclick="event.stopPropagation();deleteVideo('${v.id}')" title="Remove"><i class="fa-solid fa-xmark"></i></button>` : ''}
+                <div class="video-thumb">
+                    <i class="fa-solid fa-${trainEdit ? 'pencil' : 'circle-play'}"></i>
+                </div>
+                <div class="video-body">
+                    <h4>${trainEsc(v.title)}</h4>
+                    ${v.desc ? `<p>${trainEsc(v.desc)}</p>` : ''}
+                    <div class="video-footer">
+                        <span class="pill">${trainEsc(catLabel)}</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </div>
+            </${aOrDiv}>`;
+        });
+    }
+
+    grid.innerHTML = html;
+
+    let addBtn = document.getElementById('addVideoBtn');
+    if (!addBtn) {
+        addBtn = document.createElement('button');
+        addBtn.id = 'addVideoBtn';
+        addBtn.className = 'btn-add-train';
+        addBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Add Video';
+        addBtn.onclick = () => openVideoModal(null);
+        grid.parentNode.insertBefore(addBtn, grid.nextSibling);
+    }
+}
+
+/* ── Meeting modal ── */
+let _editMeetingId = null;
+function openMeetingModal(id) {
+    _editMeetingId = id;
+    const m = id ? state.meetings.find(x => x.id === id) : null;
+    document.getElementById('meetingModalTitle').textContent = m ? 'Edit Meeting' : 'Add Meeting';
+    document.getElementById('mDate').value  = m ? (m.date  || '') : '';
+    document.getElementById('mTitle').value = m ? (m.title || '') : '';
+    document.getElementById('mDesc').value  = m ? (m.desc  || '') : '';
+    document.getElementById('mLink').value  = m ? (m.link  || '') : '';
+    document.getElementById('meetingModalOverlay').classList.add('open');
+    setTimeout(() => document.getElementById('mDate').focus(), 80);
+}
+function closeMeetingModal() {
+    document.getElementById('meetingModalOverlay').classList.remove('open');
+    _editMeetingId = null;
+}
+function saveMeeting() {
+    const date  = document.getElementById('mDate').value.trim();
+    const title = document.getElementById('mTitle').value.trim();
+    if (!date || !title) {
+        if (!date)  { document.getElementById('mDate').style.borderColor  = '#ef4444'; }
+        if (!title) { document.getElementById('mTitle').style.borderColor = '#ef4444'; }
+        return;
+    }
+    const obj = {
+        id:    _editMeetingId || trainUid(),
+        date, title,
+        desc:  document.getElementById('mDesc').value.trim(),
+        link:  document.getElementById('mLink').value.trim()
+    };
+    if (_editMeetingId) {
+        const idx = state.meetings.findIndex(m => m.id === _editMeetingId);
+        if (idx > -1) state.meetings[idx] = obj;
+    } else {
+        state.meetings.push(obj);
+    }
+    closeMeetingModal();
+    trainPersist();
+    renderMeetings();
+}
+function deleteMeeting(id) {
+    if (!confirm('Remove this meeting?')) return;
+    state.meetings = state.meetings.filter(m => m.id !== id);
+    trainPersist();
+    renderMeetings();
+}
+
+/* ── Video modal ── */
+let _editVideoId = null;
+function openVideoModal(id) {
+    _editVideoId = id;
+    const v = id ? state.videos.find(x => x.id === id) : null;
+    document.getElementById('videoModalTitle').textContent = v ? 'Edit Video' : 'Add Video';
+    document.getElementById('vTitle').value    = v ? (v.title    || '') : '';
+    document.getElementById('vDesc').value     = v ? (v.desc     || '') : '';
+    document.getElementById('vLink').value     = v ? (v.link     || '') : '';
+    document.getElementById('vCategory').value = v ? (v.category || 'how-tos') : 'how-tos';
+    document.getElementById('vUploadStatus').textContent = 'or paste URL above';
+    document.getElementById('vUploadStatus').className   = 'train-upload-status';
+    document.getElementById('videoModalOverlay').classList.add('open');
+    setTimeout(() => document.getElementById('vTitle').focus(), 80);
+}
+function closeVideoModal() {
+    document.getElementById('videoModalOverlay').classList.remove('open');
+    _editVideoId = null;
+}
+async function handleVideoFileUpload() {
+    const fileInput = document.getElementById('vFileInput');
+    const linkInput = document.getElementById('vLink');
+    const status    = document.getElementById('vUploadStatus');
+    if (!fileInput?.files?.[0]) return;
+    const file = fileInput.files[0];
+    if (file.size > 50 * 1024 * 1024) {
+        status.textContent = '\u2717 Too large (max 50 MB)';
+        status.className = 'train-upload-status error';
+        fileInput.value = ''; return;
+    }
+    status.textContent = 'Uploading\u2026'; status.className = 'train-upload-status uploading';
+    try {
+        const url = await uploadHubFile(file, 'training');
+        linkInput.value = url;
+        const name = file.name.length > 30 ? file.name.slice(0,27) + '\u2026' : file.name;
+        status.textContent = '\u2713 ' + name; status.className = 'train-upload-status success';
+    } catch(err) {
+        status.textContent = '\u2717 ' + (err.message || 'Upload failed');
+        status.className = 'train-upload-status error';
+        fileInput.value = '';
+    }
+}
+function saveVideo() {
+    const title = document.getElementById('vTitle').value.trim();
+    if (!title) { document.getElementById('vTitle').style.borderColor = '#ef4444'; return; }
+    const obj = {
+        id:       _editVideoId || trainUid(),
+        title,
+        desc:     document.getElementById('vDesc').value.trim(),
+        link:     document.getElementById('vLink').value.trim(),
+        category: document.getElementById('vCategory').value
+    };
+    if (_editVideoId) {
+        const idx = state.videos.findIndex(v => v.id === _editVideoId);
+        if (idx > -1) state.videos[idx] = obj;
+    } else {
+        state.videos.push(obj);
+    }
+    closeVideoModal();
+    trainPersist();
+    renderVideos();
+}
+function deleteVideo(id) {
+    if (!confirm('Remove this video?')) return;
+    state.videos = state.videos.filter(v => v.id !== id);
+    trainPersist();
+    renderVideos();
+}
+
+/* ── Drag: meetings ── */
+let _mDragId = null;
+function mDragStart(e, id) {
+    _mDragId = id;
+    e.dataTransfer.effectAllowed = 'move';
+    setTimeout(() => { const el = document.querySelector(`.meeting-card[data-meeting-id="${id}"]`); if (el) el.classList.add('t-dragging'); }, 0);
+}
+function mDragEnd(e) {
+    document.querySelectorAll('.meeting-card.t-dragging,.meeting-card.t-drag-over').forEach(el => el.classList.remove('t-dragging','t-drag-over'));
+    _mDragId = null;
+}
+function mDragOver(e, id) {
+    if (!_mDragId || id === _mDragId) return;
+    e.preventDefault();
+    document.querySelectorAll('.meeting-card.t-drag-over').forEach(el => el.classList.remove('t-drag-over'));
+    const el = document.querySelector(`.meeting-card[data-meeting-id="${id}"]`);
+    if (el) el.classList.add('t-drag-over');
+}
+function mDragLeave(e) { e.currentTarget.classList.remove('t-drag-over'); }
+function mDrop(e, toId) {
+    e.preventDefault();
+    document.querySelectorAll('.meeting-card.t-drag-over').forEach(el => el.classList.remove('t-drag-over'));
+    if (!_mDragId || _mDragId === toId) return;
+    const fromIdx = state.meetings.findIndex(m => m.id === _mDragId);
+    const toIdx   = state.meetings.findIndex(m => m.id === toId);
+    if (fromIdx < 0 || toIdx < 0) return;
+    const [moved] = state.meetings.splice(fromIdx, 1);
+    state.meetings.splice(toIdx, 0, moved);
+    trainPersist(); renderMeetings();
+}
+
+/* ── Drag: videos ── */
+let _vDragId = null;
+function vDragStart(e, id) {
+    _vDragId = id;
+    e.dataTransfer.effectAllowed = 'move';
+    setTimeout(() => { const el = document.querySelector(`.video-card[data-video-id="${id}"]`); if (el) el.classList.add('t-dragging'); }, 0);
+}
+function vDragEnd(e) {
+    document.querySelectorAll('.video-card.t-dragging,.video-card.t-drag-over').forEach(el => el.classList.remove('t-dragging','t-drag-over'));
+    _vDragId = null;
+}
+function vDragOver(e, id) {
+    if (!_vDragId || id === _vDragId) return;
+    e.preventDefault();
+    document.querySelectorAll('.video-card.t-drag-over').forEach(el => el.classList.remove('t-drag-over'));
+    const el = document.querySelector(`.video-card[data-video-id="${id}"]`);
+    if (el) el.classList.add('t-drag-over');
+}
+function vDragLeave(e) { e.currentTarget.classList.remove('t-drag-over'); }
+function vDrop(e, toId) {
+    e.preventDefault();
+    document.querySelectorAll('.video-card.t-drag-over').forEach(el => el.classList.remove('t-drag-over'));
+    if (!_vDragId || _vDragId === toId) return;
+    const fromIdx = state.videos.findIndex(v => v.id === _vDragId);
+    const toIdx   = state.videos.findIndex(v => v.id === toId);
+    if (fromIdx < 0 || toIdx < 0) return;
+    const [moved] = state.videos.splice(fromIdx, 1);
+    state.videos.splice(toIdx, 0, moved);
+    trainPersist(); renderVideos();
+}
+
+/* ── Tab filtering ── */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+        renderVideos();
+    });
+});
+
+/* ── Modal backdrop clicks ── */
+document.getElementById('trainPinOverlay').addEventListener('click', function(e) { if (e.target===this) closeTrainPinModal(); });
+document.getElementById('meetingModalOverlay').addEventListener('click', function(e) { if (e.target===this) closeMeetingModal(); });
+document.getElementById('videoModalOverlay').addEventListener('click', function(e) { if (e.target===this) closeVideoModal(); });
+
+/* ── Keyboard ── */
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { closeMeetingModal(); closeVideoModal(); closeTrainPinModal(); }
+});
+
+document.addEventListener('DOMContentLoaded', trainInit);
+</script>
+
+</body>
+</html>
