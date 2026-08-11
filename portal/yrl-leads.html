@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leads — Your Realty Link</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="portal-auth.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --red:#c03926; --red-light:#d94a35; --red-dark:#9e2e1e;
+            --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f7f8fa;
+            --surface-3:#eef0f3; --border:#e2e5ea;
+            --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+            --green:#16a34a; --blue:#1d4ed8; --radius:12px;
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;}
+        a{text-decoration:none;color:inherit;}
+        .sub-header{background:linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);padding:26px 20px 22px;color:#fff;position:relative;overflow:hidden;}
+        .sub-header::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.07) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;}
+        .sub-header-inner{max-width:1000px;margin:0 auto;position:relative;z-index:1;}
+        .back-btn{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:rgba(255,255,255,0.85);background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:7px 14px;margin-bottom:14px;cursor:pointer;}
+        .back-btn:hover{background:rgba(255,255,255,0.2);color:#fff;}
+        .header-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1.6px;line-height:1.05;}
+        .header-sub{font-size:13px;opacity:0.88;margin-top:5px;max-width:620px;}
+        .main{max-width:1000px;margin:0 auto;padding:22px 16px 80px;}
+
+        .toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:18px;}
+        .search-wrap{position:relative;flex:1;min-width:220px;}
+        .search-wrap i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:13px;}
+        #searchInput{width:100%;padding:11px 14px 11px 38px;border:1px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;background:var(--surface);}
+        #searchInput:focus{outline:none;border-color:var(--red);}
+        .count-pill{font-size:12.5px;font-weight:700;color:var(--text-sec);background:var(--surface-3);border-radius:100px;padding:8px 14px;white-space:nowrap;}
+        .refresh-btn{border:1px solid var(--border);background:var(--surface);border-radius:10px;padding:10px 14px;font-size:13px;font-weight:600;color:var(--text-sec);cursor:pointer;display:inline-flex;align-items:center;gap:7px;}
+        .refresh-btn:hover{border-color:var(--red);color:var(--red);}
+
+        .lead-list{display:flex;flex-direction:column;gap:12px;}
+        .lead{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;display:grid;grid-template-columns:1.2fr 1.4fr 1fr auto;gap:14px;align-items:start;}
+        .lead .who .nm{font-weight:700;font-size:15px;}
+        .lead .who .meta{font-size:12px;color:var(--text-muted);margin-top:2px;}
+        .lead .contact a{display:block;font-size:13.5px;color:var(--blue);font-weight:600;}
+        .lead .contact a i{width:16px;color:var(--text-muted);margin-right:6px;}
+        .lead .contact .muted{color:var(--text-muted);font-weight:500;}
+        .lead .src .pill{display:inline-block;font-size:11px;font-weight:700;background:#fde9e5;color:var(--red-dark);border-radius:100px;padding:3px 10px;text-transform:capitalize;}
+        .lead .src .tags{margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;}
+        .lead .src .tag{font-size:10.5px;color:var(--text-sec);background:var(--surface-3);border-radius:5px;padding:2px 6px;}
+        .lead .src .note{font-size:12px;color:var(--text-sec);margin-top:8px;line-height:1.45;}
+        .lead .when{text-align:right;font-size:12px;color:var(--text-muted);white-space:nowrap;}
+        .lead .when .status{display:inline-block;margin-top:6px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--green);}
+
+        .state{text-align:center;padding:60px 20px;color:var(--text-muted);}
+        .state i{font-size:34px;margin-bottom:14px;opacity:.7;}
+        .state p{font-size:14px;max-width:420px;margin:0 auto;line-height:1.6;}
+        .state.err i{color:var(--red);}
+        .spin{display:inline-block;width:26px;height:26px;border:3px solid var(--surface-3);border-top-color:var(--red);border-radius:50%;animation:sp .7s linear infinite;}
+        @keyframes sp{to{transform:rotate(360deg);}}
+
+        @media(max-width:720px){
+            .lead{grid-template-columns:1fr;gap:8px;}
+            .lead .when{text-align:left;}
+        }
+    </style>
+    <link rel="stylesheet" href="hub-theme.css?v=20260728"><script src="hub-brand.js" defer></script>
+</head>
+<body>
+    <header class="sub-header">
+        <div class="sub-header-inner">
+            <a href="hub.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Hub</a>
+            <div class="header-title">Leads</div>
+            <div class="header-sub">Every lead your website forms bring in — buyer, seller, valuation, and contact requests — collected in one place. New leads also email your team automatically and save to the CRM.</div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="toolbar">
+            <div class="search-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input id="searchInput" type="search" placeholder="Search name, email, phone, source…" oninput="render()" autocomplete="off">
+            </div>
+            <span class="count-pill" id="countPill">—</span>
+            <button class="refresh-btn" onclick="loadLeads()"><i class="fa-solid fa-rotate"></i> Refresh</button>
+        </div>
+        <div id="leadsBox">
+            <div class="state"><div class="spin"></div></div>
+        </div>
+    </main>
+
+    <script>
+        const esc = s => String(s ?? '').replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+        let _leads = [];
+
+        document.addEventListener('yrl-auth-ready', loadLeads);
+
+        async function loadLeads() {
+            const box = document.getElementById('leadsBox');
+            box.innerHTML = '<div class="state"><div class="spin"></div></div>';
+            if (!window.yrlClient) { showErr('Not signed in.'); return; }
+            try {
+                const { data, error } = await window.yrlClient.rpc('get_yrl_leads');
+                if (error) throw error;
+                _leads = Array.isArray(data) ? data : [];
+                render();
+            } catch (e) {
+                const m = (e && e.message) || '';
+                if (/not authorized|permission denied|42501/i.test(m)) {
+                    showErr("Your account isn't authorized to view Your Realty Link leads. Ask an admin to add you.", 'lock');
+                } else {
+                    showErr('Could not load leads. ' + esc(m), 'triangle-exclamation');
+                }
+            }
+        }
+
+        function showErr(msg, icon) {
+            document.getElementById('countPill').textContent = '—';
+            document.getElementById('leadsBox').innerHTML =
+                `<div class="state err"><i class="fa-solid fa-${icon||'triangle-exclamation'}"></i><p>${msg}</p></div>`;
+        }
+
+        function fmtDate(s) {
+            if (!s) return '';
+            try { return new Date(s).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }); }
+            catch { return s; }
+        }
+        function prettySource(s) {
+            const map = { 'indypropertyguide':'Website', 'home-valuation':'Home Valuation', 'website':'Website', 'contact':'Contact Form' };
+            const k = (s||'').toLowerCase();
+            return map[k] || (s ? s.replace(/[-_]/g,' ') : 'Website');
+        }
+
+        function leadHtml(l) {
+            const phone = l.phone ? `<a href="tel:${esc(l.phone)}"><i class="fa-solid fa-phone"></i>${esc(l.phone)}</a>` : '';
+            const email = l.email ? `<a href="mailto:${esc(l.email)}"><i class="fa-solid fa-envelope"></i>${esc(l.email)}</a>` : '';
+            const loc = [l.city, l.state].filter(Boolean).join(', ');
+            const tags = (Array.isArray(l.tags) ? l.tags : []).filter(t => t && t !== 'web-lead')
+                .map(t => `<span class="tag">${esc(t)}</span>`).join('');
+            const note = l.last_note ? `<div class="note">${esc(l.last_note)}</div>` : '';
+            return `<div class="lead">
+                <div class="who">
+                    <div class="nm">${esc(l.name || 'Unknown')}</div>
+                    ${loc ? `<div class="meta">${esc(loc)}</div>` : ''}
+                    ${l.company ? `<div class="meta">${esc(l.company)}</div>` : ''}
+                </div>
+                <div class="contact">
+                    ${phone || ''}
+                    ${email || (phone ? '' : '<span class="muted">No contact info</span>')}
+                </div>
+                <div class="src">
+                    <span class="pill">${esc(prettySource(l.source))}</span>
+                    ${tags ? `<div class="tags">${tags}</div>` : ''}
+                    ${note}
+                </div>
+                <div class="when">
+                    ${fmtDate(l.created_at)}
+                    <span class="status">${esc(l.status || 'lead')}</span>
+                </div>
+            </div>`;
+        }
+
+        function render() {
+            const q = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+            let rows = _leads;
+            if (q) {
+                rows = rows.filter(l => [l.name, l.email, l.phone, l.source, l.company, l.city,
+                    (l.tags||[]).join(' '), l.last_note].join(' ').toLowerCase().includes(q));
+            }
+            document.getElementById('countPill').textContent =
+                _leads.length === 0 ? '0 leads' : `${rows.length}${q ? ' of ' + _leads.length : ''} lead${rows.length===1?'':'s'}`;
+            const box = document.getElementById('leadsBox');
+            if (_leads.length === 0) {
+                box.innerHTML = `<div class="state"><i class="fa-solid fa-inbox"></i><p>No leads yet. As visitors submit your website forms, they'll appear here automatically — and your team gets an email for each one.</p></div>`;
+                return;
+            }
+            if (rows.length === 0) {
+                box.innerHTML = `<div class="state"><i class="fa-solid fa-magnifying-glass"></i><p>No leads match &ldquo;${esc(q)}&rdquo;.</p></div>`;
+                return;
+            }
+            box.innerHTML = `<div class="lead-list">${rows.map(leadHtml).join('')}</div>`;
+        }
+
+        // If auth already resolved before this script ran, load now.
+        if (window.yrlMember && window.yrlClient) loadLeads();
+    </script>
+</body>
+</html>
