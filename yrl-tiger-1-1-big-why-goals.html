@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tiger 1.1 · Your Big Why &amp; Goals — Your Realty Link</title>
+<script src="yrl-auth.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{
+  --red:#c03926; --red-light:#d94a35; --red-dark:#9e2e1e;
+  --tiger:#b5661c; --tiger-light:#d98a2b;
+  --gray:#6e6e70;
+  --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f7f8fa; --surface-3:#eef0f3;
+  --border:#e2e5ea; --border-light:#d0d4da;
+  --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+  --radius:12px; --radius-lg:20px;
+  --shadow:0 4px 20px rgba(0,0,0,.08); --shadow-red:0 6px 28px rgba(192,57,38,.22);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--red);text-decoration:none}
+
+/* ---- top bar ---- */
+.topbar{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+.topbar-in{max-width:920px;margin:0 auto;padding:12px 22px;display:flex;align-items:center;gap:16px}
+.back{display:inline-flex;align-items:center;gap:8px;color:var(--text-sec);font-weight:600;font-size:14px}
+.back:hover{color:var(--red)}
+.topbar .spacer{flex:1}
+.prog{min-width:150px}
+.prog-track{height:8px;border-radius:99px;background:var(--surface-3);overflow:hidden}
+.prog-bar{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--tiger),var(--red));transition:width .3s ease}
+.prog-lbl{font-size:11px;color:var(--text-muted);margin-top:4px;font-weight:600;letter-spacing:.02em}
+.btn{display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;font-family:inherit;font-weight:600;font-size:14px;padding:10px 16px;border-radius:10px;transition:.15s}
+.btn-primary{background:var(--red);color:#fff;box-shadow:var(--shadow-red)}
+.btn-primary:hover{background:var(--red-dark)}
+.btn-ghost{background:var(--surface-3);color:var(--text-sec)}
+.btn-ghost:hover{background:var(--border)}
+
+/* ---- hero ---- */
+.hero{background:#1c1a17;color:#f3ede4;position:relative;overflow:hidden}
+.hero .stripes{position:absolute;inset:0;opacity:.13;background:repeating-linear-gradient(58deg,var(--tiger-light) 0 3px,transparent 3px 9px,var(--red) 9px 12px,transparent 12px 34px)}
+.hero-in{position:relative;max-width:920px;margin:0 auto;padding:40px 22px 34px}
+.eyebrow{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--tiger-light);font-weight:700;margin:0 0 10px}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:clamp(38px,7vw,60px);line-height:.95;letter-spacing:.01em;margin:0}
+.hero p.lede{color:#cfc7bc;max-width:60ch;margin:14px 0 0;font-size:16px}
+.hero .whoami{margin-top:18px;font-size:13px;color:#a8a099}
+.hero .whoami b{color:#f3ede4}
+
+/* ---- layout ---- */
+.wrap{max-width:920px;margin:0 auto;padding:26px 22px 60px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:26px 28px;box-shadow:var(--shadow);margin:18px 0}
+.card h2{font-size:22px;margin:0 0 4px;letter-spacing:-.01em}
+.card h2 .n{color:var(--tiger);font-family:'Bebas Neue',sans-serif;font-size:26px;margin-right:8px}
+.card .sub{color:var(--text-sec);margin:0 0 18px;font-size:15px}
+.card p{font-size:15.5px}
+.teach{color:var(--text-sec)}
+.callout{border-left:3px solid var(--tiger);background:var(--surface-2);padding:12px 16px;border-radius:0 10px 10px 0;font-size:14.5px;color:var(--text-sec);margin:16px 0}
+.callout b{color:var(--text)}
+
+/* ---- fields ---- */
+.field{margin:16px 0}
+.field-label{display:block;font-weight:650;font-size:14px;margin:0 0 6px;color:var(--text)}
+.field-hint{font-weight:400;color:var(--text-muted);font-size:13px}
+.tiger-input,textarea[data-tiger]{width:100%;font-family:inherit;font-size:15px;color:var(--text);background:var(--surface-2);border:1.5px solid var(--border);border-radius:10px;padding:11px 13px;transition:.15s}
+.tiger-input:focus,textarea[data-tiger]:focus{outline:none;border-color:var(--red);background:#fff;box-shadow:0 0 0 3px rgba(192,57,38,.1)}
+textarea[data-tiger]{min-height:96px;resize:vertical;line-height:1.55}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.input-money{position:relative}
+.input-money::before{content:"$";position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-weight:600}
+.input-money input{padding-left:24px}
+
+/* ---- calculator ---- */
+.calc{background:linear-gradient(135deg,#1c1a17,#2a251f);color:#f3ede4;border-radius:16px;padding:22px 24px;margin:18px 0;display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.calc .big{font-family:'Bebas Neue',sans-serif;font-size:52px;line-height:.9;color:var(--tiger-light)}
+.calc .big small{display:block;font-family:'Inter';font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#a8a099;font-weight:700;margin-top:6px}
+.calc .say{font-size:14.5px;color:#cfc7bc;flex:1;min-width:200px}
+
+/* ---- checklist ---- */
+.check{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
+.check:last-child{border-bottom:none}
+.check input{width:20px;height:20px;margin-top:2px;accent-color:var(--red);flex:none;cursor:pointer}
+.check label{font-size:15px;cursor:pointer}
+
+/* ---- dynamic list ---- */
+.tiger-list{margin:8px 0 4px}
+.tiger-list-row{display:flex;align-items:center;gap:10px;margin:8px 0}
+.tiger-list-num{color:var(--text-muted);font-weight:700;font-size:13px;width:26px;text-align:right;flex:none}
+.tiger-list-row input{flex:1;font-family:inherit;font-size:15px;background:var(--surface-2);border:1.5px solid var(--border);border-radius:9px;padding:10px 12px}
+.tiger-list-row input:focus{outline:none;border-color:var(--red);background:#fff;box-shadow:0 0 0 3px rgba(192,57,38,.1)}
+.tiger-list-del{border:none;background:transparent;color:var(--text-muted);cursor:pointer;font-size:15px;padding:6px;border-radius:8px}
+.tiger-list-del:hover{color:var(--red);background:var(--surface-3)}
+.tiger-list-add{margin-top:6px;border:1.5px dashed var(--border-light);background:transparent;color:var(--text-sec);font-family:inherit;font-weight:600;font-size:14px;padding:9px 14px;border-radius:10px;cursor:pointer}
+.tiger-list-add:hover{border-color:var(--red);color:var(--red)}
+
+/* ---- footer actions ---- */
+.actions{position:sticky;bottom:0;z-index:30;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-top:1px solid var(--border);margin-top:24px}
+.actions-in{max-width:920px;margin:0 auto;padding:14px 22px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.actions .note{color:var(--text-muted);font-size:12.5px;flex:1;min-width:160px}
+.actions .note i{color:var(--tiger)}
+
+/* ---- toast ---- */
+.tiger-toast{position:fixed;left:50%;bottom:86px;transform:translate(-50%,20px);background:#1c1a17;color:#fff;padding:11px 20px;border-radius:99px;font-size:14px;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:.25s;z-index:100}
+.tiger-toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ---- print header/footer (screen-hidden) ---- */
+.print-only{display:none}
+
+@media (max-width:640px){
+  .grid2,.grid3{grid-template-columns:1fr}
+  .topbar .btn span{display:none}
+  .calc .big{font-size:42px}
+}
+
+/* ============ PRINT / PDF ============ */
+@media print{
+  @page{margin:16mm}
+  .topbar,.actions,.tiger-list-add,.tiger-list-del,.tiger-toast,.hero .stripes{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  .print-only{display:block}
+  .hero{background:#fff;color:#000;border-bottom:3px solid var(--red)}
+  .hero .eyebrow{color:var(--red)}
+  .hero h1{color:#000}
+  .hero p.lede,.hero .whoami{color:#333}
+  .wrap{padding-top:8px}
+  .card{box-shadow:none;border:1px solid #ccc;break-inside:avoid;page-break-inside:avoid;margin:12px 0}
+  .calc{background:#f3f0ec;color:#000;border:1px solid #ccc}
+  .calc .big{color:var(--red-dark)}
+  .calc .say{color:#333}
+  .tiger-input,textarea[data-tiger],.tiger-list-row input{border:none;border-bottom:1px solid #999;background:#fff;border-radius:0}
+  .callout{background:#f7f5f2}
+  a{color:#000}
+}
+</style>
+</head>
+<body data-tiger-module="1.1" data-tiger-title="Your Big Why &amp; Goals">
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-in">
+    <a class="back" href="yrl-tiger-training.html"><i class="fa-solid fa-arrow-left"></i> Tiger Training</a>
+    <div class="spacer"></div>
+    <div class="prog">
+      <div class="prog-track"><div class="prog-bar" id="tigerProgressBar"></div></div>
+      <div class="prog-lbl" id="tigerProgressLabel">0% complete</div>
+    </div>
+    <button class="btn btn-ghost" data-tiger-action="pdf"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
+    <button class="btn btn-primary" data-tiger-action="save"><i class="fa-solid fa-floppy-disk"></i> <span>Save</span></button>
+  </div>
+</div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="stripes"></div>
+  <div class="hero-in">
+    <p class="eyebrow">Tiger Training · Phase 1 · Module 1.1</p>
+    <h1>Your Big Why &amp; Goals</h1>
+    <p class="lede">Every great real estate career is built on two things: a reason strong enough to get you prospecting on the hard days, and a number you're working toward on purpose. Let's put both on paper.</p>
+    <p class="whoami">Worksheet for <b data-tiger-name>Agent</b> · <span data-tiger-date></span> · saves automatically as you type</p>
+  </div>
+</header>
+
+<!-- PRINT-ONLY DOC HEADER -->
+<div class="print-only" style="text-align:center;margin:0 0 6px">
+  <strong>YOUR REALTY LINK · TIGER TRAINING</strong> — Module 1.1: Your Big Why &amp; Goals
+</div>
+
+<div class="wrap">
+
+  <!-- WHY -->
+  <section class="card">
+    <h2><span class="n">01</span>Why this module matters</h2>
+    <p class="teach">Real estate hands you total freedom — no one sets your schedule, your goals, or your paycheck. That freedom is also the trap. The agents who make it aren't the smartest or the most charming; they're the ones who know <b>why</b> they're doing this and <b>exactly what</b> they're aiming for, so they lead-generate even when they don't feel like it.</p>
+    <div class="callout">This is the first module for a reason. Everything else in Tiger Training — scripts, listings, buyers, negotiation — is just <b>how</b>. Today you lock in your <b>why</b> and your <b>what</b>.</div>
+  </section>
+
+  <!-- BIG WHY -->
+  <section class="card">
+    <h2><span class="n">02</span>Your Big Why</h2>
+    <p class="sub">The deep reason behind the money. Not "I want to sell houses" — the life it pays for.</p>
+    <div class="field">
+      <label class="field-label" for="big_why">When real estate gets hard, what am I doing this for? <span class="field-hint">Be specific and personal — read this on the tough days.</span></label>
+      <textarea id="big_why" data-tiger="big_why" placeholder="e.g. Pay off the house by 55, take my kids somewhere new every year, and never again ask a boss for time off…"></textarea>
+    </div>
+    <div class="field">
+      <label class="field-label" for="one_year">One year from now, if this goes great, what's different in my life?</label>
+      <textarea id="one_year" data-tiger="one_year" placeholder="Describe the win…"></textarea>
+    </div>
+  </section>
+
+  <!-- INCOME GOAL + CALC -->
+  <section class="card">
+    <h2><span class="n">03</span>Your Number — worked backward</h2>
+    <p class="sub">A goal without math is a wish. Put in your income target and we'll show you the deals it takes.</p>
+    <div class="grid3">
+      <div class="field">
+        <label class="field-label" for="income_goal">Income goal this year</label>
+        <div class="input-money"><input class="tiger-input" id="income_goal" data-tiger="income_goal" inputmode="numeric" placeholder="80,000"></div>
+      </div>
+      <div class="field">
+        <label class="field-label" for="avg_commission">Avg. commission per deal <span class="field-hint">your take-home per side</span></label>
+        <div class="input-money"><input class="tiger-input" id="avg_commission" data-tiger="avg_commission" inputmode="numeric" placeholder="7,500"></div>
+      </div>
+      <div class="field">
+        <label class="field-label" for="work_weeks">Weeks I'll work this year</label>
+        <input class="tiger-input" id="work_weeks" data-tiger="work_weeks" inputmode="numeric" placeholder="48">
+      </div>
+    </div>
+    <div class="calc">
+      <div class="big" id="calcDeals">—<small>Closings needed</small></div>
+      <div class="big" id="calcMonth">—<small>Per month</small></div>
+      <div class="say" id="calcSay">Enter your income goal and average commission to see the target. Most of what stands between you and that number is one thing: consistent lead generation.</div>
+    </div>
+    <input type="hidden" data-tiger="deals_needed" id="deals_needed">
+  </section>
+
+  <!-- YEAR TARGETS -->
+  <section class="card">
+    <h2><span class="n">04</span>Break it into scoreboard numbers</h2>
+    <p class="sub">The activities you can actually control. Set targets you'll track weekly on your Tiger Tracker.</p>
+    <div class="grid3">
+      <div class="field"><label class="field-label" for="t_listings">Listings taken (goal)</label><input class="tiger-input" id="t_listings" data-tiger="t_listings" inputmode="numeric" placeholder="12"></div>
+      <div class="field"><label class="field-label" for="t_buyers">Buyers closed (goal)</label><input class="tiger-input" id="t_buyers" data-tiger="t_buyers" inputmode="numeric" placeholder="10"></div>
+      <div class="field"><label class="field-label" for="t_convos">Conversations / week</label><input class="tiger-input" id="t_convos" data-tiger="t_convos" inputmode="numeric" placeholder="50"></div>
+    </div>
+    <div class="callout">Rule of thumb in our market: steady weekly conversations with people you know and meet is the single biggest predictor of closings. Protect that time before anything else fills your calendar.</div>
+  </section>
+
+  <!-- DATABASE LIST -->
+  <section class="card">
+    <h2><span class="n">05</span>Start your database — people who already know you</h2>
+    <p class="sub">Your first deals come from your sphere. List everyone who'd take your call: family, friends, past coworkers, your dentist, your kid's coach. Add as many as you can — aim for 20+.</p>
+    <div class="tiger-list" data-list="soi" data-list-title="My starting database" data-min="8" data-placeholder="Name — how you know them (e.g. Aunt Carol — family)"></div>
+    <div class="callout"><b>Next step:</b> in Module 2.1 we'll load these into your database and start a simple monthly touch plan. For now, just get the names down.</div>
+  </section>
+
+  <!-- DAILY COMMITMENT -->
+  <section class="card">
+    <h2><span class="n">06</span>Your daily commitment</h2>
+    <p class="sub">Check the habits you commit to. These become your non-negotiables.</p>
+    <div class="check"><input type="checkbox" id="c1" data-tiger-check="time_block"><label for="c1">Time-block lead generation first thing, before email or errands</label></div>
+    <div class="check"><input type="checkbox" id="c2" data-tiger-check="ten_convos"><label for="c2">Talk to real people about real estate every working day</label></div>
+    <div class="check"><input type="checkbox" id="c3" data-tiger-check="track"><label for="c3">Update my Tiger Tracker every Friday</label></div>
+    <div class="check"><input type="checkbox" id="c4" data-tiger-check="scripts"><label for="c4">Practice one script out loud before I use it live</label></div>
+    <div class="check"><input type="checkbox" id="c5" data-tiger-check="review_why"><label for="c5">Re-read my Big Why whenever I want to quit for the day</label></div>
+  </section>
+
+  <!-- ACTION -->
+  <section class="card">
+    <h2><span class="n">07</span>Your action this week</h2>
+    <p class="sub">One concrete commitment. Write it like a promise to yourself.</p>
+    <div class="field">
+      <label class="field-label" for="action">This week I will…</label>
+      <textarea id="action" data-tiger="action" placeholder="e.g. Add 25 people to my database and call 5 of them to let them know I'm in real estate."></textarea>
+    </div>
+    <div class="grid2">
+      <div class="field"><label class="field-label" for="sign">Signed</label><input class="tiger-input" id="sign" data-tiger="sign" placeholder="Your name"></div>
+      <div class="field"><label class="field-label" for="signdate">Date</label><input class="tiger-input" id="signdate" data-tiger="signdate" placeholder="MM/DD/YYYY"></div>
+    </div>
+  </section>
+
+</div>
+
+<!-- STICKY ACTIONS -->
+<div class="actions">
+  <div class="actions-in">
+    <span class="note"><i class="fa-solid fa-cloud"></i> Your answers save automatically to your account — pick up on any device.</span>
+    <button class="btn btn-ghost" data-tiger-action="txt"><i class="fa-solid fa-list"></i> Download list</button>
+    <button class="btn btn-ghost" data-tiger-action="pdf"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
+    <button class="btn btn-ghost" data-tiger-action="reset"><i class="fa-solid fa-eraser"></i> Clear</button>
+    <button class="btn btn-primary" data-tiger-action="complete"><i class="fa-solid fa-check"></i> Mark complete</button>
+  </div>
+</div>
+
+<script src="yrl-hub.js"></script>
+<script src="yrl-tiger.js"></script>
+<script>
+/* Live goal calculator — reads the two money fields + weeks, writes the target. */
+(function(){
+  const num = s => parseFloat(String(s||'').replace(/[^0-9.]/g,'')) || 0;
+  const dealsEl = document.getElementById('calcDeals');
+  const monthEl = document.getElementById('calcMonth');
+  const sayEl   = document.getElementById('calcSay');
+  const hidden  = document.getElementById('deals_needed');
+  function recalc(){
+    const goal = num(document.getElementById('income_goal').value);
+    const comm = num(document.getElementById('avg_commission').value);
+    if(goal>0 && comm>0){
+      const deals = Math.ceil(goal/comm);
+      dealsEl.innerHTML = deals + '<small>Closings needed</small>';
+      monthEl.innerHTML = (Math.round((deals/12)*10)/10) + '<small>Per month</small>';
+      hidden.value = deals;
+      sayEl.textContent = `To earn $${goal.toLocaleString()} at $${comm.toLocaleString()} per closing, you need about ${deals} closings this year — roughly ${Math.ceil(deals/12)} a month. That's the finish line. Tiger Training is how you get there.`;
+    } else {
+      dealsEl.innerHTML = '—<small>Closings needed</small>';
+      monthEl.innerHTML = '—<small>Per month</small>';
+      hidden.value = '';
+      sayEl.textContent = 'Enter your income goal and average commission to see the target.';
+    }
+  }
+  ['income_goal','avg_commission','work_weeks'].forEach(id=>{
+    document.getElementById(id).addEventListener('input',recalc);
+  });
+  // recalc once the engine has hydrated saved values
+  document.addEventListener('yrl-auth-ready',()=>setTimeout(recalc,300));
+  setTimeout(recalc,1200);
+})();
+</script>
+</body>
+</html>

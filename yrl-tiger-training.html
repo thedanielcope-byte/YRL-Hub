@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tiger Training — Your Realty Link</title>
+<script src="yrl-auth.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{
+  --red:#c03926; --red-dark:#9e2e1e; --tiger:#b5661c; --tiger-light:#d98a2b;
+  --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f7f8fa; --surface-3:#eef0f3;
+  --border:#e2e5ea; --border-light:#d0d4da;
+  --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+  --radius:14px; --shadow:0 4px 20px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+
+.topbar{background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:20}
+.topbar-in{max-width:1040px;margin:0 auto;padding:12px 22px;display:flex;align-items:center;gap:14px}
+.back{display:inline-flex;align-items:center;gap:8px;color:var(--text-sec);font-weight:600;font-size:14px}
+.back:hover{color:var(--red)}
+.topbar .who{margin-left:auto;font-size:13px;color:var(--text-muted)}
+.topbar .who b{color:var(--text-sec)}
+
+.hero{background:#1c1a17;color:#f3ede4;position:relative;overflow:hidden}
+.hero .stripes{position:absolute;inset:0;opacity:.13;background:repeating-linear-gradient(58deg,var(--tiger-light) 0 3px,transparent 3px 9px,var(--red) 9px 12px,transparent 12px 34px)}
+.hero-in{position:relative;max-width:1040px;margin:0 auto;padding:44px 22px 38px;display:flex;align-items:center;gap:34px;flex-wrap:wrap}
+.hero-txt{flex:1;min-width:260px}
+.eyebrow{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--tiger-light);font-weight:700;margin:0 0 10px}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:clamp(44px,8vw,78px);line-height:.9;margin:0}
+.hero p{color:#cfc7bc;max-width:56ch;margin:12px 0 0;font-size:16px}
+/* progress ring */
+.ring{--p:0;width:132px;height:132px;border-radius:50%;flex:none;display:grid;place-items:center;
+  background:conic-gradient(var(--tiger-light) calc(var(--p)*1%), rgba(255,255,255,.12) 0)}
+.ring .inner{width:104px;height:104px;border-radius:50%;background:#1c1a17;display:grid;place-items:center;text-align:center}
+.ring .pct{font-family:'Bebas Neue',sans-serif;font-size:38px;color:#f3ede4;line-height:1}
+.ring .lbl{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#a8a099;font-weight:700}
+
+.wrap{max-width:1040px;margin:0 auto;padding:26px 22px 70px}
+.legend{display:flex;gap:20px;flex-wrap:wrap;font-size:12.5px;color:var(--text-sec);margin:4px 2px 18px}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.dot{width:11px;height:11px;border-radius:3px}
+.dot.live{background:var(--red)} .dot.done{background:#2e9e5b} .dot.soon{background:var(--border-light)}
+
+.phase{margin:22px 0;border-top:1px solid var(--border);padding-top:20px}
+.phase-head{display:flex;align-items:baseline;gap:14px;margin:0 0 14px}
+.phase-num{font-family:'Bebas Neue',sans-serif;font-size:34px;color:transparent;-webkit-text-stroke:1.4px var(--tiger);line-height:1}
+.phase-title{font-size:19px;font-weight:750;margin:0}
+.phase-goal{color:var(--text-muted);font-size:13.5px;margin-left:auto;text-align:right;max-width:40ch}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.mod{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:15px 16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:9px;min-height:112px;position:relative;transition:.15s}
+.mod.live{cursor:pointer}
+.mod.live:hover{transform:translateY(-2px);border-color:var(--red)}
+.mod.soon{opacity:.72}
+.mod .top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mod .id{font-size:11px;font-weight:800;letter-spacing:.04em;color:var(--text-muted)}
+.mod .badge{font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:99px}
+.badge.live{background:var(--red);color:#fff}
+.badge.done{background:#2e9e5b;color:#fff}
+.badge.soon{background:var(--surface-3);color:var(--text-muted)}
+.mod .name{font-size:14.5px;font-weight:650;line-height:1.28;flex:1}
+.mod .mbar{height:6px;border-radius:99px;background:var(--surface-3);overflow:hidden}
+.mod .mbar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--tiger),var(--red));border-radius:99px;transition:width .4s}
+.mod .go{font-size:12.5px;font-weight:700;color:var(--red);display:inline-flex;align-items:center;gap:6px}
+
+.woven{margin-top:34px;background:#1c1a17;color:#e9e3da;border-radius:18px;padding:24px 26px;position:relative;overflow:hidden}
+.woven .stripes{position:absolute;inset:0;opacity:.1;background:repeating-linear-gradient(58deg,var(--tiger-light) 0 2px,transparent 2px 10px)}
+.woven h3{position:relative;margin:0 0 14px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--tiger-light)}
+.woven-grid{position:relative;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.woven-item h4{margin:0 0 5px;font-size:15px}
+.woven-item p{margin:0;font-size:13px;color:#b3aaa0;line-height:1.45}
+.woven-item{border-left:2px solid var(--red);padding-left:13px}
+
+@media(max-width:640px){.phase-goal{display:none}.hero-in{gap:22px}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-in">
+    <a class="back" href="yrl-agent-training.html"><i class="fa-solid fa-arrow-left"></i> Training</a>
+    <a class="back" href="yrl-agent-hub.html"><i class="fa-solid fa-house"></i> Hub</a>
+    <div class="who">Signed in as <b id="yrl-user-name">…</b></div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="stripes"></div>
+  <div class="hero-in">
+    <div class="hero-txt">
+      <p class="eyebrow">Your Realty Link · CSI Realty Team</p>
+      <h1>Tiger Training</h1>
+      <p>The complete agent success path — from newly licensed to consistent producer. Work through it at your own pace. Every module lets you type your answers, save them to your account, and download them as a PDF.</p>
+    </div>
+    <div class="ring" id="ring"><div class="inner">
+      <div class="pct" id="ringPct">0%</div>
+      <div class="lbl">Complete</div>
+    </div></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="legend">
+    <span><span class="dot done"></span> Completed</span>
+    <span><span class="dot live"></span> Available now</span>
+    <span><span class="dot soon"></span> Coming soon</span>
+  </div>
+  <div id="phases"></div>
+
+  <div class="woven">
+    <div class="stripes"></div>
+    <h3>Runs through every phase</h3>
+    <div class="woven-grid">
+      <div class="woven-item"><h4>YRL Script Book</h4><p>The right scripts drop into each module — sphere, open house, FSBO/expired, buyer &amp; listing, objections.</p></div>
+      <div class="woven-item"><h4>The Tiger Tracker</h4><p>Your weekly scoreboard: conversations, appointments, contracts, closings. Updated every Friday.</p></div>
+      <div class="woven-item"><h4>Business Planning</h4><p>Revisited each quarter — your goals and numbers, kept honest.</p></div>
+    </div>
+  </div>
+</div>
+
+<script src="yrl-hub.js"></script>
+<script>
+const PHASES = [
+  {n:'00',title:'Get in the Game',goal:'Set up and open for business in week one.',mods:[
+    {id:'0.1',name:'Getting Licensed & Joining MIBOR'},
+    {id:'0.2',name:'Setting Up Dotloop'},
+    {id:'0.3',name:'YRL Tech & Tools Tour'},
+    {id:'0.4',name:'Your Brand & Agent Profile'},
+    {id:'0.5',name:'Office SOPs & How We Work'},
+  ]},
+  {n:'01',title:'Mindset, Goals & Plan',goal:'Know your why, your numbers, your schedule.',mods:[
+    {id:'1.1',name:'Your Big Why & Goals',href:'yrl-tiger-1-1-big-why-goals.html'},
+    {id:'1.2',name:'The Numbers: How Agents Get Paid'},
+    {id:'1.3',name:'Business Planning Clinic'},
+    {id:'1.4',name:'Daily Schedule & Time-Blocking'},
+  ]},
+  {n:'02',title:'Lead Generation',goal:'Fill the pipeline. Job No. 1, every day.',mods:[
+    {id:'2.1',name:'Your Database / Sphere of Influence'},
+    {id:'2.2',name:'Open Houses That Generate Leads'},
+    {id:'2.3',name:'Daily Prospecting & the Pipeline'},
+    {id:'2.4',name:'FSBO & Expired Listings'},
+    {id:'2.5',name:'Online & Social Media Leads'},
+    {id:'2.6',name:'Referrals & Past-Client Follow-Up'},
+  ]},
+  {n:'03',title:'The Buyer Track',goal:'Convert & close buyers under the new rules.',mods:[
+    {id:'3.1',name:'Buyer Consultation + Buyer Rep Agreement'},
+    {id:'3.2',name:'Finding & Showing Homes'},
+    {id:'3.3',name:'Writing Offers'},
+    {id:'3.4',name:'Negotiating Win-Win Agreements'},
+    {id:'3.5',name:'Buyer Contract-to-Close'},
+  ]},
+  {n:'04',title:'The Listing Track',goal:'Win it, price it, market it, close it.',mods:[
+    {id:'4.1',name:'Finding Seller Leads'},
+    {id:'4.2',name:'Your Prelisting Packet'},
+    {id:'4.3',name:'Pricing Right & Presenting the CMA'},
+    {id:'4.4',name:'List a Home for Sale — the full workflow'},
+    {id:'4.5',name:'The Listing Appointment'},
+    {id:'4.6',name:'Marketing & Servicing Your Listings'},
+    {id:'4.7',name:'Seller Contract-to-Close'},
+  ]},
+  {n:'05',title:'Systems & Compliance',goal:"Don't get fined. Delight clients.",mods:[
+    {id:'5.1',name:'Dotloop File Compliance & Transaction Mgmt'},
+    {id:'5.2',name:'Getting Reviews & Referrals'},
+    {id:'5.3',name:'Client Experience & Staying in Touch'},
+  ]},
+  {n:'06',title:'Level Up',goal:'Grow beyond survival — specialize & scale.',mods:[
+    {id:'6.1',name:'Video & Social Presence'},
+    {id:'6.2',name:'Geographic Farming'},
+    {id:'6.3',name:'Working with Investors'},
+    {id:'6.4',name:'New Construction'},
+    {id:'6.5',name:'Luxury / Move-Up Buyers'},
+    {id:'6.6',name:'Building Toward a Team'},
+  ]},
+];
+
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+function render(progress){
+  const host = document.getElementById('phases');
+  let doneCount=0, total=0;
+  host.innerHTML = PHASES.map(ph=>{
+    const cards = ph.mods.map(m=>{
+      total++;
+      const p = progress[m.id] || {};
+      const live = !!m.href;
+      const done = !!p.done;
+      if(done) doneCount++;
+      const status = done?'done':(live?'live':'soon');
+      const badge = done?'Done':(live?'Start':'Soon');
+      const pct = p.pct||0;
+      const inner = `
+        <div class="top"><span class="id">${m.id}</span><span class="badge ${status}">${badge}</span></div>
+        <div class="name">${esc(m.name)}</div>
+        ${ (live||pct>0) ? `<div class="mbar"><i style="width:${done?100:pct}%"></i></div>`:'' }
+        ${ live ? `<span class="go">${done?'Review':'Open worksheet'} <i class="fa-solid fa-arrow-right"></i></span>`:'' }`;
+      return live
+        ? `<a class="mod live" href="${m.href}">${inner}</a>`
+        : `<div class="mod soon">${inner}</div>`;
+    }).join('');
+    return `<section class="phase">
+      <div class="phase-head"><span class="phase-num">${ph.n}</span>
+        <h2 class="phase-title">${esc(ph.title)}</h2>
+        <span class="phase-goal">${esc(ph.goal)}</span></div>
+      <div class="cards">${cards}</div></section>`;
+  }).join('');
+  const overall = total?Math.round((doneCount/total)*100):0;
+  document.getElementById('ringPct').textContent = overall+'%';
+  document.getElementById('ring').style.setProperty('--p',overall);
+}
+
+async function boot(){
+  const email = (window.yrlUser&&window.yrlUser.email?window.yrlUser.email.toLowerCase():
+    (localStorage.getItem('yrl_agent_email')||'anon'));
+  const key = `tiger:v1:progress:${email}`;
+  let progress = {};
+  try{ progress = JSON.parse(localStorage.getItem(key))||{}; }catch{}
+  if(typeof loadHubContent==='function'){
+    try{ const cloud=await loadHubContent(key); if(cloud) progress=cloud; }catch{}
+  }
+  render(progress);
+}
+if(window.yrlUser) boot();
+else { document.addEventListener('yrl-auth-ready',boot,{once:true}); setTimeout(()=>{if(!document.getElementById('phases').innerHTML)boot();},4000); }
+</script>
+</body>
+</html>
