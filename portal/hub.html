@@ -2512,7 +2512,8 @@
     const PIN_KEY          = 'yrl_broker_auth';
     const HUB_ORDER_KEY    = 'yrl-hub-card-order';
     const CUSTOM_CARDS_KEY = 'yrl-hub-custom-cards';
-    const HIDDEN_CARDS_KEY = 'yrl-hub-hidden-cards';
+    const HIDDEN_CARDS_KEY    = 'yrl-hub-hidden-cards';
+    const DISABLED_CARDS_KEY  = 'yrl-hub-disabled-cards';
     const CUSTOM_SECTIONS_KEY = 'yrl-hub-custom-sections';   // owner-created sections [{id,name,icon}]
     const CARD_GRIDS_KEY      = 'yrl-hub-card-grids';        // {cardId: gridId} — move a tool to another section
     let customSections = [];
@@ -3109,7 +3110,8 @@
     //  CUSTOM CARDS (add / edit / delete)
     // ══════════════════════════════════════
     let customCards = [];
-    let hiddenCards = [];  // array of built-in card IDs that user hid
+    let hiddenCards   = [];  // array of built-in card IDs that user hid
+    let disabledCards = [];  // array of built-in card IDs that are visible but non-clickable
 
     function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
     function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -3118,12 +3120,14 @@
     async function initHubCards() {
         // Load from localStorage first (instant paint)
         try { customCards = JSON.parse(localStorage.getItem(CUSTOM_CARDS_KEY) || '[]'); } catch(e) { customCards = []; }
-        try { hiddenCards = JSON.parse(localStorage.getItem(HIDDEN_CARDS_KEY) || '[]'); } catch(e) { hiddenCards = []; }
+        try { hiddenCards   = JSON.parse(localStorage.getItem(HIDDEN_CARDS_KEY)   || '[]'); } catch(e) { hiddenCards   = []; }
+        try { disabledCards = JSON.parse(localStorage.getItem(DISABLED_CARDS_KEY) || '[]'); } catch(e) { disabledCards = []; }
         try { customSections = JSON.parse(localStorage.getItem(CUSTOM_SECTIONS_KEY) || '[]'); } catch(e) { customSections = []; }
         try { cardGrids = JSON.parse(localStorage.getItem(CARD_GRIDS_KEY) || '{}'); } catch(e) { cardGrids = {}; }
 
         renderCustomSections();
         applyHiddenCards();
+        applyDisabledCards();
         renderCustomCards();
         injectDeleteButtons();
         restoreHubCardOrder();
@@ -3132,9 +3136,10 @@
 
         // Then sync everything from Supabase (cards + order)
         if (typeof loadHubContent === 'function') {
-            const [remoteCustom, remoteHidden, remoteOrder, remoteSections, remoteGrids] = await Promise.all([
+            const [remoteCustom, remoteHidden, remoteDisabled, remoteOrder, remoteSections, remoteGrids] = await Promise.all([
                 loadHubContent(CUSTOM_CARDS_KEY),
                 loadHubContent(HIDDEN_CARDS_KEY),
+                loadHubContent(DISABLED_CARDS_KEY),
                 loadHubContent(HUB_ORDER_KEY),
                 loadHubContent(CUSTOM_SECTIONS_KEY),
                 loadHubContent(CARD_GRIDS_KEY)
@@ -3147,6 +3152,10 @@
                 hiddenCards = remoteHidden;
                 localStorage.setItem(HIDDEN_CARDS_KEY, JSON.stringify(hiddenCards));
             }
+            if (Array.isArray(remoteDisabled)) {
+                disabledCards = remoteDisabled;
+                localStorage.setItem(DISABLED_CARDS_KEY, JSON.stringify(disabledCards));
+            }
             if (remoteOrder && typeof remoteOrder === 'object') {
                 localStorage.setItem(HUB_ORDER_KEY, JSON.stringify(remoteOrder));
             }
@@ -3156,6 +3165,7 @@
             document.querySelectorAll('.card[data-custom-card]').forEach(el => el.remove());
             renderCustomSections();
             applyHiddenCards();
+            applyDisabledCards();
             renderCustomCards();
             injectDeleteButtons();
             restoreHubCardOrder(remoteOrder || undefined);
@@ -3353,6 +3363,19 @@
         hiddenCards.forEach(id => {
             const card = document.querySelector(`.card[data-card-id="${id}"]`);
             if (card) card.style.display = 'none';
+        });
+    }
+
+    // ── Apply disabled IDs (visible but non-clickable) ──
+    function applyDisabledCards() {
+        disabledCards.forEach(id => {
+            const card = document.querySelector(`.card[data-card-id="${id}"]`);
+            if (!card) return;
+            card.removeAttribute('href');
+            card.removeAttribute('target');
+            card.style.pointerEvents = 'none';
+            card.style.opacity = '0.45';
+            card.style.cursor = 'default';
         });
     }
 
