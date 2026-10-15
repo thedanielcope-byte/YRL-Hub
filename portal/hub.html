@@ -5,6 +5,14 @@
     <meta name="robots" content="noindex">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YRL Agent Hub — Your Realty Link</title>
+    <!-- Home-screen app: agents tap Share → Add to Home Screen (see Help → Install the Hub App) -->
+    <link rel="manifest" href="manifest-yrl.json?v=20260927a">
+    <meta name="theme-color" content="#c03926">
+    <link rel="apple-touch-icon" href="yrl-apple-touch-icon.png?v=20260927a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="YRL Hub">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -280,7 +288,18 @@
         /* ============================================
            SECTION HEADER
            ============================================ */
-        .section { margin-bottom: 64px; }
+        /* Two-tone section blocks — visual break-up, alternating every other section */
+        .section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 26px 28px 30px;
+            margin-bottom: 22px;
+        }
+        .section:nth-of-type(even) {
+            background: #eaedf2;
+            border-color: #dfe3ea;
+        }
 
         .sec-header {
             display: flex;
@@ -326,20 +345,25 @@
             gap: 14px;
         }
 
-        /* Work a Deal: one row — My Contacts wide (span 2) + Buyer + Seller (span 1 each). */
-        .card-grid[data-grid-id="work-a-deal"] {
-            grid-template-columns: repeat(4, 1fr);
-        }
-        .card-grid[data-grid-id="work-a-deal"] .card[data-card-id="my-contacts"] {
-            grid-column: span 2;
-        }
-        @media (max-width: 900px) {
-            .card-grid[data-grid-id="work-a-deal"] { grid-template-columns: repeat(2, 1fr); }
-            .card-grid[data-grid-id="work-a-deal"] .card[data-card-id="my-contacts"] { grid-column: span 2; }
+        /* Work a Deal: Buyer + Seller (2 wide) on row 1, Leads + My Contacts on row 2. */
+        .card-grid[data-grid-id="work-a-deal"] { grid-template-columns: repeat(2, 1fr); }
+        .card-grid[data-grid-id="work-a-deal"] .card[data-card-id="buyer-tools"]  { order: 1; }
+        .card-grid[data-grid-id="work-a-deal"] .card[data-card-id="seller-tools"] { order: 2; }
+        .card-grid[data-grid-id="work-a-deal"] .card[data-card-id="referrals"]    { order: 3; }
+        .card-grid[data-grid-id="my-tools"] { grid-template-columns: repeat(3, 1fr); }
+        .card[data-card-id="tasks"] .card-icon { background: #7c3aed; color: #fff; }
+        .card[data-card-id="tasks"] .pill { color: #7c3aed; background: rgba(124,58,237,0.10); }
+        .card[data-card-id="marketing"] .card-icon { background: #0ea5e9; color: #fff; }
+        .card[data-card-id="marketing"] .pill { color: #0ea5e9; background: rgba(14,165,233,0.10); }
+        .card[data-card-id="social"] .card-icon { background: #e1306c; color: #fff; }
+        .card[data-card-id="social"] .pill { color: #e1306c; background: rgba(225,48,108,0.10); }
+        @media (max-width: 960px) {
+            .card-grid[data-grid-id="my-tools"] { grid-template-columns: repeat(2, 1fr); }
         }
         @media (max-width: 640px) {
             .card-grid[data-grid-id="work-a-deal"] { grid-template-columns: 1fr; }
-            .card-grid[data-grid-id="work-a-deal"] .card[data-card-id="my-contacts"] { grid-column: span 1; }
+            .card-grid[data-grid-id="my-tools"] { grid-template-columns: 1fr; }
+            .section { padding: 18px 16px 22px; border-radius: 16px; }
         }
 
         .card {
@@ -353,6 +377,7 @@
             transition: all 0.25s ease;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
         }
 
         .card::after {
@@ -379,6 +404,13 @@
            can tell them apart from red tools built inside the hub. */
         .card[href^="http"] .card-icon { background: rgba(37,99,235,0.10); color: #2563eb; }
         .card[href^="http"] .pill { color: #2563eb; background: rgba(37,99,235,0.10); }
+        /* Work a Deal tile colors — match the featured banners up top */
+        .card[data-card-id="buyer-tools"]  .card-icon { background: #1877f2; color: #fff; }
+        .card[data-card-id="buyer-tools"]  .pill { color: #1877f2; background: rgba(24,119,242,0.10); }
+        .card[data-card-id="seller-tools"] .card-icon { background: #16a34a; color: #fff; }
+        .card[data-card-id="seller-tools"] .pill { color: #16a34a; background: rgba(22,163,74,0.10); }
+        .card[data-card-id="my-contacts"]  .card-icon { background: #d4a017; color: #fff; }
+        .card[data-card-id="my-contacts"]  .pill { color: #b8860b; background: rgba(184,134,11,0.12); }
         .card[href^="http"]::after { background: #2563eb; }
         .card[href^="http"]:hover { border-color: rgba(37,99,235,0.35); box-shadow: 0 8px 28px rgba(37,99,235,0.18); }
         .card[href^="http"] .card-footer i { color: #2563eb; }
@@ -483,6 +515,28 @@
             color: var(--text-muted);
             flex: 1;
         }
+        .asset-card { position: relative; }
+        /* owner add/remove brand tiles (edit mode only) */
+        .brand-del { display: none; position: absolute; top: 7px; right: 8px; width: 22px; height: 22px; background: #ef4444; color: #fff; border: none; border-radius: 50%; font-size: 14px; line-height: 1; cursor: pointer; z-index: 5; }
+        .brand-del:hover { background: #dc2626; }
+        body.hub-edit-mode .brand-del { display: block; }
+        .brand-addcard { display: none; flex-direction: column; align-items: center; justify-content: center; gap: 8px; min-height: 150px; background: var(--surface-2); border: 1.5px dashed var(--border); border-radius: 14px; color: var(--text-sec); font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; }
+        .brand-addcard i { font-size: 20px; }
+        .brand-addcard:hover { border-color: var(--red); color: var(--red); }
+        body.hub-edit-mode .brand-addcard { display: flex; }
+        /* brand tile add modal */
+        .bt-ov { position: fixed; inset: 0; background: rgba(15,23,42,.55); z-index: 9600; display: none; align-items: center; justify-content: center; padding: 18px; }
+        .bt-ov.open { display: flex; }
+        .bt-box { background: var(--surface); border-radius: 14px; width: 100%; max-width: 440px; padding: 20px 22px; font-family: 'Inter', sans-serif; }
+        .bt-box h3 { font-family: 'Bebas Neue', sans-serif; font-size: 21px; letter-spacing: 1px; margin-bottom: 8px; }
+        .bt-box label { display: block; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--text-sec); margin: 12px 0 4px; }
+        .bt-box input { width: 100%; background: var(--surface-2); border: 1.5px solid var(--border); border-radius: 8px; padding: 9px 12px; font-size: 13.5px; font-family: 'Inter', sans-serif; color: var(--text); outline: none; }
+        .bt-uploadbtn { width: 100%; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--surface-2); border: 1.5px dashed var(--border); border-radius: 9px; padding: 10px; font-size: 13px; font-weight: 700; color: var(--text-sec); cursor: pointer; font-family: 'Inter', sans-serif; }
+        .bt-uploadbtn:hover { border-color: var(--red); color: var(--red); }
+        .bt-status { font-size: 11.5px; color: var(--text-muted); margin-top: 6px; min-height: 14px; }
+        .bt-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+        .bt-btn { border: none; border-radius: 9px; padding: 10px 18px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; }
+        .bt-save { background: var(--red); color: #fff; } .bt-ghost { background: var(--surface-2); color: var(--text-sec); border: 1px solid var(--border); }
 
         /* ============================================
            BUTTONS
@@ -638,15 +692,42 @@
            ============================================ */
         .contact-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 14px;
         }
-
-        /* Row 2 leadership: Janet, Brenda, and Daniel are all half-size (span 1). */
 
         @media (max-width: 768px) {
             .contact-grid { grid-template-columns: repeat(2, 1fr); }
         }
+        @media (max-width: 520px) {
+            .contact-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Office hours shown as a single line under the section header */
+        .office-hours-line {
+            display: inline-flex; align-items: center; gap: 9px; flex-wrap: wrap;
+            background: var(--surface-2); border: 1px solid var(--border); border-radius: 100px;
+            padding: 9px 18px; margin: 0 0 20px; font-size: 13.5px; color: var(--text-sec);
+        }
+        .office-hours-line i { color: var(--red); }
+        .office-hours-line strong { color: var(--text); font-weight: 700; }
+        .hours-edit-btn {
+            display: none; margin-left: 4px; width: 26px; height: 26px; flex: none;
+            border: none; border-radius: 50%; background: var(--red); color: #fff;
+            font-size: 11px; cursor: pointer; align-items: center; justify-content: center; line-height: 1;
+        }
+        body.hub-edit-mode .hours-edit-btn { display: inline-flex; }
+        .hours-edit-btn:hover { background: var(--red-dark); }
+        .ohm-overlay { position: fixed; inset: 0; background: rgba(15,23,42,.55); display: none; align-items: center; justify-content: center; z-index: 9500; padding: 20px; }
+        .ohm-overlay.open { display: flex; }
+        .ohm-box { background: #fff; border-radius: 16px; max-width: 460px; width: 100%; padding: 22px; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+        .ohm-box h3 { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; margin: 0 0 12px; }
+        .ohm-box label { display: block; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--text-sec); margin: 6px 0 5px; }
+        .ohm-box input { width: 100%; background: var(--surface-2); border: 1.5px solid var(--border); border-radius: 9px; padding: 10px 12px; font-size: 14px; font-family: 'Inter', sans-serif; outline: none; }
+        .ohm-box input:focus { border-color: var(--red); }
+        .ohm-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
+        .ohm-actions button { border: none; border-radius: 9px; padding: 10px 16px; font-size: 13px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; }
+        .ohm-save { background: var(--red); color: #fff; } .ohm-cancel { background: var(--surface-3); color: var(--text); }
 
         .contact-card {
             position: relative;
@@ -676,6 +757,30 @@
         }
         .btn-contact-edit:hover { background: var(--red-dark); }
         body.hub-edit-mode .btn-contact-edit { display: flex; }
+        .btn-add-contact { display: none; align-items: center; justify-content: center; gap: 8px; background: var(--surface-2); border: 1.5px dashed var(--border); border-radius: 14px; padding: 20px; font-size: 13px; font-weight: 700; color: var(--text-sec); cursor: pointer; font-family: 'Inter', sans-serif; min-height: 90px; }
+        .btn-add-contact:hover { border-color: var(--red); color: var(--red); }
+        body.hub-edit-mode .btn-add-contact { display: flex; }
+        body.hub-edit-mode #qcEditBtn { display: inline-flex !important; }
+        /* home-page buttons editor */
+        .ql-ov{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:9500;display:none;align-items:center;justify-content:center;padding:18px;}
+        .ql-ov.open{display:flex;}
+        .ql-modal{background:var(--surface);border-radius:16px;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;padding:22px 24px;font-family:'Inter',sans-serif;}
+        .ql-modal h3{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:4px;}
+        .ql-grouplbl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin:16px 0 8px;}
+        .ql-item{border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;background:var(--surface-2);}
+        .ql-row{display:flex;gap:7px;flex-wrap:wrap;align-items:center;}
+        .ql-item input,.ql-item select{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:6px 9px;font-size:12.5px;font-family:'Inter',sans-serif;color:var(--text);outline:none;}
+        .ql-item input.ql-label{flex:1;min-width:120px;font-weight:600;}
+        .ql-item input.ql-url{flex:2;min-width:180px;}
+        .ql-item input.ql-icon{width:150px;}
+        .ql-ctrls{display:flex;gap:4px;margin-left:auto;}
+        .ql-ctrls button{width:28px;height:28px;border:1px solid var(--border);background:var(--surface);border-radius:6px;cursor:pointer;color:var(--text-sec);font-size:11px;}
+        .ql-ctrls button:hover{border-color:var(--red);color:var(--red);}
+        .ql-add{display:block;width:100%;background:var(--surface-2);border:1.5px dashed var(--border);border-radius:9px;padding:9px;font-size:12.5px;font-weight:700;color:var(--text-sec);cursor:pointer;font-family:'Inter',sans-serif;}
+        .ql-add:hover{border-color:var(--red);color:var(--red);}
+        .ql-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;}
+        .ql-btn{border:none;border-radius:9px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;}
+        .ql-save{background:var(--red);color:#fff;} .ql-cancel{background:var(--surface-2);color:var(--text-sec);border:1px solid var(--border);}
 
         .c-icon {
             width: 42px;
@@ -710,6 +815,9 @@
         .c-info a:hover { color: var(--red); }
 
         .c-info .sub-link {
+            display: block;
+            width: fit-content;
+            margin-top: 2px;
             font-size: 12px;
             color: var(--red);
             font-weight: 500;
@@ -725,7 +833,10 @@
             grid-template-columns: repeat(4, 1fr);
             gap: 14px;
         }
-        @media (max-width: 768px) { .info-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 768px) { .info-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 480px) { .info-grid { grid-template-columns: minmax(0, 1fr); } .info-tile { padding: 16px; } }
+        .info-tile .c-info { min-width: 0; }
+        .info-tile .c-info p, .info-tile .c-info a, .info-tile .info-value { overflow-wrap: anywhere; }
 
         .info-tile {
             background: var(--surface);
@@ -798,6 +909,7 @@
            DIVIDERS
            ============================================ */
         .divider {
+            display: none;   /* section blocks provide the separation now */
             height: 1px;
             background: linear-gradient(90deg, transparent, var(--border), transparent);
             margin: 64px 0;
@@ -974,6 +1086,29 @@
         }
         .card-edit-btn:hover { background: var(--red-dark); }
         body.hub-edit-mode .card-edit-btn { display: flex; }
+
+        /* ── Card "move to section" button (edit mode) ── */
+        .card-move-btn {
+            display: none;
+            position: absolute; top: 7px; left: 8px;
+            width: 22px; height: 22px;
+            background: #0d9488; color: #fff;
+            border: none; border-radius: 50%;
+            font-size: 10px; cursor: pointer;
+            align-items: center; justify-content: center;
+            z-index: 10; line-height: 1;
+        }
+        .card-move-btn:hover { background: #0b7d73; }
+        body.hub-edit-mode .card-move-btn { display: flex; }
+        /* move-to-section picker */
+        .mc-ov { position: fixed; inset: 0; background: rgba(15,23,42,.55); z-index: 9600; display: none; align-items: center; justify-content: center; padding: 18px; }
+        .mc-ov.open { display: flex; }
+        .mc-box { background: var(--surface); border-radius: 14px; width: 100%; max-width: 360px; padding: 18px 20px; font-family: 'Inter', sans-serif; max-height: 80vh; overflow-y: auto; }
+        .mc-box h3 { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; margin-bottom: 12px; }
+        .mc-opt { display: block; width: 100%; text-align: left; background: var(--surface-2); border: 1px solid var(--border); border-radius: 9px; padding: 11px 13px; margin-bottom: 7px; font-size: 13.5px; font-weight: 600; color: var(--text); cursor: pointer; font-family: 'Inter', sans-serif; }
+        .mc-opt:hover { border-color: var(--red); color: var(--red); }
+        .mc-opt.cur { opacity: .55; cursor: default; }
+        .mc-cancel { display: block; width: 100%; background: none; border: none; color: var(--text-sec); font-size: 12.5px; font-weight: 600; padding: 8px; cursor: pointer; font-family: 'Inter', sans-serif; margin-top: 4px; }
 
         /* ── Add Card button (injected into grids) ── */
         .card-add-btn {
@@ -1318,10 +1453,59 @@
             clip: rect(0,0,0,0);
             white-space: nowrap;
         }
+
+        /* ── search results dropdown ── */
+        .search-dd {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0; right: 0;
+            background: var(--surface, #fff);
+            border: 1px solid var(--border, #e2e5ea);
+            border-radius: 14px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.16);
+            overflow: hidden;
+            z-index: 200;
+            display: none;
+            max-height: min(60vh, 440px);
+            overflow-y: auto;
+        }
+        .search-dd.open { display: block; }
+        .search-dd-empty { padding: 22px 18px; text-align: center; color: var(--text-muted, #9ca3af); font-size: 13px; }
+        .search-dd-empty i { display:block; font-size: 24px; opacity:.4; margin-bottom: 8px; }
+        .search-dd-item {
+            display: flex; align-items: center; gap: 13px;
+            width: 100%; text-align: left;
+            padding: 11px 15px;
+            background: none; border: none; cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            border-bottom: 1px solid var(--border-light, #edeff2);
+            color: var(--text, #1a1d22);
+            text-decoration: none;
+        }
+        .search-dd-item:last-child { border-bottom: none; }
+        .search-dd-item:hover, .search-dd-item.active { background: var(--surface-2, #f7f8fa); }
+        .search-dd-item.active { box-shadow: inset 3px 0 0 var(--red, #c03926); }
+        .search-dd-ic {
+            width: 36px; height: 36px; flex-shrink: 0;
+            border-radius: 10px;
+            background: rgba(192,57,38,0.09);
+            color: var(--red, #c03926);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px;
+        }
+        .search-dd-txt { flex: 1; min-width: 0; }
+        .search-dd-title { font-size: 14px; font-weight: 600; line-height: 1.25; }
+        .search-dd-title mark { background: rgba(192,57,38,0.16); color: inherit; border-radius: 3px; padding: 0 1px; }
+        .search-dd-sub { font-size: 11.5px; color: var(--text-muted, #9ca3af); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .search-dd-go { flex-shrink: 0; color: var(--text-muted, #c3c7cf); font-size: 12px; }
+        .search-dd-item:hover .search-dd-go, .search-dd-item.active .search-dd-go { color: var(--red, #c03926); }
+        .search-dd-more { padding: 9px 15px; font-size: 11.5px; color: var(--text-muted, #9ca3af); text-align: center; background: var(--surface-2, #f7f8fa); }
+
     </style>
     <script src="portal-auth.js"></script>
-    <script src="edit-gate.js?v=20260729"></script>
-<link rel="stylesheet" href="hub-theme.css?v=20260728"><script src="hub-brand.js" defer></script></head>
+    <script src="help-box.js?v=20260916" defer></script>
+    <script src="edit-gate.js?v=20260916"></script>
+<link rel="stylesheet" href="hub-theme.css?v=20260903b"><script src="hub-brand.js?v=20261015b" defer></script></head>
 <body>
 
 <!-- ═══════════════════════════════════════
@@ -1359,6 +1543,7 @@
 ═══════════════════════════════════════ -->
 <nav class="quick-connect">
     <div class="qc-inner">
+        <div id="qcLinks" style="display:contents"><!-- editable home-page buttons (yrl-hub-quicklinks); this static markup is the fallback -->
         <a href="https://www.homes.com/real-estate-agents/janet-giles/n8xkgsp/" target="_blank" rel="noopener" class="qc-featured qc-gold">
             <span class="qc-badge"><i class="fa-solid fa-star"></i> Featured</span>
             <i class="fa-solid fa-house-chimney"></i>
@@ -1401,11 +1586,13 @@
         <a href="https://g.page/r/CQA3a1VpQ2LZEAI/review" target="_blank" class="qc-btn rv">
             <i class="fa-solid fa-star"></i> <span>Leave a Review</span>
         </a>
+        </div><!-- /#qcLinks -->
+        <button type="button" id="qcEditBtn" onclick="openQuickLinksEditor()" style="display:none;flex-basis:100%;margin:6px 0 0;align-items:center;justify-content:center;gap:8px;background:var(--surface-2);border:1.5px dashed var(--border);border-radius:100px;padding:9px 16px;font-size:12.5px;font-weight:700;color:var(--text-sec);cursor:pointer;font-family:'Inter',sans-serif;"><i class="fa-solid fa-pen"></i> Edit these buttons</button>
         <!-- Force the signed-in name + account controls onto their own (2nd) line. -->
         <div style="flex-basis:100%;height:0;margin:0;padding:0;"></div>
         <span id="yrl-user-name" style="font-size:12px;font-weight:600;color:var(--text-sec);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
-        <a id="navNomadAccount" href="index.html?portal=1" style="display:none;align-items:center;gap:6px;background:var(--surface-2);border:1px solid var(--border);color:var(--text-sec);padding:9px 16px;border-radius:100px;font-size:12.5px;font-weight:600;cursor:pointer;text-decoration:none;font-family:'Inter',sans-serif;white-space:nowrap;transition:all 0.2s;" onmouseover="this.style.color='var(--accent,#0d9488)';this.style.borderColor='var(--accent,#0d9488)'" onmouseout="this.style.color='var(--text-sec)';this.style.borderColor='var(--border)'">
-            <i class="fa-solid fa-arrow-right-to-bracket"></i> <span>My Nomad Account</span>
+        <a id="navNomadAccount" href="index.html?portal=1" target="_blank" rel="noopener" style="display:none;align-items:center;gap:6px;background:var(--surface-2);border:1px solid var(--border);color:var(--text-sec);padding:9px 16px;border-radius:100px;font-size:12.5px;font-weight:600;cursor:pointer;text-decoration:none;font-family:'Inter',sans-serif;white-space:nowrap;transition:all 0.2s;" onmouseover="this.style.color='var(--accent,#0d9488)';this.style.borderColor='var(--accent,#0d9488)'" onmouseout="this.style.color='var(--text-sec)';this.style.borderColor='var(--border)'">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i> <span>Admin Hub</span>
         </a>
         <button onclick="yrlSignOut()" style="display:inline-flex;align-items:center;gap:6px;background:var(--surface-2);border:1px solid var(--border);color:var(--text-sec);padding:9px 16px;border-radius:100px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;transition:all 0.2s;" onmouseover="this.style.background='rgba(192,57,38,0.08)';this.style.color='#c03926';this.style.borderColor='#c03926'" onmouseout="this.style.background='var(--surface-2)';this.style.color='var(--text-sec)';this.style.borderColor='var(--border)'">
             <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Sign Out</span>
@@ -1421,9 +1608,13 @@
 
     <div id="hubSocial"></div>
 
+    <div id="helpTop" style="max-width:1200px;margin:0 auto;padding:0 24px;"></div>
+    <script>document.addEventListener('DOMContentLoaded',function(){ window.HelpBox && HelpBox.mount({container:'#helpTop',key:'hub',label:'the YRL Hub'}); });</script>
+    <script>/* secHelp mounts */document.addEventListener('DOMContentLoaded',function(){ if(!window.HelpBox) return; var M=[["secHelp-my-tools","hub-my-tools","My Tools"],["secHelp-work-a-deal","hub-work-a-deal","Work a Deal"],["secHelp-transactions-closings","hub-transactions","Transactions & Closings"],["secHelp-calendar","hub-calendar","the Calendar"],["secHelp-training-compliance","hub-training","Training & Compliance"],["secHelp-my-setup","hub-setup","My Setup"],["secHelp-the-office","hub-office","The Office"],["secHelp-brand-assets","hub-brand-assets","Brand Assets"],["secHelp-share-with-clients","hub-share-with-clients","Share With Clients"]]; M.forEach(function(m){ if(document.getElementById(m[0])) HelpBox.mount({container:"#"+m[0],key:m[1],label:m[2]}); }); });</script>
+
     <div class="hub-edit-banner">
         <i class="fa-solid fa-pen-to-square"></i>
-        <strong>Edit Layout:</strong> <strong>click any card</strong> to edit its text &amp; link · drag <strong>⠿</strong> to reorder · <strong>×</strong> to remove · <strong>+</strong> to add new
+        <strong>Edit Layout:</strong> <strong>click any card</strong> to edit its text &amp; link · drag <strong>⠿</strong> to reorder cards · <strong>▲▼</strong> beside a section heading to move the whole section up/down · <strong>×</strong> to remove · <strong>+</strong> to add new
     </div>
     <div class="restore-hidden-bar" id="restoreHiddenBar">
         <i class="fa-solid fa-eye-slash"></i>
@@ -1431,7 +1622,7 @@
     </div>
 
     <!-- ─── OFFICE NUMBERS ─── -->
-    <section class="section">
+    <section class="section" data-section-id="important-numbers">
         <div class="sec-header">
             <div class="sec-icon"><i class="fa-solid fa-hashtag"></i></div>
             <div>
@@ -1445,6 +1636,87 @@
     <div class="divider"></div>
 
     <!-- ─── WORK A DEAL ─── -->
+    <!-- ─── MY TOOLS ─── -->
+    <section class="section" data-section-id="my-tools">
+        <div class="sec-header">
+            <div class="sec-icon"><i class="fa-solid fa-toolbox"></i></div>
+            <div>
+                <h2>My Tools</h2>
+                <p>Your CRM and task manager, together</p>
+            </div>
+        </div>
+
+        <div class="sec-help" id="secHelp-my-tools" style="margin:-2px 0 14px;"></div>
+        <div class="card-grid" data-grid-id="my-tools">
+            <a href="yrl-contacts.html?v=20260923a" class="card" data-card-id="my-contacts">
+                <div class="card-icon"><i class="fa-solid fa-address-book"></i></div>
+                <h3>My Contacts / CRM</h3>
+                <p>Your personal CRM — every client, lead, and past customer in one searchable place. Move buyers and sellers through your own pipeline, track deal values and closing dates, and log every call, text, and note so each contact keeps a full history. Set follow-up reminders so nothing slips, import your existing contacts in seconds, and tag and filter your whole database however you work. When the broker hands you a website lead, it drops right in here — ready to work.</p>
+                <span class="search-keywords">contacts my contacts CRM clients leads database phone email address book people rolodex</span>
+                <div class="card-footer">
+                    <span class="pill">Contacts</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="yrl-tasks.html?v=20260923c" class="card" data-card-id="tasks">
+                <div class="card-icon"><i class="fa-solid fa-list-check"></i></div>
+                <h3>Tasks Manager</h3>
+                <p>Schedule and track your to-dos, CRM follow-ups, and transaction deadlines in one place — as a list or a board. Attach a task to a contact from your CRM, and brokers can assign tasks straight to their agents.</p>
+                <span class="search-keywords">tasks task manager to-do todo schedule reminders follow up follow-ups due dates deadlines board kanban assign agent broker checklist calendar transactions priorities</span>
+                <div class="card-footer">
+                    <span class="pill">Tasks</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="yrl-marketing.html" class="card" data-card-id="marketing">
+                <div class="card-icon"><i class="fa-solid fa-bullhorn"></i></div>
+                <h3>Marketing</h3>
+                <p>Your whole marketing toolbox in one place — buyer &amp; seller pieces, open house, prospecting, email, print, and signs. Grab a ready template, make your own with the brand-slide and signature tools, or request a custom piece from the team. Prospecting is broken out by channel with a training playbook for each.</p>
+                <span class="search-keywords">marketing flyers templates postcards print signs yard sign open house prospecting sphere farming fsbo expired referrals email templates scripts canva brand slide listing just listed just sold content calendar</span>
+                <div class="card-footer">
+                    <span class="pill">Marketing</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="yrl-social.html" class="card" data-card-id="social">
+                <div class="card-icon"><i class="fa-solid fa-share-nodes"></i></div>
+                <h3>Social Media</h3>
+                <p>Ready-to-post templates and graphics, organized by what you're posting about — Buyers, Listings, Open House, Just Sold, Prospecting, Branding &amp; Intros, seasonal, and everyday engagement, plus banners, a hashtag guide, and posting strategy.</p>
+                <span class="search-keywords">social media instagram facebook posts post templates graphics reels stories captions hashtag banners just listed just sold buyers listings open house prospecting branding new agent announcement seasonal holiday engagement content calendar</span>
+                <div class="card-footer">
+                    <span class="pill">Social</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="yrl-calendar.html" class="card" data-card-id="calendar">
+                <div class="card-icon"><i class="fa-solid fa-calendar-days"></i></div>
+                <h3>Calendar</h3>
+                <p>Your whole schedule in one place — deal closings, transaction key dates, contact birthdays &amp; home anniversaries, tasks due, plus office events and your own personal events.</p>
+                <span class="search-keywords">calendar yearly monthly agenda closings closing dates deal deals key dates deadlines birthday birthdays home anniversary anniversaries contacts license renewal CE continuing education MIBOR fees dues meetings events schedule important dates open house holidays personal events tasks</span>
+                <div class="card-footer">
+                    <span class="pill">Calendar</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="yrl-referrals.html" class="card" data-card-id="referrals">
+                <div class="card-icon"><i class="fa-solid fa-handshake-angle"></i></div>
+                <h3>Referrals</h3>
+                <p>In-office referrals and trusted outside partners — where to send business you can't take, and who to bring in for your client. Keep referrals in the family and track your go-to partners.</p>
+                <span class="search-keywords">referrals refer referral partners in office outside network send business lenders vendors agents relocation out of area</span>
+                <div class="card-footer">
+                    <span class="pill">Referrals</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- ─── WORK A DEAL ─── -->
     <section class="section" data-section-id="work-a-deal">
         <div class="sec-header">
             <div class="sec-icon"><i class="fa-solid fa-handshake"></i></div>
@@ -1454,29 +1726,8 @@
             </div>
         </div>
 
+        <div class="sec-help" id="secHelp-work-a-deal" style="margin:-2px 0 14px;"></div>
         <div class="card-grid" data-grid-id="work-a-deal">
-            <a href="yrl-contacts.html" class="card" data-card-id="my-contacts">
-                <div class="card-icon"><i class="fa-solid fa-address-book"></i></div>
-                <h3>My Contacts</h3>
-                <p>Your clients, leads, and transaction team — every contact in one searchable place.</p>
-                <span class="search-keywords">contacts my contacts CRM clients leads database phone email address book people rolodex</span>
-                <div class="card-footer">
-                    <span class="pill">Contacts</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </div>
-            </a>
-
-            <a href="yrl-leads.html" class="card" data-card-id="leads">
-                <div class="card-icon"><i class="fa-solid fa-inbox"></i></div>
-                <h3>Leads</h3>
-                <p>Every lead your website forms bring in — buyer, seller, and valuation requests — in one place.</p>
-                <span class="search-keywords">leads website leads new leads form submissions inquiries buyer seller valuation home value contact requests pipeline lead capture prospects</span>
-                <div class="card-footer">
-                    <span class="pill">Leads</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </div>
-            </a>
-
             <a href="yrl-buyers.html" class="card" data-card-id="buyer-tools">
                 <div class="card-icon"><i class="fa-solid fa-key"></i></div>
                 <h3>Buyer Tools</h3>
@@ -1511,19 +1762,9 @@
             </div>
         </div>
 
+        <div class="sec-help" id="secHelp-transactions-closings" style="margin:-2px 0 14px;"></div>
         <div class="card-grid" data-grid-id="transactions-closings">
-            <a href="yrl-calendar.html" class="card" data-card-id="calendar">
-                <div class="card-icon"><i class="fa-solid fa-calendar-days"></i></div>
-                <h3>Calendar</h3>
-                <p>Closings, license &amp; CE renewals, MIBOR dates, meetings, and office events — all on one yearly calendar.</p>
-                <span class="search-keywords">calendar yearly monthly agenda closings closing dates key dates deadlines license renewal CE continuing education MIBOR fees dues meetings quarterly monthly meeting events schedule important dates open house holidays</span>
-                <div class="card-footer">
-                    <span class="pill">Calendar</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </div>
-            </a>
-
-            <a href="yrl-transactions.html" class="card" data-card-id="transactions">
+            <a href="yrl-transactions.html?v=20260923a" class="card" data-card-id="transactions">
                 <div class="card-icon"><i class="fa-solid fa-folder-tree"></i></div>
                 <h3>Client Portal — Transactions</h3>
                 <p>Open a file per client — track stages, check off milestones, set key dates, and give your buyer or seller a live progress page.</p>
@@ -1541,6 +1782,17 @@
                 <span class="search-keywords">closing request disbursement authorization form CDA commission disbursement broker sign title company closer pay agent at closing BLC sales price earnest money net to agent payout commission split listing buyer side closing date submit request approval scheduled closing settlement</span>
                 <div class="card-footer">
                     <span class="pill">Transactions</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="yrl-commissions.html?v=20260923c" class="card" data-card-id="my-commissions">
+                <div class="card-icon"><i class="fa-solid fa-sack-dollar"></i></div>
+                <h3>My Commissions</h3>
+                <p>Your split and cap progress for the cap year, net income, and the full breakdown of every deal — company split, referral, mentor, and fees — plus printable statements.</p>
+                <span class="search-keywords">my commissions commission split cap cap progress capped net income GCI gross commission income statement agent statement company dollar transaction fee referral fee mentor team split payout paid 1099 earnings production year to date YTD</span>
+                <div class="card-footer">
+                    <span class="pill">Commissions</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </div>
             </a>
@@ -1566,6 +1818,7 @@
                 <p>Closings, license &amp; CE renewals, MIBOR dates, meetings &amp; events — quick view</p>
             </div>
         </div>
+        <div class="sec-help" id="secHelp-calendar" style="margin:-2px 0 14px;"></div>
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 2px 14px rgba(0,0,0,0.06);">
             <iframe src="yrl-calendar.html?embed=1" title="Calendar" loading="lazy"
                     style="width:100%;height:660px;border:0;display:block;"></iframe>
@@ -1579,19 +1832,42 @@
         <div class="sec-header">
             <div class="sec-icon"><i class="fa-solid fa-graduation-cap"></i></div>
             <div>
-                <h2>Training &amp; Compliance</h2>
-                <p>Know the rules, sharpen your skills</p>
+                <h2>Training</h2>
+                <p>Sharpen your skills and grow your business</p>
             </div>
         </div>
 
+        <div class="sec-help" id="secHelp-training-compliance" style="margin:-2px 0 14px;"></div>
         <div class="card-grid" data-grid-id="training-compliance">
             <a href="yrl-agent-training.html" class="card" data-card-id="agent-training">
                 <div class="card-icon"><i class="fa-solid fa-graduation-cap"></i></div>
-                <h3>Agent Training</h3>
-                <p>Programs, monthly meetings, and training video library.</p>
-                <span class="search-keywords">tiger training your first year courses videos social media lead generation prospecting sales scripts client skills marketing technology market knowledge business growth monthly meeting continuing education CE</span>
+                <h3>Trainings</h3>
+                <p>Training programs and the video library — Your First Year, Tiger Training, and the Millionaire Agent Path.</p>
+                <span class="search-keywords">tiger training your first year courses videos social media lead generation prospecting sales scripts client skills marketing technology market knowledge business growth continuing education CE millionaire agent path MREA millionaire real estate agent economic model conversion rates budget model database sizing three L's leads listings leverage 8x8 33 touch 12 direct lead source audit listing engine referral loop capacity talent three key hires 7th level scorecard Keller</span>
                 <div class="card-footer">
                     <span class="pill">Education</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="yrl-meetings.html" class="card" data-card-id="meetings">
+                <div class="card-icon"><i class="fa-solid fa-calendar-days"></i></div>
+                <h3>Monthly Meetings</h3>
+                <p>Recordings and recaps from our office meetings, organized by year.</p>
+                <span class="search-keywords">monthly meeting meetings office meeting recording recap notes agenda rsvp sales meeting zoom fb live</span>
+                <div class="card-footer">
+                    <span class="pill">Meetings</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="yrl-faqs.html" class="card" data-card-id="faqs">
+                <div class="card-icon"><i class="fa-solid fa-circle-question"></i></div>
+                <h3>FAQ's</h3>
+                <p>Frequently asked questions — answers to what agents ask most, grouped by topic and searchable. Admins keep it up to date.</p>
+                <span class="search-keywords">faq faqs frequently asked questions q and a help answers how do i what is where common questions topics search knowledge base</span>
+                <div class="card-footer">
+                    <span class="pill">FAQs</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </div>
             </a>
@@ -1618,7 +1894,7 @@
                 </div>
             </a>
 
-            <a href="yrl-ce-licensing.html" class="card" data-card-id="ce-licensing">
+            <a href="yrl-ce-licensing.html?v=20260922c" class="card" data-card-id="ce-licensing">
                 <div class="card-icon"><i class="fa-solid fa-graduation-cap"></i></div>
                 <h3>CE &amp; Licensing</h3>
                 <p>Continuing education hours, IREC-approved courses, and Indiana license renewal, lookup &amp; transfer requirements.</p>
@@ -1640,36 +1916,15 @@
             </div>
         </div>
 
+        <div class="sec-help" id="secHelp-my-setup" style="margin:-2px 0 14px;"></div>
         <div class="card-grid" data-grid-id="my-setup">
-            <a href="yrl-agent-info.html" class="card" data-card-id="my-agent-info">
-                <div class="card-icon"><i class="fa-solid fa-id-card"></i></div>
-                <h3>My Agent Info</h3>
-                <p>Your name, license #, address, headshot, tagline, bio, social links — your single source of truth. Used for business cards, email signature, agent website bio, and marketing.</p>
-                <span class="search-keywords">agent info my profile personal information name license number cell phone email address mailing home business cards tagline bio biography headshot photo emergency contact facebook instagram linkedin social marketing details details on file</span>
+            <a href="yrl-my-agent-profile.html" class="card" data-card-id="my-agent-info">
+                <div class="card-icon"><i class="fa-solid fa-id-badge"></i></div>
+                <h3>My Agent Profile</h3>
+                <p>Your agent info and your email-signature tool in one place — name, license #, headshot, bio and social links, plus a polished signature for Gmail, Outlook, or Apple Mail.</p>
+                <span class="search-keywords">agent info my profile personal information name license number cell phone email address mailing home business cards tagline bio biography headshot photo emergency contact facebook instagram linkedin social marketing details on file email signature generator builder copy paste gmail outlook apple mail signature block REALTOR template branded logo footer</span>
                 <div class="card-footer">
-                    <span class="pill">Onboarding</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </div>
-            </a>
-
-            <a href="yrl-email-signature.html" class="card" data-card-id="email-signature">
-                <div class="card-icon"><i class="fa-solid fa-signature"></i></div>
-                <h3>Email Signature</h3>
-                <p>Auto-fills from your Agent Info. Customize, preview, and copy a polished signature for Gmail, Outlook, or Apple Mail.</p>
-                <span class="search-keywords">email signature generator builder copy paste gmail outlook apple mail signature block REALTOR signature template branded photo headshot logo footer tagline contact info phone email website Facebook Instagram LinkedIn</span>
-                <div class="card-footer">
-                    <span class="pill">Marketing</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </div>
-            </a>
-
-            <a href="yrl-onboarding.html" class="card" data-card-id="onboarding">
-                <div class="card-icon"><i class="fa-solid fa-clipboard-list"></i></div>
-                <h3>New Agent Onboarding</h3>
-                <p>Checklists, setup guides, and everything needed to get new agents up and running.</p>
-                <span class="search-keywords">new agent checklist first day setup MLS access key fob office tour email account business cards sign install getting started orientation welcome packet independent contractor agreement ICA W-9 W9 tax form direct deposit setup E&O insurance IPLA license transfer emergency contact agent information form headshot photo submit portrait MIBOR MLS setup YRL email Dotloop DocuSign ShowingTime CRM Supra lockbox app MIBOR portal Canva templates tiger training first year plan mentor accountability partner 30 days monthly agent meeting training video library yard sign rider order social media bio template personal branding guidelines YRL logo brand assets listing presentation staff directory broker contact office manager transaction coordinator agent bio onboarding progress checklist phase setup</span>
-                <div class="card-footer">
-                    <span class="pill">Onboarding</span>
+                    <span class="pill">Profile</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </div>
             </a>
@@ -1679,6 +1934,17 @@
                 <h3>Moving to YRL</h3>
                 <p>Interactive 19-step checklist for agents transferring their license to Your Realty Link. Progress saves automatically.</p>
                 <span class="search-keywords">moving offices license transfer new agent join YRL switch brokerages checklist to do mutual release listing contract MIBOR YRLT01 office code business cards signs print materials Access Indiana state license transfer Dotloop email setup signature block office door code WiFi T-mobile Keystone1 printer 7404 Agent Talk Facebook YouTube workspace bio website Homes.com Realtor.com Zillow Google Business LinkedIn voicemail MIBOR class shared laptop 4942 writing contracts onboarding transition transferring</span>
+                <div class="card-footer">
+                    <span class="pill">Onboarding</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="yrl-onboarding.html" class="card" data-card-id="onboarding">
+                <div class="card-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+                <h3>New Agent Onboarding</h3>
+                <p>Checklists, setup guides, and everything needed to get new agents up and running.</p>
+                <span class="search-keywords">new agent checklist first day setup MLS access key fob office tour email account business cards sign install getting started orientation welcome packet independent contractor agreement ICA W-9 W9 tax form direct deposit setup E&O insurance IPLA license transfer emergency contact agent information form headshot photo submit portrait MIBOR MLS setup YRL email Dotloop DocuSign ShowingTime CRM Supra lockbox app MIBOR portal Canva templates tiger training first year plan mentor accountability partner 30 days monthly agent meeting training video library yard sign rider order social media bio template personal branding guidelines YRL logo brand assets listing presentation staff directory broker contact office manager transaction coordinator agent bio onboarding progress checklist phase setup</span>
                 <div class="card-footer">
                     <span class="pill">Onboarding</span>
                     <i class="fa-solid fa-arrow-right"></i>
@@ -1696,6 +1962,7 @@
             </div>
         </div>
 
+        <div class="sec-help" id="secHelp-the-office" style="margin:-2px 0 14px;"></div>
         <div class="card-grid" data-grid-id="the-office">
             <!-- Broker-only: hidden for agents by _hubApplyRole(); the page and its
                  tables are role-gated too, so hiding is convenience, not the lock. -->
@@ -1710,18 +1977,7 @@
                 </div>
             </a>
 
-            <a href="yrl-slideshow-maker.html" class="card broker-only" data-card-id="slideshow-maker" style="display:none;">
-                <div class="card-icon"><i class="fa-solid fa-film"></i></div>
-                <h3>Listing Slideshow Maker</h3>
-                <p>Paste a listing URL and instantly generate a branded 5-photo slideshow to download or share.</p>
-                <span class="search-keywords">slideshow listing photos canva template maker generator social media instagram facebook reel presentation 5 photos address price accent color auto-fetch url download branded YRL broker only</span>
-                <div class="card-footer">
-                    <span class="pill"><i class="fa-solid fa-lock" style="font-size:9px;"></i> Broker</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </div>
-            </a>
-
-            <a href="yrl-agent-directory.html" class="card" data-card-id="agent-directory">
+            <a href="yrl-agent-directory.html?v=20260923a" class="card" data-card-id="agent-directory">
                 <div class="card-icon"><i class="fa-solid fa-address-card"></i></div>
                 <h3>Agent Directory</h3>
                 <p>Contact info, headshots, and details for every agent in the office.</p>
@@ -1754,11 +2010,11 @@
                 </div>
             </a>
 
-            <a href="https://yourrealtylink-my.sharepoint.com/:f:/p/csirealtyteam/IgAO9Yn6biq8Sr-yPowsNhHEAUwmgcgzfw2f1rvqtP7zUk0?e=JbU0Sh" target="_blank" class="card" data-card-id="upload-videos">
+            <a href="https://drive.google.com/drive/folders/1fsCsVWwYlKMmP5JWcDrEAcOi4-2MWLS-?usp=drive_link" target="_blank" rel="noopener" class="card" data-card-id="upload-videos">
                 <div class="card-icon"><i class="fa-solid fa-photo-film"></i></div>
                 <h3>Upload/Share Videos</h3>
-                <p>Share listing videos, walkthroughs, and media files with your team via OneDrive.</p>
-                <span class="search-keywords">upload share videos media walkthrough listing video mp4 OneDrive SharePoint folder team share send footage</span>
+                <p>Share listing videos, walkthroughs, and media files with your team in the shared Google Drive folder.</p>
+                <span class="search-keywords">upload share videos media walkthrough listing video mp4 google drive folder team share send footage</span>
                 <div class="card-footer">
                     <span class="pill">Media</span>
                     <i class="fa-solid fa-arrow-right"></i>
@@ -1787,7 +2043,7 @@
     <div class="divider"></div>
 
     <!-- ─── BRAND ASSETS ─── -->
-    <section class="section">
+    <section class="section" data-section-id="brand-assets">
         <div class="sec-header">
             <div class="sec-icon"><i class="fa-solid fa-paintbrush"></i></div>
             <div>
@@ -1795,75 +2051,62 @@
                 <p>Logos, templates, and official brand materials</p>
             </div>
         </div>
+        <div class="sec-help" id="secHelp-brand-assets" style="margin:-2px 0 14px;"></div>
 
-        <div class="asset-grid">
-            <!-- ⚙️ REPLACE: href="#" with actual file download URLs from WP Media Library -->
-            <div class="asset-card">
-                <div class="asset-emoji">🖼️</div>
-                <h4>YRL Logo — Color</h4>
-                <p>PNG transparent background</p>
-                <a href="yrl-logo.png" download class="btn btn-red"><i class="fa-solid fa-download"></i> Download</a>
-            </div>
+        <div class="card-grid" data-grid-id="brand-assets">
+            <a href="yrl-brand-assets.html" class="card" data-card-id="brand-kit">
+                <div class="card-icon"><i class="fa-solid fa-palette"></i></div>
+                <h3>Brand Kit</h3>
+                <p>Company images, logos, colors, and print &amp; social templates — download and personalize.</p>
+                <span class="search-keywords">brand assets brand kit logos colors company images print marketing social media templates canva yard sign business card fonts email signature download personalize</span>
+                <div class="card-footer">
+                    <span class="pill">Assets</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
 
-            <div class="asset-card">
-                <div class="asset-emoji">⬜</div>
-                <h4>YRL Logo — White</h4>
-                <p>For dark backgrounds & print</p>
-                <a href="yrl-logo-white.jpg" download class="btn btn-red"><i class="fa-solid fa-download"></i> Download</a>
-            </div>
+            <a href="yrl-slideshow-maker.html" class="card broker-only" data-card-id="slideshow-maker" style="display:none;">
+                <div class="card-icon"><i class="fa-solid fa-film"></i></div>
+                <h3>Listing Slideshow Maker</h3>
+                <p>Paste a listing URL and instantly generate a branded 5-photo slideshow to download or share.</p>
+                <span class="search-keywords">slideshow listing photos canva template maker generator social media instagram facebook reel presentation 5 photos address price accent color auto-fetch url download branded YRL agent profile broker only brand assets</span>
+                <div class="card-footer">
+                    <span class="pill"><i class="fa-solid fa-lock" style="font-size:9px;"></i> Broker</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+        </div>
+    </section>
 
-            <div class="asset-card">
-                <div class="asset-emoji">💼</div>
-                <h4>Business Card Template</h4>
-                <p>Editable Canva template</p>
-                <span class="btn btn-disabled"><i class="fa-solid fa-clock"></i> Coming Soon</span>
-            </div>
+    <div class="divider"></div>
 
-            <div class="asset-card">
-                <div class="asset-emoji">🪧</div>
-                <h4>Yard Sign Template</h4>
-                <p>Standard + rider design files</p>
-                <span class="btn btn-disabled"><i class="fa-solid fa-clock"></i> Coming Soon</span>
+    <!-- ─── HELP CENTER ─── -->
+    <section class="section" data-section-id="help-center">
+        <div class="sec-header">
+            <div class="sec-icon"><i class="fa-solid fa-circle-info"></i></div>
+            <div>
+                <h2>Help Center</h2>
+                <p>How every part of the hub works — one place to look things up</p>
             </div>
-
-            <div class="asset-card">
-                <div class="asset-emoji">📸</div>
-                <h4>Social Media Templates</h4>
-                <p>Instagram, Facebook &amp; Stories</p>
-                <span class="btn btn-disabled"><i class="fa-solid fa-clock"></i> Coming Soon</span>
-            </div>
-
-            <div class="asset-card">
-                <div class="asset-emoji">✉️</div>
-                <h4>Email Signature</h4>
-                <p>Copy-paste HTML signature block</p>
-                <span class="btn btn-disabled"><i class="fa-solid fa-clock"></i> Coming Soon</span>
-            </div>
-
-            <div class="asset-card">
-                <div class="asset-emoji">🎨</div>
-                <h4>Brand Colors</h4>
-                <p>#c03926 · #6e6e70 · #ffffff</p>
-                <button class="btn btn-outline" onclick="copyRaw('#c03926 · #6e6e70 · #ffffff', this)">
-                    <i class="fa-solid fa-copy"></i> Copy Codes
-                </button>
-            </div>
-
-            <div class="asset-card">
-                <div class="asset-emoji">🖋️</div>
-                <h4>Brand Fonts</h4>
-                <p>Bebas Neue + Inter (Google Fonts)</p>
-                <a href="https://fonts.google.com" target="_blank" class="btn btn-outline">
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i> View Fonts
-                </a>
-            </div>
+        </div>
+        <div class="card-grid" data-grid-id="help-center">
+            <a href="yrl-help.html?v=20260923b" class="card" data-card-id="help-center">
+                <div class="card-icon"><i class="fa-solid fa-circle-info"></i></div>
+                <h3>Help Center</h3>
+                <p>A guided walkthrough of every section of the hub — what it's for, how to use it, tips, and short videos. Your go-to reference whenever you're not sure how something works.</p>
+                <span class="search-keywords">help center how to guide sop walkthrough video tutorial dashboard sections instructions support faq questions learn training reference manual</span>
+                <div class="card-footer">
+                    <span class="pill">Help</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
         </div>
     </section>
 
     <div class="divider"></div>
 
     <!-- ─── SHARE WITH CLIENTS ─── -->
-    <section class="section">
+    <section class="section" data-section-id="share-with-clients">
         <div class="sec-header">
             <div class="sec-icon"><i class="fa-solid fa-share-nodes"></i></div>
             <div>
@@ -1871,6 +2114,7 @@
                 <p>Quick links and copy-paste tools for client communication</p>
             </div>
         </div>
+        <div class="sec-help" id="secHelp-share-with-clients" style="margin:-2px 0 14px;"></div>
 
         <!-- Google Review Box -->
         <div class="review-box">
@@ -1909,7 +2153,7 @@
     <div class="divider"></div>
 
     <!-- ─── OFFICE CONTACT ─── -->
-    <section class="section">
+    <section class="section" data-section-id="office-contacts">
         <div class="sec-header">
             <div class="sec-icon"><i class="fa-solid fa-building"></i></div>
             <div>
@@ -1917,6 +2161,33 @@
                 <p>Need help? Reach out directly</p>
             </div>
         </div>
+
+        <div class="office-hours-line">
+            <i class="fa-solid fa-clock"></i>
+            <span><strong>Office Hours:</strong> <span id="officeHoursText">Mon–Thu 9:00 AM – 5:00 PM · Fri–Sun Closed</span></span>
+            <button class="hours-edit-btn" type="button" onclick="openHoursEdit()" title="Edit office hours"><i class="fa-solid fa-pen"></i></button>
+        </div>
+        <div class="ohm-overlay" id="hoursModal">
+            <div class="ohm-box">
+                <h3>Edit office hours</h3>
+                <label>Office hours</label>
+                <input id="hoursInput" type="text" placeholder="Mon–Thu 9:00 AM – 5:00 PM · Fri–Sun Closed">
+                <div class="ohm-actions">
+                    <button class="ohm-cancel" type="button" onclick="closeHoursEdit()">Cancel</button>
+                    <button class="ohm-save" type="button" onclick="saveHours()">Save</button>
+                </div>
+            </div>
+        </div>
+        <script>
+            const OFFICE_HOURS_KEY = 'yrl-office-hours';
+            function openHoursEdit(){ var el=document.getElementById('officeHoursText'); document.getElementById('hoursInput').value=(el?el.textContent:'').replace(/ /g,' ').trim(); document.getElementById('hoursModal').classList.add('open'); setTimeout(function(){document.getElementById('hoursInput').focus();},50); }
+            function closeHoursEdit(){ document.getElementById('hoursModal').classList.remove('open'); }
+            function saveHours(){ var v=document.getElementById('hoursInput').value.trim(); var el=document.getElementById('officeHoursText'); if(el&&v) el.textContent=v; closeHoursEdit(); if(typeof saveHubContent==='function') saveHubContent(OFFICE_HOURS_KEY, v); }
+            (function(){ var m=document.getElementById('hoursModal'); if(m) m.addEventListener('click',function(e){ if(e.target===m) closeHoursEdit(); });
+              function apply(){ if(typeof loadHubContent==='function'){ loadHubContent(OFFICE_HOURS_KEY).then(function(v){ if(v){ var el=document.getElementById('officeHoursText'); if(el) el.textContent=v; } }).catch(function(){}); } }
+              if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',apply); else apply();
+            })();
+        </script>
 
         <div class="contact-grid">
             <div class="contact-card" data-contact-id="main-office">
@@ -1940,14 +2211,6 @@
                 <div class="c-info" id="cc-office-address">
                     <h4>Office Address</h4>
                     <p>2302 E Southport Rd<br>Indianapolis, IN 46227</p>
-                </div>
-            </div>
-
-            <div class="contact-card" data-contact-id="office-hours">
-                <div class="c-icon"><i class="fa-solid fa-clock"></i></div>
-                <div class="c-info" id="cc-office-hours">
-                    <h4>Office Hours</h4>
-                    <p>Mon–Thu: 9:00 AM – 5:00 PM<br>Fri–Sun: Closed</p>
                 </div>
             </div>
 
@@ -2090,6 +2353,10 @@
             <input type="text" id="ccTitle" placeholder="e.g. Main Office" maxlength="50">
         </div>
         <div class="add-card-field">
+            <label>Icon (Font Awesome class) — optional</label>
+            <input type="text" id="ccIcon" placeholder="fa-solid fa-user">
+        </div>
+        <div class="add-card-field">
             <label>Content — one item per line (phone numbers and emails auto-link)</label>
             <textarea id="ccContent" rows="5" placeholder="e.g.&#10;Janet Giles-Schultz&#10;(317) 997-7404&#10;janet@yourrealtylink.com" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:Inter,sans-serif;font-size:14px;resize:vertical;background:var(--surface-2);color:var(--text);"></textarea>
         </div>
@@ -2099,6 +2366,7 @@
                 <i class="fa-solid fa-floppy-disk"></i> Save
             </button>
             <button class="add-card-cancel" onclick="closeContactCardModal()">Cancel</button>
+            <button class="add-card-cancel" id="ccDeleteBtn" onclick="deleteContactCard()" style="display:none;margin-left:auto;color:#dc2626;border-color:#fecaca;">Delete card</button>
         </div>
     </div>
 </div>
@@ -2206,9 +2474,9 @@
     </p>
     <div class="footer-admin-row">
         <button class="btn-hub-edit" id="btnHubEdit" onclick="toggleHubEditMode()">
-            <i class="fa-solid fa-pen"></i> <span>Edit Layout</span>
+            <i class="fa-solid fa-pen"></i> <span>Edit Site</span>
         </button>
-        <a href="https://portal.nomadsystems.co" target="_blank" rel="noopener" class="btn-hub-edit" style="text-decoration:none;">
+        <a href="https://portal.yrlagent.com" target="_blank" rel="noopener" class="btn-hub-edit" style="text-decoration:none;">
             <i class="fa-solid fa-lock"></i> <span>Admin Portal</span>
         </a>
     </div>
@@ -2217,8 +2485,21 @@
 
 <!-- hub-data.js provides tenant-aware loadHubContent / saveHubContent / uploadHubFile -->
 <script src="hub-data.js"></script>
+<!-- section-order.js: edit-mode ▲/▼ arrows to reorder whole sections -->
+<script src="section-order.js?v=20260824b"></script>
+<script>
+    window.__hubSectionOrder = SectionOrder.init({
+        key:        'yrl-hub-section-order',
+        container:  'main.main',
+        section:    'section.section',
+        header:     '.sec-header',
+        titleSel:   'h2',
+        subtitleSel:'p',
+        metaKey:    'yrl-hub-section-meta'
+    });
+</script>
 <!-- Announcements banner + Office Chat + Agent Talk feed -->
-<script src="hub-social.js?v=20260804b" defer></script>
+<script src="hub-social.js?v=20260917a" defer></script>
 
 <!-- ═══════════════════════════════════════
      SCRIPTS
@@ -2232,6 +2513,10 @@
     const HUB_ORDER_KEY    = 'yrl-hub-card-order';
     const CUSTOM_CARDS_KEY = 'yrl-hub-custom-cards';
     const HIDDEN_CARDS_KEY = 'yrl-hub-hidden-cards';
+    const CUSTOM_SECTIONS_KEY = 'yrl-hub-custom-sections';   // owner-created sections [{id,name,icon}]
+    const CARD_GRIDS_KEY      = 'yrl-hub-card-grids';        // {cardId: gridId} — move a tool to another section
+    let customSections = [];
+    let cardGrids = {};
 
     /* Edit mode is now role-based: only the brokerage owner (or a Nomad admin)
        can edit the hub. Agents never see the Edit button. The old broker PIN is
@@ -2252,6 +2537,8 @@
         if (acct) acct.style.display = owner ? '' : 'none';
         /* Broker-only tiles (e.g. Agent Recruiting) stay hidden for agents. */
         document.querySelectorAll('.broker-only').forEach(el => { el.style.display = owner ? '' : 'none'; });
+        /* Reflect the reveal/hide of broker-only cards + sections in the nomad sidebar. */
+        if (window.__hubRebuildNav) window.__hubRebuildNav();
     }
     if (window.yrlMember) { _hubApplyRole(); }
     else { document.addEventListener('yrl-auth-ready', _hubApplyRole, { once: true }); }
@@ -2345,7 +2632,7 @@
         document.body.classList.remove('hub-edit-mode');
         const btn = document.getElementById('btnHubEdit');
         btn.classList.remove('active');
-        btn.innerHTML = '<i class="fa-solid fa-pen"></i> <span>Edit Layout</span>';
+        btn.innerHTML = '<i class="fa-solid fa-pen"></i> <span>Edit Site</span>';
         teardownDraggableCards();
         // Remove add buttons
         document.querySelectorAll('.card-add-btn').forEach(b => b.remove());
@@ -2465,12 +2752,16 @@
             grid.querySelectorAll('.card[data-card-id]').forEach(card => {
                 ids.push(card.dataset.cardId);
             });
-            if (ids.length) order['grid_' + gridIdx] = ids;
+            /* Key by grid-id when available so card order survives section reordering;
+               fall back to positional key for any grid without a data-grid-id. */
+            if (ids.length) order[grid.dataset.gridId ? ('gid_' + grid.dataset.gridId) : ('grid_' + gridIdx)] = ids;
         });
         /* Save to localStorage AND Supabase so order survives cache clears & other devices */
         localStorage.setItem(HUB_ORDER_KEY, JSON.stringify(order));
         if (typeof saveHubContent === 'function') saveHubContent(HUB_ORDER_KEY, order);
     }
+    /* Expose so the nomad sidebar (hub-shell.js) can persist tool reordering. */
+    window.saveHubCardOrder = saveHubCardOrder;
 
     function restoreHubCardOrder(orderOverride) {
         let saved = orderOverride || null;
@@ -2481,7 +2772,8 @@
         if (!saved) return;
 
         document.querySelectorAll('.card-grid').forEach((grid, gridIdx) => {
-            const ids = saved['grid_' + gridIdx];
+            /* Prefer grid-id key; fall back to legacy positional key for older saved data. */
+            const ids = (grid.dataset.gridId && saved['gid_' + grid.dataset.gridId]) || saved['grid_' + gridIdx];
             if (!ids || !ids.length) return;
             ids.forEach(id => {
                 const card = grid.querySelector(`.card[data-card-id="${id}"]`);
@@ -2656,25 +2948,37 @@
         });
     }
 
-    /* Open the edit modal, pre-filling from current DOM or stored override */
+    const CONTACT_EXTRA_KEY = 'yrl-contact-cards-extra';   // added (custom) contact cards
+    const CONTACT_STATIC_IDS = ['main-office','office-email','office-address','broker-owner','associate-broker','transaction-coordinator'];
+    let contactExtra = [];
+    function contactGrid(){ return document.querySelector('.contact-grid'); }
+    function currentCardIcon(id){ const el=document.getElementById('cc-'+id); const card=el&&el.closest('.contact-card'); const ic=card&&card.querySelector('.c-icon i'); return ic?ic.className:''; }
+
+    /* Open the edit modal — id null = ADD a new card, else edit existing (static or extra) */
     function openContactCardModal(id) {
-        const infoEl = document.getElementById('cc-' + id);
-        if (!infoEl) return;
-        document.getElementById('editingContactId').value = id;
-
-        // Read current title from h4
-        const h4 = infoEl.querySelector('h4');
-        document.getElementById('ccTitle').value = h4 ? h4.textContent.trim() : '';
-
-        // Build content lines from everything after the h4
-        const lines = [];
-        infoEl.childNodes.forEach(node => {
-            if (node === h4 || (node.tagName === 'H4')) return;
-            const text = node.textContent?.trim();
-            if (text) lines.push(text);
-        });
-        document.getElementById('ccContent').value = lines.join('\n');
-
+        const isNew = !id;
+        const useId = id || ('x' + Math.random().toString(36).slice(2, 8));
+        document.getElementById('editingContactId').value = useId;
+        document.querySelector('#contactCardOverlay h3 span').textContent = isNew ? 'Add Contact Card' : 'Edit Contact Card';
+        if (isNew) {
+            document.getElementById('ccTitle').value = '';
+            document.getElementById('ccIcon').value = 'fa-solid fa-user';
+            document.getElementById('ccContent').value = '';
+            document.getElementById('ccDeleteBtn').style.display = 'none';
+        } else {
+            const infoEl = document.getElementById('cc-' + id); if (!infoEl) return;
+            const h4 = infoEl.querySelector('h4');
+            document.getElementById('ccTitle').value = h4 ? h4.textContent.trim() : '';
+            document.getElementById('ccIcon').value = currentCardIcon(id) || 'fa-solid fa-user';
+            const lines = [];
+            infoEl.childNodes.forEach(node => {
+                if (node === h4 || (node.tagName === 'H4')) return;
+                const text = node.textContent?.trim();
+                if (text) lines.push(text);
+            });
+            document.getElementById('ccContent').value = lines.join('\n');
+            document.getElementById('ccDeleteBtn').style.display = contactExtra.find(c => c.id === id) ? '' : 'none';
+        }
         document.getElementById('contactCardError').style.display = 'none';
         document.getElementById('contactCardOverlay').classList.add('open');
         setTimeout(() => document.getElementById('ccTitle').focus(), 80);
@@ -2701,36 +3005,73 @@
         return `<p>${esc(line)}</p>`;
     }
 
-    /* Apply an override to the live DOM */
+    /* Apply an override to the live DOM (title + lines, and icon if provided) */
     function applyContactOverride(id, data) {
         const infoEl = document.getElementById('cc-' + id);
         if (!infoEl) return;
         let html = `<h4>${esc(data.title)}</h4>`;
         (data.lines || []).forEach(line => { html += contactLineHtml(line); });
         infoEl.innerHTML = html;
+        if (data.icon) { const card = infoEl.closest('.contact-card'); const ic = card && card.querySelector('.c-icon i'); if (ic) ic.className = esc(data.icon); }
     }
 
-    /* Save from modal */
+    function saveContactExtra() {
+        try { localStorage.setItem(CONTACT_EXTRA_KEY, JSON.stringify(contactExtra)); } catch {}
+        if (typeof saveHubContent === 'function') saveHubContent(CONTACT_EXTRA_KEY, contactExtra);
+    }
+    /* Add the "+ Add contact" button (kept last in the grid; shown only in edit mode via CSS) */
+    function ensureAddContactBtn() {
+        const grid = contactGrid(); if (!grid) return;
+        let b = grid.querySelector('.btn-add-contact');
+        if (!b) { b = document.createElement('button'); b.type = 'button'; b.className = 'btn-add-contact';
+            b.innerHTML = '<i class="fa-solid fa-plus"></i> Add contact'; b.onclick = function(){ openContactCardModal(null); }; }
+        grid.appendChild(b);
+    }
+    /* Render the custom (added) contact cards into the grid */
+    function renderContactExtra() {
+        const grid = contactGrid(); if (!grid) return;
+        grid.querySelectorAll('.contact-card[data-extra]').forEach(el => el.remove());
+        const addBtn = grid.querySelector('.btn-add-contact');
+        contactExtra.forEach(c => {
+            const card = document.createElement('div');
+            card.className = 'contact-card'; card.dataset.contactId = c.id; card.dataset.extra = '1';
+            card.innerHTML = `<div class="c-icon"><i class="${esc(c.icon || 'fa-solid fa-user')}"></i></div><div class="c-info" id="cc-${c.id}"></div>`;
+            if (addBtn) grid.insertBefore(card, addBtn); else grid.appendChild(card);
+            applyContactOverride(c.id, { title: c.title, lines: c.lines });
+        });
+        ensureAddContactBtn();
+        injectContactEditButtons();
+    }
+
+    /* Save from modal — routes to static overrides or the extra-cards list */
     async function saveContactCard() {
         const id    = document.getElementById('editingContactId').value;
         const title = document.getElementById('ccTitle').value.trim();
         const errEl = document.getElementById('contactCardError');
         if (!title) { errEl.style.display = 'block'; return; }
         errEl.style.display = 'none';
+        const icon  = document.getElementById('ccIcon').value.trim() || 'fa-solid fa-user';
+        const lines = document.getElementById('ccContent').value.split('\n').map(l => l.trim()).filter(Boolean);
 
-        const lines = document.getElementById('ccContent').value
-            .split('\n').map(l => l.trim()).filter(Boolean);
-
-        contactOverrides[id] = { title, lines };
-
-        // Update DOM immediately
-        applyContactOverride(id, contactOverrides[id]);
-
-        // Persist
-        localStorage.setItem(CONTACT_CARDS_KEY, JSON.stringify(contactOverrides));
-        if (typeof saveHubContent === 'function') saveHubContent(CONTACT_CARDS_KEY, contactOverrides);
-
+        if (CONTACT_STATIC_IDS.includes(id)) {
+            contactOverrides[id] = { title, lines, icon };
+            applyContactOverride(id, contactOverrides[id]);
+            try { localStorage.setItem(CONTACT_CARDS_KEY, JSON.stringify(contactOverrides)); } catch {}
+            if (typeof saveHubContent === 'function') saveHubContent(CONTACT_CARDS_KEY, contactOverrides);
+        } else {
+            let c = contactExtra.find(x => x.id === id);
+            if (!c) { c = { id }; contactExtra.push(c); }
+            c.title = title; c.lines = lines; c.icon = icon;
+            saveContactExtra(); renderContactExtra();
+        }
         closeContactCardModal();
+    }
+    function deleteContactCard() {
+        const id = document.getElementById('editingContactId').value;
+        if (!contactExtra.find(c => c.id === id)) { closeContactCardModal(); return; }
+        if (!confirm('Delete this contact card?')) return;
+        contactExtra = contactExtra.filter(c => c.id !== id);
+        saveContactExtra(); renderContactExtra(); closeContactCardModal();
     }
 
     /* Load overrides on init and apply to DOM */
@@ -2752,6 +3093,16 @@
                 }
             }
         } catch {}
+        // Added (custom) contact cards — cache-first, then remote
+        try { const cx = localStorage.getItem(CONTACT_EXTRA_KEY); if (cx) contactExtra = JSON.parse(cx) || []; } catch {}
+        renderContactExtra();
+        try {
+            if (typeof loadHubContent === 'function') {
+                const rx = await loadHubContent(CONTACT_EXTRA_KEY);
+                if (Array.isArray(rx)) { contactExtra = rx; try { localStorage.setItem(CONTACT_EXTRA_KEY, JSON.stringify(contactExtra)); } catch {} renderContactExtra(); }
+            }
+        } catch {}
+        ensureAddContactBtn();
     }
 
     // ══════════════════════════════════════
@@ -2768,18 +3119,25 @@
         // Load from localStorage first (instant paint)
         try { customCards = JSON.parse(localStorage.getItem(CUSTOM_CARDS_KEY) || '[]'); } catch(e) { customCards = []; }
         try { hiddenCards = JSON.parse(localStorage.getItem(HIDDEN_CARDS_KEY) || '[]'); } catch(e) { hiddenCards = []; }
+        try { customSections = JSON.parse(localStorage.getItem(CUSTOM_SECTIONS_KEY) || '[]'); } catch(e) { customSections = []; }
+        try { cardGrids = JSON.parse(localStorage.getItem(CARD_GRIDS_KEY) || '{}'); } catch(e) { cardGrids = {}; }
 
+        renderCustomSections();
         applyHiddenCards();
         renderCustomCards();
         injectDeleteButtons();
         restoreHubCardOrder();
+        applyCardGrids();
+        if (window.__hubRebuildNav) window.__hubRebuildNav();
 
         // Then sync everything from Supabase (cards + order)
         if (typeof loadHubContent === 'function') {
-            const [remoteCustom, remoteHidden, remoteOrder] = await Promise.all([
+            const [remoteCustom, remoteHidden, remoteOrder, remoteSections, remoteGrids] = await Promise.all([
                 loadHubContent(CUSTOM_CARDS_KEY),
                 loadHubContent(HIDDEN_CARDS_KEY),
-                loadHubContent(HUB_ORDER_KEY)
+                loadHubContent(HUB_ORDER_KEY),
+                loadHubContent(CUSTOM_SECTIONS_KEY),
+                loadHubContent(CARD_GRIDS_KEY)
             ]);
             if (Array.isArray(remoteCustom)) {
                 customCards = remoteCustom;
@@ -2792,12 +3150,17 @@
             if (remoteOrder && typeof remoteOrder === 'object') {
                 localStorage.setItem(HUB_ORDER_KEY, JSON.stringify(remoteOrder));
             }
+            if (Array.isArray(remoteSections)) { customSections = remoteSections; localStorage.setItem(CUSTOM_SECTIONS_KEY, JSON.stringify(customSections)); }
+            if (remoteGrids && typeof remoteGrids === 'object' && !Array.isArray(remoteGrids)) { cardGrids = remoteGrids; localStorage.setItem(CARD_GRIDS_KEY, JSON.stringify(cardGrids)); }
             // Re-render with remote data + order
             document.querySelectorAll('.card[data-custom-card]').forEach(el => el.remove());
+            renderCustomSections();
             applyHiddenCards();
             renderCustomCards();
             injectDeleteButtons();
             restoreHubCardOrder(remoteOrder || undefined);
+            applyCardGrids();
+            if (window.__hubRebuildNav) window.__hubRebuildNav();
         }
     }
 
@@ -2805,6 +3168,65 @@
         localStorage.setItem(CUSTOM_CARDS_KEY, JSON.stringify(customCards));
         if (typeof saveHubContent === 'function') saveHubContent(CUSTOM_CARDS_KEY, customCards);
     }
+
+    // ══ Custom SECTIONS + move-a-tool-to-another-section ══
+    function saveCustomSections(){ try { localStorage.setItem(CUSTOM_SECTIONS_KEY, JSON.stringify(customSections)); } catch(e){} if (typeof saveHubContent==='function') saveHubContent(CUSTOM_SECTIONS_KEY, customSections); }
+    function saveCardGrids(){ try { localStorage.setItem(CARD_GRIDS_KEY, JSON.stringify(cardGrids)); } catch(e){} if (typeof saveHubContent==='function') saveHubContent(CARD_GRIDS_KEY, cardGrids); }
+    function hubMainEl(){ return document.querySelector('main.main') || document.querySelector('.main'); }
+    /* Render owner-created sections into the page so hub-shell shows them in the sidebar */
+    function renderCustomSections(){
+        const main = hubMainEl(); if (!main) return;
+        const oc = main.querySelector('.section[data-section-id="office-contacts"]');
+        customSections.forEach(s => {
+            if (document.querySelector('.section[data-section-id="'+s.id+'"]')) return;
+            const sec = document.createElement('section');
+            sec.className = 'section'; sec.dataset.sectionId = s.id; sec.dataset.customSection = '1';
+            sec.innerHTML = '<div class="sec-header"><div class="sec-icon"><i class="'+esc(s.icon||'fa-solid fa-folder')+'"></i></div><div><h2>'+esc(s.name||'Section')+'</h2></div></div><div class="card-grid" data-grid-id="'+esc(s.id)+'"></div>';
+            if (oc) main.insertBefore(sec, oc); else main.appendChild(sec);
+        });
+    }
+    /* Move each assigned card into its target section's grid */
+    function applyCardGrids(){
+        Object.keys(cardGrids || {}).forEach(cardId => {
+            const gid = cardGrids[cardId];
+            const card = document.querySelector('.card[data-card-id="'+cardId+'"]');
+            const grid = document.querySelector('.card-grid[data-grid-id="'+gid+'"]');
+            if (card && grid && card.parentElement !== grid) grid.appendChild(card);
+        });
+    }
+    /* All sections a tool can be moved into (have a .card-grid) */
+    function moveTargetSections(){
+        return [].slice.call(document.querySelectorAll('.section[data-section-id]'))
+            .filter(s => s.dataset.sectionId !== 'important-numbers' && s.querySelector('.card-grid'))
+            .map(s => ({ gid: s.querySelector('.card-grid').dataset.gridId, name: (s.querySelector('.sec-header h2')||{}).textContent || s.dataset.sectionId }));
+    }
+    window.__hubAddSection = function(){
+        const name = prompt('New section name:'); if (!name || !name.trim()) return;
+        customSections.push({ id: 'sec-'+uid(), name: name.trim(), icon: 'fa-solid fa-folder' });
+        saveCustomSections(); renderCustomSections();
+        if (window.__hubRebuildNav) window.__hubRebuildNav();
+    };
+    function moveCardToSection(cardId, gridId){
+        const card = document.querySelector('.card[data-card-id="'+cardId+'"]');
+        const grid = document.querySelector('.card-grid[data-grid-id="'+gridId+'"]');
+        if (!card || !grid) return;
+        grid.appendChild(card);
+        cardGrids[cardId] = gridId; saveCardGrids();
+        if (window.__hubRebuildNav) window.__hubRebuildNav();
+    }
+    window.openMoveCardMenu = function(cardId){
+        const secs = moveTargetSections();
+        const g = document.querySelector('.card[data-card-id="'+cardId+'"]');
+        const curGid = g && g.closest('.card-grid') ? g.closest('.card-grid').dataset.gridId : null;
+        let ov = document.getElementById('moveCardOverlay');
+        if (!ov){ ov = document.createElement('div'); ov.id='moveCardOverlay'; ov.className='mc-ov'; document.body.appendChild(ov); ov.addEventListener('click', e => { if (e.target===ov) ov.classList.remove('open'); }); }
+        ov.innerHTML = '<div class="mc-box"><h3>Move to section</h3>' +
+            secs.map(s => '<button class="mc-opt'+(s.gid===curGid?' cur':'')+'" data-gid="'+esc(s.gid)+'">'+esc(s.name)+(s.gid===curGid?' · here now':'')+'</button>').join('') +
+            '<button class="mc-cancel">Cancel</button></div>';
+        ov.querySelector('.mc-cancel').onclick = () => ov.classList.remove('open');
+        ov.querySelectorAll('.mc-opt').forEach(b => b.onclick = () => { moveCardToSection(cardId, b.dataset.gid); ov.classList.remove('open'); });
+        ov.classList.add('open');
+    };
 
     function saveHiddenCards() {
         localStorage.setItem(HIDDEN_CARDS_KEY, JSON.stringify(hiddenCards));
@@ -2898,6 +3320,16 @@
                     deleteHubCard(id, isCustom ? 'custom' : 'builtin');
                 });
                 card.appendChild(delBtn);
+            }
+
+            // Inject "move to section" button if missing
+            if (!card.querySelector('.card-move-btn')) {
+                const mvBtn = document.createElement('button');
+                mvBtn.className = 'card-move-btn';
+                mvBtn.title = 'Move to another section';
+                mvBtn.innerHTML = '<i class="fa-solid fa-arrows-up-down-left-right"></i>';
+                mvBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); openMoveCardMenu(id); });
+                card.appendChild(mvBtn);
             }
 
             // Inject edit button if missing (built-in only — custom cards get it in buildCustomCardEl)
@@ -3234,102 +3666,196 @@
         const input = document.getElementById('siteSearch');
         const clearBtn = document.getElementById('searchClear');
         const noResults = document.getElementById('searchNoResults');
-        const mainEl = document.querySelector('.main');
+        if (noResults) noResults.style.display = 'none';
 
-        function getSearchables() {
-            const items = [];
-            mainEl.querySelectorAll('.card').forEach(el => {
-                items.push({ el, text: el.textContent.toLowerCase(), type: 'card' });
+        const MAX_SHOWN = 8;
+        const esc = s => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        const rx = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+        /* dropdown element */
+        const dd = document.createElement('div');
+        dd.className = 'search-dd';
+        dd.id = 'searchDropdown';
+        document.querySelector('.search-wrap').appendChild(dd);
+
+        /* ── build the searchable index ── */
+        let index = null;             // built lazily, then cached
+        let deepLoaded = false;       // hub_content sub-tiles merged in
+        const seenHrefs = new Set();
+
+        function pushEntry(list, e) {
+            if (!e.label || !e.href) return;
+            const dedupe = (e.label + '|' + e.href).toLowerCase();
+            if (seenHrefs.has(dedupe)) return;
+            seenHrefs.add(dedupe);
+            e.text = (e.label + ' ' + (e.subRaw || '') + ' ' + (e.desc || '')).toLowerCase();
+            list.push(e);
+        }
+
+        function buildIndex() {
+            const list = [];
+            seenHrefs.clear();
+            /* the tool tiles that live on the hub itself (each links to a page) */
+            document.querySelectorAll('.main .section[data-section-id]').forEach(sec => {
+                const secId = sec.getAttribute('data-section-id') || '';
+                if (secId === 'important-numbers') return;         // reference values, not a page
+                const secName = (sec.querySelector('.sec-header h2')?.textContent || '').trim();
+                sec.querySelectorAll('.card').forEach(a => {
+                    const href = a.getAttribute('href') || '';
+                    if (!href || href === '#') return;             // modal-only cards can't be linked
+                    const title = (a.querySelector('h3')?.textContent || '').trim();
+                    const desc = (a.querySelector('p')?.textContent || '').trim();
+                    const icon = a.querySelector('.card-icon i')?.className || 'fa-solid fa-file';
+                    const ext = a.getAttribute('target') === '_blank' || /^(https?:|mailto:)/i.test(href);
+                    pushEntry(list, { label: title, subRaw: secName, sub: secName, desc, icon, href, ext });
+                });
             });
-            mainEl.querySelectorAll('.asset-card').forEach(el => {
-                items.push({ el, text: el.textContent.toLowerCase(), type: 'asset' });
-            });
-            mainEl.querySelectorAll('.contact-card').forEach(el => {
-                items.push({ el, text: el.textContent.toLowerCase(), type: 'contact' });
-            });
-            mainEl.querySelectorAll('.review-box').forEach(el => {
-                items.push({ el, text: el.textContent.toLowerCase(), type: 'review' });
-            });
-            return items;
+            return list;
+        }
+
+        /* deeper tool content (categories/handouts inside Marketing, Buyer/Seller Tools, resource lists) */
+        const DEEP_SOURCES = [
+            { key: 'yrl-marketing-tools', page: 'Marketing',    href: 'yrl-marketing.html', shape: 'sections' },
+            { key: 'yrl-buyer-tools',     page: 'Buyer Tools',   href: 'yrl-buyers.html',    shape: 'sections' },
+            { key: 'yrl-seller-tools',    page: 'Seller Tools',  href: 'yrl-sellers.html',   shape: 'sections' },
+            { key: 'yrl-buyer-resources', page: 'Buyer Tools',   href: 'yrl-buyers.html',    shape: 'categories' },
+            { key: 'yrl-ce-licensing',    page: 'CE & Licensing',href: 'yrl-ce-licensing.html', shape: 'categories' },
+        ];
+        function usableLink(link, fallback) {
+            if (!link) return { href: fallback, ext: false };
+            if (/^(https?:|mailto:)/i.test(link)) return { href: link, ext: true };
+            if (/^secure:/i.test(link)) return { href: fallback, ext: false };   // signed on click — send to the page
+            if (/\.html?(\?|#|$)/i.test(link)) return { href: link, ext: false };
+            return { href: fallback, ext: false };
+        }
+        async function loadDeep() {
+            if (deepLoaded || typeof loadHubContent !== 'function') return;
+            deepLoaded = true;
+            for (const src of DEEP_SOURCES) {
+                try {
+                    const data = await loadHubContent(src.key);
+                    if (!data) continue;
+                    const groups = src.shape === 'categories' ? (data.categories || []) : (data.sections || []);
+                    groups.forEach(g => {
+                        const gname = (g.name || '').trim();
+                        const tiles = src.shape === 'categories' ? (g.guides || []) : (g.tiles || []);
+                        tiles.forEach(t => {
+                            const link = usableLink(t.link, src.href);
+                            pushEntry(index, {
+                                label: (t.title || '').trim(),
+                                subRaw: src.page + ' ' + gname,
+                                sub: src.page + (gname ? ' › ' + gname : ''),
+                                desc: t.desc || '',
+                                icon: t.icon || 'fa-solid fa-file-lines',
+                                href: link.href, ext: link.ext
+                            });
+                        });
+                    });
+                } catch (e) { /* ignore a missing/locked key */ }
+            }
+        }
+
+        /* ── query + render ── */
+        let results = [], activeIdx = -1;
+        function score(e, q) {
+            const t = e.label.toLowerCase();
+            if (t === q) return 0;
+            if (t.startsWith(q)) return 1;
+            if (t.includes(q)) return 2;
+            if ((e.sub || '').toLowerCase().includes(q)) return 3;
+            return 4;   // matched only in desc/keywords
+        }
+        function query(q) {
+            q = q.trim().toLowerCase();
+            if (!q) { results = []; return; }
+            results = (index || [])
+                .filter(e => e.text.includes(q))
+                .map(e => ({ e, s: score(e, q) }))
+                .sort((a, b) => a.s - b.s || a.e.label.length - b.e.label.length)
+                .map(x => x.e);
+        }
+        function hl(text, q) {
+            if (!q) return esc(text);
+            try { return esc(text).replace(new RegExp('(' + rx(q) + ')', 'ig'), '<mark>$1</mark>'); }
+            catch (e) { return esc(text); }
+        }
+        function renderDD() {
+            const q = input.value.trim();
+            if (!q) { dd.classList.remove('open'); dd.innerHTML = ''; return; }
+            if (!results.length) {
+                dd.innerHTML = '<div class="search-dd-empty"><i class="fa-solid fa-magnifying-glass"></i>No pages match “' + esc(q) + '”.' +
+                    (deepLoaded ? '' : '<br><span style="font-size:11px;opacity:.7">Still loading tools…</span>') + '</div>';
+                dd.classList.add('open');
+                return;
+            }
+            const shown = results.slice(0, MAX_SHOWN);
+            let html = shown.map((e, i) => {
+                const arrow = e.ext ? 'fa-arrow-up-right-from-square' : 'fa-arrow-right';
+                return '<a class="search-dd-item' + (i === activeIdx ? ' active' : '') + '" href="' + esc(e.href) + '"' +
+                    (e.ext ? ' target="_blank" rel="noopener"' : '') + ' data-i="' + i + '">' +
+                    '<span class="search-dd-ic"><i class="' + esc(e.icon) + '"></i></span>' +
+                    '<span class="search-dd-txt"><span class="search-dd-title">' + hl(e.label, q) + '</span>' +
+                    (e.sub ? '<span class="search-dd-sub">' + esc(e.sub) + '</span>' : '') + '</span>' +
+                    '<i class="search-dd-go fa-solid ' + arrow + '"></i></a>';
+            }).join('');
+            if (results.length > MAX_SHOWN) html += '<div class="search-dd-more">+' + (results.length - MAX_SHOWN) + ' more — keep typing to narrow</div>';
+            dd.innerHTML = html;
+            dd.classList.add('open');
+        }
+
+        function refresh() {
+            if (!index) index = buildIndex();
+            query(input.value);
+            activeIdx = -1;
+            renderDD();
         }
 
         let debounceTimer;
-        input.addEventListener('input', function() {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(runSearch, 150);
+        input.addEventListener('input', function () {
             clearBtn.style.display = input.value ? 'block' : 'none';
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(refresh, 120);
+        });
+        input.addEventListener('focus', function () {
+            if (!index) index = buildIndex();
+            loadDeep().then(() => { if (input.value.trim()) refresh(); });   // enrich in the background
+            if (input.value.trim()) refresh();
+        });
+        input.addEventListener('keydown', function (e) {
+            if (!dd.classList.contains('open')) return;
+            const n = Math.min(results.length, MAX_SHOWN);
+            if (e.key === 'ArrowDown') { e.preventDefault(); activeIdx = (activeIdx + 1) % n; renderDD(); scrollActive(); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); activeIdx = (activeIdx - 1 + n) % n; renderDD(); scrollActive(); }
+            else if (e.key === 'Enter') {
+                const pick = results[activeIdx] || results[0];
+                if (pick) { e.preventDefault(); go(pick); }
+            } else if (e.key === 'Escape') { input.value = ''; clearBtn.style.display = 'none'; dd.classList.remove('open'); }
+        });
+        function scrollActive() {
+            const a = dd.querySelector('.search-dd-item.active');
+            if (a) a.scrollIntoView({ block: 'nearest' });
+        }
+        function go(e) {
+            if (e.ext) window.open(e.href, '_blank', 'noopener');
+            else window.location.href = e.href;
+        }
+        dd.addEventListener('mousedown', function (ev) {
+            const a = ev.target.closest('.search-dd-item');
+            if (!a) return;
+            ev.preventDefault();
+            const pick = results[parseInt(a.dataset.i, 10)];
+            if (pick) go(pick);
         });
 
-        clearBtn.addEventListener('click', function() {
+        clearBtn.addEventListener('click', function () {
             input.value = '';
             clearBtn.style.display = 'none';
-            clearSearch();
+            dd.classList.remove('open'); dd.innerHTML = '';
             input.focus();
         });
-
-        function runSearch() {
-            const q = input.value.trim().toLowerCase();
-            if (!q) { clearSearch(); return; }
-
-            const items = getSearchables();
-            const sections = mainEl.querySelectorAll('.section');
-            const dividers = mainEl.querySelectorAll('.divider');
-            const sectionHasMatch = new Map();
-            sections.forEach(s => sectionHasMatch.set(s, false));
-
-            let totalMatches = 0;
-            let firstMatch = null;
-
-            items.forEach(item => {
-                const match = item.text.includes(q);
-                if (match) {
-                    item.el.classList.remove('search-fade');
-                    item.el.classList.add('search-highlight');
-                    totalMatches++;
-                    const sec = item.el.closest('.section');
-                    if (sec) sectionHasMatch.set(sec, true);
-                    if (!firstMatch) firstMatch = sec || item.el;
-                } else {
-                    item.el.classList.add('search-fade');
-                    item.el.classList.remove('search-highlight');
-                }
-            });
-
-            sections.forEach(sec => {
-                const headerText = sec.querySelector('.sec-header')?.textContent.toLowerCase() || '';
-                if (headerText.includes(q)) {
-                    sectionHasMatch.set(sec, true);
-                    sec.querySelectorAll('.search-fade').forEach(el => el.classList.remove('search-fade'));
-                    if (!firstMatch) firstMatch = sec;
-                    totalMatches++;
-                }
-            });
-
-            sections.forEach(sec => {
-                sec.classList.toggle('search-section-fade', !sectionHasMatch.get(sec));
-            });
-
-            dividers.forEach(div => {
-                const prevFaded = div.previousElementSibling?.classList.contains('search-section-fade');
-                const nextFaded = div.nextElementSibling?.classList.contains('search-section-fade');
-                div.classList.toggle('search-divider-hide', prevFaded || nextFaded);
-            });
-
-            noResults.style.display = totalMatches === 0 ? 'block' : 'none';
-            mainEl.style.display = totalMatches === 0 ? 'none' : '';
-
-            if (firstMatch) firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-
-        function clearSearch() {
-            getSearchables().forEach(item => {
-                item.el.classList.remove('search-fade', 'search-highlight');
-            });
-            mainEl.querySelectorAll('.section').forEach(s => s.classList.remove('search-section-fade'));
-            mainEl.querySelectorAll('.divider').forEach(d => d.classList.remove('search-divider-hide'));
-            noResults.style.display = 'none';
-            mainEl.style.display = '';
-        }
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.search-wrap')) dd.classList.remove('open');
+        });
     })();
 
     /* Deep-link handlers from other tools (e.g. Moving to YRL checklist) */
@@ -3356,5 +3882,102 @@
     });
 </script>
 
+<script src="calendar.js?v=20260927a"></script>
+<script src="agent-dashboard.js?v=20260923a"></script>
+<script src="hub-shell.js?v=20260927g"></script>
+
+<!-- ═══ Home-page buttons (featured + quick-connect) — data-driven + owner editor ═══ -->
+<script>
+(function(){
+    var KEY = 'yrl-hub-quicklinks';
+    var qesc = function(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); };
+    var BADGE_ICON = { Featured:'fa-solid fa-star', Private:'fa-solid fa-lock', Login:'fa-solid fa-right-to-bracket' };
+    var STYLE_OPTS = [['gold','Gold'],['fb','Blue'],['mls','Green']];
+    var data = null;
+
+    function render(){
+        var host = document.getElementById('qcLinks'); if (!host || !data) return;
+        var html = '';
+        (data.featured||[]).forEach(function(f){
+            var ext = /^https?:/i.test(f.url||'');
+            var inner = '<span class="qc-badge"><i class="'+qesc(BADGE_ICON[f.badge]||'fa-solid fa-star')+'"></i> '+qesc(f.badge||'')+'</span>'+
+                '<i class="'+qesc(f.icon||'fa-solid fa-star')+'"></i><span>'+qesc(f.label||'')+'</span>'+
+                (ext?'<i class="fa-solid fa-arrow-up-right-from-square qc-ext"></i>':'');
+            var a = '<a href="'+qesc(f.url||'#')+'"'+(ext?' target="_blank" rel="noopener"':'')+' class="qc-featured qc-'+qesc(f.style||'gold')+'">'+inner+'</a>';
+            html += (f.style==='mls') ? ('<div class="qc-mls-row">'+a+'</div>') : a;
+        });
+        (data.quick||[]).forEach(function(q){
+            var ext = /^https?:/i.test(q.url||'');
+            html += '<a href="'+qesc(q.url||'#')+'"'+(ext?' target="_blank" rel="noopener"':'')+' class="qc-btn '+qesc(q.cls||'')+(q.primary?' primary':'')+'"><i class="'+qesc(q.icon||'fa-solid fa-link')+'"></i> <span>'+qesc(q.label||'')+'</span></a>';
+        });
+        host.innerHTML = html;
+    }
+    function load(){
+        if (typeof loadHubContent !== 'function') return;
+        loadHubContent(KEY).then(function(d){ if (d && (d.featured||d.quick)) { data = d; render(); } }).catch(function(){});
+    }
+    document.addEventListener('yrl-auth-ready', load);
+    if (window.yrlClient) load();
+
+    /* ── Editor ── */
+    var work = null;
+    function ensureModal(){
+        if (document.getElementById('qlModal')) return;
+        var ov = document.createElement('div'); ov.className='ql-ov'; ov.id='qlModal';
+        ov.innerHTML = '<div class="ql-modal"><h3>Home Page Buttons</h3>'+
+            '<div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">The big Featured / Private / Login buttons, and the phone &amp; quick-connect row. Saves for every agent.</div>'+
+            '<div class="ql-grouplbl">Big buttons</div><div id="qlFeatured"></div><button type="button" class="ql-add" onclick="__qlAdd(\'featured\')"><i class="fa-solid fa-plus"></i> Add big button</button>'+
+            '<div class="ql-grouplbl">Quick-connect buttons</div><div id="qlQuick"></div><button type="button" class="ql-add" onclick="__qlAdd(\'quick\')"><i class="fa-solid fa-plus"></i> Add quick button</button>'+
+            '<div class="ql-actions"><button class="ql-btn ql-cancel" onclick="__qlClose()">Cancel</button><button class="ql-btn ql-save" onclick="__qlSave()">Save</button></div></div>';
+        ov.addEventListener('click', function(e){ if (e.target===ov) __qlClose(); });
+        document.body.appendChild(ov);
+    }
+    function uid(){ return 'q'+Math.random().toString(36).slice(2,8); }
+    function itemHtml(it, group, i, n){
+        var ctrls = '<div class="ql-ctrls">'+
+            '<button type="button" title="Up" onclick="__qlMove(\''+group+'\','+i+',-1)"'+(i===0?' disabled':'')+'>&#9650;</button>'+
+            '<button type="button" title="Down" onclick="__qlMove(\''+group+'\','+i+',1)"'+(i===n-1?' disabled':'')+'>&#9660;</button>'+
+            '<button type="button" title="Delete" onclick="__qlDel(\''+group+'\','+i+')">&times;</button></div>';
+        var common = '<input class="ql-label" placeholder="Label" value="'+qesc(it.label||'')+'" oninput="__qlSet(\''+group+'\','+i+',\'label\',this.value)">'+
+            '<input class="ql-url" placeholder="Link (https://…, tel:, mailto:)" value="'+qesc(it.url||'')+'" oninput="__qlSet(\''+group+'\','+i+',\'url\',this.value)">';
+        var icon = '<input class="ql-icon" placeholder="fa-solid fa-star" value="'+qesc(it.icon||'')+'" oninput="__qlSet(\''+group+'\','+i+',\'icon\',this.value)">';
+        var extra = '';
+        if (group==='featured'){
+            var badges = ['Featured','Private','Login'].map(function(b){ return '<option'+(it.badge===b?' selected':'')+'>'+b+'</option>'; }).join('');
+            var styles = STYLE_OPTS.map(function(s){ return '<option value="'+s[0]+'"'+(it.style===s[0]?' selected':'')+'>'+s[1]+'</option>'; }).join('');
+            extra = '<select onchange="__qlSet(\'featured\','+i+',\'badge\',this.value)"><option value="">(badge)</option>'+badges+'</select>'+
+                    '<select onchange="__qlSet(\'featured\','+i+',\'style\',this.value)">'+styles+'</select>';
+        }
+        return '<div class="ql-item"><div class="ql-row">'+common+ctrls+'</div><div class="ql-row" style="margin-top:6px;">'+icon+extra+'</div></div>';
+    }
+    function paint(){
+        document.getElementById('qlFeatured').innerHTML = (work.featured||[]).map(function(it,i){ return itemHtml(it,'featured',i,work.featured.length); }).join('');
+        document.getElementById('qlQuick').innerHTML = (work.quick||[]).map(function(it,i){ return itemHtml(it,'quick',i,work.quick.length); }).join('');
+    }
+    window.openQuickLinksEditor = function(){
+        ensureModal();
+        var src = data || { featured:[], quick:[] };
+        work = JSON.parse(JSON.stringify(src));
+        work.featured = work.featured || []; work.quick = work.quick || [];
+        paint();
+        document.getElementById('qlModal').classList.add('open');
+    };
+    window.__qlClose = function(){ var m=document.getElementById('qlModal'); if(m) m.classList.remove('open'); };
+    window.__qlSet = function(g,i,k,v){ if(work[g]&&work[g][i]) work[g][i][k]=v; };
+    window.__qlMove = function(g,i,d){ var a=work[g]; var j=i+d; if(j<0||j>=a.length) return; var t=a[i];a[i]=a[j];a[j]=t; paint(); };
+    window.__qlDel = function(g,i){ work[g].splice(i,1); paint(); };
+    window.__qlAdd = function(g){ if(g==='featured') work.featured.push({id:uid(),label:'New button',url:'',badge:'Featured',style:'gold',icon:'fa-solid fa-star'}); else work.quick.push({id:uid(),label:'New',url:'',icon:'fa-solid fa-link'}); paint(); };
+    window.__qlSave = function(){
+        (work.featured||[]).forEach(function(it){ if(!it.id) it.id=uid(); });
+        (work.quick||[]).forEach(function(it){ if(!it.id) it.id=uid(); });
+        data = work;
+        render();
+        try { if (typeof saveHubContent==='function') saveHubContent(KEY, data); } catch(e){ alert('Save failed: '+(e.message||e)); }
+        __qlClose();
+    };
+})();
+</script>
+<script src="yrl-install.js?v=20260927b"></script>
+<script src="yrl-push.js?v=20260927b"></script>
 </body>
 </html>

@@ -1,0 +1,2686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Portal — Nomad Systems Co.</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script>
+    /* YRL agents log in here on yrlagent.com — give them the YRL home-screen app, not Nomad Admin. */
+    (function(){
+        var h = location.hostname.toLowerCase();
+        if (!/(^|\.)yrlagent\.com$/.test(h) && h !== 'yrl.nomadsystems.co') return;
+        function set(sel, attr, val){ var el = document.querySelector(sel); if (el) el.setAttribute(attr, val); }
+        set('link[rel="manifest"]', 'href', 'manifest-yrl.json?v=20260927a');
+        set('meta[name="theme-color"]', 'content', '#c03926');
+        set('link[rel="apple-touch-icon"]', 'href', 'yrl-apple-touch-icon.png?v=20260927a');
+        set('meta[name="apple-mobile-web-app-status-bar-style"]', 'content', 'default');
+        var t = document.createElement('meta'); t.name = 'apple-mobile-web-app-title'; t.content = 'YRL Hub'; document.head.appendChild(t);
+    })();
+    </script>
+    <style>
+        :root {
+            --ink:#0f172a; --ink-2:#1e293b; --ink-3:#334155;
+            --bg:#f1f5f9; --surface:#ffffff; --surface-2:#f8fafc;
+            --border:#e2e8f0; --border-dark:#cbd5e1;
+            --text:#0f172a; --text-sec:#475569; --text-muted:#94a3b8;
+            --accent:#0d9488; --accent-light:#14b8a6; --accent-bg:#f0fdfa;
+            --green:#16a34a; --green-light:#dcfce7;
+            --amber:#d97706; --amber-light:#fef3c7;
+            --radius:14px;
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.55;min-height:100vh;}
+        a{text-decoration:none;color:inherit;}
+
+        /* ── Header ── */
+        .topbar{background:var(--ink);color:#fff;padding:0 24px;}
+        .topbar-inner{max-width:1040px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:62px;}
+        .wordmark{font-size:14px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;}
+        .wordmark span{color:var(--accent-light);}
+        .topbar-right{display:flex;align-items:center;gap:14px;font-size:12.5px;}
+        .topbar-right .user-chip{color:#cbd5e1;font-weight:600;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+        .btn-signout{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#e2e8f0;border-radius:8px;padding:7px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;}
+        .btn-signout:hover{background:rgba(255,255,255,0.16);}
+
+        .main{max-width:1040px;margin:0 auto;padding:30px 20px 90px;}
+
+        /* ── Login card ── */
+        .login-wrap{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 62px);padding:20px;}
+        .login-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:38px 34px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(15,23,42,0.08);}
+        .login-card .wordmark-lg{font-size:17px;font-weight:900;letter-spacing:3px;text-transform:uppercase;color:var(--ink);margin-bottom:4px;}
+        .login-card .wordmark-lg span{color:var(--accent);}
+        .login-card h1{font-size:21px;font-weight:800;margin:18px 0 6px;}
+        .login-card p{font-size:13.5px;color:var(--text-sec);margin-bottom:20px;}
+        .login-card label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px;color:var(--text);}
+        .login-card input{width:100%;background:var(--surface-2);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;font-size:14.5px;font-family:'Inter',sans-serif;outline:none;margin-bottom:14px;}
+        .login-card input:focus{border-color:var(--accent);background:#fff;}
+        .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:10px;padding:12px 18px;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:700;cursor:pointer;transition:all 0.15s;text-decoration:none;}
+        .btn-accent{background:var(--accent);color:#fff;width:100%;}
+        .btn-accent:hover{background:var(--accent-light);}
+        .btn-accent:disabled{opacity:0.6;cursor:default;}
+        .login-msg{font-size:13px;border-radius:10px;padding:12px 14px;margin-bottom:14px;display:none;}
+        .login-msg.ok{display:block;background:var(--green-light);color:#166534;}
+        .login-msg.err{display:block;background:#fee2e2;color:#991b1b;}
+        .login-foot{font-size:11.5px;color:var(--text-muted);margin-top:18px;text-align:center;}
+
+        /* ── Dashboard ── */
+        .dash-head{margin-bottom:24px;}
+        .dash-head .client-name{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:4px;}
+        .dash-head h1{font-size:26px;font-weight:800;letter-spacing:-0.3px;}
+        .dash-head p{font-size:13.5px;color:var(--text-sec);margin-top:4px;}
+
+        .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-bottom:34px;}
+        .pcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px 20px;transition:all 0.18s;cursor:pointer;display:block;}
+        .pcard:hover{border-color:var(--accent);box-shadow:0 10px 30px rgba(13,148,136,0.10);transform:translateY(-2px);}
+        .pcard .pcard-icon{width:42px;height:42px;border-radius:11px;background:var(--accent-bg);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:14px;}
+        .pcard h3{font-size:15px;font-weight:800;margin-bottom:4px;}
+        .pcard p{font-size:12.5px;color:var(--text-sec);line-height:1.5;}
+        .pcard .soon{display:inline-block;background:var(--amber-light);color:var(--amber);border-radius:20px;padding:2px 9px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-top:8px;}
+
+        /* ── Sections ── */
+        .section{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:24px;margin-bottom:22px;}
+        .section h2{font-size:16px;font-weight:800;display:flex;align-items:center;gap:9px;margin-bottom:16px;}
+        .section h2 i{color:var(--accent);font-size:14px;}
+
+        .field{margin-bottom:13px;}
+        .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:13px;}
+        @media(max-width:560px){.field-row{grid-template-columns:1fr;}}
+        .field label{display:block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;color:var(--text);}
+        .field input,.field select,.field textarea{width:100%;background:var(--surface-2);border:1.5px solid var(--border);border-radius:9px;padding:10px 12px;font-size:13.5px;font-family:'Inter',sans-serif;outline:none;color:var(--text);}
+        .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);background:#fff;}
+        .field textarea{resize:vertical;min-height:90px;}
+
+        /* Request list */
+        .req-item{border:1px solid var(--border);border-radius:11px;padding:13px 15px;margin-bottom:9px;display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;}
+        .req-item .req-subject{font-size:13.5px;font-weight:700;}
+        .req-item .req-meta{font-size:11.5px;color:var(--text-muted);margin-top:2px;}
+        .req-item .req-details{font-size:12.5px;color:var(--text-sec);margin-top:6px;width:100%;}
+        .req-status{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;border-radius:20px;padding:3px 10px;white-space:nowrap;}
+        .req-status.new{background:#e0f2fe;color:#075985;}
+        .req-status.in_progress{background:var(--amber-light);color:var(--amber);}
+        .req-status.done{background:var(--green-light);color:#166534;}
+        .req-empty{font-size:12.5px;color:var(--text-muted);padding:8px 2px;}
+        /* Files grouped by year → month */
+        .fy-group{border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;}
+        .fy-head{width:100%;display:flex;align-items:center;gap:10px;background:var(--surface-2);border:none;padding:12px 15px;cursor:pointer;font-family:inherit;font-size:15px;font-weight:800;color:var(--text);}
+        .fy-head .fy-count{margin-left:auto;font-size:11px;font-weight:800;color:var(--text-sec);background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:3px 10px;}
+        .fy-chev{font-size:12px;color:var(--text-muted);transition:transform .2s;}
+        .fy-group.open .fy-chev{transform:rotate(180deg);}
+        .fy-body{display:none;padding:12px 14px 6px;}
+        .fy-group.open .fy-body{display:block;}
+        .fy-month{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--accent);margin:6px 2px 8px;}
+        .fkind{display:inline-block;background:var(--accent-bg);color:var(--accent);border-radius:6px;padding:1px 8px;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;}
+
+        /* Messages */
+        .msg-thread{display:flex;flex-direction:column;gap:8px;max-height:360px;overflow-y:auto;padding:4px 2px 8px;}
+        .msg-row{display:flex;}
+        .msg-row.me{justify-content:flex-end;}
+        .msg-bubble{max-width:78%;padding:9px 13px;border-radius:14px;font-size:13.5px;line-height:1.45;white-space:pre-wrap;word-break:break-word;}
+        .msg-row.them .msg-bubble{background:var(--surface-2);border:1px solid var(--border);border-bottom-left-radius:4px;}
+        .msg-row.me .msg-bubble{background:var(--accent);color:#fff;border-bottom-right-radius:4px;}
+        .msg-meta{font-size:10.5px;color:var(--text-muted);margin:2px 4px 0;}
+        .msg-form{display:flex;gap:8px;margin-top:14px;align-items:flex-end;}
+        .msg-form textarea{flex:1;background:var(--surface-2);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13.5px;font-family:'Inter',sans-serif;outline:none;resize:vertical;min-height:44px;}
+        .msg-form textarea:focus{border-color:var(--accent);background:#fff;}
+        .msg-badge{display:inline-block;background:var(--accent);color:#fff;border-radius:20px;padding:2px 9px;font-size:11px;font-weight:800;vertical-align:middle;margin-left:6px;font-family:'Inter',sans-serif;}
+        .onb-input{width:100%;background:var(--surface-2);border:1.5px solid var(--border);border-radius:9px;padding:10px 12px;font-size:13.5px;font-family:'Inter',sans-serif;outline:none;color:var(--text);resize:vertical;}
+        .onb-input:focus{border-color:var(--accent);background:#fff;}
+
+        #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--ink);color:#fff;padding:11px 22px;border-radius:10px;font-size:12.5px;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,0.25);z-index:9999;transition:transform 0.3s;max-width:90vw;text-align:center;}
+        #toast.show{transform:translateX(-50%) translateY(0);}
+        #toast.error{background:#dc2626;}
+        #toast.success{background:var(--green);}
+
+        .hidden{display:none !important;}
+
+        .footer{text-align:center;padding:26px 20px;font-size:11.5px;color:var(--text-muted);}
+        .footer a{color:var(--accent);font-weight:600;}
+
+        .ptabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--border);margin-bottom:24px;}
+        .ptab{background:none;border:none;padding:10px 14px;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:700;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;display:inline-flex;align-items:center;gap:7px;white-space:nowrap;}
+        .ptab:hover{color:var(--text);}
+        .ptab.active{color:var(--accent);border-bottom-color:var(--accent);}
+        .ptab i{font-size:12px;}
+
+        /* Nomad admin's own dashboard ("Command Center"): one solid app shell —
+           a dark sidebar rail (like the Hub) and content filling the rest. */
+        .ac-layout{display:flex;align-items:stretch;min-height:560px;border-radius:18px;overflow:hidden;box-shadow:0 1px 2px rgba(15,23,42,.04),0 10px 30px rgba(15,23,42,.06);}
+        .ac-nav{flex:none;width:220px;background:var(--ink);padding:20px 12px;display:flex;flex-direction:column;gap:3px;}
+        .ac-navlink{display:flex;align-items:flex-start;gap:10px;padding:11px 13px;border-radius:10px;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:700;color:#94a3b8;text-decoration:none;border:none;background:none;cursor:pointer;text-align:left;line-height:1.3;}
+        .ac-navlink i{flex:none;margin-top:2px;}
+        .ac-navlink:hover{background:rgba(255,255,255,.06);color:#fff;}
+        .ac-navlink.active{background:rgba(255,255,255,.1);color:#fff;}
+        .ac-navlink.ac-admin-link{color:#fff;background:var(--accent);margin-bottom:14px;}
+        .ac-navlink.ac-admin-link:hover{background:var(--accent-light);color:#fff;}
+        .ac-content{flex:1;min-width:0;background:var(--surface);padding:26px 28px;}
+        .ac-content .section{box-shadow:none;}
+        @media(max-width:760px){
+            .ac-layout{flex-direction:column;min-height:0;}
+            .ac-nav{width:auto;flex-direction:row;flex-wrap:wrap;}
+            .ac-content{padding:20px;}
+        }
+
+        .banner{padding:11px 16px;border-radius:10px;font-size:13.5px;font-weight:600;margin-bottom:14px;}
+        .banner a{font-weight:700;}
+        .banner-warn{background:#fef3c7;color:#92400e;}
+        .banner-warn a{color:#92400e;text-decoration:underline;}
+        .banner-info{background:var(--accent-bg);color:#0f766e;}
+
+        @media (max-width:600px){
+            .ptabs{margin-bottom:16px;gap:2px;}
+            .ptab{padding:8px 9px;font-size:12px;}
+            .topbar{padding:0 14px;}
+            .topbar-inner{flex-wrap:wrap;height:auto;min-height:54px;gap:8px;padding:8px 0;}
+            .topbar-right{gap:8px;}
+            .topbar-right .user-chip{display:none;}
+            .wordmark{font-size:12px;letter-spacing:1.5px;}
+            .btn-signout{padding:6px 10px;font-size:11.5px;}
+            .main{padding:20px 14px 80px;}
+            .dash-head h1{font-size:22px;}
+            .section{padding:18px 15px;}
+            .section h2{font-size:15px;}
+            .card-grid{grid-template-columns:1fr;}
+            .msg-bubble{max-width:88%;}
+            .msg-form{flex-direction:column;align-items:stretch;}
+            .msg-form .btn{width:100%;}
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── DEMO GATE (demo.nomadsystems.co only) ──────────────── -->
+<div id="demoGate" style="display:none;position:fixed;inset:0;background:#0f172a;z-index:9999;display:none;align-items:center;justify-content:center;font-family:'Inter',sans-serif;">
+  <div style="background:#fff;border-radius:20px;padding:42px 36px;width:100%;max-width:400px;margin:20px;box-shadow:0 30px 80px rgba(0,0,0,0.4);text-align:center;">
+    <div style="width:56px;height:56px;border-radius:14px;background:#eef3fb;color:#1e5fbf;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:22px;">
+      <i class="fa-solid fa-building-user"></i>
+    </div>
+    <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:#1e5fbf;margin-bottom:6px;">Demo Preview</div>
+    <h2 style="font-size:22px;font-weight:800;color:#0f172a;margin:0 0 6px;">CSI Realty Team</h2>
+    <p style="font-size:13.5px;color:#64748b;margin:0 0 24px;">Enter the access code to preview the agent hub.</p>
+    <div id="demoGateMsg" style="display:none;background:#fee2e2;color:#991b1b;border-radius:9px;padding:10px 14px;font-size:13px;font-weight:600;margin-bottom:14px;"></div>
+    <div>
+      <input id="demoGateCode" type="text" autocomplete="off" placeholder="Access code"
+        onkeydown="if(event.key==='Enter'){demoGateSubmit(event);}"
+        style="width:100%;text-align:center;font-size:20px;letter-spacing:6px;font-weight:700;padding:13px 16px;border:1.5px solid #e2e8f0;border-radius:10px;outline:none;font-family:'Inter',sans-serif;color:#0f172a;background:#f8fafc;margin-bottom:14px;box-sizing:border-box;">
+      <button type="button" id="demoGateBtn" onclick="demoGateSubmit(event)"
+        style="width:100%;background:#1e5fbf;color:#fff;border:none;border-radius:10px;padding:13px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">
+        <i class="fa-solid fa-right-to-bracket"></i>&nbsp; Preview Hub
+      </button>
+    </div>
+    <p style="font-size:11px;color:#94a3b8;margin-top:16px;">Powered by <strong>Nomad Systems Co.</strong></p>
+  </div>
+</div>
+
+<!-- ── LOGIN VIEW ─────────────────────────────────────────── -->
+<div id="loginView" class="login-wrap hidden">
+    <div class="login-card">
+        <img id="loginLogo" alt="" style="display:none;max-height:54px;max-width:210px;margin:0 auto 16px;object-fit:contain;">
+        <div class="wordmark-lg" id="loginWordmark">Nomad <span>Systems</span> Co.</div>
+        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;">Client Portal</div>
+        <h1>Sign in</h1>
+        <div class="login-msg" id="loginMsg"></div>
+
+        <!-- Agent PIN sign-in -->
+        <div id="pinStep" style="display:none;">
+            <p>Sign in with your email and your 4-digit PIN.</p>
+            <form onsubmit="pinSignIn(event)">
+                <label>Email address</label>
+                <input type="email" id="pinEmail" placeholder="you@yourcompany.com" autocomplete="email">
+                <label style="margin-top:10px;">Agent PIN</label>
+                <input type="password" id="pinCode" placeholder="••••" inputmode="numeric" maxlength="4"
+                       autocomplete="off" style="text-align:center;font-size:22px;letter-spacing:12px;font-weight:700;"
+                       oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                <button type="submit" class="btn btn-accent" id="pinBtn"><i class="fa-solid fa-right-to-bracket"></i> Sign in</button>
+            </form>
+            <div style="text-align:center;margin-top:12px;font-size:12px;">
+                <a href="#" onclick="setLoginMode('code');return false;" style="color:var(--text-muted);font-weight:600;">No PIN? Email me a code instead</a>
+            </div>
+        </div>
+
+        <!-- Step 1: email code -->
+        <div id="loginStep1">
+            <p>Enter the email on your account and we'll send you a sign-in code.</p>
+            <form onsubmit="sendCode(event)">
+                <label>Email address</label>
+                <input type="email" id="loginEmail" required placeholder="you@yourcompany.com" autocomplete="email">
+                <button type="submit" class="btn btn-accent" id="loginBtn"><i class="fa-solid fa-paper-plane"></i> Email me a code</button>
+            </form>
+            <div style="text-align:center;margin-top:12px;font-size:12px;">
+                <a href="#" onclick="setLoginMode('pin');return false;" style="color:var(--accent);font-weight:600;"><i class="fa-solid fa-key"></i> Agent? Sign in with your PIN</a>
+            </div>
+        </div>
+
+        <!-- Step 2: code -->
+        <div id="loginStep2" style="display:none;">
+            <p>We emailed a code to <b id="codeSentTo"></b>. Type it below to sign in.</p>
+            <form onsubmit="verifyCode(event)">
+                <label>Sign-in code</label>
+                <input type="text" id="loginCode" required placeholder="123456" inputmode="numeric"
+                       autocomplete="one-time-code" maxlength="6"
+                       style="text-align:center;font-size:24px;letter-spacing:10px;font-weight:700;"
+                       oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                <button type="submit" class="btn btn-accent" id="verifyBtn"><i class="fa-solid fa-right-to-bracket"></i> Sign in</button>
+            </form>
+            <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:12px;">
+                <a href="#" onclick="resendCode(event)" style="color:var(--accent);font-weight:600;">Send a new code</a>
+                <a href="#" onclick="backToEmail(event)" style="color:var(--text-muted);font-weight:600;">Use a different email</a>
+            </div>
+        </div>
+
+        <div class="login-foot">Trouble signing in? Email <a href="mailto:daniel@nomadsystems.co" style="color:var(--accent);font-weight:600;">support</a>.</div>
+    </div>
+</div>
+
+<!-- ── DASHBOARD VIEW ─────────────────────────────────────── -->
+<style>
+/* ══ Bookkeeping sidebar layout — gated to body.bk (other tenants keep top tabs) ══ */
+#brandLogo{display:none}
+#acctEmail{display:none}
+.bk #brandLogo{display:none}
+.bk .wordmark{display:block;text-transform:none;letter-spacing:.3px;font-size:16px;font-weight:800;color:var(--ink)}
+.bk .topbar{background:#fff;color:var(--ink);border-bottom:1px solid var(--border)}
+.bk .topbar .user-chip{display:none}
+.bk .dash-head .client-name{display:none}
+.dh-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+#bkHeadLogo{display:none}
+.bk #bkHeadLogo{display:block;max-height:44px;max-width:210px;margin-bottom:10px;object-fit:contain}
+.bk #acctEmail{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--text-sec);text-decoration:none}
+.bk #acctEmail:hover{color:var(--accent);text-decoration:underline}
+.bk #bizLabel{font-size:12px;color:var(--text-sec);font-weight:600}
+.bk .topbar .btn-signout{background:var(--surface-2);color:var(--text);border:1px solid var(--border)}
+.bk .topbar .btn-signout:hover{background:var(--border)}
+.bk #bizSwitcher{background:var(--surface-2)!important;color:var(--ink)!important}
+.bk .main{max-width:1160px;display:grid;grid-template-columns:232px 1fr;grid-template-areas:"head head" "ann ann" "cards cards" "nav body" "dates dates";gap:16px 22px;align-items:start}
+.bk #datesSection{grid-area:dates;margin:0}
+.bk .dash-head{grid-area:head;margin:0}
+.bk #portalBanners{grid-area:ann}
+.bk #portalBanners:empty{display:none}
+.bk .ptabs{grid-area:nav;display:flex;flex-direction:column;gap:3px;border-bottom:none;margin:0;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:10px}
+.bk .ptab{width:100%;justify-content:flex-start;border:none!important;border-radius:10px;padding:10px 12px;margin:0;color:var(--text)}
+.bk .ptab:hover{background:var(--surface-2)}
+.bk .ptab.active{background:var(--accent-bg);color:var(--accent)}
+.bk .ptab[data-ptab="files"]{order:1}
+.bk .ptab[data-ptab="uploads"]{order:2}
+.bk .ptab[data-ptab="messages"]{order:3}
+.bk .ptab[data-ptab="tasks"]{order:4}
+.bk .ptab[data-ptab="dates"]{order:5}
+.bk .ptab[data-ptab="contractors"]{order:6}
+.bk .ptab[data-ptab="onboarding"]{order:7}
+.bk .ptab[data-ptab="account"]{order:8}
+.bk .ptab[data-ptab="team"]{order:9}
+/* Real-estate portal has a different visible tab set — give it its own order */
+.bk[data-tpl="real_estate"] .ptab[data-ptab="gbp"]{order:1}
+.bk[data-tpl="real_estate"] .ptab[data-ptab="messages"]{order:2}
+.bk[data-tpl="real_estate"] .ptab[data-ptab="requests"]{order:3}
+.bk[data-tpl="real_estate"] .ptab[data-ptab="onboarding"]{order:4}
+.bk[data-tpl="real_estate"] .ptab[data-ptab="tasks"]{order:5}
+.bk[data-tpl="real_estate"] .ptab[data-ptab="team"]{order:6}
+.bk[data-tpl="real_estate"] .ptab[data-ptab="account"]{order:7}
+.up-folder{border:1px solid var(--border);border-radius:13px;padding:15px 17px;margin-bottom:14px;transition:border-color .15s,background .15s;}
+.up-folder.drag{border-color:var(--accent);background:var(--accent-bg,#f0fdfa);}
+.up-folder-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
+.up-drop-hint{font-size:11.5px;color:var(--text-muted);border:1.5px dashed var(--border);border-radius:9px;padding:9px;text-align:center;margin-bottom:10px;}
+.up-folder.drag .up-drop-hint{border-color:var(--accent);color:var(--accent);}
+.up-files .req-item{margin-bottom:8px;}
+.bk .section{grid-area:body;margin:0}
+/* Quick-link tiles: own horizontal row above the nav, compact */
+.bk #cardGrid{grid-area:cards;margin:0;background:none;border:none;padding:0;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.bk #cardGrid .pcard{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 15px;margin:0;text-align:left;display:grid;grid-template-columns:38px 1fr;grid-template-rows:auto auto;column-gap:12px;align-items:center}
+.bk #cardGrid .pcard-icon{grid-row:1/3;grid-column:1;width:38px;height:38px;margin:0}
+.bk #cardGrid .pcard h3{grid-column:2;grid-row:1;margin:0;font-size:14px;align-self:end}
+.bk #cardGrid .pcard p{grid-column:2;grid-row:2;margin:0;font-size:12px;color:var(--text-sec);align-self:start;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.bk #cardGrid .soon{grid-column:2}
+/* Pinned card: full-width, accent-filled, first on the main page. */
+#cardGrid .pcard.pcard-pin,.bk #cardGrid .pcard.pcard-pin{grid-column:1/-1;background:var(--accent);border-color:var(--accent);}
+#cardGrid .pcard.pcard-pin h3,#cardGrid .pcard.pcard-pin p,.bk #cardGrid .pcard.pcard-pin p{color:#fff;}
+#cardGrid .pcard.pcard-pin p,.bk #cardGrid .pcard.pcard-pin p{opacity:.92;display:block;-webkit-line-clamp:unset;overflow:visible;}
+#cardGrid .pcard.pcard-pin .pcard-icon{background:rgba(255,255,255,.2);color:#fff;}
+@media(max-width:760px){.bk .main{grid-template-columns:1fr;grid-template-areas:"head" "ann" "cards" "nav" "body" "dates"}.bk .ptabs{flex-direction:row;flex-wrap:wrap;position:static}.bk .ptab{width:auto}}
+/* ══ Tasks ══ */
+.tk-group{margin-bottom:22px}
+.tk-group h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin:0 0 10px}
+.tk{display:flex;align-items:flex-start;gap:12px;padding:13px 14px;border:1px solid var(--border);border-radius:12px;margin-bottom:9px;background:var(--surface)}
+.tk.mine{background:var(--surface-2)}
+.tk-box{width:20px;height:20px;border-radius:6px;border:2px solid var(--border-dark);flex:0 0 auto;margin-top:1px;cursor:pointer;display:grid;place-items:center;background:#fff}
+.tk-box.done{background:var(--accent);border-color:var(--accent);color:#fff}
+.tk-ti{font-weight:600;font-size:14px}
+.tk.done .tk-ti{color:var(--text-muted);text-decoration:line-through}
+.tk-de{font-size:12.5px;color:var(--text-sec);margin-top:2px}
+.tk-right{margin-left:auto;flex:0 0 auto;display:flex;gap:6px;align-items:center}
+/* ══ Help drawer ══ */
+#helpScrim{position:fixed;inset:0;background:rgba(15,23,42,.34);opacity:0;pointer-events:none;transition:opacity .2s;z-index:60}
+#helpScrim.on{opacity:1;pointer-events:auto}
+#helpDrawer{position:fixed;top:0;right:0;height:100%;width:390px;max-width:92vw;background:var(--surface);box-shadow:-14px 0 40px rgba(15,23,42,.16);transform:translateX(100%);transition:transform .24s ease;z-index:61;display:flex;flex-direction:column}
+#helpDrawer.on{transform:none}
+.help-head{padding:17px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.help-head h3{margin:0;font-size:16px;font-weight:800}
+.help-x{border:none;background:var(--surface-2);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:17px;color:var(--text-muted)}
+.help-body{padding:6px 12px 24px;overflow:auto}
+.help-cat{font-size:10.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--accent);padding:14px 10px 4px}
+.help-art{padding:12px 12px;border-radius:11px;cursor:pointer;border:1px solid transparent}
+.help-art:hover{background:var(--surface-2);border-color:var(--border)}
+.help-art h4{margin:0 0 3px;font-size:14px;font-weight:700}
+.help-art .hp{margin:0;font-size:12.5px;color:var(--text-sec)}
+.help-art .hb{margin:8px 0 0;font-size:13px;color:var(--text);line-height:1.55;display:none;white-space:pre-wrap}
+.help-art.open .hb{display:block}
+.help-art.open{background:var(--surface-2);border-color:var(--border)}
+
+/* ══ New look (body.pshell): full-height sidebar on the left, each tab is its own page on the right.
+   Everything is scoped to body.pshell, so the classic layout is untouched without the flag. ══ */
+#pside,.ps-mbar,.ps-backdrop,#homeSummary{display:none}
+body.pshell .topbar{display:none}
+body.pshell #pside{display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;width:244px;background:var(--ink);color:#cbd5e1;padding:18px 12px 14px;overflow-y:auto;z-index:50}
+.ps-brand{display:flex;align-items:center;gap:10px;padding:2px 6px 16px}
+.ps-logo{width:40px;height:40px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none;font-weight:800;color:var(--ink);font-size:13px;padding:3px}
+.ps-logo img{max-width:100%;max-height:100%;object-fit:contain}
+.ps-name{font-size:14px;font-weight:800;color:#fff;line-height:1.25}
+.ps-sub{font-size:11px;color:#94a3b8;font-weight:600;margin-top:1px}
+body.pshell #psBiz #bizLabel{display:none!important}
+body.pshell #psBiz #bizSwitcher{width:100%;margin:0 0 12px!important;background:rgba(255,255,255,.08)!important;color:#fff!important;border:1px solid rgba(255,255,255,.16)!important}
+body.pshell #psBiz #bizSwitcher option{color:#0f172a}
+body.pshell #ptabs{display:flex;flex-direction:column;flex-wrap:nowrap;gap:2px;flex:1;margin:0;padding:0;background:none;border:none;border-radius:0}
+body.pshell #ptabs .ptab{display:flex;align-items:center;gap:10px;width:100%;justify-content:flex-start;text-align:left;border:none!important;border-radius:10px;padding:10px 12px;margin:0;font-size:13.5px;font-weight:600;color:#cbd5e1;background:none}
+body.pshell #ptabs .ptab i{width:18px;text-align:center;flex:none}
+body.pshell #ptabs .ptab:hover{background:rgba(255,255,255,.07);color:#fff}
+body.pshell #ptabs .ptab.active{background:var(--accent);color:#fff}
+body.pshell #ptabs .ptab[data-ptab="dashboard"]{order:0!important}
+body.pshell #ptabs .msg-badge{margin-left:auto;background:#fff;color:var(--ink)}
+#psAdminNav{display:flex;flex-direction:column;gap:3px;flex:1}
+#psAdminNav:empty{display:none}
+.ps-foot{border-top:1px solid rgba(255,255,255,.12);margin-top:10px;padding-top:10px;display:flex;flex-direction:column;gap:2px}
+body.pshell .ps-foot .btn-signout{display:flex;align-items:center;gap:10px;width:100%;background:none;border:none;color:#cbd5e1;padding:9px 12px;border-radius:10px;font-size:13px;font-weight:600;text-align:left;cursor:pointer;font-family:inherit}
+body.pshell .ps-foot .btn-signout i{width:18px;text-align:center}
+body.pshell .ps-foot .btn-signout:hover{background:rgba(255,255,255,.07);color:#fff}
+body.pshell .main{display:block!important;max-width:none;margin:0 0 0 244px;padding:30px 36px 80px}
+body.pshell .main>*{max-width:980px}
+body.pshell .footer{margin-left:244px}
+body.pshell .section{margin:0 0 20px}
+body.pshell .dash-head{margin-bottom:18px}
+body.pshell .dash-head .client-name,body.pshell #bkHeadLogo,body.pshell #acctEmail,body.pshell #clientLogo{display:none!important}
+body.pshell #cardGrid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin:0 0 20px;background:none;border:none;padding:0}
+body.pshell #cardGrid .pcard{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 15px;margin:0;text-align:left;display:grid;grid-template-columns:38px 1fr;grid-template-rows:auto auto;column-gap:12px;align-items:center}
+body.pshell #cardGrid .pcard-icon{grid-row:1/3;grid-column:1;width:38px;height:38px;margin:0}
+body.pshell #cardGrid .pcard h3{grid-column:2;grid-row:1;margin:0;font-size:14px;align-self:end}
+body.pshell #cardGrid .pcard p{grid-column:2;grid-row:2;margin:0;font-size:12px;color:var(--text-sec);align-self:start}
+body.pshell #cardGrid .soon{grid-column:2}
+body.pshell #cardGrid .pcard.pcard-pin{padding:16px 18px}
+body.pshell #cardGrid .pcard.pcard-pin h3{font-size:15.5px}
+body.pshell #cardGrid .pcard.pcard-pin p{font-size:13px;color:#fff}
+body.pshell #homeSummary{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:20px}
+.hs-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 20px}
+.hs-card h3{font-size:14px;font-weight:800;margin:0 0 6px}
+.hs-row{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:9px 0;border-top:1px solid var(--border);font-size:13.5px;cursor:pointer}
+.hs-card h3 + .hs-row{border-top:none}
+.hs-row:hover .hs-t{color:var(--accent)}
+.hs-t{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hs-m{font-size:12px;color:var(--text-muted);white-space:nowrap}
+.hs-empty{font-size:13px;color:var(--text-muted);padding:6px 0}
+body.pshell .ac-nav{display:none}
+body.pshell .ac-layout{display:block;min-height:0;box-shadow:none;border-radius:0;overflow:visible}
+body.pshell .ac-content{padding:0;background:none}
+@media(max-width:860px){
+    body.pshell #pside{transform:translateX(-100%);transition:transform .22s ease;width:82%;max-width:300px;z-index:70}
+    body.pshell #pside.open{transform:none}
+    body.pshell .ps-mbar{display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:55;background:var(--ink);color:#fff;padding:9px 14px;font-weight:800;font-size:14px}
+    .ps-burger{background:rgba(255,255,255,.1);border:none;color:#fff;width:38px;height:38px;border-radius:10px;font-size:16px;cursor:pointer;flex:none}
+    body.pshell .ps-backdrop.show{display:block;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:65}
+    body.pshell .main{margin-left:0;padding:20px 14px 80px}
+    body.pshell .footer{margin-left:0}
+}
+</style>
+<div id="dashView" class="hidden">
+    <header class="topbar">
+        <div class="topbar-inner">
+            <div class="wordmark">Nomad <span>Systems</span> Co.</div>
+            <img id="brandLogo" alt="">
+            <div class="topbar-right">
+                <span id="bizLabel" style="display:none;margin-right:6px;">Company:</span>
+                <select id="bizSwitcher" onchange="switchBusiness(this.value)" title="Switch company" style="display:none;margin-right:8px;padding:6px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:#fff;color:#0f1c2e;"></select>
+                <span class="user-chip" id="userChip"></span>
+                <button class="btn-signout" id="topBilling" onclick="openBilling(event)" style="display:none;"><i class="fa-solid fa-credit-card"></i> Billing</button>
+                <button class="btn-signout" id="helpBtn" onclick="openHelp()" style="display:none;"><i class="fa-solid fa-circle-question"></i> Help</button>
+                <button class="btn-signout" onclick="signOut()"><i class="fa-solid fa-arrow-right-from-square"></i> Sign out</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div id="portalBanners"></div>
+        <div class="dash-head">
+            <img id="bkHeadLogo" alt="">
+            <div class="client-name" id="clientName"></div>
+            <div class="dh-row">
+                <h1>Client Portal</h1>
+                <a id="acctEmail" href="#" onclick="switchPortalTab('account');return false;" title="Account settings"></a>
+            </div>
+            <p id="dashSubtitle">Your tools, billing, and support — all in one place.</p>
+        </div>
+
+        <div class="ptabs" id="ptabs" style="display:none;">
+            <button class="ptab active" data-ptab="dashboard" onclick="switchPortalTab('dashboard')"><i class="fa-solid fa-table-columns"></i> Dashboard</button>
+            <button class="ptab" data-ptab="gbp" id="gbpTab" onclick="switchPortalTab('gbp')" style="display:none;"><i class="fa-brands fa-google"></i> GBP</button>
+            <button class="ptab" data-ptab="messages" onclick="switchPortalTab('messages')"><i class="fa-solid fa-comments"></i> Messages <span id="msgTabBadge" class="msg-badge" style="display:none;"></span></button>
+            <button class="ptab" data-ptab="onboarding" onclick="switchPortalTab('onboarding')"><i class="fa-solid fa-clipboard-list"></i> Onboarding</button>
+            <button class="ptab" data-ptab="files" id="filesTab" onclick="switchPortalTab('files')" style="display:none;"><i class="fa-solid fa-folder-open"></i> Files</button>
+            <button class="ptab" data-ptab="uploads" id="uploadsTab" onclick="switchPortalTab('uploads')" style="display:none;"><i class="fa-solid fa-cloud-arrow-up"></i> Uploads</button>
+            <button class="ptab" data-ptab="contractors" id="contractorsTab" onclick="switchPortalTab('contractors')" style="display:none;"><i class="fa-solid fa-file-invoice-dollar"></i> 1099 / Contractors</button>
+            <button class="ptab" data-ptab="projects" id="projectsTab" onclick="switchPortalTab('projects')" style="display:none;"><i class="fa-solid fa-diagram-project"></i> Projects</button>
+            <button class="ptab" data-ptab="requests" onclick="switchPortalTab('requests')"><i class="fa-solid fa-paper-plane"></i> Requests</button>
+            <button class="ptab" data-ptab="tasks" id="tasksTab" onclick="switchPortalTab('tasks')" style="display:none;"><i class="fa-solid fa-list-check"></i> Tasks</button>
+            <button class="ptab" data-ptab="dates" id="datesTab" onclick="switchPortalTab('dates')" style="display:none;"><i class="fa-solid fa-calendar-day"></i> Important Dates</button>
+            <button class="ptab" data-ptab="team" id="teamTab" onclick="switchPortalTab('team')" style="display:none;"><i class="fa-solid fa-users"></i> Team</button>
+            <button class="ptab" data-ptab="account" id="accountTab" onclick="switchPortalTab('account')" style="display:none;"><i class="fa-solid fa-user-gear"></i> Account</button>
+        </div>
+
+        <div class="card-grid" id="cardGrid"></div>
+        <div id="adminCenter" style="display:none;"></div>
+
+        <div class="section" id="gbpSection">
+            <h2><i class="fa-brands fa-google"></i> Google Business Profile</h2>
+            <div id="gbpProgress" style="margin:4px 0 16px;"></div>
+            <div id="gbpChecklist"><div class="req-empty">Loading…</div></div>
+            <div style="border-top:1px solid var(--border);margin-top:22px;padding-top:18px;">
+                <div style="font-weight:700;font-size:14px;margin-bottom:12px;">Audit scores</div>
+                <div id="auditsBody"><div class="req-empty">No audits yet.</div></div>
+            </div>
+            <div style="border-top:1px solid var(--border);margin-top:22px;padding-top:18px;">
+                <div style="font-weight:700;font-size:14px;margin-bottom:12px;">Reports &amp; files</div>
+                <div id="gbpFiles"><div class="req-empty">No files yet.</div></div>
+            </div>
+            <div style="border-top:1px solid var(--border);margin-top:22px;padding-top:18px;">
+                <a id="gbpGoogleBtn" href="https://business.google.com/" target="_blank" rel="noopener" class="btn btn-accent" style="width:auto;"><i class="fa-brands fa-google"></i> Open my Google Business Profile</a>
+            </div>
+        </div>
+
+        <div class="section" id="onboardingSection">
+            <h2><i class="fa-solid fa-clipboard-list"></i> Onboarding <span id="onbStatus" style="display:none;"></span></h2>
+            <p style="font-size:13px;color:var(--text-sec);margin:-6px 0 16px;">Fill this out so we have everything we need to start on your projects. You can update it anytime. <b>Please never enter passwords here</b> — we'll request access securely.</p>
+            <div id="onbForm"><div class="req-empty">Loading…</div></div>
+        </div>
+
+        <div class="section" id="messagesSection">
+            <h2><i class="fa-solid fa-comments"></i> Messages <span id="msgBadge" class="msg-badge" style="display:none;"></span></h2>
+            <div class="msg-thread" id="msgThread"><div class="req-empty">Loading…</div></div>
+            <form class="msg-form" onsubmit="sendMessage(event)">
+                <textarea id="msgInput" placeholder="Write a message to your Nomad Systems team…" required></textarea>
+                <button type="submit" class="btn btn-accent" id="msgBtn" style="width:auto;"><i class="fa-solid fa-paper-plane"></i> Send</button>
+            </form>
+        </div>
+
+        <div class="section" id="filesSection">
+            <h2><i class="fa-solid fa-folder-open"></i> Reports &amp; files</h2>
+            <div id="filesList"><div class="req-empty">Loading…</div></div>
+        </div>
+
+        <div class="section" id="uploadsSection">
+            <h2><i class="fa-solid fa-cloud-arrow-up"></i> Uploads</h2>
+            <p style="font-size:13px;color:var(--text-sec);margin:-6px 0 16px;">Send documents to your bookkeeper — statements, receipts, tax forms. Drag files onto a folder or use <b>Add files</b>. <b>Never upload passwords or bank logins.</b></p>
+            <div id="uploadsBreadcrumb" style="margin-bottom:12px;"></div>
+            <div id="uploadsBody"><div class="req-empty">Loading…</div></div>
+        </div>
+
+        <div class="section" id="contractorsSection">
+            <h2><i class="fa-solid fa-file-invoice-dollar"></i> 1099 / Contractors</h2>
+            <p style="font-size:13px;color:var(--text-sec);margin:-6px 0 16px;">Add the contractors and vendors you paid this year and upload each W-9. We'll flag who needs a 1099 and check them off as we file them. <b>Only upload the W-9 form itself</b> — never passwords or bank logins.</p>
+            <a class="pcard" href="forms/w9-blank.pdf" target="_blank" style="display:flex;flex-direction:row;align-items:center;gap:12px;padding:12px 16px;margin-bottom:16px;">
+                <div class="pcard-icon" style="margin:0;flex:none;"><i class="fa-solid fa-file-pdf"></i></div>
+                <div style="flex:1;min-width:0;"><h3 style="margin:0;">Blank W-9 form</h3><p style="margin:2px 0 0;">Download and send to a contractor who needs to fill one out.</p></div>
+                <i class="fa-solid fa-download" style="color:var(--accent);"></i>
+            </a>
+            <form onsubmit="clientAddContractor(event)" style="border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:18px;">
+                <div class="field-row">
+                    <div class="field" style="margin:0;"><label>Contractor / vendor name</label><input type="text" id="ccName" required placeholder="Acme Plumbing LLC"></div>
+                    <div class="field" style="margin:0;"><label>Email (optional)</label><input type="email" id="ccEmail" placeholder="name@company.com"></div>
+                </div>
+                <div class="field"><label>W-9 form (PDF or image, optional)</label><input type="file" id="ccW9" accept="application/pdf,.pdf,image/*"></div>
+                <button type="submit" class="btn btn-accent" id="ccBtn" style="width:auto;"><i class="fa-solid fa-plus"></i> Add contractor</button>
+            </form>
+            <div id="clientContractorsList"><div class="req-empty">Loading…</div></div>
+        </div>
+
+        <div class="section" id="projectsSection">
+            <h2><i class="fa-solid fa-diagram-project"></i> Projects</h2>
+            <p style="font-size:13px;color:var(--text-sec);margin:-6px 0 16px;">Every project gets its own tracking here — what it's worth, what's been received, and who's been paid out of it. Two minutes per project.</p>
+
+            <form id="pjForm" onsubmit="pjSubmit(event)" style="border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:22px;">
+                <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;">
+                    <button type="button" class="btn btn-accent" id="pjModeNew" style="width:auto;padding:8px 16px;font-size:12.5px;" onclick="pjSetMode(false)">New project</button>
+                    <button type="button" class="btn btn-ghost" id="pjModeBack" style="width:auto;padding:8px 16px;font-size:12.5px;" onclick="pjSetMode(true)">Project already underway</button>
+                </div>
+
+                <div class="field"><label>Project name</label><input id="pjName" placeholder="Acme Health — Spine Program" required>
+                    <div class="req-meta" style="margin-top:5px;">Once created this can't be renamed later, so it's worth naming the way you'd want to find it in two years.</div></div>
+                <div class="field-row">
+                    <div class="field" style="margin:0;"><label>Client</label><input id="pjClient" placeholder="Acme Health Systems" required></div>
+                    <div class="field" style="margin:0;"><label>Status</label><select id="pjStatus"><option>Active</option><option>Wrapping up</option><option>Complete</option><option>On hold</option></select></div>
+                </div>
+                <div class="field-row" style="margin-top:13px;">
+                    <div class="field" style="margin:0;"><label>Start date</label><input id="pjStart" type="date" required></div>
+                    <div class="field" style="margin:0;"><label>Expected wrap date <span style="text-transform:none;font-weight:400;">(rough is fine)</span></label><input id="pjEnd" type="date"></div>
+                </div>
+
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin:20px 0 10px;">Money coming in</div>
+                <div class="field-row">
+                    <div class="field" style="margin:0;"><label>Contract value</label><input id="pjValue" type="number" min="0" step="100" placeholder="100000" required></div>
+                    <div class="field" style="margin:0;"><label>How you're invoicing it</label><select id="pjBilling"><option>Lump sum</option><option>Milestones</option><option>Monthly retainer</option><option>Hourly</option><option>Other</option></select></div>
+                </div>
+                <div class="field" style="margin-top:13px;"><label>Which account do payments land in?</label><input id="pjAcct" placeholder="Chase business checking — operating" required></div>
+                <div class="field" id="pjRecdWrap" style="display:none;margin-top:13px;"><label>Received so far this year</label><input id="pjRecd" type="number" min="0" step="100" placeholder="50000">
+                    <div class="req-meta" style="margin-top:5px;">Ballpark is fine — we'll confirm against the statements.</div></div>
+
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin:20px 0 8px;">Who gets paid out of it</div>
+                <p class="req-meta" style="margin:-2px 0 10px;">A W-9 is needed before anyone's first payment — after that it becomes a chase. Anything paid on a credit card is left off their 1099 (the processor reports it instead), so how someone got paid matters as much as how much.</p>
+                <div id="pjSubs"></div>
+                <button type="button" class="btn btn-ghost" style="width:auto;padding:7px 14px;font-size:12.5px;margin-bottom:6px;" onclick="pjAddSubRow()"><i class="fa-solid fa-plus"></i> Add a subcontractor</button>
+
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin:20px 0 10px;">Costs that belong only to this job</div>
+                <div class="field"><label>What's on it</label><textarea id="pjCosts" placeholder="Flights and hotel for the Sept site visit; a licence for the scheduling tool; a monitor for the workstation"></textarea></div>
+                <div class="field-row">
+                    <div class="field" style="margin:0;"><label>Billed back to the client?</label><select id="pjReimb"><option>No — I absorb these</option><option>Yes — reimbursed</option><option>Partly</option><option>Not sure yet</option></select></div>
+                    <div class="field" style="margin:0;"><label>Mostly paid with</label><select id="pjCard"><option>Amex Platinum</option><option>Business checking</option><option>Mix of both</option><option>Personal — needs reimbursing</option></select></div>
+                </div>
+                <div class="field"><label>Anything unusual I should know</label><textarea id="pjNotes" placeholder="Revenue share with the distribution side, an odd payment arrangement, a client who pays late — anything that won't look normal in the bank feed."></textarea></div>
+
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;">
+                    <button type="submit" class="btn btn-accent" id="pjSubmitBtn" style="width:auto;"><i class="fa-solid fa-plus"></i> Add this project</button>
+                    <button type="button" class="btn btn-ghost" id="pjCancelBtn" style="width:auto;display:none;" onclick="pjCancelEdit()">Cancel edit</button>
+                    <button type="button" class="btn btn-ghost" style="width:auto;" onclick="pjClearForm()">Clear form</button>
+                </div>
+            </form>
+
+            <div id="projectsList"><div class="req-empty">Loading…</div></div>
+        </div>
+
+        <div class="section" id="requests">
+            <h2><i class="fa-solid fa-paper-plane"></i> Submit a Request</h2>
+            <form onsubmit="submitRequest(event)">
+                <div class="field-row">
+                    <div class="field" style="margin:0;">
+                        <label>Request type</label>
+                        <select id="reqType">
+                            <option value="support">Support / something's broken</option>
+                            <option value="change_request">Change request</option>
+                            <option value="new_feature">New feature idea</option>
+                            <option value="billing">Billing question</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="field" style="margin:0;">
+                        <label>Subject</label>
+                        <input type="text" id="reqSubject" required placeholder="Short summary">
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Details</label>
+                    <textarea id="reqDetails" placeholder="Tell us what you need — the more detail the better."></textarea>
+                </div>
+                <button type="submit" class="btn btn-accent" id="reqBtn" style="width:auto;"><i class="fa-solid fa-paper-plane"></i> Send request</button>
+            </form>
+        </div>
+
+        <div class="section" id="myRequests">
+            <h2><i class="fa-solid fa-clock-rotate-left"></i> My Requests</h2>
+            <div id="reqList"><div class="req-empty">Loading…</div></div>
+        </div>
+
+        <div class="section" id="tasksSection">
+            <h2><i class="fa-solid fa-list-check"></i> Tasks</h2>
+            <p style="font-size:13px;color:var(--text-sec);margin:-6px 0 14px;">Track what needs doing — add your own, or check off what we've asked for.</p>
+            <form onsubmit="clientAddTask(event)" style="border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:18px;display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;">
+                <div style="flex:1;min-width:180px;"><label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--text);margin-bottom:4px;">New task</label><input id="ntTitle" class="onb-input" placeholder="e.g. Send August receipts"></div>
+                <div><label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--text);margin-bottom:4px;">For</label><select id="ntFor" class="onb-input" style="min-width:150px;"><option value="client">Me</option><option value="tides">My bookkeeper</option></select></div>
+                <div><label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--text);margin-bottom:4px;">Due (optional)</label><input id="ntDue" type="date" class="onb-input"></div>
+                <button type="submit" class="btn btn-accent" id="ntBtn" style="width:auto;"><i class="fa-solid fa-plus"></i> Add</button>
+            </form>
+            <div id="tasksList"><div class="req-empty">Loading…</div></div>
+        </div>
+
+        <div class="section" id="datesSection">
+            <h2><i class="fa-solid fa-calendar-day"></i> Important Dates</h2>
+            <p style="font-size:13px;color:var(--text-sec);margin:-6px 0 16px;">Key tax deadlines and filing dates to keep on your radar.</p>
+            <div id="datesList"><div class="req-empty">Loading…</div></div>
+        </div>
+
+        <div class="section" id="teamSection">
+            <h2><i class="fa-solid fa-users"></i> Team</h2>
+            <p style="font-size:13px;color:var(--text-sec);margin:-6px 0 16px;">Give people on your team access to this portal. They'll sign in with their own email — no password needed.</p>
+            <form id="teamAddForm" onsubmit="addTeamMember(event)" style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;">
+                <input id="teamEmail" type="email" placeholder="teammate@email.com" required style="flex:1;min-width:200px;padding:10px 12px;border:1px solid var(--border);border-radius:9px;font-size:14px;">
+                <button type="submit" class="btn btn-accent" style="width:auto;"><i class="fa-solid fa-plus"></i> Add member</button>
+            </form>
+            <div id="teamList"><div class="req-empty">Loading…</div></div>
+        </div>
+
+        <div class="section" id="accountSection">
+            <h2><i class="fa-solid fa-user-gear"></i> Account</h2>
+            <div id="accountBody"><div class="req-empty">Loading…</div></div>
+        </div>
+    </main>
+
+    <div class="footer">
+        &copy; 2026 Nomad Systems Co. &nbsp;·&nbsp; <a href="https://www.nomadsystems.co" target="_blank" rel="noopener">nomadsystems.co</a>
+    </div>
+</div>
+
+<div id="helpScrim" onclick="closeHelp()"></div>
+<aside id="helpDrawer" aria-label="Help center">
+    <div class="help-head"><h3><i class="fa-solid fa-circle-question" style="color:var(--accent);margin-right:7px;"></i>Help Center</h3><button class="help-x" onclick="closeHelp()">&times;</button></div>
+    <div class="help-body" id="helpBody"><div class="req-empty" style="padding:20px;">Loading…</div></div>
+</aside>
+
+<div id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════════
+   Nomad Systems Client Portal — login + data-driven dashboard
+   Membership, cards, and billing all come from Supabase:
+     client_portal_members  → who's allowed in + role (client | nomad_admin)
+     client_portal_clients  → the client org + its Stripe billing link
+     client_portal_cards    → the dashboard cards each client sees
+   ════════════════════════════════════════════════════════════════════ */
+const SB_URL = 'https://wdvolamasztetwpitbwg.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indkdm9sYW1hc3p0ZXR3cGl0YndnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3Nzc2MTYsImV4cCI6MjA5MTM1MzYxNn0.uiGIaZwr88ZNtAobfSV-axlpXB3sos2Rcw3FiFm6JO8';
+
+const sb = window.supabase.createClient(SB_URL, SB_KEY, {
+    auth: { persistSession: true, storage: window.localStorage, autoRefreshToken: true, detectSessionInUrl: false }
+});
+
+/* Hostname → brokerage slug. Declared BEFORE init() runs, because init()'s very
+   first step (applyLoginBranding) calls hubSlug() synchronously — a const in the
+   temporal dead zone here threw and silently killed pre-login branding. */
+const CUSTOM_HUB_DOMAINS = { 'yrlagent.com': 'yrl', 'www.yrlagent.com': 'yrl', 'portal.yrlagent.com': 'yrl', 'portal.tidesbookkeeping.com': 'tides', 'demo.nomadsystems.co': 'csi' };
+/* Which clients have the real-estate AGENT HUB (Open My Hub / Hub Admin + hub redirect).
+   Everyone else — Tides bookkeeping clients, etc. — gets the plain client portal. */
+const HUB_SLUGS = new Set(['yrl', 'csi']);
+let currentUser = null, currentMember = null, currentClient = null;
+let _stripeUrl = '', _clientSlug = 'yrl';
+let _businesses = [], _cid = null;   /* Phase 2: all of the user's businesses + the selected one */
+
+/* ── Demo gate — fires only on demo.nomadsystems.co ── */
+(function(){
+    if (location.hostname !== 'demo.nomadsystems.co') return;
+    const gate = document.getElementById('demoGate');
+    if (!gate) return;
+    gate.style.display = 'flex';
+    setTimeout(() => { var i = document.getElementById('demoGateCode'); if(i) i.focus(); }, 120);
+})();
+
+async function demoGateSubmit(e){
+    e.preventDefault();
+    const code = (document.getElementById('demoGateCode').value || '').trim().toLowerCase();
+    const msgEl = document.getElementById('demoGateMsg');
+    const btn   = document.getElementById('demoGateBtn');
+    msgEl.style.display = 'none';
+    if (code !== 'demo') {
+        msgEl.textContent = 'Incorrect access code.';
+        msgEl.style.display = 'block';
+        document.getElementById('demoGateCode').value = '';
+        document.getElementById('demoGateCode').focus();
+        return;
+    }
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp; Signing in…';
+    try {
+        const res = await fetch(SB_URL + '/functions/v1/verify-pin', {
+            method: 'POST',
+            headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: 'marcus.webb@csirealtyteam.co', pin: '1234' })
+        });
+        const out = await res.json().catch(() => ({}));
+        if (!res.ok || !out.otp) {
+            msgEl.textContent = 'Demo sign-in failed — try again.';
+            msgEl.style.display = 'block';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i>&nbsp; Preview Hub';
+            return;
+        }
+        const { data, error } = await sb.auth.verifyOtp({ email: out.email, token: out.otp, type: 'email' });
+        if (error || !data.session) {
+            msgEl.textContent = 'Could not start demo session — try again.';
+            msgEl.style.display = 'block';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i>&nbsp; Preview Hub';
+            return;
+        }
+        window.location.href = 'hub.html';
+    } catch(err) {
+        msgEl.textContent = 'Network error — try again.';
+        msgEl.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i>&nbsp; Preview Hub';
+    }
+}
+
+init();
+async function init(){
+    if (location.hostname === 'demo.nomadsystems.co') {
+        /* On demo domain: if already authed as the demo user, go straight to hub. */
+        const { data: { session } } = await sb.auth.getSession();
+        if (session && (session.user.email || '').toLowerCase() === 'marcus.webb@csirealtyteam.co') {
+            window.location.href = 'hub.html';
+            return;
+        }
+        /* Otherwise the demo gate overlay is already showing — stop here. */
+        return;
+    }
+    applyLoginBranding().catch(e => console.error('login branding failed', e));
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) {
+        const member = await resolveMember(session.user.email);
+        if (member) { currentUser = session.user; currentMember = member; await showDash(); return; }
+        /* Signed in but not a portal member (e.g., a hub agent account) */
+        await sb.auth.signOut();
+        showLoginMsg('That account doesn\'t have portal access. Use your client account email, or contact support.', 'err');
+    }
+    if (new URLSearchParams(location.search).get('denied')) {
+        showLoginMsg('That account doesn\'t have portal access. Use your client account email, or contact support.', 'err');
+    }
+    document.getElementById('loginView').classList.remove('hidden');
+
+    /* Agents/owners sign in with email + 4-digit PIN — default the hub domains
+       (yrl.nomadsystems.co, yrlagent.com) to PIN. The "Email me a code" link
+       stays for buyers/sellers (transaction clients) and forgotten PINs.
+       portal.nomadsystems.co keeps the email-code default.
+       A `?login=code` (or `pin`) param overrides the default — client invite
+       emails link with ?login=code so buyers/sellers land on the code screen,
+       not the agent PIN screen. */
+    const _forceLogin = new URLSearchParams(location.search).get('login');
+    if (_forceLogin === 'code' || _forceLogin === 'pin') setLoginMode(_forceLogin);
+    else if (isHubHost() && hubSlug() !== 'tides') setLoginMode('pin'); /* Tides is a client portal (email-code default), not an agent hub (PIN) */
+
+    /* Catch the magic-link / code redirect */
+    sb.auth.onAuthStateChange(async (event, s) => {
+        if (event === 'SIGNED_IN' && s && !currentUser) {
+            const member = await resolveMember(s.user.email);
+            if (member) {
+                currentUser = s.user; currentMember = member;
+                document.getElementById('loginView').classList.add('hidden');
+                await showDash();
+            } else {
+                sb.auth.signOut();
+                showLoginMsg('That account doesn\'t have portal access.', 'err');
+            }
+        }
+    });
+}
+
+/* Resolve the caller's active membership row. RLS returns the user's own row
+   (admins get all), so we match by email. Returns {role, client_id} or null. */
+async function resolveMember(email){
+    const { data, error } = await sb.from('client_portal_members')
+        .select('role, status, client_id, email').eq('status','active');
+    if (error || !data) return null;
+    const lc = (email||'').toLowerCase();
+    return data.find(r => (r.email||'').toLowerCase() === lc) || null;
+}
+
+/* Phase 2: every active client membership for this user, with the business
+   name/slug joined in. Excludes the nomad_admin (global) membership. */
+async function resolveMemberships(email){
+    const { data, error } = await sb.from('client_portal_members')
+        .select('role, status, client_id, email, client_portal_clients(id, name, slug)')
+        .eq('status', 'active');
+    if (error || !data) return [];
+    const lc = (email||'').toLowerCase();
+    return data
+        .filter(r => (r.email||'').toLowerCase() === lc && r.client_id && r.role !== 'nomad_admin')
+        .map(r => ({ client_id: r.client_id, role: r.role,
+                     name: (r.client_portal_clients && r.client_portal_clients.name) || 'My business',
+                     slug: (r.client_portal_clients && r.client_portal_clients.slug) || '' }));
+}
+
+/* Pre-login white-label: brand the sign-in page from the subdomain slug
+   (e.g. yrl.nomadsystems.co → Your Realty Link's logo + accent). Anon-safe RPC. */
+/* Which brokerage hub is this hostname? Handles <slug>.nomadsystems.co AND
+   custom domains a brokerage points at their hub (e.g. yrlagent.com → yrl).
+   Returns the client slug, or null if this is the generic portal. */
+function hubSlug(){
+    const host = location.hostname.toLowerCase();
+    if (CUSTOM_HUB_DOMAINS[host]) return CUSTOM_HUB_DOMAINS[host];
+    const m = host.match(/^([a-z0-9-]+)\.nomadsystems\.co$/);
+    const s = m ? m[1] : null;
+    return (s && !['portal','www','app','staging'].includes(s)) ? s : null;
+}
+function isHubHost(){ return !!hubSlug(); }
+
+async function applyLoginBranding(){
+    const slug = hubSlug();
+    if (!slug) return;
+    try {
+        const { data } = await sb.rpc('portal_brand_by_slug', { p_slug: slug });
+        const b = Array.isArray(data) ? data[0] : data;
+        if (!b) return;
+        if (b.accent_color){
+            const r = document.documentElement.style;
+            r.setProperty('--accent', b.accent_color);
+            r.setProperty('--accent-light', b.accent_color);
+        }
+        const wm = document.getElementById('loginWordmark');
+        if (b.logo_url){
+            const img = document.getElementById('loginLogo');
+            if (img){ img.src = b.logo_url; img.alt = b.name || ''; img.style.display = 'block'; }
+            if (wm) wm.style.display = 'none';
+        } else if (b.name && wm){
+            wm.textContent = b.name;
+        }
+        if (b.name) document.title = b.name + ' — Sign in';
+    } catch (e) {}
+}
+
+function showLoginMsg(msg, cls){
+    const el = document.getElementById('loginMsg');
+    el.textContent = msg;
+    el.className = 'login-msg ' + cls;
+}
+
+let pendingEmail = null;
+
+async function sendCode(e){
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+    const btn = document.getElementById('loginBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Checking…';
+    /* Gate: only known portal emails get a code (data-driven via RPC). */
+    let allowed = false;
+    try { const { data } = await sb.rpc('portal_email_allowed', { p_email: email }); allowed = !!data; } catch {}
+    if (!allowed) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Email me a code';
+        showLoginMsg('That email isn\'t registered for portal access. Contact support if you think this is a mistake.', 'err');
+        return;
+    }
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending…';
+    const error = await requestLoginCode(email);
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Email me a code';
+    if (error) { showLoginMsg('Could not send the code: ' + error, 'err'); return; }
+    pendingEmail = email;
+    document.getElementById('codeSentTo').textContent = email;
+    document.getElementById('loginStep1').style.display = 'none';
+    document.getElementById('loginStep2').style.display = '';
+    document.getElementById('loginCode').value = '';
+    showLoginMsg('Code sent — check your email. (Check junk/spam the first time.)', 'ok');
+    setTimeout(() => document.getElementById('loginCode').focus(), 50);
+}
+
+/* ── Agent PIN sign-in (email + 4-digit PIN → verify-pin edge fn → real session) ── */
+function setLoginMode(mode){
+    document.getElementById('pinStep').style.display = mode === 'pin' ? '' : 'none';
+    document.getElementById('loginStep1').style.display = mode === 'pin' ? 'none' : '';
+    document.getElementById('loginStep2').style.display = 'none';
+    document.getElementById('loginMsg').className = 'login-msg';
+    setTimeout(() => document.getElementById(mode === 'pin' ? 'pinEmail' : 'loginEmail').focus(), 50);
+}
+
+async function pinSignIn(e){
+    e.preventDefault();
+    const email = document.getElementById('pinEmail').value.trim().toLowerCase();
+    const pin = document.getElementById('pinCode').value.trim();
+    if (!email || !email.includes('@')) { showLoginMsg('Enter your email address.', 'err'); return; }
+    if (!/^[0-9]{4}$/.test(pin)) { showLoginMsg('Enter your 4-digit PIN.', 'err'); return; }
+    const btn = document.getElementById('pinBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Signing in…';
+    try {
+        const res = await fetch(SB_URL + '/functions/v1/verify-pin', {
+            method: 'POST',
+            headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, pin })
+        });
+        const out = await res.json().catch(() => ({}));
+        if (!res.ok || !out.otp) {
+            showLoginMsg(out.error || 'PIN sign-in failed — try again or use an email code.', 'err');
+            document.getElementById('pinCode').value = '';
+            document.getElementById('pinCode').focus();
+            return;
+        }
+        const { data, error } = await sb.auth.verifyOtp({ email: out.email, token: out.otp, type: 'email' });
+        if (error || !data.session) { showLoginMsg('Could not start your session — try again.', 'err'); return; }
+        const member = await resolveMember(data.session.user.email);
+        if (!member) {
+            await sb.auth.signOut();
+            showLoginMsg('That account doesn\'t have portal access.', 'err');
+            return;
+        }
+        currentUser = data.session.user; currentMember = member;
+        document.getElementById('loginView').classList.add('hidden');
+        await showDash();
+    } catch (err) {
+        showLoginMsg('Network problem — try again.', 'err');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Sign in';
+    }
+}
+
+async function verifyCode(e){
+    e.preventDefault();
+    const code = document.getElementById('loginCode').value.trim();
+    const btn = document.getElementById('verifyBtn');
+    if (!/^[0-9]{6}$/.test(code)) { showLoginMsg('Enter the code from the email.', 'err'); return; }
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Signing in…';
+    /* type 'email' verifies both magic-link and signup-confirmation codes */
+    const { data, error } = await sb.auth.verifyOtp({ email: pendingEmail, token: code, type: 'email' });
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Sign in';
+    if (error || !data.session) {
+        showLoginMsg('That code didn\'t work — it may have expired. Double-check it, or send a new one.', 'err');
+        document.getElementById('loginCode').focus();
+        return;
+    }
+    const member = await resolveMember(data.session.user.email);
+    if (!member) {
+        await sb.auth.signOut();
+        showLoginMsg('That account doesn\'t have portal access.', 'err');
+        return;
+    }
+    currentUser = data.session.user; currentMember = member;
+    document.getElementById('loginView').classList.add('hidden');
+    await showDash();
+}
+
+/* Codes are sent by our own `portal-login-code` function, not by
+   supabase.auth.signInWithOtp — that path emails Supabase's project-wide
+   "Confirm signup" template (a link, not a code) to first-time addresses, and
+   could never carry per-brokerage branding. Returns null on success, else a
+   message to show. */
+async function requestLoginCode(email){
+    try {
+        const { data, error } = await sb.functions.invoke('portal-login-code', {
+            body: { email, slug: hubSlug() || '' }
+        });
+        if (error) {
+            let msg = '';
+            try { msg = (await error.context?.json())?.message || ''; } catch (_e) {}
+            return msg || 'please try again in a moment.';
+        }
+        return data?.ok ? null : 'please try again in a moment.';
+    } catch (e) {
+        return e.message || 'please try again in a moment.';
+    }
+}
+
+async function resendCode(e){
+    e.preventDefault();
+    if (!pendingEmail) { backToEmail(); return; }
+    const error = await requestLoginCode(pendingEmail);
+    showLoginMsg(error ? 'Could not resend — ' + error : 'New code sent — check your email.', error ? 'err' : 'ok');
+    document.getElementById('loginCode').value = '';
+    document.getElementById('loginCode').focus();
+}
+
+function backToEmail(e){
+    if (e) e.preventDefault();
+    pendingEmail = null;
+    document.getElementById('loginStep2').style.display = 'none';
+    document.getElementById('loginStep1').style.display = '';
+    document.getElementById('loginMsg').className = 'login-msg';
+    setTimeout(() => document.getElementById('loginEmail').focus(), 50);
+}
+
+function signOut(){ sb.auth.signOut().then(() => location.reload()); }
+
+/* ── Dashboard ─────────────────────────────────────────────── */
+async function showDash(){
+    document.getElementById('dashView').classList.remove('hidden');
+    const name = currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || currentUser.email;
+    document.getElementById('userChip').textContent = name;
+    initShell();
+    if (currentMember.role === 'nomad_admin') {
+        const previewId = new URLSearchParams(location.search).get('preview');
+        if (previewId) { await renderPreview(previewId); return; }
+        renderAdminDash(); return;
+    }
+    /* Landing depends on WHERE they arrived:
+         - A brokerage subdomain (yrl.nomadsystems.co) IS the hub → owners land
+           on the hub there.
+         - The generic portal.nomadsystems.co → owners get the portal dashboard
+           (billing, Hub Admin card, etc.); they reach the hub via the cards.
+       Agents have no portal, so they always go to the hub. */
+    const _p = new URLSearchParams(location.search);
+    const _onHubSubdomain = isHubHost();
+    if (currentMember.role === 'txn_client') { location.replace('my-transaction.html'); return; }
+    if (currentMember.role === 'agent') { location.replace('hub.html'); return; }
+    /* A "portal." subdomain (portal.yrlagent.com) IS the client/admin portal — owners stay here.
+       The bare hub domain (yrlagent.com) still sends owners to the agent hub. */
+    const _onPortalSubdomain = location.hostname.toLowerCase().startsWith('portal.');
+    if (currentMember.role === 'owner' && _onHubSubdomain && HUB_SLUGS.has(hubSlug()) && !_p.get('portal') && !_onPortalSubdomain) { location.replace('hub.html'); return; }
+    await renderClientDash();
+}
+
+function pcard(c){
+    const target = c.new_tab ? ' target="_blank" rel="noopener"' : '';
+    const badge = c.badge ? `<span class="soon">${esc(c.badge)}</span>` : '';
+    return `<a class="pcard${c.pinned ? ' pcard-pin' : ''}" href="${esc(c.href)}"${target}>
+        <div class="pcard-icon"><i class="${esc(c.icon||'fa-solid fa-link')}"></i></div>
+        <h3>${esc(c.title)}</h3><p>${esc(c.description||'')}</p>${badge}</a>`;
+}
+
+const MESSAGES_CARD = `<a class="pcard" href="#" onclick="switchPortalTab('messages');return false;">
+    <div class="pcard-icon"><i class="fa-solid fa-comments"></i></div>
+    <h3>Messages</h3><p>Chat directly with the Nomad team.</p></a>`;
+
+const ONBOARDING_CARD = `<a class="pcard" href="#" onclick="switchPortalTab('onboarding');return false;">
+    <div class="pcard-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+    <h3>Onboarding</h3><p>Tell us what we need to get started — update it anytime.</p></a>`;
+
+const REQUEST_CARD = `<a class="pcard" href="#" onclick="switchPortalTab('requests');return false;">
+    <div class="pcard-icon"><i class="fa-solid fa-paper-plane"></i></div>
+    <h3>Submit a Request</h3><p>Need a change, new feature, or help? Send it straight to us.</p></a>`;
+
+function renderBizSwitcher(){
+    const sel = document.getElementById('bizSwitcher');
+    const lbl = document.getElementById('bizLabel');
+    if (!sel) return;
+    const multi = _businesses.length > 1;
+    if (multi) sel.innerHTML = _businesses.map(b => `<option value="${esc(b.client_id)}"${b.client_id===_cid?' selected':''}>${esc(b.name)}</option>`).join('');
+    sel.style.display = multi ? '' : 'none';
+    if (lbl) lbl.style.display = multi ? '' : 'none';
+}
+async function switchBusiness(cid){
+    if (!cid || cid === _cid) return;
+    _cid = cid;
+    if (_msgChannel) { try { sb.removeChannel(_msgChannel); } catch(_e){} _msgChannel = null; }
+    await renderClientDash();
+}
+
+async function renderClientDash(){
+    /* Phase 2 (multi-business): a member can belong to several businesses. Load
+       them all, keep a selected one (_cid), and scope every query to it. */
+    if (!_businesses.length) _businesses = await resolveMemberships(currentUser.email);
+    if (!_cid) {
+        const _pref = _businesses.find(b => b.slug && b.slug === hubSlug());   /* land on the business matching the domain (e.g. Tides at portal.tidesbookkeeping.com) */
+        _cid = (_pref && _pref.client_id) || (currentMember && currentMember.client_id) || (_businesses[0] && _businesses[0].client_id);
+    }
+    const _bm = _businesses.find(b => b.client_id === _cid);
+    if (_bm) currentMember = { ...currentMember, role: _bm.role, client_id: _bm.client_id };
+    renderBizSwitcher();
+    const [{ data: client }, { data: cards }, { data: ents }] = await Promise.all([
+        sb.from('client_portal_clients').select('*').eq('id', _cid).maybeSingle(),
+        sb.from('client_portal_cards').select('*').eq('client_id', _cid).eq('enabled', true).order('sort_order', { ascending: true }),
+        sb.from('client_portal_entitlements')
+          .select('href_override, enabled, service:client_portal_services(key,name,description,icon,default_href,sort_order)')
+          .eq('client_id', _cid).eq('enabled', true)
+    ]);
+    currentClient = client || null;
+    _clientSlug = client?.slug || 'yrl';
+    /* Sidebar portal layout (formerly bookkeeping-only) now also powers the real-estate template. */
+    const _isBk = !!(client && (client.template_key === 'bookkeeping' || client.template_key === 'real_estate'));
+    document.body.classList.toggle('bk', _isBk);
+    document.body.setAttribute('data-tpl', (client && client.template_key) || '');
+    if (_isBk) switchPortalTab('dashboard');   /* hide sections up front so the sidebar grid doesn't flash overlap */
+    _stripeUrl  = client?.stripe_portal_url || '';
+    document.getElementById('clientName').textContent = client?.name || '';
+    document.getElementById('dashSubtitle').textContent = 'Your tools, billing, and support — all in one place.';
+    applyBranding(client);
+    renderBanners(client);
+    setShellBrand(client?.name, client?.logo_url);
+    { const an = document.getElementById('psAdminNav'); if (an) an.innerHTML = ''; }
+
+    /* Service cards from entitlements. The GBP card opens the in-portal GBP hub. */
+    let _gbpHref = 'https://business.google.com/';
+    _hasGbp = false;
+    _hasReports = false;
+    _hasContractors = !!(client && client.contractors_enabled);
+    const contractorsCard = _hasContractors ? `<a class="pcard" href="#" onclick="switchPortalTab('contractors');return false;"><div class="pcard-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div><h3>1099 / Contractors</h3><p>Track contractors, W-9s, and 1099 filing status.</p></a>` : '';
+    const serviceCards = (ents || []).map(e => {
+        const s = e.service; if (!s) return null;
+        const href = e.href_override || s.default_href;
+        if (s.key === 'gbp') { _hasGbp = true; if (href) _gbpHref = href; return { _gbp: true, title: s.name, description: s.description, icon: s.icon || 'fa-brands fa-google', _sort: s.sort_order || 0 }; }
+        if (s.key === 'reports') { _hasReports = true; return { _files: true, title: s.name, description: s.description, icon: s.icon || 'fa-solid fa-folder-open', _sort: s.sort_order || 0 }; }
+        if (!href) return null;
+        return { title: s.name, description: s.description, icon: s.icon, href, new_tab: true, _sort: s.sort_order || 0 };
+    }).filter(Boolean).sort((a,b) => a._sort - b._sort);
+    const cardHtml = (c) => c._gbp
+        ? `<a class="pcard" href="#" onclick="switchPortalTab('gbp');return false;"><div class="pcard-icon"><i class="${esc(c.icon)}"></i></div><h3>${esc(c.title)}</h3><p>${esc(c.description||'')}</p></a>`
+        : c._files
+        ? `<a class="pcard" href="#" onclick="switchPortalTab('files');return false;"><div class="pcard-icon"><i class="${esc(c.icon)}"></i></div><h3>${esc(c.title)}</h3><p>${esc(c.description||'')}</p></a>`
+        : pcard(c);
+
+    const billingSoon = _stripeUrl ? '' : '<span class="soon">Coming soon</span>';
+    const billingCard = `<a class="pcard" id="billingCard" href="#" onclick="openBilling(event)">
+        <div class="pcard-icon"><i class="fa-solid fa-credit-card"></i></div>
+        <h3>Billing</h3><p>Invoices, payment method, and your plan.</p>${billingSoon}</a>`;
+
+    /* Brokerage owners manage their hub from here — surface Hub + Admin first so
+       they always have a way in, even on the generic portal.nomadsystems.co. */
+    const isBrokerOwner = currentMember && (currentMember.role === 'owner' || currentMember.role === 'nomad_admin') && HUB_SLUGS.has(currentClient?.slug);
+    /* Hub + Hub Admin can ALSO exist as real client_portal_cards rows, so they can be
+       renamed/re-iconed/reordered in nomad-admin -> Cards. When a row exists it wins and
+       the hardcoded copy below is skipped (no duplicates); the hardcoded pair remains the
+       fallback for a brokerage with no rows yet.
+       Per-card visibility is client_portal_cards.min_role (client < owner < nomad_admin);
+       NULL/'client' = everyone, which is how every legacy row behaves. This is a UI filter,
+       not a security boundary — admin.html/hub.html enforce their own role gate. */
+    const _ROLE_RANK = { client: 1, owner: 2, nomad_admin: 3 };
+    const _myRank    = _ROLE_RANK[currentMember && currentMember.role] || 1;
+    const _hrefOf    = (c) => (c.href || '').trim().toLowerCase().replace(/^\.\//, '');
+    const _haveRow   = (h) => (cards || []).some((c) => _hrefOf(c) === h);
+    const cardRows   = (cards || []).filter((c) => _myRank >= (_ROLE_RANK[c.min_role] || 1));
+    const hubCards = !isBrokerOwner ? '' : [
+        _haveRow('hub.html') ? '' : `<a class="pcard" href="hub.html">
+            <div class="pcard-icon"><i class="fa-solid fa-store"></i></div>
+            <h3>Open My Hub</h3><p>Your agent hub — tools, listings, training, and resources.</p></a>`,
+        _haveRow('admin.html') ? '' : `<a class="pcard" href="admin.html">
+            <div class="pcard-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <h3>Hub Admin</h3><p>Manage agents, PINs, profiles, and office settings.</p></a>`
+    ].join('');
+
+    /* Pinned cards (e.g. the monthly-meeting booking link) always lead, full width. */
+    const bkCards = cardRows.slice().sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0)).map(pcard).join('');
+    document.getElementById('cardGrid').innerHTML = _isBk
+        ? (hubCards + bkCards || '<div class="req-empty">No quick links yet — your bookkeeper will add them here.</div>')
+        : hubCards + bkCards + serviceCards.map(cardHtml).join('') + contractorsCard + MESSAGES_CARD + ONBOARDING_CARD + billingCard + REQUEST_CARD;
+
+    document.getElementById('gbpTab').style.display = _hasGbp ? '' : 'none';
+    document.getElementById('contractorsTab').style.display = _hasContractors ? '' : 'none';
+    if (_hasContractors) loadClientContractors();
+    const _isBook = !!(client && client.template_key === 'bookkeeping');
+    document.getElementById('uploadsTab').style.display = _isBook ? '' : 'none';
+    document.getElementById('gbpGoogleBtn').href = _gbpHref;
+    document.getElementById('teamTab').style.display = (currentMember && currentMember.role === 'owner') ? '' : 'none';
+    document.getElementById('topBilling').style.display = '';
+    document.getElementById('ptabs').style.display = '';
+    if (_isBk) await applyBkChrome();
+    loadRequests();
+    loadClientFiles();
+    loadMessages();
+    loadOnboarding();
+    loadClientAudits();
+    if (_hasGbp) loadGbpChecklist();
+    loadProjects();
+    switchPortalTab(_isBk && !NEWLOOK ? 'files' : 'dashboard');
+    /* Template-driven left-nav order + per-client tab hides (Phase 3). Runs last so it
+       reorders/hides on top of the entitlement/role logic above, and can also force a
+       tab ON for one client even if the template hides it by default (e.g. Projects). */
+    if (_isBk && client && client.template_key) {
+        const { data: tpl } = await sb.from('client_portal_templates').select('tab_config').eq('key', client.template_key).maybeSingle();
+        applyTabConfig((tpl && tpl.tab_config) || [], client.tab_overrides || {}, client.tab_order || null);
+    }
+    subscribeMessages();
+}
+function applyTabConfig(config, overrides, order){
+    if (!Array.isArray(config) || !config.length) return;
+    overrides = overrides || {};
+    const byKey = {}; config.forEach((t) => { byKey[t.key] = t; });
+    /* `order` is an optional per-client custom sequence (client.tab_order). Any
+       template tab missing from it (e.g. one added after the client's order was
+       saved) is appended at the end in the template's own order, so it still shows
+       up instead of silently vanishing. */
+    const keys = (Array.isArray(order) && order.length)
+        ? order.filter((k) => byKey[k]).concat(config.map((t) => t.key).filter((k) => !order.includes(k)))
+        : config.map((t) => t.key);
+    keys.forEach((key, i) => {
+        const t = byKey[key]; if (!t) return;
+        const tab = document.querySelector('.ptab[data-ptab="' + key + '"]');
+        if (!tab) return;
+        tab.style.order = i + 1;
+        /* overrides[key]: true = force on (even if the template hides it for everyone
+           else), false = force off, absent = template default. Only touch .display
+           when we need to — earlier entitlement checks (GBP/contractors/etc.) already
+           hid tabs that don't apply to this client, and this must never undo that. */
+        const ov = overrides[key];
+        if (ov === true) tab.style.display = '';
+        else if (ov === false || t.shown === false) tab.style.display = 'none';
+    });
+    const firstVisible = keys.find((key) => {
+        const tab = document.querySelector('.ptab[data-ptab="' + key + '"]');
+        return tab && window.getComputedStyle(tab).display !== 'none';
+    });
+    if (NEWLOOK) switchPortalTab('dashboard');   /* new look always lands on Home */
+    else if (firstVisible) switchPortalTab(firstVisible);
+}
+
+function renderAdminDash(){
+    document.getElementById('clientName').textContent = 'Nomad Systems';
+    document.getElementById('dashSubtitle').textContent = 'Your command center — what needs you across all clients.';
+    document.getElementById('portalBanners').innerHTML = '';
+    ['requests','myRequests','filesSection','uploadsSection','messagesSection','onboardingSection','gbpSection','contractorsSection','projectsSection','tasksSection','datesSection','teamSection','accountSection']
+        .forEach((id) => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+    document.getElementById('topBilling').style.display = 'none';
+    document.getElementById('ptabs').style.display = 'none';
+    const cg = document.getElementById('cardGrid'); if (cg) cg.style.display = 'none';
+    const ac = document.getElementById('adminCenter'); ac.style.display = '';
+    ac.innerHTML = `
+      <div class="ac-layout">
+        <div class="ac-nav">
+          <a class="ac-navlink ac-admin-link" href="nomad-admin.html"><i class="fa-solid fa-user-shield"></i> Open admin console</a>
+          <button class="ac-navlink active" data-actab="replies" onclick="switchAdminTab('replies')"><i class="fa-solid fa-reply"></i> Needs a reply</button>
+          <button class="ac-navlink" data-actab="tasks" onclick="switchAdminTab('tasks')"><i class="fa-solid fa-list-check"></i> On my plate</button>
+          <button class="ac-navlink" data-actab="requests" onclick="switchAdminTab('requests')"><i class="fa-solid fa-paper-plane"></i> Open requests</button>
+          <button class="ac-navlink" data-actab="workspace" onclick="switchAdminTab('workspace')"><i class="fa-solid fa-briefcase"></i> Nomad Systems workspace</button>
+        </div>
+        <div class="ac-content">
+          <div class="section" id="ccReplies" data-acpanel="replies"><h2><i class="fa-solid fa-reply"></i> Needs a reply</h2><div class="cc-body"><div class="req-empty">Loading…</div></div></div>
+          <div class="section" id="ccTasks" data-acpanel="tasks" style="display:none;"><h2><i class="fa-solid fa-list-check"></i> On my plate</h2><div class="cc-body"><div class="req-empty">Loading…</div></div></div>
+          <div class="section" id="ccRequests" data-acpanel="requests" style="display:none;"><h2><i class="fa-solid fa-paper-plane"></i> Open requests</h2><div class="cc-body"><div class="req-empty">Loading…</div></div></div>
+          <div class="section" id="ccWorkspace" data-acpanel="workspace" style="display:none;"><h2><i class="fa-solid fa-briefcase"></i> Nomad Systems workspace</h2><p style="font-size:13px;color:var(--text-sec);margin:-6px 0 14px;">Your own team and 1099 contractors — kept separate from your clients.</p><div class="cc-body" id="ccWorkspaceBody"><div class="req-empty">Loading…</div></div></div>
+        </div>
+      </div>`;
+    if (NEWLOOK) {
+        /* Same shell as clients: the Command Center's nav lives in the sidebar. */
+        setShellBrand('Nomad Systems', null);
+        const an = document.getElementById('psAdminNav'), src = ac.querySelector('.ac-nav');
+        if (an && src) an.innerHTML = src.innerHTML;
+        const hs = document.getElementById('homeSummary'); if (hs) hs.style.display = 'none';
+        const dh = document.querySelector('.dash-head'); if (dh) dh.style.display = '';
+    }
+    loadCommandCenter();
+    setupNomadWorkspace();
+}
+function switchAdminTab(name){
+    document.querySelectorAll('.ac-navlink[data-actab]').forEach((b) => b.classList.toggle('active', b.dataset.actab === name));
+    document.querySelectorAll('.ac-content [data-acpanel]').forEach((p) => { p.style.display = p.dataset.acpanel === name ? '' : 'none'; });
+}
+
+/* ── Command center (nomad admin) — an action inbox across ALL clients.
+   Only shows what needs a reply / task / handling; the full conversation and
+   history live in each client's page in the admin console. Both surfaces read
+   the same tables, so answering here syncs everywhere automatically. ─────── */
+let _ccClients = {};
+function _ccName(id){ return (_ccClients[id] && _ccClients[id].name) || 'Client'; }
+function _ccBadge(sectionId, n){
+    const h = document.querySelector('#' + sectionId + ' h2'); if (!h) return;
+    let b = h.querySelector('.cc-badge');
+    if (!b) { b = document.createElement('span'); b.className = 'cc-badge'; h.appendChild(b); }
+    b.textContent = n ? String(n) : '';
+    b.style.cssText = n ? 'display:inline-block;margin-left:8px;background:var(--accent);color:#fff;font-size:12px;font-weight:800;border-radius:100px;padding:1px 9px;vertical-align:middle;' : 'display:none;';
+}
+async function loadCommandCenter(){
+    const [cl, msgs, tasks, reqs] = await Promise.all([
+        sb.from('client_portal_clients').select('id,name,slug,admin_last_read_at'),
+        sb.from('client_portal_messages').select('client_id,sender_role,body,created_at').order('created_at', { ascending: true }),
+        sb.from('client_portal_tasks').select('*').neq('assignee', 'client'),
+        sb.from('client_portal_requests').select('*').order('created_at', { ascending: false })
+    ]);
+    /* Exclude the Nomad Systems workspace (not a client) and archived clients from the aggregation. */
+    const clientsOnly = (cl.data || []).filter((c) => c.slug !== 'nomad' && !c.archived_at);
+    _ccClients = {}; clientsOnly.forEach((c) => { _ccClients[c.id] = c; });
+    ccRenderReplies(clientsOnly, msgs.data || []);
+    ccRenderTasks((tasks.data || []).filter((t) => _ccClients[t.client_id]));
+    ccRenderRequests((reqs.data || []).filter((r) => !r.client_id || _ccClients[r.client_id]));
+}
+/* Nomad Systems' OWN team + 1099 live here on the portal hub — not in the client
+   console. Reuse the existing Team + Contractors sections by pointing the client
+   context at the Nomad workspace and moving them into the dashboard. */
+async function setupNomadWorkspace(){
+    const body = document.getElementById('ccWorkspaceBody'); if (!body) return;
+    const { data: nomad } = await sb.from('client_portal_clients').select('*').eq('slug', 'nomad').maybeSingle();
+    if (!nomad) { body.innerHTML = '<div class="req-empty">Workspace not set up yet.</div>'; return; }
+    currentClient = nomad; _cid = nomad.id;
+    currentMember = { client_id: nomad.id, role: 'owner', email: currentUser.email };
+    const team = document.getElementById('teamSection');
+    const contractors = document.getElementById('contractorsSection');
+    body.innerHTML = '';
+    if (contractors) { body.appendChild(contractors); contractors.style.display = ''; }
+    if (team) { body.appendChild(team); team.style.display = ''; }
+    loadClientContractors();
+    loadTeam();
+}
+function ccRenderReplies(clients, msgs){
+    const byClient = {};
+    msgs.forEach((m) => { (byClient[m.client_id] = byClient[m.client_id] || []).push(m); });
+    const items = [];
+    clients.forEach((c) => {
+        const list = byClient[c.id]; if (!list || !list.length) return;
+        const lastClientMsg = [...list].reverse().find((m) => m.sender_role === 'client');
+        if (!lastClientMsg) return;
+        const lastRead = c.admin_last_read_at ? new Date(c.admin_last_read_at) : null;
+        if (lastRead && new Date(lastClientMsg.created_at) <= lastRead) return;
+        items.push({ client_id: c.id, name: c.name, preview: lastClientMsg.body, when: lastClientMsg.created_at });
+    });
+    const el = document.querySelector('#ccReplies .cc-body'); _ccBadge('ccReplies', items.length);
+    if (!items.length) { el.innerHTML = '<div class="req-empty">You’re all caught up — no unanswered messages.</div>'; return; }
+    el.innerHTML = items.map((it) => `
+        <div class="req-item" style="flex-direction:column;align-items:stretch;gap:10px;">
+          <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;">
+            <div style="min-width:0;"><div class="req-subject">${esc(it.name)}</div>
+              <div class="req-meta" style="margin-top:3px;">${esc((it.preview || '').slice(0, 160))}</div></div>
+            <a class="btn" href="nomad-admin.html?client=${it.client_id}&dtab=messages" style="width:auto;padding:7px 11px;font-size:12px;background:var(--surface-2);color:var(--text);white-space:nowrap;">Open thread</a>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <input id="ccr-${it.client_id}" placeholder="Quick reply…" onkeydown="if(event.key==='Enter')ccReply('${it.client_id}')" style="flex:1;background:var(--surface-2);border:1.5px solid var(--border);border-radius:8px;padding:8px 11px;font-size:13px;font-family:inherit;">
+            <button class="btn btn-accent" style="width:auto;padding:8px 14px;font-size:12.5px;" onclick="ccReply('${it.client_id}')"><i class="fa-solid fa-paper-plane"></i> Send</button>
+          </div>
+        </div>`).join('');
+}
+async function ccReply(cid){
+    const inp = document.getElementById('ccr-' + cid); if (!inp) return;
+    const body = (inp.value || '').trim(); if (!body) return;
+    inp.disabled = true;
+    const { error } = await sb.from('client_portal_messages').insert({ client_id: cid, sender_role: 'admin', sender_email: currentUser.email, body });
+    if (error) { toast('Could not send: ' + error.message, 'error'); inp.disabled = false; return; }
+    await sb.rpc('mark_thread_read', { p_client_id: cid });
+    toast('Reply sent.', 'success');
+    loadCommandCenter();
+}
+function ccRenderTasks(tasks){
+    const items = (tasks || []).filter((t) => (t.status || '') !== 'done');
+    items.sort((a, b) => ((a.due_date || '9999') < (b.due_date || '9999') ? -1 : 1));
+    const el = document.querySelector('#ccTasks .cc-body'); _ccBadge('ccTasks', items.length);
+    if (!items.length) { el.innerHTML = '<div class="req-empty">Nothing on your plate right now.</div>'; return; }
+    el.innerHTML = items.map((t) => `
+        <div class="req-item">
+          <div style="min-width:0;flex:1;">
+            <div class="req-subject">${esc(t.title)}</div>
+            <div class="req-meta">${esc(_ccName(t.client_id))}${t.due_date ? ` · due ${esc(new Date(t.due_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }))}` : ''}</div>
+          </div>
+          <button class="btn btn-accent" style="width:auto;padding:7px 12px;font-size:12px;" onclick="ccTaskDone('${t.id}')"><i class="fa-solid fa-check"></i> Done</button>
+        </div>`).join('');
+}
+async function ccTaskDone(id){
+    const { error } = await sb.from('client_portal_tasks').update({ status: 'done' }).eq('id', id);
+    if (error) { toast('Could not update: ' + error.message, 'error'); return; }
+    toast('Marked done.', 'success'); loadCommandCenter();
+}
+function ccRenderRequests(reqs){
+    const open = (reqs || []).filter((r) => !r.status || !['closed', 'handled', 'done', 'resolved'].includes(String(r.status).toLowerCase()));
+    const el = document.querySelector('#ccRequests .cc-body'); _ccBadge('ccRequests', open.length);
+    if (!open.length) { el.innerHTML = '<div class="req-empty">No open requests.</div>'; return; }
+    el.innerHTML = open.map((r) => `
+        <div class="req-item" style="flex-direction:column;align-items:stretch;gap:8px;">
+          <div style="min-width:0;"><div class="req-subject">${esc(r.subject || r.request_type || 'Request')}</div>
+            <div class="req-meta">${esc(_ccName(r.client_id))}${r.user_name ? ` · ${esc(r.user_name)}` : ''}${r.request_type ? ` · ${esc(r.request_type)}` : ''}</div>
+            ${r.details ? `<div class="req-meta" style="margin-top:4px;">${esc(String(r.details).slice(0, 180))}</div>` : ''}</div>
+          <div style="display:flex;gap:8px;">
+            <a class="btn" href="nomad-admin.html?client=${r.client_id}&tab=requests" style="width:auto;padding:7px 11px;font-size:12px;background:var(--surface-2);color:var(--text);">Open</a>
+            <button class="btn btn-accent" style="width:auto;padding:7px 12px;font-size:12px;" onclick="ccReqHandled('${r.id}')"><i class="fa-solid fa-check"></i> Mark handled</button>
+          </div>
+        </div>`).join('');
+}
+async function ccReqHandled(id){
+    const { error } = await sb.from('client_portal_requests').update({ status: 'closed' }).eq('id', id);
+    if (error) { toast('Could not update: ' + error.message, 'error'); return; }
+    toast('Marked handled.', 'success'); loadCommandCenter();
+}
+
+/* Admin preview: render a client's dashboard read-only (cards + branding). */
+async function renderPreview(clientId){
+    const [{ data: client }, { data: cards }, { data: ents }] = await Promise.all([
+        sb.from('client_portal_clients').select('*').eq('id', clientId).maybeSingle(),
+        sb.from('client_portal_cards').select('*').eq('client_id', clientId).eq('enabled', true).order('sort_order', { ascending: true }),
+        sb.from('client_portal_entitlements').select('href_override, enabled, service:client_portal_services(key,name,description,icon,default_href,sort_order)').eq('client_id', clientId).eq('enabled', true)
+    ]);
+    currentClient = client || null;
+    _cid = clientId;
+    _clientSlug = client?.slug || '';
+    _stripeUrl = client?.stripe_portal_url || '';
+    /* Mirror the real dashboard's template-driven sidebar layout — a preview
+       that skips this just shows the generic flat layout regardless of template. */
+    const _isBk = !!(client && (client.template_key === 'bookkeeping' || client.template_key === 'real_estate'));
+    document.body.classList.toggle('bk', _isBk);
+    document.body.setAttribute('data-tpl', (client && client.template_key) || '');
+    document.getElementById('clientName').textContent = client?.name || '';
+    document.getElementById('dashSubtitle').textContent = 'Preview — exactly what this client sees.';
+    applyBranding(client);
+    renderBanners(client);
+    setShellBrand(client?.name, client?.logo_url);
+    { const an = document.getElementById('psAdminNav'); if (an) an.innerHTML = ''; }
+    if (NEWLOOK) { const acEl = document.getElementById('adminCenter'); if (acEl) acEl.style.display = 'none'; }
+
+    _hasGbp = false; _hasReports = false;
+    _hasContractors = !!(client && client.contractors_enabled);
+    const contractorsCard = _hasContractors ? `<a class="pcard" href="#" onclick="switchPortalTab('contractors');return false;"><div class="pcard-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div><h3>1099 / Contractors</h3><p>Track contractors, W-9s, and 1099 filing status.</p></a>` : '';
+    let _gbpHref = 'https://business.google.com/';
+    const serviceCards = (ents || []).map((e) => {
+        const s = e.service; if (!s) return null;
+        const href = e.href_override || s.default_href;
+        if (s.key === 'gbp') { _hasGbp = true; if (href) _gbpHref = href; return { _gbp: true, title: s.name, description: s.description, icon: s.icon || 'fa-brands fa-google', _sort: s.sort_order || 0 }; }
+        if (s.key === 'reports') { _hasReports = true; return { _files: true, title: s.name, description: s.description, icon: s.icon || 'fa-solid fa-folder-open', _sort: s.sort_order || 0 }; }
+        if (!href) return null;
+        return { title: s.name, description: s.description, icon: s.icon, href, new_tab: true, _sort: s.sort_order || 0 };
+    }).filter(Boolean).sort((a, b) => a._sort - b._sort);
+    const cardHtml = (c) => (c._gbp || c._files)
+        ? `<a class="pcard" href="#" onclick="return false;"><div class="pcard-icon"><i class="${esc(c.icon)}"></i></div><h3>${esc(c.title)}</h3><p>${esc(c.description||'')}</p></a>`
+        : pcard(c);
+    const billingSoon = _stripeUrl ? '' : '<span class="soon">Coming soon</span>';
+    const billingCard = `<a class="pcard" href="#" onclick="return false;"><div class="pcard-icon"><i class="fa-solid fa-credit-card"></i></div><h3>Billing</h3><p>Invoices, payment method, and your plan.</p>${billingSoon}</a>`;
+    const bkCards = (cards || []).slice().sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0)).map(pcard).join('');
+    document.getElementById('cardGrid').innerHTML = _isBk
+        ? (bkCards || '<div class="req-empty">No quick links yet — your bookkeeper will add them here.</div>')
+        : bkCards + serviceCards.map(cardHtml).join('') + contractorsCard + billingCard;
+
+    /* client_portal_requests reads are unscoped (RLS-only) — as nomad_admin that would
+       pull every client's requests into view here, so Requests stays out of preview. */
+    ['requests','myRequests'].forEach((id) => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+    const reqTabAlways = document.querySelector('.ptab[data-ptab="requests"]'); if (reqTabAlways) reqTabAlways.style.display = 'none';
+    document.getElementById('topBilling').style.display = 'none';
+    document.getElementById('cardGrid').style.display = '';
+
+    if (_isBk) {
+        document.getElementById('ptabs').style.display = '';
+        document.getElementById('contractorsTab').style.display = _hasContractors ? '' : 'none';
+        if (_hasContractors) loadClientContractors();
+        document.getElementById('uploadsTab').style.display = (client.template_key === 'bookkeeping') ? '' : 'none';
+        document.getElementById('gbpTab').style.display = _hasGbp ? '' : 'none';
+        document.getElementById('gbpGoogleBtn').href = _gbpHref;
+        document.getElementById('teamTab').style.display = '';   /* team/messages/onboarding are all client_id-scoped reads — safe to preview for real, left to applyTabConfig below */
+        await applyBkChrome();
+        loadClientFiles();
+        loadMessages();
+        loadOnboarding();
+        loadTeam();
+        loadProjects();
+        if (_hasGbp) loadGbpChecklist();
+        if (client.template_key) {
+            const { data: tpl } = await sb.from('client_portal_templates').select('tab_config').eq('key', client.template_key).maybeSingle();
+            applyTabConfig((tpl && tpl.tab_config) || [], client.tab_overrides || {}, client.tab_order || null);
+        }
+        switchPortalTab(NEWLOOK ? 'dashboard' : 'files');
+    } else {
+        if (NEWLOOK) {
+            /* Sidebar layout for every template: show the client's real tabs. Requests stays
+               hidden in preview because that query isn't scoped to one client for an admin. */
+            document.getElementById('ptabs').style.display = '';
+            const rq = document.querySelector('.ptab[data-ptab="requests"]'); if (rq) rq.style.display = 'none';
+            document.getElementById('gbpTab').style.display = _hasGbp ? '' : 'none';
+            document.getElementById('contractorsTab').style.display = _hasContractors ? '' : 'none';
+            loadClientFiles(); loadMessages(); loadOnboarding();
+            if (_hasContractors) loadClientContractors();
+            if (_hasGbp) loadGbpChecklist();
+            switchPortalTab('dashboard');
+        } else {
+            document.getElementById('ptabs').style.display = 'none';
+            ['filesSection','gbpSection'].forEach((id) => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+        }
+    }
+
+    let banner = document.getElementById('previewBanner');
+    if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'previewBanner';
+        banner.style.cssText = 'background:#fef3c7;color:#92400e;padding:9px 14px;border-radius:9px;font-size:12.5px;font-weight:700;margin-bottom:16px;';
+        const main = document.querySelector('.main');
+        main.insertBefore(banner, main.firstChild);
+    }
+    banner.textContent = "👁 Preview — viewing " + (client?.name || 'this client') + "'s portal as they see it (read-only).";
+}
+
+async function openBilling(e){
+    e.preventDefault();
+    /* Prefer a per-customer billing session so the client manages/cancels
+       their own subscriptions; fall back to the generic login link. */
+    if (currentClient && currentClient.stripe_customer_id) {
+        try {
+            const { data: { session } } = await sb.auth.getSession();
+            const res = await fetch(SB_URL + '/functions/v1/stripe-billing-portal', {
+                method: 'POST',
+                headers: { Authorization: 'Bearer ' + session.access_token, apikey: SB_KEY, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ return_url: window.location.href })
+            });
+            const out = await res.json().catch(() => ({}));
+            if (res.ok && out.url) { window.location.href = out.url; return; }
+        } catch (_e) { /* fall through to generic link */ }
+    }
+    if (_stripeUrl) window.location.href = _stripeUrl;
+    else toast('Billing portal is being set up — for now, email us with billing questions.');
+}
+
+/* ── Requests ─────────────────────────────────────────────── */
+async function getToken(){
+    const { data } = await sb.auth.getSession();
+    if (!data.session) throw new Error('Session expired — refresh the page');
+    return data.session.access_token;
+}
+function hdrs(token, extra){ return Object.assign({apikey:SB_KEY, Authorization:'Bearer '+token, 'Content-Type':'application/json'}, extra||{}); }
+
+async function submitRequest(e){
+    e.preventDefault();
+    const btn = document.getElementById('reqBtn');
+    btn.disabled = true;
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending…';
+    try {
+        const payload = {
+            client_id:    _clientSlug,
+            user_name:    currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || null,
+            user_email:   currentUser.email,
+            request_type: document.getElementById('reqType').value,
+            subject:      document.getElementById('reqSubject').value.trim(),
+            details:      document.getElementById('reqDetails').value.trim() || null
+        };
+        const token = await getToken();
+        const res = await fetch(SB_URL+'/rest/v1/client_portal_requests', {
+            method:'POST', headers: hdrs(token, {'Prefer':'return=minimal'}), body: JSON.stringify(payload)
+        });
+        if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(err.message || ('HTTP '+res.status)); }
+        /* Admin is notified server-side via DB trigger -> portal-request-hook. */
+        toast('Request sent — we\'ll get back to you shortly.', 'success');
+        document.getElementById('reqSubject').value = '';
+        document.getElementById('reqDetails').value = '';
+        loadRequests();
+    } catch(err) {
+        toast('Could not send: ' + err.message, 'error');
+    } finally {
+        btn.disabled = false; btn.innerHTML = orig;
+    }
+}
+
+async function loadRequests(){
+    const wrap = document.getElementById('reqList');
+    try {
+        const token = await getToken();
+        const res = await fetch(SB_URL+'/rest/v1/client_portal_requests?select=*&order=created_at.desc&limit=25', { headers: hdrs(token) });
+        if (!res.ok) throw new Error('HTTP '+res.status);
+        const rows = await res.json();
+        if (!rows.length) { wrap.innerHTML = '<div class="req-empty">No requests yet — anything you submit shows up here with its status.</div>'; return; }
+        const TYPE_LABEL = {support:'Support', change_request:'Change request', new_feature:'New feature', billing:'Billing', other:'Other'};
+        wrap.innerHTML = rows.map(r => {
+            const d = new Date(r.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+            return `<div class="req-item">
+                <div style="min-width:0;flex:1;">
+                    <div class="req-subject">${esc(r.subject)}</div>
+                    <div class="req-meta">${esc(TYPE_LABEL[r.request_type]||r.request_type)} · ${esc(d)}</div>
+                    ${r.details ? `<div class="req-details">${esc(r.details)}</div>` : ''}
+                    ${r.admin_notes ? `<div class="req-details" style="color:var(--accent);"><b>Nomad Systems:</b> ${esc(r.admin_notes)}</div>` : ''}
+                </div>
+                <span class="req-status ${esc(r.status)}">${esc(r.status.replace('_',' '))}</span>
+            </div>`;
+        }).join('');
+    } catch(e) {
+        wrap.innerHTML = '<div class="req-empty">Could not load requests: '+esc(e.message)+'</div>';
+    }
+}
+
+/* ── Banners (past-due + announcement) ───────────────────── */
+function renderBanners(client){
+    const el = document.getElementById('portalBanners');
+    if (!el) return;
+    let html = '';
+    if (client && (client.billing_status === 'past_due' || client.billing_status === 'unpaid')) {
+        html += '<div class="banner banner-warn">⚠ There’s a payment issue with your subscription. <a href="#" onclick="openBilling(event);return false;">Update your payment method →</a></div>';
+    }
+    if (client && client.announcement) {
+        html += '<div class="banner banner-info">📣 ' + esc(client.announcement) + '</div>';
+    }
+    el.innerHTML = html;
+}
+
+/* ── Per-client branding ─────────────────────────────────── */
+function applyBranding(client){
+    const root = document.documentElement.style;
+    if (client && client.accent_color) {
+        const c = client.accent_color;
+        root.setProperty('--accent', c);
+        root.setProperty('--accent-light', c);
+        if (/^#[0-9a-fA-F]{6}$/.test(c)) root.setProperty('--accent-bg', c + '1a');
+    }
+    const head = document.querySelector('.dash-head');
+    const existing = document.getElementById('clientLogo');
+    if (existing) existing.remove();
+    if (head && client && client.logo_url && !document.body.classList.contains('bk')) {
+        const img = document.createElement('img');
+        img.id = 'clientLogo';
+        img.src = client.logo_url;
+        img.alt = client.name || '';
+        img.style.cssText = 'max-height:46px;max-width:200px;margin-bottom:12px;display:block;object-fit:contain;';
+        head.insertBefore(img, head.firstChild);
+    }
+}
+
+/* ── Reports & files ─────────────────────────────────────── */
+let _allFiles = [], _fileFolders = [], _filesCurrentFolder = null;
+const _FMON = ['','January','February','March','April','May','June','July','August','September','October','November','December'];
+const _FMONABBR = { jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12 };
+function _filePeriod(f){
+    const p = (f.period||'').trim(); let y=null, m=null;
+    let mm = p.match(/(\d{4})[-\/](\d{1,2})/); if (mm){ y=+mm[1]; m=+mm[2]; }
+    else { const ym = p.match(/(19|20)\d{2}/); if (ym) y=+ym[0]; const mo=p.toLowerCase().match(/jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec/); if (mo) m=_FMONABBR[mo[0]]; }
+    if (!y){ const d=new Date(f.created_at); y=d.getFullYear(); if (m==null) m=d.getMonth()+1; }
+    return { y, m:(m||0) };
+}
+function _kindLabel(k){ const map={monthly_analysis:'Monthly Analysis',pl:'Profit & Loss',balance_sheet:'Balance Sheet',cash_flow:'Cash Flows',reconciliation:'Reconciliation',ar_aging:'A/R Aging',ap_aging:'A/P Aging',sales_tax:'Sales Tax',payroll:'Payroll',report:'Report',estimated_tax:'Estimated Tax',sales_tax_return:'Sales Tax Return',tax:'Tax',cpa_package:'Year-End / CPA',agreement:'Agreement',bank:'Bank Statement',statement:'Statement',audit:'Audit',file:'File'}; return map[k] || (k ? k.charAt(0).toUpperCase()+k.slice(1) : 'File'); }
+async function loadClientFiles(){
+    const el = document.getElementById('filesList');
+    const gel = document.getElementById('gbpFiles');
+    const tab = document.getElementById('filesTab');
+    const [{ data, error }, { data: folders, error: fErr }] = await Promise.all([
+        sb.from('client_portal_files').select('*').eq('client_id', _cid).order('created_at', { ascending: false }),
+        sb.from('client_portal_file_folders').select('*').eq('client_id', _cid).order('sort', { ascending: true }).order('name', { ascending: true })
+    ]);
+    const files = error ? [] : (data || []);
+    _allFiles = files;
+    renderHomeSummary();
+    _fileFolders = fErr ? [] : (folders || []);
+    if (_filesCurrentFolder && !_fileFolders.some(f => f.id === _filesCurrentFolder)) _filesCurrentFolder = null;
+    _hasFiles = files.length > 0;
+    const _showFilesTab = (_hasFiles || _hasReports || _fileFolders.length > 0 || document.body.classList.contains('bk')) && !_hasGbp;
+    if (tab) tab.style.display = _showFilesTab ? '' : 'none';
+    if (!files.length && !_fileFolders.length) { if (!_showFilesTab && activePortalTab() === 'files') switchPortalTab('dashboard'); if (el) el.innerHTML = '<div class="req-empty">No files yet — your reports will appear here.</div>'; if (gel) gel.innerHTML = '<div class="req-empty">No files yet.</div>'; return; }
+    renderFiles('');
+}
+function _clientFileFolderPath(id){
+    const path = []; let f = _fileFolders.find(x => x.id === id);
+    while (f) { path.unshift(f); f = f.parent_id ? _fileFolders.find(x => x.id === f.parent_id) : null; }
+    return path;
+}
+function goToClientFileFolder(id){ _filesCurrentFolder = id; renderFiles(''); }
+function renderFiles(q){
+    const el = document.getElementById('filesList'); const gel = document.getElementById('gbpFiles'); if (!el) return;
+    q = (q||'').trim(); const ql = q.toLowerCase();
+    /* Searching looks across every folder at once; browsing (no query) stays scoped to the open folder. */
+    let files = ql ? _allFiles : _allFiles.filter(f => (f.folder_id || null) === _filesCurrentFolder);
+    if (ql) files = files.filter(f => ((f.title||'')+' '+(f.kind||'')+' '+(f.period||'')).toLowerCase().includes(ql));
+    const search = `<div style="position:relative;margin-bottom:14px;"><input id="fileSearch" type="search" placeholder="Search files…" oninput="renderFiles(this.value)" value="${esc(q)}" style="width:100%;background:var(--surface-2);border:1.5px solid var(--border);border-radius:10px;padding:9px 12px 9px 34px;font-size:13.5px;font-family:inherit;outline:none;"><i class="fa-solid fa-magnifying-glass" style="position:absolute;left:12px;top:11px;color:var(--text-muted);font-size:13px;"></i></div>`;
+    /* A file uploaded with no year/month (period left blank) is undated by design —
+       pin it above everything, including the folder list, instead of burying it in
+       whatever year it happened to be uploaded in. */
+    const undated = ql ? [] : files.filter(f => !f.period);
+    if (!ql) files = files.filter(f => f.period);
+    const pinnedHtml = undated.map(f => `<div class="req-item"><div style="min-width:0;flex:1;"><div class="req-subject">${esc(f.title)}</div><div class="req-meta"><span class="fkind">${esc(_kindLabel(f.kind))}</span> · ${esc(new Date(f.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}))}</div></div><button class="btn btn-accent" style="width:auto;padding:8px 14px;font-size:12.5px;" onclick="dlFile('${esc(f.storage_path)}')"><i class="fa-solid fa-download"></i> Download</button></div>`).join('');
+    let folderHtml = '', subfolderCount = 0;
+    if (!ql) {
+        const path = _clientFileFolderPath(_filesCurrentFolder);
+        if (path.length) {
+            const crumbs = [`<a href="#" onclick="goToClientFileFolder(null);return false;" style="font-weight:700;">All files</a>`]
+                .concat(path.map((f, i) => i === path.length - 1 ? `<span style="font-weight:700;color:var(--text-muted);">${esc(f.name)}</span>` : `<a href="#" onclick="goToClientFileFolder('${f.id}');return false;" style="font-weight:700;">${esc(f.name)}</a>`));
+            folderHtml += `<div style="margin-bottom:12px;font-size:13px;">${crumbs.join(' <span class="req-meta">/</span> ')}</div>`;
+        }
+        /* Standard folders are pre-created for every client; hide ones with nothing in them yet (at any depth). */
+        const hasContent = (id) => _allFiles.some(x => x.folder_id === id) || _fileFolders.some(x => x.parent_id === id && hasContent(x.id));
+        const subfolders = _fileFolders.filter(f => (f.parent_id || null) === _filesCurrentFolder && hasContent(f.id));
+        subfolderCount = subfolders.length;
+        folderHtml += subfolders.map(f => {
+            const count = _allFiles.filter(x => x.folder_id === f.id).length + _fileFolders.filter(x => x.parent_id === f.id).length;
+            return `<div class="req-item" style="cursor:pointer;" onclick="goToClientFileFolder('${f.id}')"><div style="min-width:0;flex:1;"><div class="req-subject"><i class="fa-solid fa-folder" style="color:var(--accent);margin-right:6px;"></i>${esc(f.name)}</div></div><span class="req-meta">${count} item${count!==1?'s':''} <i class="fa-solid fa-chevron-right" style="margin-left:4px;"></i></span></div>`;
+        }).join('');
+    }
+    if (!files.length){ el.innerHTML = search + pinnedHtml + folderHtml + (ql || (!subfolderCount && !undated.length) ? `<div class="req-empty">${ql ? 'No files match your search.' : 'No files here yet.'}</div>` : ''); if (gel) gel.innerHTML = el.innerHTML; return; }
+    const byYear = {};
+    files.forEach(f => { const {y,m} = _filePeriod(f); (byYear[y] = byYear[y] || {}); (byYear[y][m] = byYear[y][m] || []).push(f); });
+    /* Within a month, show the package in reading order — the Monthly Analysis (the headline) first. */
+    const PKG = ['monthly_analysis','pl','balance_sheet','cash_flow','reconciliation','ar_aging','ap_aging','sales_tax','payroll','report'];
+    const rank = (k) => { const i = PKG.indexOf(k); return i < 0 ? PKG.length : i; };
+    Object.values(byYear).forEach((months) => Object.values(months).forEach((list) => list.sort((a, b) => rank(a.kind) - rank(b.kind))));
+    const years = Object.keys(byYear).map(Number).sort((a,b)=>b-a);
+    let html = search + pinnedHtml + folderHtml;
+    years.forEach((yr, yi) => {
+        const open = (yi === 0) || !!ql;
+        const months = Object.keys(byYear[yr]).map(Number).sort((a,b)=>b-a);
+        const count = months.reduce((n,mo)=>n+byYear[yr][mo].length,0);
+        html += `<div class="fy-group${open?' open':''}"><button type="button" class="fy-head" onclick="this.parentNode.classList.toggle('open')"><i class="fa-solid fa-chevron-down fy-chev"></i> <span>${yr}</span><span class="fy-count">${count} file${count!==1?'s':''}</span></button><div class="fy-body">`;
+        months.forEach(mo => {
+            if (mo > 0) html += `<div class="fy-month">${_FMON[mo]}</div>`;
+            byYear[yr][mo].forEach(f => {
+                html += `<div class="req-item"><div style="min-width:0;flex:1;"><div class="req-subject">${esc(f.title)}</div><div class="req-meta"><span class="fkind">${esc(_kindLabel(f.kind))}</span>${f.period?(' · '+esc(f.period)):''} · ${esc(new Date(f.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}))}</div></div><button class="btn btn-accent" style="width:auto;padding:8px 14px;font-size:12.5px;" onclick="dlFile('${esc(f.storage_path)}')"><i class="fa-solid fa-download"></i> Download</button></div>`;
+            });
+        });
+        html += `</div></div>`;
+    });
+    el.innerHTML = html;
+    if (gel) gel.innerHTML = html;
+}
+
+/* ── Bookkeeping chrome: logo, Chat rename, Tasks + Help visibility ─── */
+async function applyBkChrome(){
+    try {
+        const { data: db } = await sb.rpc('portal_brand_by_slug', { p_slug: hubSlug() || '' });
+        const brand = Array.isArray(db) ? db[0] : db;
+        if (brand && brand.name) {
+            const wm = document.querySelector('.wordmark'); if (wm) wm.textContent = brand.name;
+            const ft = document.querySelector('.footer'); if (ft) ft.innerHTML = '&copy; ' + new Date().getFullYear() + ' ' + esc(brand.name);
+        }
+        if (brand && brand.logo_url) { const hl = document.getElementById('bkHeadLogo'); if (hl) hl.src = brand.logo_url; }
+    } catch(e){}
+    const h1 = document.querySelector('.dash-head h1'); if (h1) h1.textContent = 'Your Portal';
+    const ae = document.getElementById('acctEmail');
+    if (ae && currentUser) ae.innerHTML = '<i class="fa-solid fa-user-gear"></i> ' + esc(currentUser.email);
+    const show = id => { const el = document.getElementById(id); if (el) el.style.display = ''; };
+    show('helpBtn'); show('tasksTab'); show('accountTab');
+    /* Classic: no Home tab, dates pinned under every tab. New look: Home is the landing page and
+       Important Dates is its own tab for bookkeeping (applyTabConfig can still hide it per client). */
+    const dtab = document.querySelector('.ptab[data-ptab="dashboard"]'); if (dtab) dtab.style.display = NEWLOOK ? '' : 'none';
+    const dttab = document.querySelector('.ptab[data-ptab="dates"]');
+    if (dttab) dttab.style.display = (NEWLOOK && currentClient && currentClient.template_key === 'bookkeeping') ? '' : 'none';
+    const mtab = document.querySelector('.ptab[data-ptab="messages"]');
+    if (mtab) { mtab.innerHTML = '<i class="fa-solid fa-comments"></i> Chat <span id="msgTabBadge" class="msg-badge" style="display:none;"></span>'; setMsgBadges(_unreadMsgs); }
+    const mh = document.querySelector('#messagesSection h2');
+    if (mh) mh.innerHTML = '<i class="fa-solid fa-comments"></i> Chat';
+    const rtab = document.querySelector('.ptab[data-ptab="requests"]');
+    if (rtab) rtab.style.display = (currentClient && currentClient.template_key === 'real_estate') ? '' : 'none';
+    loadClientTasks();
+    loadHelp();
+    loadKeyDates();
+}
+
+/* ── Tasks (client) ──────────────────────────────────────── */
+function taskTag(assignee){
+    const them = (currentClient && currentClient.template_key === 'real_estate') ? 'For Nomad' : 'For Bookkeeper';
+    return assignee === 'client'
+        ? '<span class="pill" style="background:var(--accent-bg);color:var(--accent);font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;">For you</span>'
+        : `<span class="pill" style="background:#eef2f7;color:#5b6b82;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;">${them}</span>`;
+}
+async function loadClientTasks(){
+    const el = document.getElementById('tasksList');
+    if (!el) return;
+    const { data, error } = await sb.from('client_portal_tasks').select('*').eq('client_id', _cid).order('due_date', { ascending: true, nullsFirst: false }).order('created_at');
+    if (error) { el.innerHTML = `<div class="req-empty">Could not load: ${esc(error.message)}</div>`; return; }
+    const rows = data || [];
+    const dueTag = d => d ? `<span class="pill" style="background:var(--amber-light);color:var(--amber);font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;">Due ${esc(new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}))}</span>` : '';
+    const rowHtml = r => {
+        const isDone = r.status === 'done';
+        return `<div class="tk ${r.assignee!=='client'?'mine':''} ${isDone?'done':''}">
+            <div class="tk-box ${isDone?'done':''}" onclick="toggleTask('${r.id}','${isDone?'open':'done'}')">${isDone?'<i class="fa-solid fa-check" style="font-size:11px;"></i>':''}</div>
+            <div><div class="tk-ti">${esc(r.title)}</div>${r.detail?`<div class="tk-de">${esc(r.detail)}</div>`:''}</div>
+            <div class="tk-right">${taskTag(r.assignee)}${!isDone?dueTag(r.due_date):''}</div>
+        </div>`;
+    };
+    const open = rows.filter(r => r.status!=='done');
+    const done = rows.filter(r => r.status==='done');
+    _openClientTasks = open.filter(r => r.assignee === 'client'); renderHomeSummary();
+    let html = '';
+    if (open.length) html += `<div class="tk-group"><h3>To do</h3>${open.map(rowHtml).join('')}</div>`;
+    if (done.length) html += `<div class="tk-group"><h3>Completed</h3>${done.map(rowHtml).join('')}</div>`;
+    el.innerHTML = html || '<div class="req-empty">No tasks yet — add one above, or check back for what we need.</div>';
+}
+async function toggleTask(id, status){
+    const { error } = await sb.from('client_portal_tasks').update({ status }).eq('id', id);
+    if (error) toast('Could not update: ' + error.message, 'error');
+    loadClientTasks();
+}
+async function clientAddTask(e){
+    e.preventDefault();
+    const title = document.getElementById('ntTitle').value.trim();
+    if (!title) { toast('Enter a task.', 'error'); return; }
+    const btn = document.getElementById('ntBtn'); btn.disabled = true;
+    const payload = { client_id: _cid, title, assignee: document.getElementById('ntFor').value,
+        due_date: document.getElementById('ntDue').value || null, created_by: currentUser && currentUser.email };
+    const { error } = await sb.from('client_portal_tasks').insert(payload);
+    btn.disabled = false;
+    if (error) { toast('Could not add: ' + error.message, 'error'); return; }
+    document.getElementById('ntTitle').value = ''; document.getElementById('ntDue').value = '';
+    toast('Task added.', 'success');
+    loadClientTasks();
+}
+
+/* ── Important Dates (client) ────────────────────────────── */
+let _kdYear = null;
+function setKdYear(y){ _kdYear = y; loadKeyDates(); }
+async function loadKeyDates(){
+    const el = document.getElementById('datesList');
+    if (!el) return;
+    const { data, error } = await sb.from('client_portal_key_dates').select('*').eq('active', true).order('due_date');
+    if (error) { el.innerHTML = `<div class="req-empty">Could not load: ${esc(error.message)}</div>`; return; }
+    const tk = currentClient && currentClient.template_key;
+    const all = (data||[]).filter(d => !d.template_key || d.template_key === tk);
+    _kdAll = all; renderHomeSummary();
+    if (!all.length) { el.innerHTML = '<div class="req-empty">No dates posted yet.</div>'; return; }
+    const today = new Date(); today.setHours(0,0,0,0);
+    const years = [...new Set(all.map(d => new Date(d.due_date+'T00:00:00').getFullYear()))].sort();
+    if (!_kdYear || !years.includes(_kdYear)) _kdYear = years.find(y => y >= today.getFullYear()) || years[0];
+    /* Countdown to the next upcoming date (across all years) */
+    const next = all.map(d => ({d, dt:new Date(d.due_date+'T00:00:00')})).filter(x => x.dt >= today).sort((a,b)=>a.dt-b.dt)[0];
+    let countdown = '';
+    if (next) {
+        const days = Math.round((next.dt - today) / 86400000);
+        countdown = `<div style="background:var(--accent-bg);border:1px solid var(--accent);border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <span style="font-size:24px;font-weight:800;color:var(--accent);line-height:1;">${days}</span>
+            <span style="font-weight:700;">day${days!==1?'s':''} until <span style="color:var(--accent);">${esc(next.d.title)}</span></span>
+            <span style="font-size:12px;color:var(--text-muted);margin-left:auto;">${esc(next.dt.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}))}</span></div>`;
+    }
+    const toggle = years.length > 1 ? `<div style="display:inline-flex;gap:4px;background:var(--surface-2);border:1px solid var(--border);border-radius:9px;padding:3px;margin-bottom:16px;">${
+        years.map(y => `<button onclick="setKdYear(${y})" style="border:none;background:${y===_kdYear?'var(--accent)':'transparent'};color:${y===_kdYear?'#fff':'var(--text-sec)'};font:inherit;font-size:13px;font-weight:700;padding:5px 15px;border-radius:7px;cursor:pointer;">${y}</button>`).join('')
+    }</div>` : '';
+    const rows = all.filter(d => new Date(d.due_date+'T00:00:00').getFullYear() === _kdYear);
+    const list = rows.map(d => {
+        const dt = new Date(d.due_date + 'T00:00:00');
+        const past = dt < today;
+        const isNext = next && d.id === next.d.id;
+        const mon = dt.toLocaleDateString('en-US',{month:'short'}).toUpperCase();
+        return `<div class="tk" style="${past?'opacity:.5;':''}${isNext?'border-color:var(--accent);box-shadow:0 0 0 1px var(--accent);':''}">
+            <div style="flex:0 0 auto;width:46px;text-align:center;border:1px solid var(--border);border-radius:9px;overflow:hidden;">
+                <div style="background:var(--accent);color:#fff;font-size:10px;font-weight:800;letter-spacing:.5px;padding:2px 0;">${esc(mon)}</div>
+                <div style="font-size:18px;font-weight:800;color:var(--ink);padding:1px 0 2px;">${dt.getDate()}</div></div>
+            <div><div class="tk-ti">${esc(d.title)}${isNext?' <span class="pill" style="background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;">Next up</span>':''}</div>${d.note?`<div class="tk-de">${esc(d.note)}</div>`:''}
+                <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">${esc(dt.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}))}</div></div>
+        </div>`;
+    }).join('');
+    el.innerHTML = countdown + toggle + list;
+}
+
+/* ── Help Center (client) ────────────────────────────────── */
+async function loadHelp(){
+    const el = document.getElementById('helpBody');
+    if (!el) return;
+    const { data, error } = await sb.from('client_portal_help_articles').select('*').eq('active', true).order('sort_order');
+    if (error) { el.innerHTML = '<div class="req-empty" style="padding:20px;">Could not load help.</div>'; return; }
+    const arts = (data||[]).filter(a => !a.template_key || a.template_key === (currentClient && currentClient.template_key));
+    if (!arts.length) { el.innerHTML = '<div class="req-empty" style="padding:20px;">No help articles yet.</div>'; return; }
+    const cats = [];
+    arts.forEach(a => { if (!cats.includes(a.category)) cats.push(a.category); });
+    el.innerHTML = cats.map(cat => `<div class="help-cat">${esc(cat)}</div>` +
+        arts.filter(a=>a.category===cat).map(a => `<div class="help-art" onclick="this.classList.toggle('open')"><h4>${esc(a.title)}</h4><div class="hb">${esc(a.body||'')}</div></div>`).join('')).join('');
+}
+function openHelp(){ document.getElementById('helpScrim').classList.add('on'); document.getElementById('helpDrawer').classList.add('on'); }
+function closeHelp(){ document.getElementById('helpScrim').classList.remove('on'); document.getElementById('helpDrawer').classList.remove('on'); }
+
+/* ── Account (client) ────────────────────────────────────── */
+function loadAccount(){
+    const el = document.getElementById('accountBody');
+    if (!el || !currentUser) return;
+    const name = (currentUser.user_metadata && (currentUser.user_metadata.full_name || currentUser.user_metadata.name)) || '';
+    el.innerHTML = `<div style="max-width:460px;">
+        <div style="margin-bottom:14px;"><label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;color:var(--text);">Email</label>
+            <div style="padding:11px 13px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;color:var(--text-sec);font-size:14px;">${esc(currentUser.email)}</div></div>
+        <div style="margin-bottom:14px;"><label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;color:var(--text);">Your name</label>
+            <input id="acctName" class="onb-input" value="${esc(name)}" placeholder="Your name"></div>
+        <button class="btn btn-accent" style="width:auto;" onclick="saveAccount()"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+        <p style="font-size:12.5px;color:var(--text-muted);margin-top:22px;line-height:1.55;"><i class="fa-solid fa-shield-halved" style="color:var(--accent);margin-right:6px;"></i>You sign in with a secure one-time code we email you each time — there's no password to remember or reset. Need to change the email on your account? Just send us a note in Chat.</p>
+    </div>`;
+}
+async function saveAccount(){
+    const el = document.getElementById('acctName');
+    const name = el ? el.value.trim() : '';
+    const { error } = await sb.auth.updateUser({ data: { full_name: name } });
+    if (error) { toast('Could not save: ' + error.message, 'error'); return; }
+    currentUser.user_metadata = Object.assign({}, currentUser.user_metadata, { full_name: name });
+    const chip = document.getElementById('userChip'); if (chip) chip.textContent = name || currentUser.email;
+    toast('Saved.', 'success');
+}
+
+/* ── 1099 / Contractors (client) ─────────────────────────── */
+async function loadClientContractors(){
+    const el = document.getElementById('clientContractorsList');
+    if (!el) return;
+    const { data, error } = await sb.from('client_portal_contractors').select('*').eq('client_id', _cid).order('name');
+    if (error) { el.innerHTML = `<div class="req-empty">Could not load: ${esc(error.message)}</div>`; return; }
+    const rows = data || [];
+    if (!rows.length) { el.innerHTML = '<div class="req-empty">No contractors added yet — add the people and businesses you paid this year above.</div>'; return; }
+    const badge = (txt, kind) => {
+        const col = kind==='good' ? 'background:#dcfce7;color:#166534' : kind==='warn' ? 'background:#fef3c7;color:#92400e' : kind==='info' ? 'background:#dbeafe;color:#1e40af' : 'background:#eef2f7;color:#5b6b82';
+        return `<span style="display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;${col};">${esc(txt)}</span>`;
+    };
+    el.innerHTML = rows.map(r => {
+        const flag = (r.needs_1099 || Number(r.amount_paid) >= 600);
+        const w9 = r.w9_received ? badge('W-9 received','good') : (r.w9_file_path ? badge('W-9 uploaded','info') : badge('W-9 needed','warn'));
+        const f1 = r.filed_1099 ? badge('1099 filed','good') : (flag ? badge('1099 pending','warn') : '');
+        return `<div class="req-item" style="flex-direction:column;align-items:stretch;gap:10px;">
+            <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;">
+                <div style="min-width:0;"><div class="req-subject">${esc(r.name)}</div>${r.email?`<div class="req-meta">${esc(r.email)}</div>`:''}</div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">${w9} ${f1}</div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                ${r.w9_file_path
+                    ? `<button class="btn btn-ghost" style="width:auto;padding:7px 12px;font-size:12px;" onclick="dlFile('${esc(r.w9_file_path)}')"><i class="fa-solid fa-file-arrow-down"></i> View W-9</button>`
+                    : `<label class="btn btn-accent" style="width:auto;padding:7px 12px;font-size:12px;cursor:pointer;"><i class="fa-solid fa-upload"></i> Upload W-9<input type="file" accept="application/pdf,.pdf,image/*" style="display:none;" onchange="clientUploadW9('${r.id}', this)"></label>`}
+            </div>
+        </div>`;
+    }).join('');
+}
+
+/* ── Projects (client — the "Tides Project Intake" form, saved straight to the portal) ── */
+function _money(n){ n = Number(n); return isFinite(n) ? n.toLocaleString('en-US', { style:'currency', currency:'USD', maximumFractionDigits:0 }) : '—'; }
+const _STATUS_COLOR = { 'Active':'good', 'Wrapping up':'info', 'Complete':'off', 'On hold':'warn' };
+let _cProjCache = [], _cProjPayeeCache = [], _pjEditId = null, _pjBackfill = false;
+async function loadProjects(){
+    const el = document.getElementById('projectsList');
+    if (!el) return;
+    const [{ data: projects, error }, { data: payees, error: pErr }] = await Promise.all([
+        sb.from('client_portal_projects').select('*').eq('client_id', _cid).order('start_date', { ascending: false, nullsFirst: false }),
+        sb.from('client_portal_project_payees').select('*').eq('client_id', _cid).order('sort', { ascending: true })
+    ]);
+    if (error || pErr) { el.innerHTML = `<div class="req-empty">Could not load: ${esc((error||pErr).message)}</div>`; return; }
+    _cProjCache = projects || []; _cProjPayeeCache = payees || [];
+    if (!document.getElementById('pjSubs').children.length) pjAddSubRow();
+    renderProjectsList();
+}
+function renderProjectsList(){
+    const el = document.getElementById('projectsList');
+    if (!el) return;
+    if (!_cProjCache.length) { el.innerHTML = '<div class="req-empty">No projects added yet. Fill in the form above, then choose "Add this project."</div>'; return; }
+    const badge = (txt, kind) => {
+        const col = kind==='good' ? 'background:#dcfce7;color:#166534' : kind==='warn' ? 'background:#fef3c7;color:#92400e' : kind==='info' ? 'background:#dbeafe;color:#1e40af' : 'background:#eef2f7;color:#5b6b82';
+        return `<span style="display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;${col};">${esc(txt)}</span>`;
+    };
+    const w9Badge = (s) => s === 'Yes' ? badge('W-9 on file','good') : s === 'Not sure' ? badge('W-9 unclear','warn') : badge('W-9 needed','warn');
+    el.innerHTML = _cProjCache.map((p) => {
+        const mine = _cProjPayeeCache.filter((x) => x.project_id === p.id);
+        const paidOut = mine.reduce((sum, x) => sum + (Number(x.amount) || 0), 0);
+        const revenue = Number(p.received_to_date) || Number(p.contract_value) || 0;
+        const margin = revenue - paidOut;
+        const dates = [p.start_date, p.expected_wrap_date].filter(Boolean).map((d) => new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}));
+        const payeeRows = mine.map((x) => `<div class="req-item"><div style="min-width:0;flex:1;"><div class="req-subject">${esc(x.name||'—')}</div><div class="req-meta">${x.payment_method?esc(x.payment_method)+' · ':''}${_money(x.amount)}</div></div>${w9Badge(x.w9_status)}</div>`).join('');
+        return `<div class="req-item" style="flex-direction:column;align-items:stretch;gap:12px;margin-bottom:14px;">
+            <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start;">
+                <div style="min-width:0;">
+                    <div class="req-subject" style="font-size:15px;">${esc(p.name)}</div>
+                    <div class="req-meta">${p.end_client?esc(p.end_client)+' · ':''}${dates.join(' – ')||''}</div>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    ${badge(p.status||'Active', _STATUS_COLOR[p.status]||'off')}
+                    <button type="button" class="btn btn-ghost" style="width:auto;padding:5px 11px;font-size:11.5px;" onclick="pjEditProject('${p.id}')">Edit</button>
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;background:var(--surface-2);border-radius:10px;padding:12px;">
+                <div><div class="req-meta">Contract value</div><b>${_money(p.contract_value)}</b></div>
+                ${p.received_to_date!=null?`<div><div class="req-meta">Received so far</div><b>${_money(p.received_to_date)}</b></div>`:''}
+                <div><div class="req-meta">Paid to payees</div><b>${_money(paidOut)}</b></div>
+                <div><div class="req-meta">Margin</div><b style="color:var(--accent);">${_money(margin)}</b></div>
+            </div>
+            ${p.deposit_account?`<div class="req-meta"><i class="fa-solid fa-building-columns"></i> Deposits to: ${esc(p.deposit_account)}</div>`:''}
+            ${mine.length?`<div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin-bottom:6px;">Paid out of this job</div>${payeeRows}</div>`:''}
+            ${p.costs_description?`<div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin-bottom:4px;">Job costs</div><div class="req-meta">${esc(p.costs_description)}${p.reimbursable?' · '+esc(p.reimbursable):''}</div></div>`:''}
+            ${p.notes?`<div class="req-meta"><i class="fa-solid fa-circle-info"></i> ${esc(p.notes)}</div>`:''}
+        </div>`;
+    }).join('');
+}
+
+/* -- form: mode toggle, subcontractor rows, add/edit/save -- */
+function pjSetMode(isBack){
+    _pjBackfill = isBack;
+    const nb = document.getElementById('pjModeNew'), bb = document.getElementById('pjModeBack');
+    nb.className = 'btn ' + (isBack ? 'btn-ghost' : 'btn-accent');
+    bb.className = 'btn ' + (isBack ? 'btn-accent' : 'btn-ghost');
+    document.getElementById('pjRecdWrap').style.display = isBack ? '' : 'none';
+}
+function pjAddSubRow(seed){
+    seed = seed || {};
+    const wrap = document.getElementById('pjSubs'); if (!wrap) return;
+    const opt = (val, cur) => `<option ${cur===val?'selected':''}>${val}</option>`;
+    const div = document.createElement('div');
+    div.className = 'pj-sub-row';
+    div.style.cssText = 'border:1px solid var(--border);border-radius:9px;padding:12px;margin-bottom:10px;';
+    div.innerHTML = `
+        <div class="field-row">
+            <div class="field" style="margin:0;"><label>Name</label><input class="ps-name" value="${esc(seed.name||'')}" placeholder="Jordan Reyes"></div>
+            <div class="field" style="margin:0;"><label>Email</label><input class="ps-email" type="email" value="${esc(seed.email||'')}" placeholder="jordan@example.com"></div>
+        </div>
+        <div class="field-row" style="margin-top:13px;">
+            <div class="field" style="margin:0;"><label>Amount</label><input class="ps-amt" type="number" min="0" step="100" value="${seed.amount??''}" placeholder="50000"></div>
+            <div class="field" style="margin:0;"><label>Paid by</label><select class="ps-how">${opt('Bank transfer / ACH',seed.payment_method)}${opt('Check',seed.payment_method)}${opt('Credit card',seed.payment_method)}${opt('Not paid yet',seed.payment_method)}</select></div>
+        </div>
+        <div class="field-row" style="margin-top:13px;align-items:end;">
+            <div class="field" style="margin:0;"><label>W-9 on file</label><select class="ps-w9">${opt('Not yet',seed.w9_status)}${opt('Yes',seed.w9_status)}${opt('Not sure',seed.w9_status)}</select></div>
+            <button type="button" class="btn btn-ghost" style="width:auto;height:fit-content;" onclick="this.closest('.pj-sub-row').remove(); if(!document.getElementById('pjSubs').children.length) pjAddSubRow();">Remove</button>
+        </div>`;
+    wrap.appendChild(div);
+}
+function pjClearForm(){
+    ['pjName','pjClient','pjStart','pjEnd','pjValue','pjAcct','pjRecd','pjCosts','pjNotes'].forEach((id) => { const el = document.getElementById(id); if (el) el.value = ''; });
+    document.getElementById('pjStatus').value = 'Active';
+    document.getElementById('pjBilling').value = 'Lump sum';
+    document.getElementById('pjReimb').value = 'No — I absorb these';
+    document.getElementById('pjCard').value = 'Amex Platinum';
+    document.getElementById('pjSubs').innerHTML = ''; pjAddSubRow();
+    pjSetMode(false);
+    _pjEditId = null;
+    document.getElementById('pjSubmitBtn').innerHTML = '<i class="fa-solid fa-plus"></i> Add this project';
+    document.getElementById('pjCancelBtn').style.display = 'none';
+}
+function pjEditProject(id){
+    const p = _cProjCache.find((x) => x.id === id); if (!p) return;
+    _pjEditId = id;
+    document.getElementById('pjName').value = p.name || '';
+    document.getElementById('pjClient').value = p.end_client || '';
+    document.getElementById('pjStatus').value = p.status || 'Active';
+    document.getElementById('pjStart').value = p.start_date || '';
+    document.getElementById('pjEnd').value = p.expected_wrap_date || '';
+    document.getElementById('pjValue').value = p.contract_value ?? '';
+    document.getElementById('pjBilling').value = p.invoicing_method || 'Lump sum';
+    document.getElementById('pjAcct').value = p.deposit_account || '';
+    document.getElementById('pjRecd').value = p.received_to_date ?? '';
+    pjSetMode(p.received_to_date != null);
+    document.getElementById('pjCosts').value = p.costs_description || '';
+    document.getElementById('pjReimb').value = p.reimbursable || 'No — I absorb these';
+    document.getElementById('pjCard').value = p.costs_paid_with || 'Amex Platinum';
+    document.getElementById('pjNotes').value = p.notes || '';
+    const subs = _cProjPayeeCache.filter((x) => x.project_id === id);
+    document.getElementById('pjSubs').innerHTML = '';
+    (subs.length ? subs : [{}]).forEach((s) => pjAddSubRow(s));
+    document.getElementById('pjSubmitBtn').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save changes';
+    document.getElementById('pjCancelBtn').style.display = '';
+    document.getElementById('pjForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function pjCancelEdit(){ pjClearForm(); }
+async function pjSubmit(e){
+    e.preventDefault();
+    const name = document.getElementById('pjName').value.trim();
+    if (!name) { toast('Give the project a name first.', 'error'); return; }
+    const btn = document.getElementById('pjSubmitBtn');
+    btn.disabled = true;
+    try {
+        const fields = {
+            client_id: _cid, name,
+            end_client: document.getElementById('pjClient').value.trim() || null,
+            status: document.getElementById('pjStatus').value,
+            start_date: document.getElementById('pjStart').value || null,
+            expected_wrap_date: document.getElementById('pjEnd').value || null,
+            contract_value: document.getElementById('pjValue').value ? Number(document.getElementById('pjValue').value) : null,
+            invoicing_method: document.getElementById('pjBilling').value,
+            deposit_account: document.getElementById('pjAcct').value.trim() || null,
+            received_to_date: (_pjBackfill && document.getElementById('pjRecd').value) ? Number(document.getElementById('pjRecd').value) : null,
+            costs_description: document.getElementById('pjCosts').value.trim() || null,
+            reimbursable: document.getElementById('pjReimb').value,
+            costs_paid_with: document.getElementById('pjCard').value,
+            notes: document.getElementById('pjNotes').value.trim() || null
+        };
+        let projectId = _pjEditId;
+        if (projectId) {
+            const { error } = await sb.from('client_portal_projects').update(fields).eq('id', projectId);
+            if (error) throw error;
+        } else {
+            const { data, error } = await sb.from('client_portal_projects').insert(fields).select().maybeSingle();
+            if (error) throw error;
+            projectId = data.id;
+        }
+        const subRows = [...document.querySelectorAll('#pjSubs .pj-sub-row')].map((row, i) => ({
+            name: row.querySelector('.ps-name').value.trim(),
+            email: row.querySelector('.ps-email').value.trim() || null,
+            amount: row.querySelector('.ps-amt').value ? Number(row.querySelector('.ps-amt').value) : null,
+            payment_method: row.querySelector('.ps-how').value,
+            w9_status: row.querySelector('.ps-w9').value,
+            sort: i
+        })).filter((r) => r.name || r.amount);
+        if (_pjEditId) await sb.from('client_portal_project_payees').delete().eq('project_id', projectId);
+        if (subRows.length) await sb.from('client_portal_project_payees').insert(subRows.map((r) => Object.assign({}, r, { project_id: projectId, client_id: _cid })));
+        toast(_pjEditId ? 'Project updated.' : 'Project added.', 'success');
+        pjClearForm();
+        await loadProjects();
+    } catch (err) {
+        toast('Could not save: ' + err.message, 'error');
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+async function clientUploadFile(file){
+    const cid = currentMember && currentMember.client_id;
+    if (!cid) { toast('No client account context.', 'error'); return null; }
+    const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const path = `${cid}/${Date.now()}-${safe}`;
+    const up = await sb.storage.from('client-portal-files').upload(path, file, { upsert:false, contentType: file.type || 'application/octet-stream' });
+    if (up.error) { toast('Upload failed: ' + up.error.message, 'error'); return null; }
+    return { path, name: file.name };
+}
+
+async function clientAddContractor(e){
+    e.preventDefault();
+    const btn = document.getElementById('ccBtn');
+    const orig = btn.innerHTML; btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…';
+    try {
+        const cid = currentMember && currentMember.client_id;
+        const name = document.getElementById('ccName').value.trim();
+        if (!name) { toast('Name is required.', 'error'); return; }
+        let w9 = null;
+        const fileEl = document.getElementById('ccW9');
+        const file = fileEl && fileEl.files && fileEl.files[0];
+        if (file) { w9 = await clientUploadFile(file); if (!w9) return; }
+        const payload = { client_id: cid, name, email: document.getElementById('ccEmail').value.trim() || null, created_by: currentUser && currentUser.email };
+        if (w9) { payload.w9_file_path = w9.path; payload.w9_file_name = w9.name; }
+        const { error } = await sb.from('client_portal_contractors').insert(payload);
+        if (error) { toast('Could not save: ' + error.message, 'error'); return; }
+        toast('Contractor added.', 'success');
+        document.getElementById('ccName').value = '';
+        document.getElementById('ccEmail').value = '';
+        if (fileEl) fileEl.value = '';
+        loadClientContractors();
+    } finally { btn.disabled = false; btn.innerHTML = orig; }
+}
+
+async function clientUploadW9(id, input){
+    const file = input && input.files && input.files[0];
+    if (!file) return;
+    const w9 = await clientUploadFile(file);
+    if (!w9) return;
+    const { error } = await sb.from('client_portal_contractors').update({ w9_file_path: w9.path, w9_file_name: w9.name }).eq('id', id);
+    if (error) { toast('Could not attach: ' + error.message, 'error'); return; }
+    toast('W-9 uploaded.', 'success');
+    loadClientContractors();
+}
+
+async function dlFile(path){
+    const w = window.open('', '_blank');
+    const { data, error } = await sb.storage.from('client-portal-files').createSignedUrl(path, 3600);
+    if (error || !data?.signedUrl) { if (w) w.close(); toast('Could not open file.', 'error'); return; }
+    if (w) w.location = data.signedUrl; else window.location = data.signedUrl;
+}
+
+/* ── Client Uploads (client → bookkeeper) ─────────────────── */
+let _upFolders = [], _upFiles = [], _upCurrentFolder = null;
+function _fmtSize(n){ n = Number(n||0); if (!n) return ''; if (n < 1024) return n+' B'; if (n < 1048576) return (n/1024).toFixed(0)+' KB'; return (n/1048576).toFixed(1)+' MB'; }
+async function loadUploads(){
+    const cid = currentMember && currentMember.client_id; if (!cid) return;
+    const el = document.getElementById('uploadsBody'); if (!el) return;
+    const [{ data: folders }, { data: files }] = await Promise.all([
+        sb.from('client_portal_upload_folders').select('*').eq('client_id', cid).order('sort', { ascending: true }).order('name', { ascending: true }),
+        sb.from('client_portal_uploads').select('*').eq('client_id', cid).order('created_at', { ascending: false })
+    ]);
+    _upFolders = folders || []; _upFiles = files || [];
+    if (_upCurrentFolder && !_upFolders.some((f) => f.id === _upCurrentFolder)) _upCurrentFolder = null;
+    renderUploads();
+}
+function _upFolderPath(id){
+    const path = []; let f = _upFolders.find((x) => x.id === id);
+    while (f) { path.unshift(f); f = f.parent_id ? _upFolders.find((x) => x.id === f.parent_id) : null; }
+    return path;
+}
+function goToUploadFolder(id){ _upCurrentFolder = id; renderUploads(); }
+function _isPortalOwner(){ return currentMember && currentMember.role === 'owner'; }
+function newUploadFolderClient(){
+    const cid = currentMember && currentMember.client_id; if (!cid) return;
+    const name = prompt('Folder name (e.g. AMEX, Receipts, 2026 Tax docs)');
+    if (!name || !name.trim()) return;
+    const sort = _upFolders.filter((f) => (f.parent_id || null) === _upCurrentFolder).length;
+    sb.from('client_portal_upload_folders').insert({ client_id: cid, parent_id: _upCurrentFolder, name: name.trim(), sort }).then(({ error }) => {
+        if (error) { toast('Could not create folder: ' + error.message, 'error'); return; }
+        toast('Folder created.', 'success'); loadUploads();
+    });
+}
+function renameUploadFolderClient(id){
+    const f = _upFolders.find((x) => x.id === id); if (!f) return;
+    const name = prompt('Rename folder', f.name);
+    if (!name || !name.trim() || name.trim() === f.name) return;
+    sb.from('client_portal_upload_folders').update({ name: name.trim() }).eq('id', id).then(({ error }) => {
+        if (error) { toast('Could not rename: ' + error.message, 'error'); return; }
+        toast('Folder renamed.', 'success'); loadUploads();
+    });
+}
+async function deleteUploadFolderClient(id){
+    const hasChildren = _upFolders.some((f) => f.parent_id === id);
+    if (hasChildren) { toast('Delete or move the subfolders inside it first.', 'error'); return; }
+    const count = _upFiles.filter((f) => f.folder_id === id).length;
+    const msg = count > 0 ? `Delete this folder? Its ${count} file${count!==1?'s':''} will move up one level.` : 'Delete this empty folder?';
+    if (!confirm(msg)) return;
+    const folder = _upFolders.find((f) => f.id === id);
+    if (count > 0) await sb.from('client_portal_uploads').update({ folder_id: folder ? folder.parent_id : null }).eq('folder_id', id);
+    const { error } = await sb.from('client_portal_upload_folders').delete().eq('id', id);
+    if (error) { toast('Could not delete: ' + error.message, 'error'); return; }
+    toast('Folder deleted.', 'success'); loadUploads();
+}
+function renderUploads(){
+    const el = document.getElementById('uploadsBody'); if (!el) return;
+    const bc = document.getElementById('uploadsBreadcrumb');
+    if (bc) {
+        const path = _upFolderPath(_upCurrentFolder);
+        const newFolderBtn = _isPortalOwner() ? `<button class="btn btn-ghost" style="width:auto;padding:5px 11px;font-size:11.5px;margin-left:10px;" onclick="newUploadFolderClient()"><i class="fa-solid fa-folder-plus"></i> New folder</button>` : '';
+        if (!path.length) { bc.innerHTML = newFolderBtn; }
+        else {
+            const crumbs = [`<a href="#" onclick="goToUploadFolder(null);return false;" style="font-weight:700;">Uploads</a>`]
+                .concat(path.map((f, i) => i === path.length - 1 ? `<span style="font-weight:700;color:var(--text-muted);">${esc(f.name)}</span>` : `<a href="#" onclick="goToUploadFolder('${f.id}');return false;" style="font-weight:700;">${esc(f.name)}</a>`));
+            bc.innerHTML = `<span style="font-size:13px;">${crumbs.join(' <span class="req-meta">/</span> ')}</span>${newFolderBtn}`;
+        }
+    }
+    const subfolders = _upFolders.filter((f) => (f.parent_id || null) === _upCurrentFolder);
+    const files = _upFiles.filter((u) => (u.folder_id || null) === _upCurrentFolder);
+    if (!subfolders.length && !_upFolders.length){
+        el.innerHTML = '<div class="req-empty">No folders yet. Your bookkeeper will create folders here for you to drop documents into.</div>';
+        return;
+    }
+    const folderHtml = subfolders.map((f) => {
+        const count = _upFiles.filter((x) => x.folder_id === f.id).length + _upFolders.filter((x) => x.parent_id === f.id).length;
+        const ownerBtns = _isPortalOwner() ? `<button class="btn" style="width:auto;padding:6px 10px;font-size:11.5px;background:var(--surface-2);" onclick="event.stopPropagation();renameUploadFolderClient('${f.id}')">Rename</button><button class="btn" style="width:auto;padding:6px 10px;font-size:11.5px;background:#fef2f2;color:#dc2626;" onclick="event.stopPropagation();deleteUploadFolderClient('${f.id}')">Delete</button>` : '';
+        return `<div class="req-item" style="cursor:pointer;" onclick="goToUploadFolder('${f.id}')"><div style="min-width:0;flex:1;"><div class="req-subject"><i class="fa-solid fa-folder" style="color:var(--accent);margin-right:6px;"></i>${esc(f.name)}</div></div><div style="display:flex;gap:8px;align-items:center;"><span class="req-meta">${count} item${count!==1?'s':''}</span>${ownerBtns}</div></div>`;
+    }).join('');
+    /* Files only ever live inside a folder you've opened — no root-level dropzone,
+       so nothing lands "unfiled" by accident. */
+    const dropZone = !_upCurrentFolder ? '' : `<div class="up-folder" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="uploadDrop(event,'${_upCurrentFolder}')" style="margin-top:${subfolders.length?'14px':'0'};">
+        <div class="up-folder-head">
+          <div style="color:var(--text-muted);font-size:12px;font-weight:600;">${files.length} file${files.length!==1?'s':''} in this folder</div>
+          <label class="btn btn-accent" style="width:auto;padding:7px 13px;font-size:12.5px;cursor:pointer;">
+            <i class="fa-solid fa-plus"></i> Add files
+            <input type="file" multiple style="display:none;" onchange="uploadPick(event,'${_upCurrentFolder}')"></label>
+        </div>
+        <div class="up-drop-hint"><i class="fa-solid fa-cloud-arrow-up"></i> Drag &amp; drop files here</div>
+        <div class="up-files">${files.map(uploadRow).join('') || '<div class="req-empty" style="padding:4px 2px;">No files uploaded yet.</div>'}</div>
+    </div>`;
+    el.innerHTML = folderHtml + dropZone;
+}
+function uploadRow(u){
+    const when = new Date(u.created_at).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+    return `<div class="req-item"><div style="min-width:0;flex:1;">
+        <div class="req-subject">${esc(u.title||u.file_name||'File')}</div>
+        <div class="req-meta">${esc(_fmtSize(u.size_bytes))}${u.size_bytes?' · ':''}${esc(when)}</div></div>
+      <div style="display:flex;gap:6px;">
+        <button class="btn" style="width:auto;padding:7px 11px;font-size:12px;background:var(--surface-2);color:var(--text);" onclick="dlUpload('${esc(u.storage_path)}')" title="Download"><i class="fa-solid fa-download"></i></button>
+        <button class="btn" style="width:auto;padding:7px 11px;font-size:12px;background:#fef2f2;color:#dc2626;" onclick="delUpload('${u.id}','${esc(u.storage_path)}')" title="Remove"><i class="fa-solid fa-trash"></i></button>
+      </div></div>`;
+}
+async function dlUpload(path){
+    const w = window.open('', '_blank');
+    const { data, error } = await sb.storage.from('client-uploads').createSignedUrl(path, 3600);
+    if (error || !data?.signedUrl) { if (w) w.close(); toast('Could not open file.', 'error'); return; }
+    if (w) w.location = data.signedUrl; else window.location = data.signedUrl;
+}
+function uploadDrop(e, fid){
+    e.preventDefault();
+    e.currentTarget.classList.remove('drag');
+    const files = e.dataTransfer && e.dataTransfer.files;
+    if (files && files.length) doUploads(files, fid);
+}
+function uploadPick(e, fid){
+    const files = e.target.files;
+    if (files && files.length) doUploads(files, fid);
+    e.target.value = '';
+}
+async function doUploads(fileList, fid){
+    const cid = currentMember && currentMember.client_id; if (!cid) { toast('No account context.', 'error'); return; }
+    const files = Array.from(fileList);
+    toast(`Uploading ${files.length} file${files.length!==1?'s':''}…`);
+    const uname = currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || currentUser.email;
+    let ok = 0;
+    for (const file of files){
+        const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+        const path = `${cid}/${fid}/${Date.now()}-${safe}`;
+        const up = await sb.storage.from('client-uploads').upload(path, file, { upsert:false, contentType: file.type || 'application/octet-stream' });
+        if (up.error) { toast('Upload failed: ' + up.error.message, 'error'); continue; }
+        const ins = await sb.from('client_portal_uploads').insert({ client_id: cid, folder_id: fid, title: file.name, file_name: file.name, storage_path: path, size_bytes: file.size, uploaded_by: currentUser.email, uploaded_by_name: uname });
+        if (ins.error) { toast('Saved file but log failed: ' + ins.error.message, 'error'); continue; }
+        ok++;
+    }
+    if (ok) toast(`${ok} file${ok!==1?'s':''} uploaded — your bookkeeper has been notified.`, 'success');
+    loadUploads();
+}
+async function delUpload(id, path){
+    if (!confirm('Remove this file?')) return;
+    await sb.storage.from('client-uploads').remove([path]);
+    const { error } = await sb.from('client_portal_uploads').delete().eq('id', id);
+    if (error) { toast('Could not remove: ' + error.message, 'error'); return; }
+    toast('File removed.'); loadUploads();
+}
+
+/* ── Tabs + realtime ─────────────────────────────────────── */
+let _hasAudits = false, _hasFiles = false, _hasGbp = false, _hasContractors = false, _hasReports = false, _msgChannel = null;
+function activePortalTab(){ const t = document.querySelector('.ptab.active'); return t ? t.dataset.ptab : 'dashboard'; }
+/* ── Sidebar shell — the DEFAULT layout for every client since 2026-10-14.
+   Fallback: ?classic=1 switches this browser back to the old layout, ?classic=0 returns to the new one. ── */
+const NEWLOOK = (() => {
+    try {
+        const m = /[?&]classic=([01])/.exec(location.search);
+        if (m) { if (m[1] === '1') localStorage.setItem('portal_classic', '1'); else localStorage.removeItem('portal_classic'); }
+        return localStorage.getItem('portal_classic') !== '1';
+    } catch (e) { return !/[?&]classic=1/.test(location.search); }
+})();
+let _openClientTasks = [], _kdAll = [], _unreadMsgs = 0;
+
+/* Builds the sidebar once and MOVES the existing tab list + top-bar buttons into it,
+   so every id and handler (switchPortalTab, applyTabConfig, openBilling…) keeps working. */
+function initShell(){
+    if (!NEWLOOK || document.getElementById('pside')) return;
+    document.body.classList.add('pshell');
+    const dv = document.getElementById('dashView');
+    const side = document.createElement('aside');
+    side.id = 'pside';
+    side.innerHTML = '<div class="ps-brand"><div class="ps-logo" id="psLogo"></div><div style="min-width:0;"><div class="ps-name" id="psName"></div><div class="ps-sub">Client portal</div></div></div>'
+        + '<div id="psBiz"></div><div id="psAdminNav"></div><div class="ps-foot" id="psFoot"></div>';
+    const mbar = document.createElement('div');
+    mbar.className = 'ps-mbar';
+    mbar.innerHTML = '<button class="ps-burger" onclick="psToggle(true)" aria-label="Menu"><i class="fa-solid fa-bars"></i></button><span id="psMbarName"></span>';
+    const back = document.createElement('div');
+    back.className = 'ps-backdrop'; back.id = 'psBackdrop'; back.onclick = () => psToggle(false);
+    dv.insertBefore(back, dv.firstChild); dv.insertBefore(mbar, dv.firstChild); dv.insertBefore(side, dv.firstChild);
+    const biz = side.querySelector('#psBiz');
+    ['bizLabel', 'bizSwitcher'].forEach((id) => { const el = document.getElementById(id); if (el) biz.appendChild(el); });
+    side.insertBefore(document.getElementById('ptabs'), side.querySelector('#psAdminNav'));
+    const foot = side.querySelector('#psFoot');
+    const so = document.querySelector('.topbar .btn-signout[onclick="signOut()"]');
+    [document.getElementById('topBilling'), document.getElementById('helpBtn'), so].forEach((el) => { if (el) foot.appendChild(el); });
+    if (so) so.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> Sign out';
+    const home = document.querySelector('.ptab[data-ptab="dashboard"]');
+    if (home) home.innerHTML = '<i class="fa-solid fa-house"></i> Home';
+    const tk = document.getElementById('tasksTab');
+    if (tk) tk.insertAdjacentHTML('beforeend', ' <span id="taskTabBadge" class="msg-badge" style="display:none;"></span>');
+    const hs = document.createElement('div'); hs.id = 'homeSummary';
+    const cg = document.getElementById('cardGrid'); cg.parentNode.insertBefore(hs, cg.nextSibling);
+}
+function psToggle(open){
+    const s = document.getElementById('pside'), b = document.getElementById('psBackdrop');
+    if (s) s.classList.toggle('open', !!open);
+    if (b) b.classList.toggle('show', !!open);
+}
+function setShellBrand(name, logoUrl){
+    if (!NEWLOOK) return;
+    const n = document.getElementById('psName'), l = document.getElementById('psLogo'), m = document.getElementById('psMbarName');
+    if (n) n.textContent = name || 'Client Portal';
+    if (m) m.textContent = name || 'Client Portal';
+    if (l) {
+        const initials = (name || 'CP').split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
+        l.innerHTML = logoUrl ? `<img src="${esc(logoUrl)}" alt="" onerror="this.parentNode.textContent='${esc(initials)}'">` : esc(initials);
+    }
+}
+function _tabVisible(key){
+    const t = document.querySelector('.ptab[data-ptab="' + key + '"]');
+    return !!t && window.getComputedStyle(t).display !== 'none';
+}
+/* Home page: what's new + what needs the client. Built from data the tabs already load. */
+function renderHomeSummary(){
+    if (!NEWLOOK) return;
+    const el = document.getElementById('homeSummary');
+    if (!el || !currentClient) return;
+    const fmt = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const row = (tab, title, meta) => `<div class="hs-row" onclick="${_tabVisible(tab) ? `switchPortalTab('${tab}')` : ''}"><span class="hs-t">${esc(title)}</span><span class="hs-m">${esc(meta)}</span></div>`;
+
+    const PKG = ['monthly_analysis','pl','balance_sheet','cash_flow','reconciliation'];
+    const rank = (k) => { const i = PKG.indexOf(k); return i < 0 ? PKG.length : i; };
+    const dated = (_allFiles || []).filter((f) => f.period).map((f) => ({ f, p: _filePeriod(f) }))
+        .sort((a, b) => (b.p.y - a.p.y) || (b.p.m - a.p.m) || (rank(a.f.kind) - rank(b.f.kind))).slice(0, 4);
+    const reports = (_tabVisible('files') || dated.length)
+        ? `<div class="hs-card"><h3><i class="fa-solid fa-folder-open" style="color:var(--accent);margin-right:6px;"></i>Latest reports</h3>${
+            dated.length ? dated.map(({ f, p }) => row('files', f.title, (p.m ? _FMON[p.m].slice(0, 3) + ' ' : '') + p.y)).join('')
+                         : '<div class="hs-empty">Your reports will show up here as soon as they\'re ready.</div>'}</div>`
+        : '';
+
+    const needs = [];
+    if (_unreadMsgs > 0) needs.push(row('messages', _unreadMsgs + ' new message' + (_unreadMsgs !== 1 ? 's' : ''), 'Chat'));
+    if (_tabVisible('tasks')) _openClientTasks.slice(0, 3).forEach((t) => needs.push(row('tasks', t.title, t.due_date ? 'Due ' + fmt(new Date(t.due_date + 'T00:00:00')) : 'Task')));
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    _kdAll.map((d) => ({ d, dt: new Date(d.due_date + 'T00:00:00') })).filter((x) => x.dt >= today).sort((a, b) => a.dt - b.dt).slice(0, 2)
+        .forEach((x) => needs.push(row('dates', x.d.title, fmt(x.dt))));
+    const needsCard = `<div class="hs-card"><h3><i class="fa-solid fa-bell" style="color:var(--accent);margin-right:6px;"></i>Needs you</h3>${needs.length ? needs.join('') : '<div class="hs-empty">You\'re all caught up.</div>'}</div>`;
+    el.innerHTML = reports + needsCard;
+
+    const tb = document.getElementById('taskTabBadge');
+    if (tb) { const n = _openClientTasks.length; if (n > 0) { tb.textContent = n; tb.style.display = ''; } else tb.style.display = 'none'; }
+    const isAdminViewing = currentMember && currentMember.role === 'nomad_admin';
+    const first = isAdminViewing ? '' : ((currentUser && (currentUser.user_metadata?.full_name || currentUser.user_metadata?.name)) || '').trim().split(/\s+/)[0];
+    const h1 = document.querySelector('.dash-head h1'); if (h1) h1.textContent = first ? 'Welcome back, ' + first : 'Welcome back';
+    const todo = (_unreadMsgs > 0 ? 1 : 0) + (_tabVisible('tasks') ? _openClientTasks.length : 0);
+    const sub = document.getElementById('dashSubtitle');
+    if (sub) sub.textContent = todo ? `${todo} thing${todo !== 1 ? 's' : ''} need${todo === 1 ? 's' : ''} your attention.` : 'Everything is up to date.';
+}
+
+function switchPortalTab(name){
+    document.querySelectorAll('.ptab').forEach((t) => t.classList.toggle('active', t.dataset.ptab === name));
+    const _nl = document.body.classList.contains('pshell');
+    if (_nl) {
+        /* New look: link cards, announcements, greeting and the summary live on Home only. */
+        const home = name === 'dashboard';
+        ['homeSummary', 'portalBanners'].forEach((id) => { const el = document.getElementById(id); if (el) el.style.display = home ? '' : 'none'; });
+        const dh = document.querySelector('.dash-head'); if (dh) dh.style.display = home ? '' : 'none';
+        psToggle(false);
+        window.scrollTo(0, 0);
+        if (home && currentClient) { loadClientTasks(); loadKeyDates(); }
+    }
+    const vis = {
+        cardGrid: name === 'dashboard' || (!_nl && document.body.classList.contains('bk')),
+        gbpSection: name === 'gbp',
+        messagesSection: name === 'messages',
+        onboardingSection: name === 'onboarding',
+        filesSection: name === 'files',
+        uploadsSection: name === 'uploads',
+        contractorsSection: name === 'contractors',
+        projectsSection: name === 'projects',
+        tasksSection: name === 'tasks',
+        datesSection: name === 'dates' || (!_nl && document.body.classList.contains('bk')),
+        accountSection: name === 'account',
+        requests: name === 'requests',
+        myRequests: name === 'requests',
+        teamSection: name === 'team'
+    };
+    Object.keys(vis).forEach((id) => { const el = document.getElementById(id); if (el) el.style.display = vis[id] ? '' : 'none'; });
+    if (name === 'messages') markMessagesRead();
+    if (name === 'team') loadTeam();
+    if (name === 'tasks') loadClientTasks();
+    if (name === 'uploads') loadUploads();
+    if (name === 'dates') loadKeyDates();
+    if (name === 'account') loadAccount();
+}
+function subscribeMessages(){
+    if (!currentClient) return;
+    if (_msgChannel) { sb.removeChannel(_msgChannel); _msgChannel = null; }
+    _msgChannel = sb.channel('cpm-' + currentClient.id)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'client_portal_messages', filter: 'client_id=eq.' + currentClient.id }, async () => {
+            await loadMessages();
+            if (activePortalTab() === 'messages') markMessagesRead();
+        })
+        .subscribe();
+}
+
+/* ── GBP hub ─────────────────────────────────────────────── */
+async function loadGbpChecklist(){
+    const [{ data: items }, { data: status }] = await Promise.all([
+        sb.from('client_portal_checklist_items').select('*').eq('active', true).order('sort_order', { ascending: true }),
+        sb.from('client_portal_checklist_status').select('*').eq('client_id', _cid)
+    ]);
+    const doneSet = {}; (status || []).forEach((s) => { if (s.done) doneSet[s.item_id] = true; });
+    const list = items || [];
+    const total = list.length, done = list.filter((i) => doneSet[i.id]).length;
+    const pct = total ? Math.round(done / total * 100) : 0;
+    document.getElementById('gbpProgress').innerHTML = `
+        <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:6px;"><span>Optimization progress</span><span>${done}/${total} · ${pct}%</span></div>
+        <div style="height:9px;background:var(--surface-2);border-radius:20px;overflow:hidden;"><div style="height:100%;width:${pct}%;background:var(--accent);border-radius:20px;transition:width .3s;"></div></div>`;
+    const el = document.getElementById('gbpChecklist');
+    if (!list.length) { el.innerHTML = '<div class="req-empty">Your checklist will appear here.</div>'; return; }
+    el.innerHTML = list.map((i) => {
+        const d = !!doneSet[i.id];
+        return `<div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--border);">
+            <i class="fa-solid ${d ? 'fa-circle-check' : 'fa-circle'}" style="color:${d ? 'var(--accent)' : '#cbd5e1'};font-size:16px;"></i>
+            <span style="font-size:13.5px;${d ? 'color:var(--text-muted);' : ''}">${esc(i.label)}</span>
+        </div>`;
+    }).join('');
+}
+
+/* ── Audit scores ────────────────────────────────────────── */
+async function loadClientAudits(){
+    const el = document.getElementById('auditsBody');
+    if (!el) return;
+    const { data } = await sb.from('client_portal_audits').select('*').eq('client_id', _cid).order('created_at', { ascending: false });
+    const rows = data || [];
+    if (!rows.length) { el.innerHTML = '<div class="req-empty">No audits yet.</div>'; return; }
+    const latest = rows[0], prev = rows[1];
+    const delta = (latest.score != null && prev && prev.score != null) ? latest.score - prev.score : null;
+    const deltaHtml = delta == null ? '' : `<span style="font-size:14px;font-weight:700;color:${delta >= 0 ? 'var(--green)' : '#dc2626'};margin-left:10px;">${delta >= 0 ? '▲' : '▼'} ${Math.abs(delta)}</span>`;
+    el.innerHTML = `
+        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px;">
+            <span style="font-size:42px;font-weight:800;color:var(--accent);line-height:1;">${latest.score != null ? esc(latest.score) : '—'}</span>
+            <span style="font-size:13px;color:var(--text-muted);">${esc(latest.label || 'Audit')}${latest.period ? ' · ' + esc(latest.period) : ''}</span>${deltaHtml}
+        </div>
+        ${latest.notes ? `<p style="font-size:13px;color:var(--text-sec);margin:6px 0 14px;white-space:pre-wrap;">${esc(latest.notes)}</p>` : ''}
+        ${rows.length > 1 ? `<div style="border-top:1px solid var(--border);padding-top:12px;margin-top:8px;"><div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;">History</div>${
+            rows.map((r) => `<div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--border);"><span>${esc(r.label || 'Audit')}${r.period ? ' · ' + esc(r.period) : ''} · ${esc(new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }))}</span><span style="font-weight:700;">${r.score != null ? esc(r.score) : '—'}</span></div>`).join('')
+        }</div>` : ''}`;
+}
+
+/* ── Onboarding ──────────────────────────────────────────── */
+const ONBOARDING_FIELDS = [
+    { key: 'legal_name', label: 'Legal business name' },
+    { key: 'website', label: 'Website URL' },
+    { key: 'phone', label: 'Main business phone' },
+    { key: 'address', label: 'Business address' },
+    { key: 'hours', label: 'Business hours' },
+    { key: 'gbp_url', label: 'Google Business Profile URL' },
+    { key: 'facebook', label: 'Facebook page' },
+    { key: 'instagram', label: 'Instagram handle' },
+    { key: 'other_social', label: 'Other social profiles' },
+    { key: 'brand_colors', label: 'Brand colors (hex or description)' },
+    { key: 'logo_link', label: 'Logo / brand assets link' },
+    { key: 'goals', label: 'Your top goals for working with us', big: true },
+    { key: 'audience', label: 'Who is your ideal customer?', big: true },
+    { key: 'competitors', label: 'Main competitors' },
+    { key: 'access_notes', label: 'How you’ll give us access — add us as a manager, or share via a password manager (please don’t type passwords here)', big: true },
+    { key: 'anything_else', label: 'Anything else we should know?', big: true },
+];
+let _onbStatus = 'not_started';
+let _onbFields = ONBOARDING_FIELDS;
+
+/* The onboarding questions come from the client's assigned portal template
+   (Bookkeeping / Real Estate / Nomad Base / …). Falls back to the legacy
+   default set if the client has no template. */
+async function onbSchemaFor(client){
+    const key = client && client.template_key;
+    if (key) {
+        const { data } = await sb.from('client_portal_templates').select('onboarding_schema').eq('key', key).maybeSingle();
+        if (data && Array.isArray(data.onboarding_schema) && data.onboarding_schema.length) return data.onboarding_schema;
+    }
+    return ONBOARDING_FIELDS;
+}
+function onbFieldHtml(f, val){
+    if (f.type === 'select' && Array.isArray(f.options)) {
+        const opts = ['<option value=""></option>'].concat(
+            f.options.map(o => `<option value="${esc(o)}"${val === o ? ' selected' : ''}>${esc(o)}</option>`)).join('');
+        return `<select id="onb_${f.key}" class="onb-input">${opts}</select>`;
+    }
+    return (f.type === 'textarea' || f.big)
+        ? `<textarea id="onb_${f.key}" class="onb-input" rows="2">${esc(val)}</textarea>`
+        : `<input id="onb_${f.key}" class="onb-input" value="${esc(val)}">`;
+}
+
+async function loadOnboarding(){
+    const wrap = document.getElementById('onbForm');
+    _onbFields = await onbSchemaFor(currentClient);
+    const { data } = await sb.from('client_portal_onboarding').select('*').eq('client_id', _cid).maybeSingle();
+    const answers = (data && data.data) || {};
+    _onbStatus = (data && data.status) || 'not_started';
+    const badge = document.getElementById('onbStatus');
+    if (badge) {
+        if (_onbStatus === 'submitted') { badge.textContent = 'Submitted'; badge.className = 'msg-badge'; badge.style.background = 'var(--green)'; badge.style.display = ''; }
+        else { badge.style.display = 'none'; }
+    }
+    wrap.innerHTML = _onbFields.map((f) => `
+        <div style="margin-bottom:12px;">
+            <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;color:var(--text);">${esc(f.label)}${f.required ? ' *' : ''}</label>
+            ${onbFieldHtml(f, answers[f.key] || '')}
+        </div>`).join('') +
+        `<button class="btn btn-accent" style="width:auto;" onclick="saveOnboarding()"><i class="fa-solid fa-floppy-disk"></i> ${_onbStatus === 'submitted' ? 'Update' : 'Submit'} onboarding</button>`;
+}
+
+async function saveOnboarding(){
+    if (!currentClient) return;
+    const answers = {};
+    _onbFields.forEach((f) => { const el = document.getElementById('onb_' + f.key); answers[f.key] = el ? el.value.trim() : ''; });
+    const payload = { client_id: currentClient.id, data: answers, status: 'submitted', updated_at: new Date().toISOString() };
+    if (_onbStatus !== 'submitted') payload.submitted_at = new Date().toISOString();
+    const { error } = await sb.from('client_portal_onboarding').upsert(payload, { onConflict: 'client_id' });
+    if (error) { toast('Could not save: ' + error.message, 'error'); return; }
+    toast('Onboarding saved — thank you!', 'success');
+    loadOnboarding();
+}
+
+/* ── Messages ────────────────────────────────────────────── */
+async function loadMessages(){
+    const el = document.getElementById('msgThread');
+    const badge = document.getElementById('msgBadge');
+    const { data, error } = await sb.from('client_portal_messages').select('*').eq('client_id', _cid).order('created_at', { ascending: true });
+    if (error) { el.innerHTML = '<div class="req-empty">Could not load messages.</div>'; return; }
+    const msgs = data || [];
+    if (!msgs.length) {
+        el.innerHTML = '<div class="req-empty">No messages yet — send us a note any time.</div>';
+        if (badge) badge.style.display = 'none';
+        return;
+    }
+    el.innerHTML = msgs.map((m) => {
+        const me = m.sender_role === 'client';
+        const who = me ? 'You' : 'Nomad Systems';
+        const t = new Date(m.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+        return `<div><div class="msg-row ${me ? 'me' : 'them'}"><div class="msg-bubble">${esc(m.body)}</div></div><div class="msg-meta" style="text-align:${me ? 'right' : 'left'};">${who} · ${esc(t)}</div></div>`;
+    }).join('');
+    el.scrollTop = el.scrollHeight;
+    const lastRead = currentClient && currentClient.client_last_read_at ? new Date(currentClient.client_last_read_at) : null;
+    const unread = msgs.filter((m) => m.sender_role === 'admin' && (!lastRead || new Date(m.created_at) > lastRead)).length;
+    setMsgBadges(unread);
+}
+function setMsgBadges(n){
+    _unreadMsgs = n; renderHomeSummary();
+    const tab = document.getElementById('msgTabBadge'), sec = document.getElementById('msgBadge');
+    if (tab) { if (n > 0) { tab.textContent = n; tab.style.display = ''; } else tab.style.display = 'none'; }
+    if (sec) { if (n > 0) { sec.textContent = n + ' new'; sec.style.display = ''; } else sec.style.display = 'none'; }
+}
+function markMessagesRead(){
+    if (!currentClient) return;
+    sb.rpc('mark_thread_read', { p_client_id: currentClient.id });
+    currentClient.client_last_read_at = new Date().toISOString();
+    setMsgBadges(0);
+}
+
+async function sendMessage(e){
+    e.preventDefault();
+    const ta = document.getElementById('msgInput');
+    const body = ta.value.trim();
+    if (!body || !currentClient) return;
+    const btn = document.getElementById('msgBtn');
+    btn.disabled = true;
+    const { error } = await sb.from('client_portal_messages').insert({ client_id: currentClient.id, sender_role: 'client', sender_email: currentUser.email, body });
+    btn.disabled = false;
+    if (error) { toast('Could not send: ' + error.message, 'error'); return; }
+    ta.value = '';
+    loadMessages();
+}
+
+/* ── utils ── */
+/* ── Team management (owner only) ────────────────────────── */
+async function loadTeam(){
+    const el = document.getElementById('teamList');
+    if (!el || !currentClient) return;
+    const { data, error } = await sb.from('client_portal_members')
+        .select('id, email, role, status, created_at')
+        .eq('client_id', currentClient.id)
+        .order('created_at', { ascending: true });
+    if (error) { el.innerHTML = `<div class="req-empty">Couldn't load your team: ${esc(error.message)}</div>`; return; }
+    /* Portal roles only. Agents/txn_clients are bounced out of the portal on sign-in
+       (see showDash) and their access is granted/revoked in Hub Admin -> Staff & Access,
+       which syncs client_portal_members via the on_hub_agent_change trigger. Listing them
+       here offered a remove button that silently killed their HUB login. */
+    const rows   = (data || []).filter((m) => m.role === 'owner' || m.role === 'client');
+    const hubCnt = (data || []).filter((m) => m.role === 'agent').length;
+    const hubNote = hubCnt
+        ? `<div style="margin-top:14px;font-size:12.5px;color:var(--text-muted);"><i class="fa-solid fa-circle-info"></i> ${hubCnt} agent${hubCnt === 1 ? '' : 's'} also have hub access &mdash; manage those in <a href="admin.html" style="color:var(--accent);font-weight:600;">Hub Admin &rarr; Staff &amp; Access</a>.</div>`
+        : '';
+    if (!rows.length) { el.innerHTML = '<div class="req-empty">No team members yet.</div>' + hubNote; return; }
+    const myEmail = (currentUser && currentUser.email || '').toLowerCase();
+    el.innerHTML = rows.map((m) => {
+        const isOwner = m.role === 'owner';
+        const isMe = (m.email || '').toLowerCase() === myEmail;
+        const tag = isOwner ? '<span class="soon" style="position:static;margin-left:8px;">Owner</span>' : '';
+        const meTag = isMe ? '<span style="color:var(--text-muted);font-size:12px;margin-left:8px;">(you)</span>' : '';
+        // Owners can only remove regular members (RLS enforces this too).
+        const del = (!isOwner) ? `<button class="btn btn-ghost btn-sm" title="Remove" onclick="removeTeamMember('${m.id}','${esc(m.email)}')" style="width:auto;color:#dc2626;"><i class="fa-solid fa-xmark"></i></button>` : '';
+        return `<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--border);">
+            <div style="font-size:14px;">${esc(m.email)}${tag}${meTag}</div>
+            <div>${del}</div>
+        </div>`;
+    }).join('') + hubNote;
+}
+
+async function addTeamMember(e){
+    e.preventDefault();
+    const input = document.getElementById('teamEmail');
+    const email = (input.value || '').trim().toLowerCase();
+    if (!email) return;
+    if (!currentClient) { toast('No client context.', 'err'); return; }
+    const { error } = await sb.from('client_portal_members')
+        .insert({ client_id: currentClient.id, email, role: 'client', status: 'active' });
+    if (error) {
+        toast(/duplicate|unique/i.test(error.message) ? 'That email is already on your team.' : 'Could not add member: ' + error.message, 'err');
+        return;
+    }
+    input.value = '';
+    toast('Added ' + email, 'ok');
+    // Best-effort invite email; member can already sign in regardless.
+    try { await sb.functions.invoke('portal-invite', { body: { email, portal_url: location.origin } }); } catch (_) {}
+    loadTeam();
+}
+
+async function removeTeamMember(id, email){
+    if (!confirm('Remove ' + email + ' from your team? They will lose portal access.')) return;
+    const { error } = await sb.from('client_portal_members').delete().eq('id', id);
+    if (error) { toast('Could not remove: ' + error.message, 'err'); return; }
+    toast('Removed ' + email, 'ok');
+    loadTeam();
+}
+
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+let _toastT;
+function toast(msg, type){
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.className = ''; if (type) t.classList.add(type);
+    void t.offsetWidth; t.classList.add('show');
+    clearTimeout(_toastT); _toastT = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=20260927a');
+</script>
+</body>
+</html>
