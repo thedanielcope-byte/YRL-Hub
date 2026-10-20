@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Licensing Training — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="portal-auth.js"></script>
+    <script src="embed-mode.js?v=20260927b"></script>
+    <script src="help-box.js?v=20260916" defer></script>
+    <style>
+        :root {
+            --red:#c03926; --red-light:#d94a35; --red-dark:#9e2e1e;
+            --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f7f8fa; --surface-3:#eef0f3;
+            --border:#e2e5ea; --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+            --green:#16a34a; --green-soft:rgba(22,163,74,0.08); --amber:#b45309; --amber-soft:rgba(245,158,11,0.12);
+            --radius:14px;
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
+        a{text-decoration:none;color:inherit;}
+        button{font-family:inherit;}
+        .page-header{background:linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);padding:28px 24px 24px;}
+        .header-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+        .back-btn{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:9px 18px;border-radius:100px;font-size:13px;font-weight:600;white-space:nowrap;}
+        .back-btn:hover{background:rgba(255,255,255,0.26);}
+        .header-title{flex:1;min-width:200px;}
+        .header-title h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(26px,4vw,38px);letter-spacing:1.5px;color:#fff;line-height:1.1;}
+        .header-title p{font-size:13px;color:rgba(255,255,255,0.85);}
+        .edit-toggle{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.35);color:#fff;padding:9px 16px;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer;}
+        .edit-toggle.on{background:rgba(255,255,255,0.35);}
+        .wrap{max-width:1000px;margin:0 auto;padding:36px 24px 90px;}
+
+        /* tabs */
+        .lt-tabs{display:flex;gap:6px;border-bottom:2px solid var(--border);margin-bottom:24px;overflow-x:auto;scrollbar-width:none;}
+        .lt-tabs::-webkit-scrollbar{display:none;}
+        .lt-tab{display:inline-flex;align-items:center;gap:8px;background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;padding:12px 16px;font-size:14px;font-weight:700;color:var(--text-sec);cursor:pointer;white-space:nowrap;}
+        .lt-tab:hover{color:var(--red);}
+        .lt-tab.on{color:var(--red);border-bottom-color:var(--red);}
+
+        .lt-intro{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px;}
+        .lt-intro p{color:var(--text-sec);font-size:14px;max-width:640px;}
+        .lt-status{font-size:12px;font-weight:600;color:var(--text-muted);margin:-12px 0 16px;min-height:18px;}
+        .lt-status.err{color:#dc2626;}
+
+        /* buttons */
+        .btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--red);color:#fff;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;cursor:pointer;}
+        .btn-primary:hover{background:var(--red-dark);}
+        .btn-primary:disabled{opacity:.5;cursor:default;}
+        .btn-ghost{display:inline-flex;align-items:center;gap:7px;background:var(--surface);color:var(--text-sec);border:1.5px solid var(--border);border-radius:10px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;}
+        .btn-ghost:hover{border-color:var(--red);color:var(--red);}
+        .btn-sm{padding:6px 11px;font-size:12px;border-radius:8px;}
+
+        /* module cards */
+        .lt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;}
+        .lt-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:all .2s;position:relative;box-shadow:0 1px 4px rgba(0,0,0,0.05);}
+        .lt-card:hover{border-color:rgba(192,57,38,0.35);transform:translateY(-3px);box-shadow:0 10px 26px rgba(192,57,38,0.12);}
+        .lt-card-top{display:flex;align-items:center;justify-content:space-between;}
+        .lt-icon{width:44px;height:44px;border-radius:12px;background:rgba(192,57,38,0.1);color:var(--red);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+        .lt-icon.lg{width:56px;height:56px;font-size:22px;border-radius:14px;}
+        .lt-num{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);}
+        .lt-card h3{font-size:15.5px;font-weight:700;line-height:1.3;}
+        .lt-card p{font-size:12.8px;color:var(--text-sec);flex:1;line-height:1.5;}
+        .lt-card-foot{display:flex;align-items:center;gap:8px;margin-top:4px;}
+        .lt-card-foot > i{margin-left:auto;color:var(--text-muted);font-size:12px;}
+        .pill{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--red);background:rgba(192,57,38,0.1);padding:3px 9px;border-radius:5px;}
+        .lt-flag{font-size:11px;font-weight:700;color:var(--amber);background:var(--amber-soft);padding:3px 8px;border-radius:5px;}
+        .lt-card-ed{display:flex;gap:6px;margin-top:6px;padding-top:10px;border-top:1px dashed var(--border);}
+        .lt-card-ed button,.lt-qhead button,.lt-resrow button{background:var(--surface-2);border:1px solid var(--border);color:var(--text-sec);border-radius:7px;width:30px;height:30px;cursor:pointer;font-size:12px;flex-shrink:0;}
+        .lt-card-ed button:hover,.lt-qhead button:hover,.lt-resrow button:hover{color:var(--red);border-color:var(--red);}
+        .lt-card-ed button.danger:hover,.lt-qhead button.danger:hover{background:#fef2f2;}
+        .lt-addcard{border:1.5px dashed var(--border);background:var(--surface-2);border-radius:var(--radius);min-height:150px;font-size:14px;font-weight:700;color:var(--text-sec);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+        .lt-addcard:hover{border-color:var(--red);color:var(--red);}
+        .lt-empty{text-align:center;color:var(--text-muted);padding:50px 20px;background:var(--surface);border:1px dashed var(--border);border-radius:var(--radius);}
+
+        /* module view */
+        .lt-back{display:inline-flex;align-items:center;gap:8px;background:none;border:none;color:var(--text-sec);font-size:13px;font-weight:700;cursor:pointer;margin-bottom:16px;padding:4px 0;}
+        .lt-back:hover{color:var(--red);}
+        .lt-mod-head{display:flex;gap:16px;align-items:center;margin-bottom:20px;}
+        .lt-mod-head h2{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:1.2px;line-height:1.05;}
+        .lt-mod-head p{color:var(--text-sec);font-size:13.5px;}
+        .lt-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;margin-bottom:16px;}
+        .lt-block > h3{font-size:15px;font-weight:800;display:flex;align-items:center;gap:9px;margin-bottom:12px;}
+        .lt-block > h3 i{color:var(--red);}
+        .lt-notes p{font-size:14px;color:var(--text);margin-bottom:10px;}
+        .lt-notes ul{margin:0 0 10px 20px;font-size:14px;}
+        .lt-notes li{margin-bottom:4px;}
+        .lt-res{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;font-size:13.5px;font-weight:600;}
+        .lt-res:hover{border-color:var(--red);color:var(--red);}
+        .lt-res i{color:var(--red);}
+        .lt-modnav{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:6px;}
+
+        /* quiz */
+        .lt-qbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
+        .lt-seg{display:inline-flex;background:var(--surface-3);border-radius:10px;padding:3px;}
+        .lt-seg button{background:none;border:none;padding:7px 14px;border-radius:8px;font-size:13px;font-weight:700;color:var(--text-sec);cursor:pointer;}
+        .lt-seg button.on{background:var(--surface);color:var(--red);box-shadow:0 1px 3px rgba(0,0,0,0.1);}
+        .hint{font-size:12.8px;color:var(--text-muted);margin-bottom:18px;}
+        .quiz-q{margin-bottom:24px;}
+        .quiz-q .qt{font-size:14.5px;font-weight:650;margin-bottom:11px;display:flex;gap:10px;}
+        .quiz-q .qn{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--surface-3);color:var(--text-sec);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+        .quiz-opt{display:flex;align-items:flex-start;gap:11px;width:100%;text-align:left;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;color:var(--text);transition:all .15s;}
+        .quiz-opt:hover:not(:disabled){border-color:var(--text-muted);background:var(--surface-2);}
+        .quiz-opt:disabled{cursor:default;}
+        .quiz-opt .dot{width:22px;height:22px;flex-shrink:0;border:2px solid var(--border);border-radius:50%;font-size:11px;font-weight:800;color:var(--text-muted);display:flex;align-items:center;justify-content:center;}
+        .quiz-opt.picked{border-color:var(--red);background:rgba(192,57,38,0.05);}
+        .quiz-opt.picked .dot{border-color:var(--red);background:var(--red);color:#fff;}
+        .quiz-opt.right{border-color:var(--green);background:var(--green-soft);}
+        .quiz-opt.right .dot{border-color:var(--green);background:var(--green);color:#fff;}
+        .quiz-opt.wrong{border-color:#ef4444;background:rgba(239,68,68,0.06);}
+        .quiz-opt.wrong .dot{border-color:#ef4444;background:#ef4444;color:#fff;}
+        .quiz-explain{font-size:13px;color:var(--text-sec);background:var(--surface-2);border-left:3px solid var(--text-muted);border-radius:8px;padding:10px 14px;margin-top:4px;}
+        .quiz-explain.ok{border-left-color:var(--green);}
+        .quiz-explain.no{border-left-color:#ef4444;}
+        .lt-score{font-size:13px;font-weight:700;color:var(--text-sec);padding:12px 0 0;border-top:1px solid var(--border);}
+        .lt-qfoot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:16px;border-top:1px solid var(--border);font-size:13px;font-weight:600;color:var(--text-sec);}
+        .lt-result{border-radius:12px;padding:18px 20px;margin-top:16px;}
+        .lt-result.pass{background:var(--green-soft);border:1px solid rgba(22,163,74,0.3);}
+        .lt-result.fail{background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.25);}
+        .lt-result .big{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:1px;line-height:1;}
+        .lt-result.pass .big{color:var(--green);}
+        .lt-result.fail .big{color:#dc2626;}
+        .lt-result p{font-size:13.5px;color:var(--text-sec);margin-top:4px;}
+        .lt-result .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+        .lt-break{margin-top:14px;display:grid;gap:6px;}
+        .lt-break div{display:flex;justify-content:space-between;gap:10px;font-size:13px;background:var(--surface);border-radius:8px;padding:7px 12px;}
+        .lt-break b{white-space:nowrap;}
+
+        /* exam setup */
+        .lt-setup h4{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin:4px 0 10px;}
+        .lt-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+        .lt-chip{background:var(--surface);border:1.5px solid var(--border);border-radius:100px;padding:8px 16px;font-size:13px;font-weight:700;color:var(--text-sec);cursor:pointer;}
+        .lt-chip:hover:not(:disabled){border-color:var(--red);color:var(--red);}
+        .lt-chip.on{background:var(--red);border-color:var(--red);color:#fff;}
+        .lt-chip:disabled{opacity:.4;cursor:default;}
+
+        /* editor */
+        .ed-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;}
+        .ed-field{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:700;color:var(--text-sec);}
+        .ed-field.full{grid-column:1 / -1;}
+        .ed-field small{font-weight:500;color:var(--text-muted);}
+        .ed-field input,.ed-field textarea,.ed-field select,.lt-q textarea,.lt-opt input,.lt-resrow input,.lt-bulk textarea{font-family:inherit;font-size:14px;color:var(--text);background:var(--surface);border:1.5px solid var(--border);border-radius:9px;padding:9px 11px;width:100%;}
+        .ed-field textarea{min-height:130px;resize:vertical;line-height:1.5;}
+        input:focus,textarea:focus,select:focus{outline:none;border-color:var(--red);}
+        .lt-q{border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px;background:var(--surface-2);}
+        .lt-q.bad{border-color:#fca5a5;}
+        .lt-qhead{display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
+        .lt-qhead .qn{font-size:12px;font-weight:800;color:var(--text-sec);margin-right:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+        .lt-warn{font-size:11px;font-weight:700;color:#dc2626;background:#fef2f2;padding:2px 8px;border-radius:5px;}
+        .lt-verify{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--amber);background:var(--amber-soft);padding:2px 4px 2px 8px;border-radius:5px;}
+        .lt-verify button{width:auto !important;height:auto !important;padding:2px 7px;font-size:11px !important;font-weight:700;}
+        .lt-q textarea{min-height:56px;resize:vertical;margin-bottom:8px;}
+        .lt-opt{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+        .lt-opt label{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--text-muted);cursor:pointer;flex-shrink:0;width:64px;}
+        .lt-opt label.is{color:var(--green);}
+        .lt-opt input[type=radio]{width:auto;accent-color:var(--green);}
+        .lt-opt button{background:none;border:none;color:var(--text-muted);cursor:pointer;width:26px;flex-shrink:0;}
+        .lt-opt button:hover{color:#dc2626;}
+        .lt-linkbtn{background:none;border:none;color:var(--red);font-size:12.5px;font-weight:700;cursor:pointer;padding:4px 0;}
+        .lt-resrow{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
+        .lt-edacts{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+        .lt-bulk{margin-top:14px;border:1.5px dashed var(--border);border-radius:12px;padding:16px;background:var(--surface);}
+        .lt-bulk textarea{min-height:180px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;}
+        .lt-bulk pre{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;background:var(--surface-2);border-radius:8px;padding:10px 12px;color:var(--text-sec);white-space:pre-wrap;margin:8px 0 10px;}
+        .lt-bulkmsg{font-size:12.5px;font-weight:600;margin:8px 0;color:var(--text-sec);}
+        .lt-bulkmsg .bad{color:#dc2626;}
+
+        @media(max-width:640px){
+            .wrap{padding:24px 16px 70px;}
+            .lt-block{padding:18px 16px;}
+            .ed-grid{grid-template-columns:1fr;}
+            .lt-grid{grid-template-columns:1fr;}
+            .lt-mod-head h2{font-size:26px;}
+        }
+    </style>
+<link rel="stylesheet" href="hub-theme.css?v=20260903b"><script src="hub-brand.js" defer></script></head>
+<body>
+
+<header class="page-header">
+    <div class="header-inner">
+        <a href="hub.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Hub</a>
+        <div class="header-title">
+            <h1><i class="fa-solid fa-id-card" style="font-size:0.8em;opacity:.9;"></i> Licensing Training</h1>
+            <p>Exam prep and first-year training — study notes plus practice quizzes</p>
+        </div>
+        <button class="edit-toggle" id="btnLicEdit" onclick="toggleEditMode()" style="display:none"><i class="fa-solid fa-pen"></i> Edit Mode</button>
+    </div>
+</header>
+
+<div class="wrap">
+    <div id="helpTop"></div>
+    <script>document.addEventListener("DOMContentLoaded",function(){ window.HelpBox && HelpBox.mount({container:"#helpTop",key:"yrl-licensing-training",label:"Licensing Training"}); });</script>
+
+    <div class="lt-tabs" id="ltTabs" role="tablist"></div>
+    <div class="lt-status" id="ltStatus"></div>
+    <div id="ltBody"><div class="lt-empty"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
+</div>
+
+<script src="hub-data.js"></script>
+<script src="edit-gate.js?v=20260916"></script>
+<script src="yrl-licensing-content.js?v=20261020a"></script>
+<script>
+(function(){
+    /* Content: hub_content[KEY] once the broker has saved; starter set from yrl-licensing-content.js until then.
+       Practice only — nothing about an agent's answers is saved (Dan's call). */
+    const KEY = 'yrl-licensing-training';
+    const PASS = 0.75;
+    const EXAM_TAB = { id: 'exam', name: 'Practice Exam', icon: 'fa-solid fa-stopwatch' };
+    const ICONS = ['fa-solid fa-book','fa-solid fa-house','fa-solid fa-map','fa-solid fa-chart-line','fa-solid fa-money-bill-wave','fa-solid fa-handshake','fa-solid fa-file-signature','fa-solid fa-key','fa-solid fa-scale-balanced','fa-solid fa-leaf','fa-solid fa-calculator','fa-solid fa-building-columns','fa-solid fa-graduation-cap','fa-solid fa-user-tie','fa-solid fa-vault','fa-solid fa-bullhorn','fa-solid fa-gavel','fa-solid fa-people-group','fa-solid fa-file-contract','fa-solid fa-clipboard-check','fa-solid fa-list-check','fa-solid fa-folder-open','fa-solid fa-landmark','fa-solid fa-shield-halved'];
+
+    let data = null, loadFailed = false;
+    let tab = 'national', openMod = null, edit = false;
+    let quiz = null;          // the quiz on screen: { key, src, qs, mode, picks, submitted, exam, hostId }
+    let examCfg = { tracks: ['national'], len: 25 };
+    let bulkOpen = false;
+
+    const $ = id => document.getElementById(id);
+    const esc = s => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    const clone = o => JSON.parse(JSON.stringify(o));
+    const uid = p => p + Math.random().toString(36).slice(2, 9);
+    function isOwner(){ const r = window.yrlMember && window.yrlMember.role; return r === 'owner' || r === 'nomad_admin'; }
+    function track(id){ return data.tracks.find(t => t.id === id); }
+    function curMod(){ const t = track(tab); return t && openMod ? t.modules.find(m => m.id === openMod) : null; }
+    function validTab(id){ return id === 'exam' || !!(data && track(id)); }
+    function shuffle(a){ a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+    /* a question is shown to agents only when it's complete */
+    function qValid(q){
+        return q && String(q.q || '').trim() && Array.isArray(q.options) && q.options.filter(o => String(o).trim()).length >= 2 &&
+               q.answer >= 0 && q.answer < q.options.length && String(q.options[q.answer] || '').trim();
+    }
+    /* copy with blank options dropped and option order shuffled (answer re-pointed) — so the right answer isn't always "B" */
+    function prepQ(q, extra){
+        const opts = q.options.map((o, i) => ({ o: String(o), right: i === q.answer })).filter(x => x.o.trim());
+        const mixed = shuffle(opts);
+        return Object.assign({ id: q.id, q: q.q, explain: q.explain || '', options: mixed.map(x => x.o), answer: mixed.findIndex(x => x.right) }, extra || {});
+    }
+
+    /* ── notes: blank line = paragraph, "- " lines = bullets, **bold** ── */
+    function fmtNotes(txt){
+        const inline = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        return String(txt || '').replace(/\r/g, '').split(/\n\s*\n/).map(block => {
+            const lines = block.split('\n').filter(l => l.trim());
+            if (!lines.length) return '';
+            if (lines.every(l => /^\s*[-•]\s+/.test(l))) return '<ul>' + lines.map(l => '<li>' + inline(l.replace(/^\s*[-•]\s+/, '')) + '</li>').join('') + '</ul>';
+            const out = []; let bullets = [];
+            lines.forEach(l => {
+                if (/^\s*[-•]\s+/.test(l)) bullets.push('<li>' + inline(l.replace(/^\s*[-•]\s+/, '')) + '</li>');
+                else { if (bullets.length){ out.push('<ul>' + bullets.join('') + '</ul>'); bullets = []; } out.push('<p>' + inline(l) + '</p>'); }
+            });
+            if (bullets.length) out.push('<ul>' + bullets.join('') + '</ul>');
+            return out.join('');
+        }).join('');
+    }
+
+    /* ══════════ render ══════════ */
+    function render(){
+        renderTabs();
+        const body = $('ltBody');
+        if (tab === 'exam') return renderExam(body);
+        if (openMod && curMod()) return edit ? renderEditor(body, curMod()) : renderModule(body, curMod());
+        openMod = null;
+        renderTrack(body);
+    }
+    function renderTabs(){
+        const list = data.tracks.map(t => ({ id: t.id, name: t.name, icon: t.icon })).concat([EXAM_TAB]);
+        $('ltTabs').innerHTML = list.map(t =>
+            `<button class="lt-tab${t.id === tab ? ' on' : ''}" role="tab" onclick="ltTab('${t.id}')"><i class="${esc(t.icon)}"></i> ${esc(t.name)}</button>`).join('');
+    }
+    window.ltTab = function(id, fromHub){
+        if (!validTab(id)) return;
+        tab = id; openMod = null; quiz = null; bulkOpen = false;
+        try { localStorage.setItem('lic-tab', id); } catch(e){}
+        render();
+        if (!fromHub) window.scrollTo(0, 0);
+        if (window.__yrlTabChanged) window.__yrlTabChanged(id);   // hub sidebar highlight follows
+    };
+
+    function renderTrack(body){
+        const t = track(tab);
+        let h = `<div class="lt-intro"><p>${esc(t.desc || '')}</p>` +
+                (t.modules.some(m => m.questions.some(qValid)) ? `<button class="btn-ghost" onclick="ltExamFor('${t.id}')"><i class="fa-solid fa-stopwatch"></i> Take a practice exam</button>` : '') + `</div>`;
+        if (!t.modules.length && !edit){ body.innerHTML = h + '<div class="lt-empty">Modules for this track are on the way.</div>'; return; }
+        h += '<div class="lt-grid">' + t.modules.map((m, i) => {
+            const n = edit ? m.questions.length : m.questions.filter(qValid).length;
+            const flags = edit ? m.questions.filter(q => q.verify).length : 0;
+            return `<div class="lt-card" onclick="ltOpen('${m.id}')">
+                <div class="lt-card-top"><div class="lt-icon"><i class="${esc(m.icon || 'fa-solid fa-book')}"></i></div><span class="lt-num">Module ${i + 1}</span></div>
+                <h3>${esc(m.title)}</h3>
+                <p>${esc(m.summary || '')}</p>
+                <div class="lt-card-foot"><span class="pill">${n} question${n === 1 ? '' : 's'}</span>${flags ? `<span class="lt-flag"><i class="fa-solid fa-triangle-exclamation"></i> ${flags} to verify</span>` : ''}<i class="fa-solid fa-arrow-right"></i></div>
+                ${edit ? `<div class="lt-card-ed" onclick="event.stopPropagation()">
+                    <button onclick="ltMoveMod('${m.id}',-1)" title="Move earlier"><i class="fa-solid fa-arrow-left"></i></button>
+                    <button onclick="ltMoveMod('${m.id}',1)" title="Move later"><i class="fa-solid fa-arrow-right"></i></button>
+                    <button class="danger" onclick="ltDelMod('${m.id}')" title="Delete module"><i class="fa-solid fa-trash"></i></button></div>` : ''}
+            </div>`;
+        }).join('') + (edit ? `<button class="lt-addcard" onclick="ltAddMod()"><i class="fa-solid fa-plus"></i> Add module</button>` : '') + '</div>';
+        body.innerHTML = h;
+    }
+    window.ltOpen = function(mid){ openMod = mid; quiz = null; bulkOpen = false; render(); window.scrollTo(0, 0); };
+    window.ltBack = function(){ openMod = null; quiz = null; bulkOpen = false; render(); window.scrollTo(0, 0); };
+
+    function renderModule(body, m){
+        const t = track(tab), idx = t.modules.indexOf(m);
+        if (!quiz || quiz.key !== m.id) quiz = newQuiz(m.id, m.questions.filter(qValid).map(q => prepQ(q)), 'study', false, 'quizHost');
+        const prev = t.modules[idx - 1], next = t.modules[idx + 1];
+        let h = `<button class="lt-back" onclick="ltBack()"><i class="fa-solid fa-arrow-left"></i> All ${esc(t.name)} modules</button>
+            <div class="lt-mod-head"><div class="lt-icon lg"><i class="${esc(m.icon || 'fa-solid fa-book')}"></i></div>
+                <div><div class="lt-num">Module ${idx + 1} of ${t.modules.length}</div><h2>${esc(m.title)}</h2><p>${esc(m.summary || '')}</p></div></div>`;
+        if (String(m.notes || '').trim()) h += `<div class="lt-block"><h3><i class="fa-solid fa-book-open"></i> Study notes</h3><div class="lt-notes">${fmtNotes(m.notes)}</div></div>`;
+        const res = (m.resources || []).filter(r => r && r.link);
+        if (res.length) h += `<div class="lt-block"><h3><i class="fa-solid fa-paperclip"></i> Resources</h3>` + res.map(r =>
+            `<a class="lt-res" href="${esc(r.link)}" target="_blank" rel="noopener"><i class="fa-solid ${/\.pdf(\?|$)/i.test(r.link) ? 'fa-file-pdf' : (/hub-files/.test(r.link) ? 'fa-file-lines' : 'fa-arrow-up-right-from-square')}"></i> ${esc(r.title || r.link)}</a>`).join('') + `</div>`;
+        h += `<div class="lt-block"><h3><i class="fa-solid fa-circle-question"></i> Quiz</h3><div id="quizHost"></div></div>`;
+        h += `<div class="lt-modnav">${prev ? `<button class="btn-ghost" onclick="ltOpen('${prev.id}')"><i class="fa-solid fa-arrow-left"></i> ${esc(prev.title)}</button>` : '<span></span>'}
+              ${next ? `<button class="btn-ghost" onclick="ltOpen('${next.id}')">${esc(next.title)} <i class="fa-solid fa-arrow-right"></i></button>` : ''}</div>`;
+        body.innerHTML = h;
+        renderQuiz();
+    }
+
+    /* ══════════ quiz engine (adapted from Your First Year) ══════════ */
+    function newQuiz(key, qs, mode, exam, hostId){ return { key, src: qs, qs: qs.slice(), mode, picks: {}, submitted: false, exam: !!exam, hostId }; }
+    function scoreOf(Z){ let c = 0; Z.qs.forEach((q, i) => { if (Z.picks[i] === q.answer) c++; }); return c; }
+    function resultHtml(Z){
+        const total = Z.qs.length, c = scoreOf(Z), pct = total ? Math.round(c / total * 100) : 0, pass = c / total >= PASS;
+        let h = `<div class="lt-result ${pass ? 'pass' : 'fail'}" id="ltResult"><div class="big">${c} / ${total} · ${pct}%</div>
+            <p>${pass ? 'Passing — nice work.' : 'Below the ' + Math.round(PASS * 100) + '% passing line. Review the explanations and try again.'}</p>`;
+        if (Z.exam){
+            const by = {};
+            Z.qs.forEach((q, i) => { const k = q._mod || 'Other'; by[k] = by[k] || { c: 0, n: 0 }; by[k].n++; if (Z.picks[i] === q.answer) by[k].c++; });
+            h += '<div class="lt-break">' + Object.keys(by).sort((a, b) => (by[a].c / by[a].n) - (by[b].c / by[b].n)).map(k =>
+                `<div><span>${esc(k)}</span><b>${by[k].c} / ${by[k].n}</b></div>`).join('') + '</div>';
+        }
+        h += `<div class="acts"><button class="btn-primary" onclick="ltRetake()"><i class="fa-solid fa-rotate-left"></i> Retake</button>` +
+             (Z.exam ? `<button class="btn-ghost" onclick="ltNewExam()"><i class="fa-solid fa-shuffle"></i> New random exam</button>` : '') + `</div></div>`;
+        return h;
+    }
+    function renderQuiz(){
+        const Z = quiz, host = Z && $(Z.hostId); if (!host) return;
+        if (!Z.qs.length){ host.innerHTML = '<p class="hint" style="margin:0">No questions in this module yet.</p>'; return; }
+        const answered = Object.keys(Z.picks).length;
+        let h = '';
+        if (!Z.exam) h += `<div class="lt-qbar"><div class="lt-seg">
+                <button class="${Z.mode === 'study' ? 'on' : ''}" onclick="ltMode('study')">Study mode</button>
+                <button class="${Z.mode === 'test' ? 'on' : ''}" onclick="ltMode('test')">Test mode</button></div>
+                <button class="btn-ghost btn-sm" onclick="ltShuffle()"><i class="fa-solid fa-shuffle"></i> Shuffle</button></div>
+            <p class="hint">${Z.mode === 'study' ? 'Pick an answer to see right away if you got it, with the explanation.' : 'Answer every question, then check your score at the end.'}</p>`;
+        h += Z.qs.map((q, qi) => {
+            const p = Z.picks[qi], reveal = Z.mode === 'study' ? p != null : Z.submitted;
+            return `<div class="quiz-q" data-q="${qi}"><p class="qt"><span class="qn">${qi + 1}</span><span>${esc(q.q)}</span></p>` +
+                q.options.map((o, oi) => {
+                    let c = '';
+                    if (reveal){ if (oi === q.answer) c = 'right'; else if (oi === p) c = 'wrong'; }
+                    else if (oi === p) c = 'picked';
+                    return `<button class="quiz-opt ${c}" ${reveal ? 'disabled' : ''} onclick="ltPick(${qi},${oi})"><span class="dot">${String.fromCharCode(65 + oi)}</span><span>${esc(o)}</span></button>`;
+                }).join('') +
+                (reveal ? `<div class="quiz-explain ${p === q.answer ? 'ok' : 'no'}"><strong>${p === q.answer ? 'Correct.' : (p == null ? 'Not answered.' : 'Not quite.')}</strong> ${esc(q.explain)}</div>` : '') +
+                `</div>`;
+        }).join('');
+        if (Z.mode === 'study'){
+            h += `<div class="lt-score">${scoreOf(Z)} correct · ${answered} of ${Z.qs.length} answered</div>`;
+            if (answered === Z.qs.length) h += resultHtml(Z);
+        } else if (!Z.submitted){
+            h += `<div class="lt-qfoot"><span>${answered} of ${Z.qs.length} answered</span><button class="btn-primary" onclick="ltSubmit()"><i class="fa-solid fa-check"></i> Check my answers</button></div>`;
+        } else h += resultHtml(Z);
+        host.innerHTML = h;
+    }
+    window.ltPick = function(qi, oi){
+        const Z = quiz; if (!Z) return;
+        if (Z.mode === 'study' && Z.picks[qi] != null) return;
+        if (Z.mode === 'test' && Z.submitted) return;
+        Z.picks[qi] = oi;
+        const wasDone = Object.keys(Z.picks).length === Z.qs.length;
+        renderQuiz();
+        if (Z.mode === 'study' && wasDone){ const r = $('ltResult'); if (r) r.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    };
+    window.ltSubmit = function(){
+        const Z = quiz; if (!Z) return;
+        const left = Z.qs.length - Object.keys(Z.picks).length;
+        if (left && !confirm(left + ' question' + (left === 1 ? ' is' : 's are') + ' unanswered and will count as wrong. Check your answers anyway?')) return;
+        Z.submitted = true; renderQuiz();
+        const r = $('ltResult'); if (r) r.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+    window.ltRetake = function(){
+        const Z = quiz; if (!Z) return;
+        Z.picks = {}; Z.submitted = false; Z.qs = Z.qs.map(q => prepQ(q, q._mod ? { _mod: q._mod } : null));   // re-mix answer order
+        renderQuiz(); const host = $(Z.hostId); if (host) host.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+    window.ltMode = function(m){ if (!quiz || quiz.mode === m) return; quiz.mode = m; quiz.picks = {}; quiz.submitted = false; renderQuiz(); };
+    window.ltShuffle = function(){ if (!quiz) return; quiz.qs = shuffle(quiz.src).map(q => prepQ(q)); quiz.picks = {}; quiz.submitted = false; renderQuiz(); };
+
+    /* ══════════ practice exam ══════════ */
+    function examPool(){
+        const out = [];
+        examCfg.tracks.forEach(tid => { const t = track(tid); if (t) t.modules.forEach(m => m.questions.filter(qValid).forEach(q => out.push({ q, mod: m.title }))); });
+        return out;
+    }
+    function renderExam(body){
+        if (quiz && quiz.exam){
+            const names = examCfg.tracks.map(id => (track(id) || {}).name).filter(Boolean).join(' + ');
+            body.innerHTML = `<div class="lt-intro"><p><strong>Practice exam</strong> — ${esc(names)} · ${quiz.qs.length} questions · passing is ${Math.round(PASS * 100)}%</p>
+                <button class="btn-ghost" onclick="ltExamSetup()"><i class="fa-solid fa-sliders"></i> Change exam</button></div>
+                <div class="lt-block"><div id="examHost"></div></div>`;
+            return renderQuiz();
+        }
+        const pool = examPool().length;
+        const trackChip = t => `<button class="lt-chip${examCfg.tracks.includes(t.id) ? ' on' : ''}" onclick="ltExamTrack('${t.id}')">${esc(t.name)}</button>`;
+        body.innerHTML = `<div class="lt-block lt-setup">
+            <h3><i class="fa-solid fa-stopwatch"></i> Build a practice exam</h3>
+            <p class="hint">Random questions from the tracks you pick, scored at the end with a breakdown by topic. Nothing is saved — it's just for practice.</p>
+            <h4>Tracks</h4><div class="lt-chips">${data.tracks.map(trackChip).join('')}</div>
+            <h4>Length</h4><div class="lt-chips">${[25, 50, 100].map(n => `<button class="lt-chip${examCfg.len === n ? ' on' : ''}" ${pool && n > pool ? 'disabled' : ''} onclick="ltExamLen(${n})">${n} questions</button>`).join('')}
+                <button class="lt-chip${examCfg.len === 0 ? ' on' : ''}" onclick="ltExamLen(0)">All (${pool})</button></div>
+            <button class="btn-primary" ${pool ? '' : 'disabled'} onclick="ltNewExam()"><i class="fa-solid fa-play"></i> Start exam</button>
+        </div>`;
+    }
+    window.ltExamTrack = function(id){
+        const i = examCfg.tracks.indexOf(id);
+        if (i > -1){ if (examCfg.tracks.length > 1) examCfg.tracks.splice(i, 1); } else examCfg.tracks.push(id);
+        const pool = examPool().length; if (examCfg.len && examCfg.len > pool) examCfg.len = 0;
+        render();
+    };
+    window.ltExamLen = function(n){ examCfg.len = n; render(); };
+    window.ltExamFor = function(tid){ examCfg.tracks = [tid]; examCfg.len = 25; quiz = null; tab = 'exam'; openMod = null; render(); window.scrollTo(0, 0); if (window.__yrlTabChanged) window.__yrlTabChanged('exam'); };
+    window.ltExamSetup = function(){ quiz = null; render(); };
+    window.ltNewExam = function(){
+        const pool = shuffle(examPool()), n = examCfg.len ? Math.min(examCfg.len, pool.length) : pool.length;
+        quiz = newQuiz('exam', pool.slice(0, n).map(x => prepQ(x.q, { _mod: x.mod })), 'test', true, 'examHost');
+        tab = 'exam'; render(); window.scrollTo(0, 0);
+    };
+
+    /* ══════════ editing (owner) ══════════ */
+    function renderEditor(body, m){
+        const t = track(tab);
+        const flags = m.questions.filter(q => q.verify).length;
+        let h = `<button class="lt-back" onclick="ltBack()"><i class="fa-solid fa-arrow-left"></i> All ${esc(t.name)} modules</button>
+        <div class="lt-block"><h3><i class="fa-solid fa-pen"></i> Module details</h3><div class="ed-grid">
+            <label class="ed-field">Title<input value="${esc(m.title)}" oninput="ltModSet('title',this.value)"></label>
+            <label class="ed-field">Icon<select onchange="ltModSet('icon',this.value);ltRender()">${ICONS.concat(ICONS.includes(m.icon) ? [] : [m.icon || 'fa-solid fa-book']).map(ic => `<option value="${esc(ic)}"${ic === m.icon ? ' selected' : ''}>${esc(ic.replace('fa-solid fa-', ''))}</option>`).join('')}</select></label>
+            <label class="ed-field full">Summary <small>(shows on the module card)</small><input value="${esc(m.summary || '')}" oninput="ltModSet('summary',this.value)"></label>
+            <label class="ed-field full">Study notes <small>Blank line = new paragraph. Start a line with "- " for a bullet. **bold** works.</small><textarea oninput="ltModSet('notes',this.value)">${esc(m.notes || '')}</textarea></label>
+        </div></div>
+        <div class="lt-block"><h3><i class="fa-solid fa-paperclip"></i> Resources</h3>
+            ${(m.resources || []).map((r, i) => `<div class="lt-resrow">
+                <input placeholder="Title" value="${esc(r.title || '')}" oninput="ltResSet(${i},'title',this.value)">
+                <input placeholder="https://… link" value="${esc(r.link || '')}" oninput="ltResSet(${i},'link',this.value)">
+                <button onclick="ltResDel(${i})" title="Remove"><i class="fa-solid fa-xmark"></i></button></div>`).join('') || '<p class="hint">No resources yet — add a link or upload a document (PDF, Word, etc.).</p>'}
+            <div class="lt-edacts"><button class="btn-ghost btn-sm" onclick="ltResAdd()"><i class="fa-solid fa-link"></i> Add link</button>
+                <label class="btn-ghost btn-sm" style="cursor:pointer"><i class="fa-solid fa-upload"></i> Upload document<input type="file" hidden onchange="ltResUpload(this)"></label>
+                <span class="hint" id="ltUpMsg" style="margin:0;align-self:center"></span></div>
+        </div>
+        <div class="lt-block"><h3><i class="fa-solid fa-circle-question"></i> Questions (${m.questions.length})${flags ? ` <span class="lt-flag">${flags} to verify</span>` : ''}</h3>
+            <p class="hint">Click the radio next to the correct answer. Answer order is shuffled for agents, so don't write "all of the above" style options. Incomplete questions are hidden from agents.</p>
+            ${m.questions.map((q, i) => qEditorHtml(q, i, m.questions.length)).join('')}
+            <div class="lt-edacts"><button class="btn-primary btn-sm" onclick="ltQAdd()"><i class="fa-solid fa-plus"></i> Add question</button>
+                <button class="btn-ghost btn-sm" onclick="ltBulkToggle()"><i class="fa-solid fa-paste"></i> ${bulkOpen ? 'Close bulk paste' : 'Bulk paste questions'}</button></div>
+            ${bulkOpen ? bulkHtml() : ''}
+        </div>`;
+        body.innerHTML = h;
+    }
+    function qEditorHtml(q, i, n){
+        const bad = !qValid(q);
+        return `<div class="lt-q${bad ? ' bad' : ''}" id="q-${esc(q.id)}">
+            <div class="lt-qhead"><span class="qn">Question ${i + 1}${bad ? ' <span class="lt-warn">Incomplete — hidden from agents</span>' : ''}${q.verify ? ` <span class="lt-verify"><i class="fa-solid fa-triangle-exclamation"></i> Check this fact against current IREC rules <button onclick="ltQVerify('${q.id}')">Mark verified</button></span>` : ''}</span>
+                <button onclick="ltQMove('${q.id}',-1)" title="Move up" ${i === 0 ? 'disabled' : ''}><i class="fa-solid fa-arrow-up"></i></button>
+                <button onclick="ltQMove('${q.id}',1)" title="Move down" ${i === n - 1 ? 'disabled' : ''}><i class="fa-solid fa-arrow-down"></i></button>
+                <button onclick="ltQDup('${q.id}')" title="Duplicate"><i class="fa-regular fa-copy"></i></button>
+                <button class="danger" onclick="ltQDel('${q.id}')" title="Delete"><i class="fa-solid fa-trash"></i></button></div>
+            <textarea placeholder="Question" oninput="ltQSet('${q.id}','q',this.value)">${esc(q.q)}</textarea>
+            ${q.options.map((o, oi) => `<div class="lt-opt">
+                <label class="${oi === q.answer ? 'is' : ''}"><input type="radio" name="ans-${esc(q.id)}" ${oi === q.answer ? 'checked' : ''} onchange="ltAns('${q.id}',${oi})"> ${oi === q.answer ? 'Correct' : String.fromCharCode(65 + oi)}</label>
+                <input placeholder="Answer option" value="${esc(o)}" oninput="ltOptSet('${q.id}',${oi},this.value)">
+                ${q.options.length > 2 ? `<button onclick="ltOptDel('${q.id}',${oi})" title="Remove option"><i class="fa-solid fa-xmark"></i></button>` : '<span style="width:26px"></span>'}</div>`).join('')}
+            ${q.options.length < 5 ? `<button class="lt-linkbtn" onclick="ltOptAdd('${q.id}')"><i class="fa-solid fa-plus"></i> Add option</button>` : ''}
+            <textarea placeholder="Explanation (shown after they answer)" style="margin-top:8px" oninput="ltQSet('${q.id}','explain',this.value)">${esc(q.explain || '')}</textarea>
+        </div>`;
+    }
+    function bulkHtml(){
+        return `<div class="lt-bulk"><strong style="font-size:13.5px">Paste questions</strong>
+            <p class="hint" style="margin:4px 0 0">One question per block, blank line between questions. Mark the correct option with a * or add an "Answer:" line.</p>
+<pre>Q: What is the EPA radon action level?
+A) 2 pCi/L
+*B) 4 pCi/L
+C) 10 pCi/L
+Why: 4 pCi/L is the level where the EPA recommends fixing the home.
+
+Q: A counteroffer does what to the original offer?
+A) Keeps it open
+B) Terminates it
+Answer: B</pre>
+            <textarea id="ltBulkTxt" placeholder="Paste here…" oninput="ltBulkPreview()"></textarea>
+            <div class="lt-bulkmsg" id="ltBulkMsg"></div>
+            <button class="btn-primary btn-sm" id="ltBulkAdd" onclick="ltBulkAdd()" disabled><i class="fa-solid fa-plus"></i> Add questions</button></div>`;
+    }
+    function parseBulk(txt){
+        const blocks = String(txt || '').replace(/\r/g, '').split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
+        return blocks.map(b => {
+            const lines = b.split('\n').map(l => l.trim()).filter(Boolean);
+            let q = '', opts = [], ans = -1, why = '', letter = null, m;
+            lines.forEach(l => {
+                if ((m = l.match(/^(?:q(?:uestion)?\s*\d*\s*[:.)-]|\d+\s*[.)])\s*(.+)$/i))) { q = m[1]; return; }
+                if ((m = l.match(/^(\*)?\s*\(?([a-e])\s*[.):\]-]\s*(.+?)\s*(\*)?$/i)) && (opts.length || q)) { opts.push(m[3]); if (m[1] || m[4]) ans = opts.length - 1; return; }
+                if ((m = l.match(/^(?:answer|ans|correct(?:\s+answer)?)\s*[:.-]\s*\(?([a-e])\b/i))) { letter = m[1].toUpperCase(); return; }
+                if ((m = l.match(/^(?:why|explanation|explain|rationale)\s*[:.-]\s*(.+)$/i))) { why = m[1]; return; }
+                if (!q) q = l; else if (why) why += ' ' + l; else if (!opts.length) q += ' ' + l;
+            });
+            if (letter) ans = letter.charCodeAt(0) - 65;
+            if (q && opts.length >= 2 && ans >= 0 && ans < opts.length) return { id: uid('q'), q, options: opts, answer: ans, explain: why };
+            return { error: true, first: (lines[0] || '').slice(0, 60) };
+        });
+    }
+    window.ltBulkToggle = function(){ bulkOpen = !bulkOpen; render(); if (bulkOpen){ const t = $('ltBulkTxt'); if (t){ t.scrollIntoView({ block: 'center' }); t.focus(); } } };
+    window.ltBulkPreview = function(){
+        const out = parseBulk($('ltBulkTxt').value), ok = out.filter(x => !x.error), bad = out.filter(x => x.error);
+        $('ltBulkMsg').innerHTML = (out.length ? `Found ${ok.length} question${ok.length === 1 ? '' : 's'} ready to add.` : '') +
+            (bad.length ? `<div class="bad">Couldn't read ${bad.length}: ${bad.map(x => '"' + esc(x.first) + '"').join(', ')} — each needs 2+ options and a marked answer.</div>` : '');
+        $('ltBulkAdd').disabled = !ok.length;
+    };
+    window.ltBulkAdd = function(){
+        const ok = parseBulk($('ltBulkTxt').value).filter(x => !x.error), m = curMod();
+        if (!ok.length || !m) return;
+        m.questions.push(...ok); bulkOpen = false; changed(); render();
+        setStatus('Added ' + ok.length + ' question' + (ok.length === 1 ? '' : 's') + '.');
+    };
+
+    /* field edits — update data + autosave, no re-render (keeps focus while typing) */
+    function qById(id){ const m = curMod(); return m && m.questions.find(q => q.id === id); }
+    window.ltRender = function(){ render(); };
+    window.ltModSet = function(f, v){ const m = curMod(); if (!m) return; m[f] = v; changed(); };
+    window.ltQSet = function(id, f, v){ const q = qById(id); if (!q) return; q[f] = v; changed(); markQ(q); };
+    window.ltOptSet = function(id, oi, v){ const q = qById(id); if (!q) return; q.options[oi] = v; changed(); markQ(q); };
+    function markQ(q){ const el = $('q-' + q.id); if (el) el.classList.toggle('bad', !qValid(q)); }
+    /* structural edits — re-render */
+    window.ltAns = function(id, oi){ const q = qById(id); if (!q) return; q.answer = oi; changed(); render(); };
+    window.ltOptAdd = function(id){ const q = qById(id); if (!q || q.options.length >= 5) return; q.options.push(''); changed(); render(); };
+    window.ltOptDel = function(id, oi){
+        const q = qById(id); if (!q || q.options.length <= 2) return;
+        q.options.splice(oi, 1);
+        if (q.answer === oi) q.answer = 0; else if (q.answer > oi) q.answer--;
+        changed(); render();
+    };
+    window.ltQAdd = function(){
+        const m = curMod(); if (!m) return;
+        const q = { id: uid('q'), q: '', options: ['', '', '', ''], answer: 0, explain: '' };
+        m.questions.push(q); changed(); render();
+        const el = $('q-' + q.id); if (el){ el.scrollIntoView({ block: 'center' }); const ta = el.querySelector('textarea'); if (ta) ta.focus(); }
+    };
+    window.ltQDel = function(id){ const m = curMod(); if (!m || !confirm('Delete this question?')) return; m.questions = m.questions.filter(q => q.id !== id); changed(); render(); };
+    window.ltQDup = function(id){
+        const m = curMod(); const i = m ? m.questions.findIndex(q => q.id === id) : -1; if (i < 0) return;
+        const c = clone(m.questions[i]); c.id = uid('q'); m.questions.splice(i + 1, 0, c); changed(); render();
+    };
+    window.ltQMove = function(id, dir){
+        const m = curMod(); const i = m ? m.questions.findIndex(q => q.id === id) : -1, j = i + dir;
+        if (i < 0 || j < 0 || j >= m.questions.length) return;
+        [m.questions[i], m.questions[j]] = [m.questions[j], m.questions[i]]; changed(); render();
+        const el = $('q-' + id); if (el) el.scrollIntoView({ block: 'center' });
+    };
+    window.ltQVerify = function(id){ const q = qById(id); if (!q) return; delete q.verify; changed(); render(); };
+    window.ltResSet = function(i, f, v){ const m = curMod(); if (!m || !m.resources[i]) return; m.resources[i][f] = v; changed(); };
+    window.ltResAdd = function(){ const m = curMod(); if (!m) return; (m.resources = m.resources || []).push({ title: '', link: '' }); changed(); render(); };
+    window.ltResDel = function(i){ const m = curMod(); if (!m) return; m.resources.splice(i, 1); changed(); render(); };
+    window.ltResUpload = async function(input){
+        const f = input.files && input.files[0], m = curMod(); if (!f || !m) return;
+        const msg = $('ltUpMsg'); if (msg) msg.textContent = 'Uploading ' + f.name + '…';
+        try {
+            const url = await uploadHubFile(f, 'licensing');
+            (m.resources = m.resources || []).push({ title: f.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' '), link: url });
+            changed(); render();
+        } catch (e){ if (msg) msg.textContent = 'Upload failed: ' + (e.message || e); }
+    };
+    window.ltAddMod = function(){
+        const t = track(tab); if (!t) return;
+        const m = { id: uid('m'), title: 'New module', icon: 'fa-solid fa-book', summary: '', notes: '', resources: [], questions: [] };
+        t.modules.push(m); changed(); ltOpen(m.id);
+    };
+    window.ltMoveMod = function(id, dir){
+        const t = track(tab), i = t.modules.findIndex(m => m.id === id), j = i + dir;
+        if (i < 0 || j < 0 || j >= t.modules.length) return;
+        [t.modules[i], t.modules[j]] = [t.modules[j], t.modules[i]]; changed(); render();
+    };
+    window.ltDelMod = function(id){
+        const t = track(tab), m = t.modules.find(x => x.id === id); if (!m) return;
+        if (!confirm('Delete "' + m.title + '"' + (m.questions.length ? ' and its ' + m.questions.length + ' questions' : '') + '? This can\'t be undone.')) return;
+        t.modules = t.modules.filter(x => x.id !== id); changed(); render();
+    };
+
+    /* ── autosave ── */
+    let saveT = null, saving = false, again = false;
+    function setStatus(txt, err){ const s = $('ltStatus'); if (!s) return; s.textContent = txt || ''; s.classList.toggle('err', !!err); }
+    function changed(){ quiz = null; setStatus('Unsaved changes…'); clearTimeout(saveT); saveT = setTimeout(save, 900); }
+    async function save(){
+        clearTimeout(saveT); saveT = null;
+        if (saving){ again = true; return; }
+        saving = true; setStatus('Saving…');
+        let ok = false;
+        try { ok = await saveHubContent(KEY, data); } catch (e){ ok = false; }
+        saving = false;
+        setStatus(ok ? 'All changes saved' : 'Couldn\'t save — check your connection. Retrying…', !ok);
+        if (!ok) saveT = setTimeout(save, 4000);
+        else if (again){ again = false; save(); }
+    }
+    function flushSave(){ if (saveT){ save(); } }
+    window.addEventListener('beforeunload', function(e){ if (saveT || saving){ flushSave(); e.preventDefault(); e.returnValue = ''; } });
+
+    /* ── edit toggle (the hub's master Edit button clicks this when embedded) ── */
+    function updEditBtn(){
+        const b = $('btnLicEdit'); if (!b) return;
+        b.classList.toggle('on', edit);
+        b.innerHTML = edit ? '<i class="fa-solid fa-check"></i> Done Editing' : '<i class="fa-solid fa-pen"></i> Edit Mode';
+    }
+    window.toggleEditMode = function(){
+        if (edit){ edit = false; flushSave(); bulkOpen = false; quiz = null; updEditBtn(); render(); setStatus(''); return; }
+        if (loadFailed){ alert('Saved content couldn\'t be loaded, so editing is turned off to protect it. Refresh the page and try again.'); return; }
+        const go = function(){ if (!isOwner()) return; edit = true; quiz = null; updEditBtn(); render(); setStatus('Editing — changes save automatically.'); };
+        if (typeof editGate === 'function') editGate(go); else go();
+    };
+
+    /* ══════════ load ══════════ */
+    function normalize(d){
+        const def = clone(window.LICENSING_DEFAULT || { tracks: [] });
+        if (!d || !Array.isArray(d.tracks)) return def;
+        def.tracks.forEach(t => { if (!d.tracks.some(x => x.id === t.id)) d.tracks.push(t); });   // a track added later still shows up
+        d.tracks.forEach(t => { t.modules = Array.isArray(t.modules) ? t.modules : [];
+            t.modules.forEach(m => { m.questions = Array.isArray(m.questions) ? m.questions : []; m.resources = Array.isArray(m.resources) ? m.resources : [];
+                m.questions.forEach(q => { q.options = Array.isArray(q.options) ? q.options : []; q.answer = +q.answer || 0; }); }); });
+        return d;
+    }
+    let started = false;
+    async function init(){
+        if (started) return; started = true;
+        let d = null;
+        try {
+            d = await Promise.race([
+                typeof loadHubContent === 'function' ? loadHubContent(KEY) : Promise.resolve(null),
+                new Promise(r => setTimeout(() => r('__timeout'), 8000))
+            ]);
+        } catch (e){ d = null; }
+        if (d === '__timeout'){ loadFailed = true; d = null; }
+        data = normalize(d);
+        if (isOwner()) $('btnLicEdit').style.display = '';
+        let want = null;
+        try { want = new URLSearchParams(location.search).get('tab'); } catch (e){}
+        if (!want) { try { want = localStorage.getItem('lic-tab'); } catch (e){} }
+        tab = validTab(want) ? want : data.tracks[0].id;
+        render();
+        // hub sidebar 3rd level: National / Indiana / New Licensee / Practice Exam
+        if (window.__yrlRegisterTabs) window.__yrlRegisterTabs(function(id){ if (validTab(id)) ltTab(id, true); });
+        if (window.__yrlTabChanged) window.__yrlTabChanged(tab);
+    }
+    document.addEventListener('yrl-auth-ready', init);
+    if (window.yrlMember) init();
+})();
+</script>
+<script src="back-link.js?v=20260917"></script>
+<script src="mobile-tabs.js?v=20260927a" defer></script>
+</body>
+</html>

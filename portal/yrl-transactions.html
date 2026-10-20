@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Portal — Transactions · Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="portal-auth.js"></script>
+    <script src="embed-mode.js?v=20260927b"></script>
+    <script src="help-box.js?v=20260916" defer></script>
+    <style>
+        :root {
+            --red:#c03926; --red-light:#d94a35; --red-dark:#9e2e1e;
+            --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f7f8fa; --surface-3:#eef0f3;
+            --border:#e2e5ea; --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+            --radius:12px; --shadow:0 4px 20px rgba(0,0,0,0.08); --green:#16a34a; --blue:#2563eb; --amber:#d97706;
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
+        a{text-decoration:none;color:inherit;}
+        .page-header{background:linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);padding:28px 24px 24px;}
+        .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+        .header-left{display:flex;align-items:center;gap:18px;}
+        .back-btn{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:9px 18px;border-radius:100px;font-size:13px;font-weight:600;transition:background .2s;white-space:nowrap;cursor:pointer;}
+        .back-btn:hover{background:rgba(255,255,255,0.26);}
+        .header-title h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(26px,4vw,38px);letter-spacing:1.5px;color:#fff;line-height:1.1;}
+        .header-title p{font-size:13px;color:rgba(255,255,255,0.85);}
+        .btn-new{display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;background:#fff;color:var(--red);padding:10px 20px;border-radius:100px;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:700;transition:all .2s;}
+        .btn-new:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,0.18);}
+
+        .wrap{max-width:1100px;margin:0 auto;padding:26px 24px 80px;}
+        .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);}
+
+        /* list */
+        .filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+        .chip{padding:7px 16px;border-radius:100px;border:1.5px solid var(--border);background:var(--surface);font-size:12.5px;font-weight:700;cursor:pointer;color:var(--text-sec);}
+        .chip.active{background:var(--red);border-color:var(--red);color:#fff;}
+        /* view toggle (list / tiles) */
+        .view-toggle{display:inline-flex;gap:4px;background:var(--surface-3);border-radius:100px;padding:3px;}
+        .vt{display:inline-flex;align-items:center;gap:6px;border:none;background:transparent;color:var(--text-sec);font-size:12px;font-weight:700;padding:6px 13px;border-radius:100px;cursor:pointer;font-family:'Inter',sans-serif;}
+        .vt.active{background:var(--surface);color:var(--red);box-shadow:0 1px 4px rgba(0,0,0,0.08);}
+        /* buyer / listing lanes */
+        .lane{margin-bottom:22px;}
+        .lane-head{display:flex;align-items:center;gap:9px;margin:0 2px 10px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.8px;color:var(--text);}
+        .lane-head .n{font-family:'Inter',sans-serif;font-size:12px;font-weight:700;color:var(--text-muted);background:var(--surface-3);border-radius:100px;padding:2px 9px;letter-spacing:0;}
+        /* tile view */
+        .tiles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
+        .txn-tile{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 18px;cursor:pointer;display:flex;flex-direction:column;gap:11px;transition:all .12s;}
+        .txn-tile:hover{border-color:rgba(192,57,38,0.3);transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,0.08);}
+        .txn-tile h3{font-size:15px;font-weight:800;line-height:1.25;}
+        .txn-tile .sub{font-size:12.5px;color:var(--text-sec);margin-top:2px;}
+        .txn-tile .pills{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+        .txn-tile .prog{width:100%;}
+        .txn-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;flex-wrap:wrap;}
+        .txn-row:hover{background:var(--surface-2);}
+        .txn-row:last-child{border-bottom:none;}
+        .txn-main{min-width:220px;flex:1;}
+        .txn-main h3{font-size:15px;font-weight:800;}
+        .txn-main .sub{font-size:12.5px;color:var(--text-sec);}
+        .type-pill{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;padding:3px 10px;border-radius:100px;}
+        .type-buyer{background:#eff6ff;color:var(--blue);} .type-seller{background:#fef2f2;color:var(--red);} .type-investor{background:#fffbeb;color:var(--amber);} .type-other{background:#f3f4f6;color:#4b5563;}
+        .stage-pill{font-size:11.5px;font-weight:700;color:var(--text-sec);background:var(--surface-3);padding:4px 12px;border-radius:100px;white-space:nowrap;}
+        .prog{width:130px;}
+        .prog .bar{height:7px;border-radius:100px;background:var(--surface-3);overflow:hidden;}
+        .prog .fill{height:100%;border-radius:100px;background:var(--green);}
+        .prog .pct{font-size:11px;color:var(--text-muted);font-weight:700;}
+        .empty{padding:34px;text-align:center;color:var(--text-muted);font-size:13.5px;}
+
+        /* detail */
+        .det-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:20px 22px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+        .det-head h2{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;line-height:1.15;}
+        .det-head .sub{font-size:13px;color:var(--text-sec);}
+        .det-grid{display:grid;grid-template-columns:1fr 340px;gap:22px;padding:22px;align-items:start;}
+        @media(max-width:860px){.det-grid{grid-template-columns:1fr;}}
+        .sec-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.2px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+        .sec-title i{color:var(--red);font-size:14px;}
+        .stage-block{margin-bottom:18px;}
+        .stage-name{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text-sec);padding:7px 0 5px;display:flex;align-items:center;gap:8px;}
+        .stage-name .now{font-size:9.5px;background:var(--red);color:#fff;padding:2px 8px;border-radius:100px;letter-spacing:.5px;}
+        .task{display:flex;align-items:center;gap:11px;padding:8px 4px;border-bottom:1px dashed var(--border);font-size:13.5px;}
+        .task:last-child{border-bottom:none;}
+        .task input[type=checkbox]{width:17px;height:17px;accent-color:var(--green);cursor:pointer;flex-shrink:0;}
+        .task.done span.lbl{color:var(--text-muted);text-decoration:line-through;}
+        .task .del{margin-left:auto;color:var(--text-muted);cursor:pointer;font-size:12px;visibility:hidden;}
+        .task:hover .del{visibility:visible;}
+        .task .del:hover{color:var(--red);}
+        .addline{display:flex;gap:8px;margin-top:10px;}
+        .addline input,.addline select{flex:1;background:var(--surface-2);border:1.5px solid var(--border);border-radius:8px;padding:8px 11px;font-size:13px;font-family:'Inter',sans-serif;outline:none;}
+        .addline input:focus{border-color:var(--red);}
+        .btn{display:inline-flex;align-items:center;gap:7px;border:none;cursor:pointer;border-radius:8px;padding:8px 14px;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:700;transition:all .15s;}
+        .btn-red{background:var(--red);color:#fff;} .btn-red:hover{background:var(--red-dark);}
+        .btn-ghost{background:var(--surface-3);color:var(--text-sec);} .btn-ghost:hover{background:var(--border);}
+        .side-card{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:16px;}
+        .date-row{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px dashed var(--border);font-size:13px;}
+        .date-row:last-child{border-bottom:none;}
+        .date-row .dl{flex:1;font-weight:600;color:var(--text-sec);}
+        .date-row input[type=date]{background:var(--surface);border:1.5px solid var(--border);border-radius:7px;padding:5px 8px;font-size:12.5px;font-family:'Inter',sans-serif;outline:none;}
+        .date-row .del{color:var(--text-muted);cursor:pointer;font-size:12px;}
+        .date-row .del:hover{color:var(--red);}
+        .cli-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px dashed var(--border);font-size:13px;}
+        .cli-row:last-child{border-bottom:none;}
+        .fieldlab{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text-sec);margin:12px 0 5px;}
+        select.stage-set,.side-card select{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:8px 11px;font-size:13px;font-family:'Inter',sans-serif;outline:none;cursor:pointer;}
+        .danger-zone{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+        .status-pill{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:4px 10px;border-radius:100px;}
+        .status-closed{background:rgba(22,163,74,0.12);color:var(--green);}
+        .status-archived{background:var(--surface-3);color:var(--text-sec);}
+
+        /* progress bar */
+        .prog-wrap{padding:0 22px 4px;}
+        .prog-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:7px;flex-wrap:wrap;}
+        .prog-lab{font-size:12px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.5px;}
+        .prog-pct{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--red);}
+        .prog-bar{height:10px;border-radius:100px;background:var(--surface-3);overflow:hidden;}
+        .prog-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--red-light),var(--red));width:0;transition:width .45s ease;}
+        .prog-fill.complete{background:linear-gradient(90deg,#22c55e,var(--green));}
+        .prog-stages{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap;}
+        .prog-step{flex:1;min-width:78px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--text-muted);text-align:center;padding-top:6px;border-top:3px solid var(--surface-3);}
+        .prog-step.done{color:var(--green);border-top-color:var(--green);}
+        .prog-step.now{color:var(--red);border-top-color:var(--red);}
+
+        /* documents */
+        .doc-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed var(--border);font-size:13px;}
+        .doc-row:last-child{border-bottom:none;}
+        .doc-ico{width:32px;height:32px;border-radius:8px;background:rgba(37,99,235,0.10);color:var(--blue);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .doc-main{flex:1;min-width:0;}
+        .doc-name{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;}
+        .doc-name:hover{color:var(--red);text-decoration:underline;}
+        .doc-meta{font-size:11.5px;color:var(--text-muted);}
+        .doc-acts{display:flex;gap:10px;align-items:center;color:var(--text-muted);font-size:12.5px;}
+        .doc-acts span{cursor:pointer;}
+        .doc-acts span:hover{color:var(--red);}
+        .doc-hidden{opacity:.62;}
+        .drop{border:2px dashed var(--border);border-radius:10px;padding:16px;text-align:center;font-size:12.5px;color:var(--text-muted);cursor:pointer;margin-top:10px;transition:all .15s;}
+        .drop:hover,.drop.over{border-color:var(--red);color:var(--red);background:rgba(192,57,38,0.04);}
+
+        /* transaction team */
+        .team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:14px;}
+        .team-card{border:1px solid var(--border);border-radius:10px;padding:14px 16px;background:var(--surface-2);position:relative;}
+        .team-card.hidden-c{opacity:.62;}
+        .team-role{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--red);margin-bottom:3px;}
+        .team-name{font-weight:700;font-size:14px;line-height:1.3;}
+        .team-co{font-size:12.5px;color:var(--text-sec);margin-bottom:7px;}
+        .team-line{font-size:12.5px;color:var(--text-sec);display:flex;align-items:center;gap:7px;padding:2px 0;}
+        .team-line i{color:var(--text-muted);font-size:11px;width:13px;text-align:center;}
+        .team-line a{color:var(--text-sec);}
+        .team-line a:hover{color:var(--red);text-decoration:underline;}
+        .team-notes{font-size:12px;color:var(--text-muted);margin-top:7px;padding-top:7px;border-top:1px dashed var(--border);white-space:pre-wrap;}
+        .team-acts{position:absolute;top:10px;right:12px;display:flex;gap:9px;color:var(--text-muted);font-size:12px;}
+        .team-acts span{cursor:pointer;}
+        .team-acts span:hover{color:var(--red);}
+        .modal textarea{width:100%;background:var(--surface-2);border:1.5px solid var(--border);border-radius:9px;padding:10px 12px;font-size:14px;font-family:'Inter',sans-serif;outline:none;resize:vertical;min-height:70px;}
+        .modal textarea:focus{border-color:var(--red);}
+        .mrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+        @media(max-width:520px){.mrow{grid-template-columns:1fr;}}
+
+        /* calendar */
+        .cal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap;}
+        .cal-nav{display:flex;align-items:center;gap:8px;}
+        .cal-nav button{background:var(--surface-2);border:1.5px solid var(--border);border-radius:8px;width:32px;height:32px;cursor:pointer;color:var(--text-sec);font-size:13px;}
+        .cal-nav button:hover{border-color:var(--red);color:var(--red);}
+        .cal-month{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;min-width:150px;text-align:center;}
+        .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;}
+        .cal-dow{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);text-align:center;padding-bottom:4px;}
+        .cal-cell{min-height:66px;border:1px solid var(--border);border-radius:8px;padding:5px 6px;background:var(--surface);font-size:11.5px;overflow:hidden;}
+        .cal-cell.out{background:var(--surface-2);opacity:.5;}
+        .cal-cell.today{border-color:var(--red);box-shadow:0 0 0 1.5px rgba(192,57,38,.25);}
+        .cal-num{font-weight:700;color:var(--text-sec);}
+        .cal-cell.today .cal-num{color:var(--red);}
+        .cal-ev{margin-top:3px;background:rgba(192,57,38,0.10);color:var(--red-dark);border-radius:5px;padding:2px 5px;font-size:10.5px;font-weight:600;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:default;}
+        .cal-ev.past{background:var(--surface-3);color:var(--text-muted);}
+        @media(max-width:620px){
+            .cal-cell{min-height:52px;padding:3px 4px;}
+            .cal-ev{font-size:9px;padding:1px 3px;}
+            .prog-step{min-width:0;font-size:0;padding-top:4px;}
+        }
+
+        /* modal */
+        .overlay{position:fixed;inset:0;background:rgba(15,23,42,0.55);display:none;align-items:center;justify-content:center;z-index:60;padding:20px;}
+        .overlay.open{display:flex;}
+        .modal{background:#fff;border-radius:16px;max-width:480px;width:100%;padding:26px;}
+        .modal h3{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;margin-bottom:14px;}
+        .modal label{display:block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text-sec);margin:12px 0 5px;}
+        .modal input,.modal select{width:100%;background:var(--surface-2);border:1.5px solid var(--border);border-radius:9px;padding:10px 12px;font-size:14px;font-family:'Inter',sans-serif;outline:none;}
+        .modal input:focus{border-color:var(--red);}
+        .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;}
+        #toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:#1a1d22;color:#fff;font-size:13.5px;font-weight:600;padding:12px 22px;border-radius:100px;z-index:70;opacity:0;transition:opacity .25s;pointer-events:none;}
+        #toast.show{opacity:1;}
+        /* deal links in the file header */
+        .deal-chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;padding:7px 12px;border-radius:100px;background:rgba(234,179,8,.14);color:#a16207;white-space:nowrap;}
+        .deal-chip.done{background:rgba(22,163,74,.12);color:#15803d;}
+        .contact-chip{display:inline-flex;align-items:center;gap:5px;font-weight:700;color:var(--red);text-decoration:none;}
+        .contact-chip:hover{text-decoration:underline;}
+    </style>
+<link rel="stylesheet" href="hub-theme.css?v=20260903b"><script src="hub-brand.js" defer></script></head>
+<body>
+
+<header class="page-header">
+    <div class="header-inner">
+        <div class="header-left">
+            <a href="hub.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Hub</a>
+            <div class="header-title">
+                <h1>Client Portal — Transactions</h1>
+                <p id="headSub">Client files — stages, tasks &amp; key dates</p>
+            </div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="back-btn" onclick="openMyCard()"><i class="fa-solid fa-id-card"></i> My contact card</button>
+            <button class="back-btn" id="btnTpl" style="display:none;" onclick="openTemplates()"><i class="fa-solid fa-sliders"></i> Manage templates</button>
+            <button class="btn-new" onclick="openNewModal()"><i class="fa-solid fa-plus"></i> New Transaction</button>
+        </div>
+    </div>
+</header>
+
+<div class="wrap">
+    <div id="helpTop"></div>
+    <script>document.addEventListener('DOMContentLoaded',function(){ window.HelpBox && HelpBox.mount({container:'#helpTop',key:'yrl-transactions',label:'Transactions'}); });</script>
+    <!-- LIST VIEW -->
+    <div id="listView">
+        <div class="filters" id="filters" style="justify-content:space-between;align-items:center;">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="chip active" data-f="active" onclick="setFilter('active')">Active</button>
+                <button class="chip" data-f="closed" onclick="setFilter('closed')">Closed</button>
+                <button class="chip" data-f="archived" onclick="setFilter('archived')">Archived</button>
+                <button class="chip" data-f="all" onclick="setFilter('all')">All</button>
+            </div>
+            <div class="view-toggle">
+                <button class="vt active" data-v="list" onclick="setView('list')"><i class="fa-solid fa-list"></i> List</button>
+                <button class="vt" data-v="tiles" onclick="setView('tiles')"><i class="fa-solid fa-table-cells-large"></i> Tiles</button>
+            </div>
+        </div>
+        <div id="txnList"><div class="empty">Loading…</div></div>
+    </div>
+
+    <!-- DETAIL VIEW -->
+    <div id="detailView" style="display:none;">
+        <button class="btn btn-ghost" style="margin-bottom:14px;" onclick="showList()"><i class="fa-solid fa-arrow-left"></i> All transactions</button>
+        <div class="panel">
+            <div class="det-head">
+                <div>
+                    <h2 id="dTitle"></h2>
+                    <div class="sub" id="dSub"></div>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;" id="dHeadActions"></div>
+            </div>
+            <div class="prog-wrap" id="dProg"></div>
+            <div class="det-grid">
+                <div>
+                    <div class="sec-title"><i class="fa-solid fa-list-check"></i> Progress checklist</div>
+                    <div id="dStages"></div>
+                    <div class="addline">
+                        <select id="newTaskStage"></select>
+                        <input id="newTaskLabel" placeholder="Add a task…" onkeydown="if(event.key==='Enter')addTask()">
+                        <button class="btn btn-red" onclick="addTask()"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+
+                    <div class="sec-title" style="margin-top:26px;"><i class="fa-solid fa-folder-open"></i> Documents</div>
+                    <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Buyer's agreements, disclosures, inspection reports. Stored privately — links expire, and only people with access to this file can open them.</div>
+                    <div id="dDocs"></div>
+                    <input type="file" id="docFile" style="display:none;" multiple onchange="uploadDocs(this.files)">
+                    <div class="drop" id="docDrop" onclick="document.getElementById('docFile').click()">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Click to upload, or drag files here
+                    </div>
+                </div>
+                <div>
+                    <div class="side-card">
+                        <div class="sec-title" style="margin-bottom:4px;"><i class="fa-solid fa-flag"></i> Current stage</div>
+                        <select class="stage-set" id="stageSet" onchange="setStage(this.value)"></select>
+                    </div>
+                    <div class="side-card">
+                        <div class="sec-title"><i class="fa-solid fa-calendar-days"></i> Key dates</div>
+                        <div id="dDates"></div>
+                        <div class="addline">
+                            <input id="newDateLabel" placeholder="Add a date…" style="min-width:0;">
+                            <button class="btn btn-red" onclick="addDate()"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                    </div>
+                    <div class="side-card">
+                        <div class="sec-title"><i class="fa-solid fa-users"></i> Who can see this file</div>
+                        <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Buyers, sellers, a spouse, the loan officer, title company — anyone you add signs in with their email (code sent — no password) and sees a <b>view-only</b> progress page. They can never edit, and they only see documents you've marked shared.</div>
+                        <div id="dClients"></div>
+                        <div style="margin-top:8px;">
+                            <select id="newCliRole" style="margin-bottom:6px;">
+                                <option value="Client">Client (buyer/seller)</option>
+                                <option value="Spouse / Co-buyer">Spouse / Co-buyer</option>
+                                <option value="Loan Officer">Loan Officer</option>
+                                <option value="Title Company">Title Company</option>
+                                <option value="Attorney">Attorney</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <input id="newCliName" placeholder="Name (optional)" style="width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:8px 11px;font-size:13px;font-family:'Inter',sans-serif;outline:none;margin-bottom:6px;">
+                            <div class="addline" style="margin-top:0;">
+                                <input id="newCliEmail" placeholder="their@email.com" style="min-width:0;" onkeydown="if(event.key==='Enter')addTxnClient()">
+                                <button class="btn btn-red" onclick="addTxnClient()"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="danger-zone">
+                        <button class="btn btn-ghost" id="btnClose" onclick="toggleClosed()"></button>
+                        <button class="btn btn-ghost" id="btnArchive" onclick="toggleArchived()"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRANSACTION TEAM -->
+        <div class="panel" style="margin-top:22px;padding:22px;">
+            <div class="cal-head">
+                <div>
+                    <div class="sec-title" style="margin-bottom:2px;"><i class="fa-solid fa-address-book"></i> Transaction Team</div>
+                    <div style="font-size:12px;color:var(--text-muted);">Title company, loan officer, inspector — everyone working this deal, in one place. Anything marked shared shows on the client's page too.</div>
+                </div>
+                <button class="btn btn-red" onclick="openContactModal()"><i class="fa-solid fa-plus"></i> Add contact</button>
+            </div>
+            <div class="team-grid" id="dContacts"></div>
+        </div>
+
+        <!-- CALENDAR -->
+        <div class="panel" style="margin-top:22px;padding:22px;">
+            <div class="cal-head">
+                <div class="sec-title" style="margin-bottom:0;"><i class="fa-solid fa-calendar-days"></i> Calendar</div>
+                <div class="cal-nav">
+                    <button onclick="calShift(-1)" title="Previous month"><i class="fa-solid fa-chevron-left"></i></button>
+                    <div class="cal-month" id="calMonth"></div>
+                    <button onclick="calShift(1)" title="Next month"><i class="fa-solid fa-chevron-right"></i></button>
+                    <button onclick="calToday()" title="Back to today" style="width:auto;padding:0 12px;font-size:12px;font-weight:700;">Today</button>
+                </div>
+            </div>
+            <div class="cal-grid" id="calGrid"></div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:10px;">Shows every key date on this file. Fill a date in on the right and it appears here.</div>
+        </div>
+    </div>
+</div>
+
+<!-- TEMPLATES VIEW (owner/admin only) -->
+    <div id="tplView" style="display:none;">
+        <button class="btn btn-ghost" style="margin-bottom:14px;" onclick="closeTemplates()"><i class="fa-solid fa-arrow-left"></i> Back to transactions</button>
+        <div class="panel">
+            <div class="det-head">
+                <div>
+                    <h2>Transaction Templates</h2>
+                    <div class="sub">These are applied when a new file is created. Changes affect <b>new</b> transactions only — existing files keep their checklist.</div>
+                </div>
+                <div class="filters" style="margin:0;">
+                    <button class="chip tpl-chip active" data-t="buyer" onclick="loadTpl('buyer')">Buyer</button>
+                    <button class="chip tpl-chip" data-t="seller" onclick="loadTpl('seller')">Seller</button>
+                    <button class="chip tpl-chip" data-t="investor" onclick="loadTpl('investor')">Investor</button>
+                    <button class="chip tpl-chip" data-t="other" onclick="loadTpl('other')">Other</button>
+                </div>
+            </div>
+            <div class="det-grid">
+                <div>
+                    <div class="sec-title"><i class="fa-solid fa-list-check"></i> Tasks by stage</div>
+                    <div id="tplStages"><div class="empty">Loading…</div></div>
+                    <div class="addline">
+                        <select id="tplTaskStage"></select>
+                        <input id="tplTaskLabel" placeholder="Add a task…" onkeydown="if(event.key==='Enter')addTplItem('task')">
+                        <button class="btn btn-red" onclick="addTplItem('task')"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+                <div>
+                    <div class="side-card">
+                        <div class="sec-title"><i class="fa-solid fa-calendar-days"></i> Key date labels</div>
+                        <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Each new file starts with these dates (blank until the agent fills them in).</div>
+                        <div id="tplDates"></div>
+                        <div class="addline">
+                            <input id="tplDateLabel" placeholder="Add a date label…" style="min-width:0;" onkeydown="if(event.key==='Enter')addTplItem('date')">
+                            <button class="btn btn-red" onclick="addTplItem('date')"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                    </div>
+                    <div class="side-card" style="font-size:12.5px;color:var(--text-sec);">
+                        <b>Tips:</b> click any item's text to rename it · use the arrows to reorder · click a stage name to rename that whole stage.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- NEW TRANSACTION MODAL -->
+<!-- MY CONTACT CARD MODAL -->
+<div class="overlay" id="cardOverlay">
+    <div class="modal">
+        <h3>My Contact Card</h3>
+        <p style="font-size:12.5px;color:var(--text-muted);margin:-6px 0 8px;">This is how you appear to clients on every transaction they can see — your name, phone and email. Set it once.</p>
+        <label>Your name</label>
+        <input id="myName" placeholder="Jane Agent">
+        <label>Phone</label>
+        <input id="myPhone" placeholder="(317) 555-0142">
+        <label>Email</label>
+        <input id="myEmail" disabled style="opacity:.7;">
+        <div class="modal-actions">
+            <button class="btn btn-ghost" onclick="closeMyCard()">Cancel</button>
+            <button class="btn btn-red" id="myCardSave" onclick="saveMyCard()">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- CONTACT MODAL -->
+<div class="overlay" id="conOverlay">
+    <div class="modal">
+        <h3 id="conTitle">Add Contact</h3>
+        <label>Their part in the deal</label>
+        <select id="cRole">
+            <option>Title Company</option>
+            <option>Loan Officer</option>
+            <option>Lender / Mortgage Co.</option>
+            <option>Home Inspector</option>
+            <option>Appraiser</option>
+            <option>Insurance Agent</option>
+            <option>Attorney</option>
+            <option>Co-op Agent</option>
+            <option>Surveyor</option>
+            <option>Contractor</option>
+            <option>Other</option>
+        </select>
+        <div class="mrow">
+            <div>
+                <label>Name</label>
+                <input id="cName" placeholder="Jane Smith">
+            </div>
+            <div>
+                <label>Company</label>
+                <input id="cCompany" placeholder="Meridian Title">
+            </div>
+        </div>
+        <div class="mrow">
+            <div>
+                <label>Phone</label>
+                <input id="cPhone" placeholder="(317) 555-0142">
+            </div>
+            <div>
+                <label>Email</label>
+                <input id="cEmail" placeholder="jane@meridiantitle.com">
+            </div>
+        </div>
+        <label>Notes</label>
+        <textarea id="cNotes" placeholder="Order number, best time to reach them, anything worth remembering…"></textarea>
+        <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:13px;font-weight:600;margin-top:14px;cursor:pointer;">
+            <input type="checkbox" id="cVisible" checked style="width:auto;">
+            Show this contact to the client
+        </label>
+        <div class="modal-actions">
+            <button class="btn btn-ghost" onclick="closeContactModal()">Cancel</button>
+            <button class="btn btn-red" id="cSave" onclick="saveContact()">Save</button>
+        </div>
+    </div>
+</div>
+
+<div class="overlay" id="newOverlay">
+    <div class="modal">
+        <h3>New Transaction</h3>
+        <label>Transaction type</label>
+        <select id="nType" onchange="syncNewModal()">
+            <option value="buyer">Buyer</option>
+            <option value="seller">Seller</option>
+            <option value="investor">Investor</option>
+            <option value="other">Other</option>
+        </select>
+        <label>Property Address <span id="nTitleOpt" style="font-weight:400;color:var(--text-muted);"></span></label>
+        <input id="nTitle" placeholder="e.g. 123 Main St, Fishers">
+        <label>Client name</label>
+        <input id="nClient" placeholder="e.g. John & Sarah Smith">
+        <label>Client email (optional — gives them portal access now)</label>
+        <input id="nEmail" placeholder="client@email.com">
+        <div class="modal-actions">
+            <button class="btn btn-ghost" onclick="closeNewModal()">Cancel</button>
+            <button class="btn btn-red" id="nCreate" onclick="createTxn()"><i class="fa-solid fa-plus"></i> Create file</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="hub-data.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+let SB=null, ME=null, ROLE='agent', FILTER='active', TXNS=[], CUR=null, TASKS=[], DATES=[], CLIS=[], DOCS=[], CONS=[], _deepLinked=false;
+let VIEW = (function(){ try { return localStorage.getItem('yrlTxnView') || 'list'; } catch(_){ return 'list'; } })();
+
+document.addEventListener('yrl-auth-ready', init);
+if (window.yrlMember) init();
+
+async function init(){
+    if (SB) return;
+    SB = window.yrlClient; ME = window.yrlMember;
+    ROLE = ME.role;
+    if (ROLE === 'txn_client') { location.replace('my-transaction.html'); return; }
+    if (ROLE === 'owner' || ROLE === 'nomad_admin') {
+        $('headSub').textContent = 'All brokerage files — stages, tasks & key dates';
+        $('btnTpl').style.display = '';
+    }
+    initDocDrop();
+    loadList();
+    // hub sidebar 3rd level: Active / Closed / Archived / All
+    if (window.__yrlRegisterTabs) window.__yrlRegisterTabs(function(f){
+        if (['active','closed','archived','all'].indexOf(f) < 0) return;
+        setFilter(f);
+        if ($('detailView') && $('detailView').style.display !== 'none') showList();   // a file was open → back to the list
+    });
+    if (window.__yrlTabChanged) window.__yrlTabChanged(FILTER);
+}
+
+function initDocDrop(){
+    const z = $('docDrop');
+    ['dragenter','dragover'].forEach(e => z.addEventListener(e, ev => { ev.preventDefault(); z.classList.add('over'); }));
+    ['dragleave','drop'].forEach(e => z.addEventListener(e, ev => { ev.preventDefault(); z.classList.remove('over'); }));
+    z.addEventListener('drop', ev => { if (ev.dataTransfer?.files?.length) uploadDocs(ev.dataTransfer.files); });
+}
+
+function setFilter(f){
+    FILTER = f;
+    document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.f === f));
+    renderList();
+    if (window.__yrlTabChanged) window.__yrlTabChanged(f);
+}
+
+async function loadList(){
+    let q = SB.from('hub_transactions').select('*').order('updated_at', { ascending:false });
+    const { data, error } = await q;
+    if (error) { $('txnList').innerHTML = `<div class="empty">Could not load: ${esc(error.message)}</div>`; return; }
+    TXNS = data || [];
+    /* progress: count tasks per txn */
+    const ids = TXNS.map(t => t.id);
+    if (ids.length) {
+        const { data: tk } = await SB.from('hub_txn_tasks').select('transaction_id, done');
+        const agg = {};
+        (tk || []).forEach(t => { const a = agg[t.transaction_id] = agg[t.transaction_id] || {d:0,n:0}; a.n++; if (t.done) a.d++; });
+        TXNS.forEach(t => { t._prog = agg[t.id] || {d:0,n:0}; });
+    }
+    renderList();
+
+    /* Deep link (?txn=<id>) — used by the Nomad admin console to jump straight
+       to a file. Only honoured once, so "All transactions" still goes back. */
+    const want = new URLSearchParams(location.search).get('txn');
+    if (want && !_deepLinked && TXNS.some(t => t.id === want)) {
+        _deepLinked = true;
+        openTxn(want);
+    }
+}
+
+/* Which lane a file belongs to: buyer files vs listings (sellers) vs other. */
+function laneOf(t){ return t.type === 'buyer' ? 'buyer' : (t.type === 'seller' ? 'listing' : 'other'); }
+const LANES = [['buyer','🔑 Buyers'], ['listing','🏠 Listings'], ['other','📁 Other']];
+
+function setView(v){
+    VIEW = v;
+    try { localStorage.setItem('yrlTxnView', v); } catch(_){}
+    renderList();
+}
+
+function renderList(){
+    // Keep the toggle in sync with current VIEW
+    document.querySelectorAll('.vt').forEach(b => b.classList.toggle('active', b.dataset.v === VIEW));
+
+    const rows = TXNS.filter(t => FILTER === 'all' ? true : (t.status || 'active') === FILTER);
+    if (!rows.length) {
+        const msg = FILTER === 'closed' ? 'No closed files yet.'
+                  : FILTER === 'archived' ? 'Nothing archived. Archived files stay here — nothing is ever deleted.'
+                  : 'No transactions yet — hit “New Transaction” to open a file.';
+        $('txnList').innerHTML = `<div class="empty">${msg}</div>`; return;
+    }
+    const showAgent = ROLE === 'owner' || ROLE === 'nomad_admin';
+    const byLane = { buyer:[], listing:[], other:[] };
+    rows.forEach(t => byLane[laneOf(t)].push(t));
+
+    let html = '';
+    LANES.forEach(([key, label]) => {
+        const arr = byLane[key];
+        if (!arr.length) return;
+        const cards = arr.map(t => VIEW === 'tiles' ? txnTile(t, showAgent) : txnRow(t, showAgent)).join('');
+        const body = VIEW === 'tiles' ? `<div class="tiles-grid">${cards}</div>` : `<div class="panel">${cards}</div>`;
+        html += `<div class="lane"><div class="lane-head">${label} <span class="n">${arr.length}</span></div>${body}</div>`;
+    });
+    $('txnList').innerHTML = html;
+}
+
+function txnRow(t, showAgent){
+    const p = t._prog || {d:0,n:0};
+    const pct = p.n ? Math.round(p.d / p.n * 100) : 0;
+    return `<div class="txn-row" onclick="openTxn('${t.id}')">
+        <div class="txn-main">
+            <h3>${esc(t.title)}</h3>
+            <div class="sub">${esc(t.client_name || '')}${showAgent && t.agent_name ? ' · agent: ' + esc(t.agent_name) : ''}</div>
+        </div>
+        <span class="type-pill type-${esc(t.type)}">${esc(t.type)}</span>
+        ${(t.status && t.status !== 'active') ? `<span class="status-pill status-${esc(t.status)}">${esc(t.status)}</span>` : ''}
+        <span class="stage-pill">${esc(t.current_stage || '—')}</span>
+        <div class="prog"><div class="bar"><div class="fill" style="width:${pct}%;"></div></div><span class="pct">${p.d}/${p.n} · ${pct}%</span></div>
+    </div>`;
+}
+
+function txnTile(t, showAgent){
+    const p = t._prog || {d:0,n:0};
+    const pct = p.n ? Math.round(p.d / p.n * 100) : 0;
+    return `<div class="txn-tile" onclick="openTxn('${t.id}')">
+        <div>
+            <h3>${esc(t.title)}</h3>
+            <div class="sub">${esc(t.client_name || '')}${showAgent && t.agent_name ? ' · ' + esc(t.agent_name) : ''}</div>
+        </div>
+        <div class="pills">
+            <span class="type-pill type-${esc(t.type)}">${esc(t.type)}</span>
+            ${(t.status && t.status !== 'active') ? `<span class="status-pill status-${esc(t.status)}">${esc(t.status)}</span>` : ''}
+            <span class="stage-pill">${esc(t.current_stage || '—')}</span>
+        </div>
+        <div class="prog"><div class="bar"><div class="fill" style="width:${pct}%;"></div></div><span class="pct">${p.d}/${p.n} · ${pct}%</span></div>
+    </div>`;
+}
+
+/* ── detail ── */
+async function openTxn(id){
+    CUR = TXNS.find(t => t.id === id) || null;
+    if (!CUR) return;
+    $('listView').style.display = 'none';
+    $('detailView').style.display = '';
+    renderHead();
+    const [tk, dt, cl, dc, cn] = await Promise.all([
+        SB.from('hub_txn_tasks').select('*').eq('transaction_id', id).order('sort_order'),
+        SB.from('hub_txn_dates').select('*').eq('transaction_id', id).order('sort_order'),
+        SB.from('hub_txn_clients').select('*').eq('transaction_id', id).order('created_at'),
+        SB.from('hub_txn_docs').select('*').eq('transaction_id', id).order('created_at', { ascending: false }),
+        SB.from('hub_txn_contacts').select('*').eq('transaction_id', id).order('sort_order')
+    ]);
+    TASKS = tk.data || []; DATES = dt.data || []; CLIS = cl.data || []; DOCS = dc.data || []; CONS = cn.data || [];
+    calToday();
+    renderTasks(); renderDates(); renderClients(); renderDocs(); renderContacts();
+}
+
+function showList(){ $('detailView').style.display = 'none'; $('tplView').style.display = 'none'; $('listView').style.display = ''; loadList(); }
+
+function renderHead(){
+    $('dTitle').innerHTML = esc(CUR.title) +
+        ' <i class="fa-solid fa-pen" style="font-size:12px;color:var(--text-muted);vertical-align:middle;"></i>';
+    $('dTitle').style.cursor = 'pointer';
+    $('dTitle').title = 'Click to rename / add the address';
+    $('dTitle').onclick = renameTxn;
+    $('dSub').innerHTML = `<span class="type-pill type-${esc(CUR.type)}">${esc(CUR.type)}</span> &nbsp;${esc(CUR.client_name || '')}${CUR.agent_name ? ' · agent: ' + esc(CUR.agent_name) : ''} · opened ${new Date(CUR.created_at).toLocaleDateString('en-US')}`;
+    $('btnClose').innerHTML = CUR.status === 'closed' ? '<i class="fa-solid fa-rotate-left"></i> Reopen' : '<i class="fa-solid fa-circle-check"></i> Mark closed';
+    $('btnClose').style.display = CUR.status === 'archived' ? 'none' : '';
+    $('btnArchive').innerHTML = CUR.status === 'archived' ? '<i class="fa-solid fa-rotate-left"></i> Restore file' : '<i class="fa-solid fa-box-archive"></i> Archive file';
+    renderDealLinks();
+}
+
+/* Header links into the rest of the deal: the linked CRM contact, and the closing
+   request for this file (request it, or see where it stands + the signed CDA). */
+async function renderDealLinks(){
+    const id = CUR && CUR.id; if (!id) return;
+    const box = $('dHeadActions'); if (!box) return;
+    box.innerHTML = '';
+    try {
+        const [cr, ln] = await Promise.all([
+            SB.from('closing_requests').select('id,status,cda_pdf_url').eq('transaction_id', id).order('created_at', { ascending: false }).limit(1),
+            SB.from('agent_contact_transactions').select('contact_id').eq('transaction_id', id).limit(1)
+        ]);
+        if (!CUR || CUR.id !== id) return;   // switched files while loading
+        const closing = (cr.data || [])[0] || null;
+        const cid = ((ln.data || [])[0] || {}).contact_id;
+        let contact = null;
+        if (cid) { const r = await SB.from('agent_contacts').select('id,name').eq('id', cid).maybeSingle(); contact = r.data || null; }
+        if (!CUR || CUR.id !== id) return;
+
+        let html = '';
+        if (!closing) {
+            if (CUR.status !== 'archived') html = `<a class="btn btn-red" href="yrl-closing-request.html?txn=${encodeURIComponent(id)}"><i class="fa-solid fa-file-circle-check"></i> Commission Distribution Form</a>`;
+        } else {
+            const lbl = { submitted: 'Closing submitted', in_review: 'Closing in review', completed: 'CDA completed' }[closing.status] || ('Closing: ' + closing.status);
+            const done = closing.status === 'completed';
+            html = `<span class="deal-chip${done ? ' done' : ''}"><i class="fa-solid ${done ? 'fa-circle-check' : 'fa-hourglass-half'}"></i> ${esc(lbl)}</span>`
+                 + (closing.cda_pdf_url ? ` <a class="btn btn-ghost" href="${esc(closing.cda_pdf_url)}" target="_blank" rel="noopener"><i class="fa-solid fa-file-pdf"></i> View CDA</a>` : '')
+                 + (done && CUR.status === 'active' ? ` <button class="btn btn-ghost" onclick="toggleClosed()" title="Closing is done — mark this file closed"><i class="fa-solid fa-circle-check"></i> Mark file closed</button>` : '');
+        }
+        box.innerHTML = html;
+        if (contact && !document.getElementById('dContactChip')) {
+            $('dSub').insertAdjacentHTML('beforeend', ` · <a id="dContactChip" class="contact-chip" href="yrl-contacts.html?contact=${encodeURIComponent(contact.id)}" title="Open in your CRM"><i class="fa-solid fa-address-book"></i> ${esc(contact.name || 'Contact')}</a>`);
+        }
+    } catch (e) { /* header links are a convenience — never block the file */ }
+}
+
+/* Buyer files often open before there's an address, so the name can be fixed
+   later — click the heading on the file. */
+async function renameTxn(){
+    const next = prompt('Property address / file name:', CUR.title);
+    if (next === null) return;
+    const title = next.trim();
+    if (!title) { toast('Name can’t be empty.'); return; }
+    if (title === CUR.title) return;
+    const { error } = await SB.from('hub_transactions').update({ title }).eq('id', CUR.id);
+    if (error) { toast('Rename failed: ' + error.message, 5000); return; }
+    CUR.title = title;
+    const row = TXNS.find(t => t.id === CUR.id); if (row) row.title = title;
+    renderHead();
+    toast('Renamed.');
+}
+
+function stages(){
+    const s = [];
+    TASKS.forEach(t => { if (!s.includes(t.stage)) s.push(t.stage); });
+    return s;
+}
+
+/* ── progress ── */
+function renderProgress(){
+    const total = TASKS.length, done = TASKS.filter(t => t.done).length;
+    const pct = total ? Math.round(done / total * 100) : 0;
+    const ss = stages();
+    const curIdx = ss.indexOf(CUR.current_stage);
+    $('dProg').innerHTML = `
+        <div class="prog-top">
+            <span class="prog-lab">${done} of ${total} steps complete</span>
+            <span class="prog-pct">${pct}%</span>
+        </div>
+        <div class="prog-bar"><div class="prog-fill ${pct === 100 ? 'complete' : ''}" style="width:${pct}%"></div></div>
+        <div class="prog-stages">${ss.map((s, i) => {
+            const items = TASKS.filter(t => t.stage === s);
+            const allDone = items.length && items.every(t => t.done);
+            const cls = allDone ? 'done' : (i === curIdx ? 'now' : '');
+            return `<div class="prog-step ${cls}" title="${esc(s || 'General')}">${esc(s || 'General')}</div>`;
+        }).join('')}</div>`;
+}
+
+/* ── calendar ── */
+let CALREF = null; /* first of the month being shown */
+
+function calShift(n){ CALREF.setMonth(CALREF.getMonth() + n); renderCal(); }
+function calToday(){ const t = new Date(); CALREF = new Date(t.getFullYear(), t.getMonth(), 1); renderCal(); }
+
+/* Date inputs give "YYYY-MM-DD"; parse as local so a date never slips a day. */
+function ymdToLocal(s){
+    const p = (s || '').split('-');
+    return p.length === 3 ? new Date(+p[0], +p[1] - 1, +p[2]) : null;
+}
+function ymd(d){
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+function renderCal(){
+    if (!CALREF) calToday();
+    const y = CALREF.getFullYear(), m = CALREF.getMonth();
+    $('calMonth').textContent = CALREF.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+    /* key dates bucketed by day */
+    const byDay = {};
+    DATES.forEach(d => {
+        if (!d.date_value) return;
+        (byDay[d.date_value] = byDay[d.date_value] || []).push(d.label);
+    });
+
+    const first = new Date(y, m, 1);
+    const start = new Date(y, m, 1 - first.getDay());          /* back up to Sunday */
+    const todayStr = ymd(new Date());
+    const dow = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+    let html = dow.map(d => `<div class="cal-dow">${d}</div>`).join('');
+    for (let i = 0; i < 42; i++) {
+        const cell = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+        const key = ymd(cell);
+        const out = cell.getMonth() !== m;
+        const evs = byDay[key] || [];
+        html += `<div class="cal-cell ${out ? 'out' : ''} ${key === todayStr ? 'today' : ''}">
+            <div class="cal-num">${cell.getDate()}</div>
+            ${evs.map(l => `<div class="cal-ev ${key < todayStr ? 'past' : ''}" title="${esc(l)}">${esc(l)}</div>`).join('')}
+        </div>`;
+    }
+    $('calGrid').innerHTML = html;
+}
+
+function renderTasks(){
+    const ss = stages();
+    $('dStages').innerHTML = ss.map(st => {
+        const items = TASKS.filter(t => t.stage === st);
+        const isNow = CUR.current_stage === st;
+        return `<div class="stage-block">
+            <div class="stage-name">${esc(st || 'General')} ${isNow ? '<span class="now">CURRENT</span>' : ''}</div>
+            ${items.map(t => `<div class="task ${t.done ? 'done' : ''}">
+                <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask('${t.id}', this.checked)">
+                <span class="lbl">${esc(t.label)}</span>
+                <span class="del" onclick="delTask('${t.id}')" title="Remove"><i class="fa-solid fa-xmark"></i></span>
+            </div>`).join('')}
+        </div>`;
+    }).join('') || '<div class="empty">No tasks yet — add one below.</div>';
+    /* stage selects */
+    $('newTaskStage').innerHTML = ss.map(s => `<option value="${esc(s)}">${esc(s || 'General')}</option>`).join('') + '<option value="__new__">+ New stage…</option>';
+    $('stageSet').innerHTML = '<option value="">—</option>' + ss.map(s => `<option value="${esc(s)}" ${CUR.current_stage === s ? 'selected' : ''}>${esc(s || 'General')}</option>`).join('');
+    renderProgress();
+}
+
+async function toggleTask(id, done){
+    const { error } = await SB.from('hub_txn_tasks').update({ done, done_at: done ? new Date().toISOString() : null }).eq('id', id);
+    if (error) { toast('Update failed: ' + error.message); return; }
+    const t = TASKS.find(x => x.id === id); if (t) { t.done = done; }
+    touch(); renderTasks();
+}
+
+async function addTask(){
+    let stage = $('newTaskStage').value;
+    if (stage === '__new__') { stage = (prompt('New stage name:') || '').trim(); if (!stage) return; }
+    const label = $('newTaskLabel').value.trim();
+    if (!label) return;
+    const maxSort = Math.max(0, ...TASKS.filter(t => t.stage === stage).map(t => t.sort_order)) + 1;
+    const { data, error } = await SB.from('hub_txn_tasks').insert({ transaction_id: CUR.id, stage, label, sort_order: maxSort }).select().single();
+    if (error) { toast('Add failed: ' + error.message); return; }
+    TASKS.push(data); $('newTaskLabel').value = '';
+    touch(); renderTasks();
+}
+
+async function delTask(id){
+    const { error } = await SB.from('hub_txn_tasks').delete().eq('id', id);
+    if (error) { toast('Delete failed: ' + error.message); return; }
+    TASKS = TASKS.filter(t => t.id !== id);
+    touch(); renderTasks();
+}
+
+async function setStage(stage){
+    const { error } = await SB.from('hub_transactions').update({ current_stage: stage || null }).eq('id', CUR.id);
+    if (error) { toast('Update failed: ' + error.message); return; }
+    CUR.current_stage = stage || null;
+    touch(); renderTasks();
+}
+
+function renderDates(){
+    $('dDates').innerHTML = DATES.map(d => `<div class="date-row">
+        <span class="dl">${esc(d.label)}</span>
+        <input type="date" value="${d.date_value || ''}" onchange="setDate('${d.id}', this.value)">
+        <span class="del" onclick="delDate('${d.id}')"><i class="fa-solid fa-xmark"></i></span>
+    </div>`).join('') || '<div style="font-size:12.5px;color:var(--text-muted);padding:4px 0;">No dates yet.</div>';
+    renderCal();
+}
+
+async function setDate(id, val){
+    const { error } = await SB.from('hub_txn_dates').update({ date_value: val || null }).eq('id', id);
+    if (error) { toast('Update failed: ' + error.message); return; }
+    const d = DATES.find(x => x.id === id); if (d) d.date_value = val || null;
+    touch(); renderCal();
+}
+
+async function addDate(){
+    const label = $('newDateLabel').value.trim();
+    if (!label) return;
+    const { data, error } = await SB.from('hub_txn_dates').insert({ transaction_id: CUR.id, label, sort_order: DATES.length + 1 }).select().single();
+    if (error) { toast('Add failed: ' + error.message); return; }
+    DATES.push(data); $('newDateLabel').value = '';
+    touch(); renderDates();
+}
+
+async function delDate(id){
+    const { error } = await SB.from('hub_txn_dates').delete().eq('id', id);
+    if (error) { toast('Delete failed: ' + error.message); return; }
+    DATES = DATES.filter(d => d.id !== id);
+    touch(); renderDates();
+}
+
+function renderClients(){
+    $('dClients').innerHTML = CLIS.map(c => `<div class="cli-row">
+        <span style="min-width:0;">
+            <span style="display:block;overflow:hidden;text-overflow:ellipsis;">${esc(c.name || c.email)}</span>
+            <span style="display:block;font-size:11.5px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;">${c.party_role ? esc(c.party_role) + ' · ' : ''}${esc(c.email)}</span>
+        </span>
+        <span class="del" style="cursor:pointer;color:var(--text-muted);" onclick="delTxnClient('${c.id}')" title="Remove access"><i class="fa-solid fa-xmark"></i></span>
+    </div>`).join('') || '<div style="font-size:12.5px;color:var(--text-muted);padding:4px 0;">Nobody outside the brokerage can see this file yet.</div>';
+}
+
+async function addTxnClient(){
+    const email = $('newCliEmail').value.trim().toLowerCase();
+    if (!email || !email.includes('@')) { toast('Enter a valid email.'); return; }
+    const role = $('newCliRole').value;
+    const name = $('newCliName').value.trim();
+    const { data, error } = await SB.from('hub_txn_clients').insert({
+        transaction_id: CUR.id, email,
+        name: name || (role === 'Client' ? (CUR.client_name || null) : null),
+        party_role: role, invited_at: new Date().toISOString()
+    }).select().single();
+    if (error) { toast(/duplicate|unique/i.test(error.message) ? 'Already added.' : 'Add failed: ' + error.message); return; }
+    CLIS.push(data); $('newCliEmail').value = ''; $('newCliName').value = '';
+    renderClients();
+    toast('Access granted — sending invite…');
+    /* Access is already saved at this point; the email is best-effort. Report a
+       failure rather than swallowing it, so nobody assumes an invite went out. */
+    try {
+        const { error: fnErr } = await SB.functions.invoke('portal-invite', { body: { email, portal_url: location.origin } });
+        if (fnErr) throw fnErr;
+        toast('Access granted — invite emailed to ' + email + '.', 4000);
+    } catch (e) {
+        console.error('portal-invite failed', e);
+        toast('Access granted, but the invite email did NOT send. They can still sign in at this site with their email — send them the link yourself.', 9000);
+    }
+}
+
+/* ── transaction team ── */
+let EDITCON = null;   /* id being edited, or null when adding */
+
+function telHref(p){ return 'tel:' + (p || '').replace(/[^\d+]/g, ''); }
+
+function renderContacts(){
+    $('dContacts').innerHTML = CONS.map(c => `<div class="team-card ${c.visible_to_client ? '' : 'hidden-c'}">
+        <div class="team-acts">
+            <span onclick="openContactModal('${c.id}')" title="Edit"><i class="fa-solid fa-pen"></i></span>
+            <span onclick="toggleContactShare('${c.id}')" title="${c.visible_to_client ? 'Hide from client' : 'Show to client'}"><i class="fa-solid ${c.visible_to_client ? 'fa-eye' : 'fa-eye-slash'}"></i></span>
+            <span onclick="delContact('${c.id}')" title="Remove"><i class="fa-solid fa-xmark"></i></span>
+        </div>
+        <div class="team-role">${esc(c.party_role || 'Contact')}</div>
+        <div class="team-name">${esc(c.name || '—')}</div>
+        ${c.company ? `<div class="team-co">${esc(c.company)}</div>` : '<div class="team-co"></div>'}
+        ${c.phone ? `<div class="team-line"><i class="fa-solid fa-phone"></i><a href="${esc(telHref(c.phone))}">${esc(c.phone)}</a></div>` : ''}
+        ${c.email ? `<div class="team-line"><i class="fa-solid fa-envelope"></i><a href="mailto:${esc(c.email)}">${esc(c.email)}</a></div>` : ''}
+        ${c.notes ? `<div class="team-notes">${esc(c.notes)}</div>` : ''}
+        ${c.visible_to_client ? '' : '<div class="team-notes" style="color:var(--amber);">Internal — hidden from client</div>'}
+    </div>`).join('') || '<div class="empty" style="grid-column:1/-1;">Nobody added yet. Add the title company, loan officer, inspector — whoever is working this deal.</div>';
+}
+
+/* ── my contact card (agent's own name/phone in agent_profiles) ── */
+async function openMyCard(){
+    const u = window.yrlUser;
+    $('myEmail').value = u.email;
+    $('myName').value = ''; $('myPhone').value = '';
+    /* RLS self_select returns only the agent's own row. */
+    const { data } = await SB.from('agent_profiles').select('name, phone').ilike('email', u.email).maybeSingle();
+    if (data) { $('myName').value = data.name || ''; $('myPhone').value = data.phone || ''; }
+    $('cardOverlay').classList.add('open');
+    setTimeout(() => $('myName').focus(), 60);
+}
+function closeMyCard(){ $('cardOverlay').classList.remove('open'); }
+$('cardOverlay').addEventListener('click', function(e){ if (e.target === this) closeMyCard(); });
+
+async function saveMyCard(){
+    const u = window.yrlUser;
+    const name = $('myName').value.trim();
+    const phone = $('myPhone').value.trim();
+    if (!name) { toast('Add your name.'); return; }
+    $('myCardSave').disabled = true;
+    /* email is the unique key; upsert so first save inserts, later saves update. */
+    const { error } = await SB.from('agent_profiles')
+        .upsert({ email: u.email.toLowerCase(), name, phone: phone || null }, { onConflict: 'email' });
+    $('myCardSave').disabled = false;
+    if (error) { toast('Save failed: ' + error.message, 5000); return; }
+    closeMyCard();
+    toast('Saved — clients now see this on your files.');
+}
+
+function openContactModal(id){
+    EDITCON = id || null;
+    const c = id ? CONS.find(x => x.id === id) : null;
+    $('conTitle').textContent = c ? 'Edit Contact' : 'Add Contact';
+    $('cRole').value = c?.party_role || 'Title Company';
+    $('cName').value = c?.name || '';
+    $('cCompany').value = c?.company || '';
+    $('cPhone').value = c?.phone || '';
+    $('cEmail').value = c?.email || '';
+    $('cNotes').value = c?.notes || '';
+    $('cVisible').checked = c ? !!c.visible_to_client : true;
+    $('conOverlay').classList.add('open');
+    setTimeout(() => $('cName').focus(), 60);
+}
+function closeContactModal(){ $('conOverlay').classList.remove('open'); EDITCON = null; }
+$('conOverlay').addEventListener('click', function(e){ if (e.target === this) closeContactModal(); });
+
+async function saveContact(){
+    const row = {
+        party_role: $('cRole').value,
+        name: $('cName').value.trim() || null,
+        company: $('cCompany').value.trim() || null,
+        phone: $('cPhone').value.trim() || null,
+        email: $('cEmail').value.trim().toLowerCase() || null,
+        notes: $('cNotes').value.trim() || null,
+        visible_to_client: $('cVisible').checked
+    };
+    if (!row.name && !row.company) { toast('Add at least a name or a company.'); return; }
+    $('cSave').disabled = true;
+    if (EDITCON) {
+        const { error } = await SB.from('hub_txn_contacts').update(row).eq('id', EDITCON);
+        $('cSave').disabled = false;
+        if (error) { toast('Save failed: ' + error.message, 5000); return; }
+        Object.assign(CONS.find(c => c.id === EDITCON), row);
+    } else {
+        row.transaction_id = CUR.id;
+        row.sort_order = CONS.length;
+        const { data, error } = await SB.from('hub_txn_contacts').insert(row).select().single();
+        $('cSave').disabled = false;
+        if (error) { toast('Save failed: ' + error.message, 5000); return; }
+        CONS.push(data);
+    }
+    closeContactModal(); renderContacts(); touch();
+    toast('Contact saved.');
+}
+
+async function toggleContactShare(id){
+    const c = CONS.find(x => x.id === id); if (!c) return;
+    const to = !c.visible_to_client;
+    const { error } = await SB.from('hub_txn_contacts').update({ visible_to_client: to }).eq('id', id);
+    if (error) { toast('Update failed: ' + error.message); return; }
+    c.visible_to_client = to; renderContacts();
+    toast(to ? 'Now visible to the client.' : 'Hidden from the client.');
+}
+
+async function delContact(id){
+    const c = CONS.find(x => x.id === id); if (!c) return;
+    if (!confirm(`Remove ${c.name || c.company || 'this contact'} from this file?`)) return;
+    const { error } = await SB.from('hub_txn_contacts').delete().eq('id', id);
+    if (error) { toast('Remove failed: ' + error.message); return; }
+    CONS = CONS.filter(x => x.id !== id);
+    renderContacts(); touch();
+}
+
+/* ── documents ──
+   Files live in the PRIVATE txn-docs bucket under "<transaction_id>/…", so
+   storage RLS scopes them to this file. Downloads use short-lived signed URLs;
+   there is no public link. */
+const DOC_ICONS = { pdf:'fa-file-pdf', doc:'fa-file-word', docx:'fa-file-word', xls:'fa-file-excel', xlsx:'fa-file-excel',
+                    png:'fa-file-image', jpg:'fa-file-image', jpeg:'fa-file-image', heic:'fa-file-image', zip:'fa-file-zipper' };
+
+function fmtSize(b){
+    if (!b && b !== 0) return '';
+    if (b < 1024) return b + ' B';
+    if (b < 1048576) return Math.round(b / 1024) + ' KB';
+    return (b / 1048576).toFixed(1) + ' MB';
+}
+
+function renderDocs(){
+    $('dDocs').innerHTML = DOCS.map(d => {
+        const ext = (d.file_name.split('.').pop() || '').toLowerCase();
+        return `<div class="doc-row ${d.visible_to_client ? '' : 'doc-hidden'}">
+            <div class="doc-ico"><i class="fa-solid ${DOC_ICONS[ext] || 'fa-file-lines'}"></i></div>
+            <div class="doc-main">
+                <div class="doc-name" onclick="openDoc('${d.id}')" title="Open">${esc(d.label || d.file_name)}</div>
+                <div class="doc-meta">${fmtSize(d.size_bytes)} · ${new Date(d.created_at).toLocaleDateString('en-US')}${d.uploaded_by_email ? ' · ' + esc(d.uploaded_by_email.split('@')[0]) : ''} · ${d.visible_to_client ? 'shared with client' : 'internal only'}</div>
+            </div>
+            <div class="doc-acts">
+                <span onclick="renameDoc('${d.id}')" title="Rename"><i class="fa-solid fa-pen"></i></span>
+                <span onclick="toggleDocShare('${d.id}')" title="${d.visible_to_client ? 'Hide from client' : 'Share with client'}"><i class="fa-solid ${d.visible_to_client ? 'fa-eye' : 'fa-eye-slash'}"></i></span>
+                <span onclick="delDoc('${d.id}')" title="Delete"><i class="fa-solid fa-trash"></i></span>
+            </div>
+        </div>`;
+    }).join('') || '<div style="font-size:12.5px;color:var(--text-muted);padding:4px 0;">No documents yet.</div>';
+}
+
+async function uploadDocs(files){
+    if (!files || !files.length) return;
+    const u = window.yrlUser;
+    for (const f of files) {
+        if (f.size > 26214400) { toast(`"${f.name}" is over the 25 MB limit.`, 5000); continue; }
+        toast('Uploading ' + f.name + '…', 60000);
+        /* keep the original name readable but make the stored path unique */
+        const safe = f.name.replace(/[^\w.\- ]+/g, '_');
+        const path = `${CUR.id}/${Date.now()}-${safe}`;
+        const { error: upErr } = await SB.storage.from('txn-docs').upload(path, f, { upsert: false, contentType: f.type || undefined });
+        if (upErr) { toast('Upload failed: ' + upErr.message, 6000); continue; }
+        const { data, error } = await SB.from('hub_txn_docs').insert({
+            transaction_id: CUR.id, label: f.name, file_name: f.name, file_path: path,
+            mime: f.type || null, size_bytes: f.size,
+            uploaded_by: u.id, uploaded_by_email: u.email
+        }).select().single();
+        if (error) {
+            await SB.storage.from('txn-docs').remove([path]);   /* don't orphan the file */
+            toast('Save failed: ' + error.message, 6000); continue;
+        }
+        DOCS.unshift(data);
+    }
+    $('docFile').value = '';
+    renderDocs(); touch();
+    toast('Uploaded.');
+}
+
+async function openDoc(id){
+    const d = DOCS.find(x => x.id === id); if (!d) return;
+    const { data, error } = await SB.storage.from('txn-docs').createSignedUrl(d.file_path, 120);
+    if (error) { toast('Could not open: ' + error.message, 5000); return; }
+    window.open(data.signedUrl, '_blank', 'noopener');
+}
+
+async function renameDoc(id){
+    const d = DOCS.find(x => x.id === id); if (!d) return;
+    const next = prompt('Document name (e.g. Buyers Agreement):', d.label || d.file_name);
+    if (next === null) return;
+    const label = next.trim(); if (!label) return;
+    const { error } = await SB.from('hub_txn_docs').update({ label }).eq('id', id);
+    if (error) { toast('Rename failed: ' + error.message); return; }
+    d.label = label; renderDocs();
+}
+
+async function toggleDocShare(id){
+    const d = DOCS.find(x => x.id === id); if (!d) return;
+    const to = !d.visible_to_client;
+    const { error } = await SB.from('hub_txn_docs').update({ visible_to_client: to }).eq('id', id);
+    if (error) { toast('Update failed: ' + error.message); return; }
+    d.visible_to_client = to; renderDocs();
+    toast(to ? 'Shared with the client.' : 'Hidden from the client.');
+}
+
+async function delDoc(id){
+    const d = DOCS.find(x => x.id === id); if (!d) return;
+    if (!confirm(`Delete "${d.label || d.file_name}"? This cannot be undone.`)) return;
+    const { error } = await SB.from('hub_txn_docs').delete().eq('id', id);
+    if (error) { toast('Delete failed: ' + error.message); return; }
+    await SB.storage.from('txn-docs').remove([d.file_path]);
+    DOCS = DOCS.filter(x => x.id !== id);
+    renderDocs(); touch();
+}
+
+async function delTxnClient(id){
+    const { error } = await SB.from('hub_txn_clients').delete().eq('id', id);
+    if (error) { toast('Remove failed: ' + error.message); return; }
+    CLIS = CLIS.filter(c => c.id !== id);
+    renderClients();
+}
+
+async function toggleClosed(){
+    const to = CUR.status === 'active' ? 'closed' : 'active';
+    const { error } = await SB.from('hub_transactions').update({ status: to, closed_at: to === 'closed' ? new Date().toISOString() : null }).eq('id', CUR.id);
+    if (error) { toast('Update failed: ' + error.message); return; }
+    CUR.status = to; renderHead();
+    toast(to === 'closed' ? 'File marked closed.' : 'File reopened.');
+}
+
+/* Archiving replaces deleting — a file is never destroyed, it just leaves the
+   working list. Everything on it (tasks, dates, documents, access) is kept. */
+async function toggleArchived(){
+    const to = CUR.status === 'archived' ? 'active' : 'archived';
+    const { error } = await SB.from('hub_transactions').update({ status: to }).eq('id', CUR.id);
+    if (error) { toast('Update failed: ' + error.message); return; }
+    CUR.status = to;
+    const row = TXNS.find(t => t.id === CUR.id); if (row) row.status = to;
+    if (to === 'archived') { toast('Archived — find it under the Archived tab.', 4000); showList(); }
+    else { renderHead(); toast('Restored to active.'); }
+}
+
+async function touch(){ SB.from('hub_transactions').update({ updated_at: new Date().toISOString() }).eq('id', CUR.id); }
+
+/* ── new transaction ── */
+/* Buyer files can open before there's an address; every other type has one. */
+function syncNewModal(){
+    const buyer = $('nType').value === 'buyer';
+    $('nTitleOpt').textContent = buyer ? '— optional, add it once they’re under contract' : '';
+    $('nTitle').placeholder = buyer ? 'e.g. 123 Main St — or leave blank for now' : 'e.g. 123 Main St, Fishers';
+}
+function openNewModal(){ $('newOverlay').classList.add('open'); syncNewModal(); setTimeout(() => $('nTitle').focus(), 60); }
+function closeNewModal(){ $('newOverlay').classList.remove('open'); }
+$('newOverlay').addEventListener('click', function(e){ if (e.target === this) closeNewModal(); });
+
+async function createTxn(){
+    const type = $('nType').value, title = $('nTitle').value.trim(), clientName = $('nClient').value.trim(), email = $('nEmail').value.trim().toLowerCase();
+    /* A buyer usually has no address yet at pre-approval — let the file open
+       under the client's name and be renamed once they're under contract. */
+    if (!title && !(type === 'buyer' && clientName)) {
+        toast(type === 'buyer' ? 'Enter a property address, or a client name.' : 'Enter a property address.');
+        return;
+    }
+    $('nCreate').disabled = true;
+
+    /* The brokerage, the template and the client's access are all resolved
+       server-side by create_hub_transaction() — the browser never sends a
+       client_id, so a stale/missing one can't trip RLS. */
+    const { data: txn, error } = await SB.rpc('create_hub_transaction', {
+        p_type: type,
+        p_title: title,
+        p_client_name: clientName || null,
+        p_client_email: (email && email.includes('@')) ? email : null
+    }).single();
+    if (error) {
+        console.error('createTxn failed', error);
+        toast('Create failed: ' + (error.message || 'unknown error'), 6000);
+        $('nCreate').disabled = false; return;
+    }
+    if (email && email.includes('@')) {
+        try { await SB.functions.invoke('portal-invite', { body: { email, portal_url: location.origin } }); } catch (e) {}
+    }
+    $('nCreate').disabled = false;
+    closeNewModal();
+    $('nTitle').value = ''; $('nClient').value = ''; $('nEmail').value = '';
+    TXNS.unshift(txn);
+    openTxn(txn.id);
+    toast('File created' + (txn.current_stage ? ' — template applied.' : '.'));
+}
+
+/* ══ Template editor (owner/admin only — RLS enforces) ══ */
+let TPL = null, TPLITEMS = [], TPLTYPE = 'buyer';
+
+function tplClientId(){
+    return ME.client_id || (typeof _hubClientId === 'function' ? _hubClientId() : null);
+}
+
+function openTemplates(){
+    $('listView').style.display = 'none';
+    $('detailView').style.display = 'none';
+    $('tplView').style.display = '';
+    loadTpl(TPLTYPE);
+}
+function closeTemplates(){ showList(); }
+
+async function loadTpl(type){
+    TPLTYPE = type;
+    document.querySelectorAll('.tpl-chip').forEach(c => c.classList.toggle('active', c.dataset.t === type));
+    const cid = tplClientId();
+    if (!cid) { $('tplStages').innerHTML = '<div class="empty">No brokerage context.</div>'; return; }
+    let { data: tpl, error } = await SB.from('hub_txn_templates').select('*').eq('client_id', cid).eq('type', type).limit(1).maybeSingle();
+    if (error) { $('tplStages').innerHTML = `<div class="empty">Could not load: ${esc(error.message)}</div>`; return; }
+    if (!tpl) {
+        const name = type.charAt(0).toUpperCase() + type.slice(1) + ' — Standard';
+        const ins = await SB.from('hub_txn_templates').insert({ client_id: cid, type, name }).select().single();
+        if (ins.error) { $('tplStages').innerHTML = `<div class="empty">Could not create template: ${esc(ins.error.message)}</div>`; return; }
+        tpl = ins.data;
+    }
+    TPL = tpl;
+    const { data: items } = await SB.from('hub_txn_template_items').select('*').eq('template_id', tpl.id).order('sort_order');
+    TPLITEMS = items || [];
+    renderTpl();
+}
+
+function tplStages(){
+    const s = [];
+    TPLITEMS.filter(i => i.kind === 'task').forEach(i => { if (!s.includes(i.stage)) s.push(i.stage); });
+    return s;
+}
+
+function renderTpl(){
+    const ss = tplStages();
+    const rowHtml = (i, group) => {
+        const idx = group.findIndex(g => g.id === i.id);
+        return `<div class="task">
+            <span style="display:flex;flex-direction:column;gap:1px;flex-shrink:0;">
+                <i class="fa-solid fa-caret-up" style="cursor:pointer;color:${idx === 0 ? 'var(--border)' : 'var(--text-muted)'};" onclick="moveTplItem('${i.id}',-1)"></i>
+                <i class="fa-solid fa-caret-down" style="cursor:pointer;color:${idx === group.length - 1 ? 'var(--border)' : 'var(--text-muted)'};" onclick="moveTplItem('${i.id}',1)"></i>
+            </span>
+            <span class="lbl" style="cursor:pointer;" title="Click to rename" onclick="editTplItem('${i.id}')">${esc(i.label)}</span>
+            <span class="del" onclick="delTplItem('${i.id}')" title="Remove"><i class="fa-solid fa-xmark"></i></span>
+        </div>`;
+    };
+    $('tplStages').innerHTML = ss.map(st => {
+        const items = TPLITEMS.filter(i => i.kind === 'task' && i.stage === st);
+        return `<div class="stage-block">
+            <div class="stage-name" style="cursor:pointer;" title="Click to rename stage" onclick="renameTplStage('${esc(st).replace(/'/g, "\\'")}')">${esc(st || 'General')} <i class="fa-solid fa-pen" style="font-size:9px;color:var(--text-muted);"></i></div>
+            ${items.map(i => rowHtml(i, items)).join('')}
+        </div>`;
+    }).join('') || '<div class="empty">No tasks yet — add one below.</div>';
+    $('tplTaskStage').innerHTML = ss.map(s => `<option value="${esc(s)}">${esc(s || 'General')}</option>`).join('') + '<option value="__new__">+ New stage…</option>';
+    const dates = TPLITEMS.filter(i => i.kind === 'date');
+    $('tplDates').innerHTML = dates.map(i => rowHtml(i, dates)).join('') || '<div style="font-size:12.5px;color:var(--text-muted);padding:4px 0;">No date labels yet.</div>';
+}
+
+/* Persist display order → sort_order (kind-scoped; tasks keep stage grouping). */
+async function persistTplOrder(kind){
+    let ordered;
+    if (kind === 'task') {
+        ordered = [];
+        tplStages().forEach(st => { TPLITEMS.filter(i => i.kind === 'task' && i.stage === st).forEach(i => ordered.push(i)); });
+    } else {
+        ordered = TPLITEMS.filter(i => i.kind === 'date');
+    }
+    const updates = [];
+    ordered.forEach((i, idx) => {
+        const want = (idx + 1) * 10;
+        if (i.sort_order !== want) { i.sort_order = want; updates.push(SB.from('hub_txn_template_items').update({ sort_order: want }).eq('id', i.id)); }
+    });
+    if (updates.length) await Promise.all(updates);
+}
+
+async function addTplItem(kind){
+    let stage = '';
+    if (kind === 'task') {
+        stage = $('tplTaskStage').value;
+        if (stage === '__new__') { stage = (prompt('New stage name:') || '').trim(); if (!stage) return; }
+    }
+    const input = $(kind === 'task' ? 'tplTaskLabel' : 'tplDateLabel');
+    const label = input.value.trim();
+    if (!label) return;
+    const { data, error } = await SB.from('hub_txn_template_items').insert({ template_id: TPL.id, kind, stage, label, sort_order: 99999 }).select().single();
+    if (error) { toast('Add failed: ' + error.message); return; }
+    TPLITEMS.push(data); input.value = '';
+    await persistTplOrder(kind);
+    renderTpl();
+}
+
+async function editTplItem(id){
+    const item = TPLITEMS.find(i => i.id === id); if (!item) return;
+    const label = (prompt('Rename item:', item.label) || '').trim();
+    if (!label || label === item.label) return;
+    const { error } = await SB.from('hub_txn_template_items').update({ label }).eq('id', id);
+    if (error) { toast('Rename failed: ' + error.message); return; }
+    item.label = label; renderTpl();
+}
+
+async function delTplItem(id){
+    const item = TPLITEMS.find(i => i.id === id); if (!item) return;
+    if (!confirm(`Remove "${item.label}" from the template?`)) return;
+    const { error } = await SB.from('hub_txn_template_items').delete().eq('id', id);
+    if (error) { toast('Delete failed: ' + error.message); return; }
+    TPLITEMS = TPLITEMS.filter(i => i.id !== id);
+    renderTpl();
+}
+
+async function moveTplItem(id, dir){
+    const item = TPLITEMS.find(i => i.id === id); if (!item) return;
+    const group = item.kind === 'task'
+        ? TPLITEMS.filter(i => i.kind === 'task' && i.stage === item.stage)
+        : TPLITEMS.filter(i => i.kind === 'date');
+    const idx = group.findIndex(i => i.id === id);
+    const swap = idx + dir;
+    if (swap < 0 || swap >= group.length) return;
+    const a = group[idx], b = group[swap];
+    const t = a.sort_order; a.sort_order = b.sort_order; b.sort_order = t;
+    TPLITEMS.sort((x, y) => x.sort_order - y.sort_order);
+    renderTpl();
+    await Promise.all([
+        SB.from('hub_txn_template_items').update({ sort_order: a.sort_order }).eq('id', a.id),
+        SB.from('hub_txn_template_items').update({ sort_order: b.sort_order }).eq('id', b.id)
+    ]);
+}
+
+async function renameTplStage(oldName){
+    const name = (prompt('Rename stage:', oldName) || '').trim();
+    if (!name || name === oldName) return;
+    const { error } = await SB.from('hub_txn_template_items').update({ stage: name }).eq('template_id', TPL.id).eq('kind', 'task').eq('stage', oldName);
+    if (error) { toast('Rename failed: ' + error.message); return; }
+    TPLITEMS.forEach(i => { if (i.kind === 'task' && i.stage === oldName) i.stage = name; });
+    renderTpl();
+}
+
+let _tT;
+function toast(msg, ms){
+    const t = $('toast'); t.textContent = msg; t.classList.add('show');
+    clearTimeout(_tT); _tT = setTimeout(() => t.classList.remove('show'), ms || 2600);
+}
+</script>
+<script src="back-link.js?v=20260917"></script>
+<script src="mobile-tabs.js?v=20260927a" defer></script>
+</body>
+</html>

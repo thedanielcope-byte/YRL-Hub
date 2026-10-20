@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Center — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="portal-auth.js"></script>
+    <script src="embed-mode.js?v=20260927b"></script>
+    <script src="help-box.js?v=20260918a" defer></script>
+    <script src="hub-data.js"></script>
+    <style>
+        :root{
+            --red:#c03926; --red-light:#d94a35; --red-dark:#9e2e1e;
+            --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f7f8fa; --surface-3:#eef0f3;
+            --border:#e2e5ea; --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+            --radius:14px; --shadow:0 4px 20px rgba(0,0,0,0.08);
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        html{scroll-behavior:smooth;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
+        a{text-decoration:none;color:inherit;}
+        .page-header{background:linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);padding:26px 22px;}
+        .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+        .header-left{display:flex;align-items:center;gap:16px;}
+        .back-btn{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:9px 16px;border-radius:100px;font-size:13px;font-weight:600;white-space:nowrap;}
+        .back-btn:hover{background:rgba(255,255,255,0.26);}
+        .header-title h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(26px,4vw,38px);letter-spacing:1.5px;color:#fff;line-height:1.1;}
+        .header-title p{font-size:13px;color:rgba(255,255,255,0.85);}
+        .btn-edit{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.18);border:1.5px solid rgba(255,255,255,0.35);color:#fff;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;white-space:nowrap;}
+        .btn-edit:hover{background:rgba(255,255,255,0.3);}
+        .btn-edit.active{background:#fff;color:var(--red);}
+        .wrap{max-width:1100px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:200px 1fr;gap:22px;align-items:start;}
+        @media(max-width:560px){.wrap{grid-template-columns:1fr;}}
+        .rail{position:sticky;top:16px;}
+        @media(max-width:560px){.rail{position:static;}}
+        .search-wrap{position:relative;margin-bottom:12px;}
+        .search-wrap i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:13px;}
+        .search-input{width:100%;padding:11px 14px 11px 36px;border:1.5px solid var(--border);border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;background:var(--surface);}
+        .search-input:focus{outline:none;border-color:var(--red);}
+        .rail-nav{display:flex;flex-direction:column;gap:2px;}
+        .rail-nav a{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:9px;font-size:13.5px;font-weight:600;color:var(--text-sec);border:1px solid transparent;cursor:pointer;}
+        .rail-nav a:hover{background:var(--surface);border-color:var(--border);color:var(--text);}
+        .rail-nav a.active{background:var(--red);border-color:var(--red);color:#fff;}
+        .rail-nav a.active i{opacity:.9!important;}
+        .rail-row{display:flex;align-items:center;gap:2px;}
+        .rail-row > a{flex:1;min-width:0;}
+        .hc-mv{display:inline-flex;gap:1px;flex-shrink:0;}
+        .hc-sec-head .hc-mv{margin-left:auto;}
+        .hc-mvbtn{width:24px;height:26px;border:none;background:none;color:var(--text-muted);cursor:pointer;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;}
+        .hc-mvbtn:hover:not(:disabled){background:var(--surface-3);color:var(--red);}
+        .hc-mvbtn:disabled{opacity:.25;cursor:default;}
+        .hc-sec{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04);scroll-margin-top:16px;}
+        .hc-subhead{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.2px;color:var(--text-muted);margin:6px 2px 12px;text-transform:uppercase;}
+        .hc-sec.hc-sub{padding:16px 18px;border-left:3px solid var(--red);margin-bottom:11px;}
+        .hc-sec.hc-sub h3{font-size:16px;font-weight:800;color:var(--text);}
+        .hc-sub-ic{width:30px;height:30px;border-radius:8px;background:var(--surface-3);color:var(--text-sec);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+        .hc-sec.hc-sub .hc-summary{font-size:13.5px;margin-top:6px;}
+        .hc-sec-head{display:flex;align-items:center;gap:11px;margin-bottom:6px;}
+        .hc-sec-ic{width:36px;height:36px;border-radius:10px;background:rgba(192,57,38,.1);color:var(--red);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+        .hc-sec-head h2{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--text);}
+        .hc-edit{margin-left:auto;}
+        .hc-summary{font-size:14.5px;color:var(--text-sec);line-height:1.65;margin:8px 0 4px;}
+        .hc-h{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);font-weight:800;margin:16px 0 7px;}
+        .hc-list{margin:0 0 4px 20px;font-size:14px;color:var(--text);line-height:1.75;}
+        .hc-list.tips{list-style:disc;}
+        .hc-video{margin-top:16px;border-radius:12px;overflow:hidden;position:relative;padding-top:56.25%;background:#000;}
+        .hc-video iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+        .hc-vlink{display:inline-flex;align-items:center;gap:8px;background:var(--red);color:#fff;font-size:13px;font-weight:700;padding:8px 15px;border-radius:8px;margin-top:14px;}
+        .hc-none{font-size:13.5px;color:var(--text-muted);font-style:italic;margin:8px 0 2px;}
+        .mini-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);background:#fff;border-radius:8px;padding:7px 13px;font-size:12.5px;font-weight:700;font-family:'Inter',sans-serif;color:var(--red);cursor:pointer;}
+        .mini-btn:hover{border-color:var(--red);}
+        .empty{text-align:center;padding:50px 20px;color:var(--text-muted);grid-column:1/-1;}
+    </style>
+    <link rel="stylesheet" href="hub-theme.css?v=20260903b"><script src="hub-brand.js" defer></script>
+</head>
+<body>
+
+<header class="page-header">
+    <div class="header-inner">
+        <div class="header-left">
+            <a href="hub.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Hub</a>
+            <div class="header-title">
+                <h1><i class="fa-solid fa-circle-info" style="font-size:0.8em;opacity:.9;"></i> Help Center</h1>
+                <p>How every part of the hub works — one place to look things up</p>
+            </div>
+        </div>
+        <button class="btn-edit" id="editBtn" style="display:none;" onclick="toggleEditMode()"><i class="fa-solid fa-pen"></i> Edit</button>
+    </div>
+</header>
+
+<div class="wrap">
+    <div class="rail">
+        <div class="search-wrap"><i class="fa-solid fa-magnifying-glass"></i><input type="text" class="search-input" id="hcSearch" placeholder="Search help…" autocomplete="off"></div>
+        <nav class="rail-nav" id="hcNav"></nav>
+    </div>
+    <div id="hcMain"><div class="empty"><i class="fa-solid fa-spinner fa-spin"></i> Loading help…</div></div>
+</div>
+
+<script>
+const SECTIONS = [
+    { key:'hub-dashboard',        label:'Dashboard',                 icon:'fa-gauge-high' },
+    { key:'hub-work-a-deal',      label:'Work a Deal',               icon:'fa-handshake' },
+    { key:'hub-my-tools',         label:'My Tools',                  icon:'fa-toolbox' },
+    { key:'hub-setup',            label:'My Setup',                  icon:'fa-user-gear' },
+    { key:'hub-transactions',     label:'Transactions & Closings',   icon:'fa-folder-tree' },
+    { key:'hub-training',         label:'Training',                  icon:'fa-graduation-cap' },
+    { key:'hub-compliance',       label:'Compliance',                icon:'fa-scale-balanced' },
+    { key:'hub-office',           label:'The Office',                icon:'fa-building' },
+    { key:'hub-brand-assets',     label:'Brand Assets',              icon:'fa-palette' },
+    { key:'hub-sops',             label:'SOPs & Workflows',          icon:'fa-route' }
+];
+// The tools inside each section — their help lives under the same hub_help rows
+// (keys like yrl-buyers). Listed below the section's own help.
+const SUBS = {
+    'hub-dashboard':    [],
+    'hub-work-a-deal':  [ {key:'yrl-buyers', label:'Buyer Tools', icon:'fa-house-user'}, {key:'yrl-sellers', label:'Seller Tools', icon:'fa-sign-hanging'}, {key:'yrl-referrals', label:'Referrals', icon:'fa-handshake-angle'} ],
+    'hub-my-tools':     [ {key:'yrl-contacts', label:'My Contacts / CRM', icon:'fa-address-book'}, {key:'yrl-tasks', label:'Tasks Manager', icon:'fa-list-check'}, {key:'yrl-marketing', label:'Marketing', icon:'fa-bullhorn'}, {key:'yrl-social', label:'Social Media', icon:'fa-share-nodes'}, {key:'yrl-calendar', label:'Calendar', icon:'fa-calendar-days'} ],
+    'hub-setup':        [ {key:'yrl-agent-info', label:'My Agent Info', icon:'fa-id-card'}, {key:'yrl-email-signature', label:'Email Signature', icon:'fa-signature'}, {key:'yrl-moving-offices', label:'Moving to YRL', icon:'fa-right-left'}, {key:'yrl-onboarding', label:'New Agent Onboarding', icon:'fa-clipboard-list'}, {key:'yrl-install-app', label:'Install the Hub App', icon:'fa-mobile-screen-button'} ],
+    'hub-transactions': [ {key:'yrl-transactions', label:'Track Transactions / Client Portal', icon:'fa-folder-tree'}, {key:'yrl-closing-request', label:'Commission Distribution Form', icon:'fa-file-circle-check'}, {key:'yrl-commissions', label:'My Commissions', icon:'fa-sack-dollar'} ],
+    'hub-training':     [ {key:'yrl-agent-training', label:'Trainings', icon:'fa-graduation-cap'}, {key:'yrl-licensing-training', label:'Licensing Training', icon:'fa-id-card'}, {key:'yrl-meetings', label:'Monthly Meetings', icon:'fa-calendar-days'}, {key:'yrl-faqs', label:"FAQ's", icon:'fa-circle-question'}, {key:'yrl-contracts', label:'Contracts & Forms', icon:'fa-file-signature'} ],
+    'hub-compliance':   [ {key:'yrl-company-policies', label:'Company Policies', icon:'fa-scale-balanced'}, {key:'yrl-ce-licensing', label:'CE & Licensing', icon:'fa-certificate'} ],
+    'hub-office':       [ {key:'yrl-recruiting', label:'Agent Recruiting', icon:'fa-user-plus'}, {key:'yrl-agent-directory', label:'Agent Directory', icon:'fa-users'}, {key:'yrl-vendors', label:'Vendor Directory', icon:'fa-store'} ],
+    'hub-brand-assets': [ {key:'yrl-brand-assets', label:'Brand Kit', icon:'fa-palette'}, {key:'yrl-slideshow-maker', label:'Listing Slideshow Maker', icon:'fa-film'} ],
+    'hub-sops':         [ {key:'sop-deal-workflow', label:'Transaction Workflow: Prospect to Paid', icon:'fa-diagram-project'} ]
+};
+const ORDER_KEY = 'yrl-help-order';
+let SB=null, ME=null, ROWS={}, editMode=false, filter='', selKey=SECTIONS[0].key;
+const $ = (id)=>document.getElementById(id);
+const esc = (s)=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const arr = (v)=>Array.isArray(v)?v:[];
+function isAuthed(){ return !!(ME && (ME.role==='owner' || ME.role==='nomad_admin')); }
+function linkify(html){ return String(html).replace(/(https?:\/\/[^\s<]+[^\s<.,;:!?)])/g, function(u){ return '<a href="'+u+'" target="_blank" rel="noopener" style="color:var(--red,#c03926);font-weight:600;word-break:break-all;">'+(/\.pdf(\?|$)/i.test(u)?'<i class="fa-solid fa-file-pdf"></i> Download the PDF':u.replace(/^https?:\/\//,''))+'</a>'; }); }
+function ytEmbed(url){ if(!url) return null; var m=String(url).match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([\w-]{11})/); return m?('https://www.youtube.com/embed/'+m[1]):null; }
+function hasContent(r){ return !!(r && (r.summary || arr(r.steps).length || arr(r.tips).length || r.video_url)); }
+
+/* Apply a saved custom order over the defaults (items not in the saved list keep
+   their default position at the end). */
+function orderBy(list, keys){
+    if (!keys || !keys.length) return;
+    list.sort((a,b)=>{ let ia=keys.indexOf(a.key), ib=keys.indexOf(b.key); if(ia<0)ia=999; if(ib<0)ib=999; return ia-ib; });
+}
+function applyOrder(o){
+    if (!o || typeof o!=='object') return;
+    orderBy(SECTIONS, o.sections);
+    if (o.subs) Object.keys(SUBS).forEach(k=>orderBy(SUBS[k], o.subs[k]));
+}
+async function saveOrder(){
+    const subs={}; Object.keys(SUBS).forEach(k=>{ subs[k]=SUBS[k].map(x=>x.key); });
+    try { await saveHubContent(ORDER_KEY, { sections: SECTIONS.map(s=>s.key), subs }); } catch(e){}
+}
+function moveSection(key, dir){
+    const i=SECTIONS.findIndex(s=>s.key===key), j=i+dir;
+    if (i<0 || j<0 || j>=SECTIONS.length) return;
+    const t=SECTIONS[i]; SECTIONS[i]=SECTIONS[j]; SECTIONS[j]=t; saveOrder(); render();
+}
+function moveSub(secKey, subKey, dir){
+    const list=SUBS[secKey]||[]; const i=list.findIndex(x=>x.key===subKey), j=i+dir;
+    if (i<0 || j<0 || j>=list.length) return;
+    const t=list[i]; list[i]=list[j]; list[j]=t; saveOrder(); render();
+}
+
+async function loadAll(){
+    ROWS = {};
+    try { const r = await SB.from('hub_help').select('*'); (r.data||[]).forEach(row=>{ ROWS[row.page_key]=row; }); } catch(e){}
+    try { if (typeof loadHubContent==='function'){ const o = await loadHubContent(ORDER_KEY); if (o) applyOrder(o); } } catch(e){}
+    render();
+}
+
+function toggleEditMode(){
+    if (!isAuthed()) return;
+    editMode = !editMode;
+    $('editBtn').classList.toggle('active', editMode);
+    $('editBtn').innerHTML = editMode ? '<i class="fa-solid fa-check"></i> Done' : '<i class="fa-solid fa-pen"></i> Edit';
+    render();
+}
+
+function secMatches(s){
+    if (!filter) return true;
+    const r = ROWS[s.key] || {};
+    const hay = (s.label+' '+(r.title||'')+' '+(r.summary||'')+' '+arr(r.steps).join(' ')+' '+arr(r.tips).join(' ')).toLowerCase();
+    return hay.indexOf(filter) !== -1;
+}
+
+function canEdit(){ return editMode && isAuthed(); }
+function sectionCard(s, isSub, parentKey, subCount, idx){
+    const r = ROWS[s.key] || {};
+    const has = hasContent(r);
+    const yt = ytEmbed(r.video_url);
+    let body;
+    if (has){
+        const steps = arr(r.steps), tips = arr(r.tips);
+        body =
+            (r.summary ? '<p class="hc-summary">'+linkify(esc(r.summary))+'</p>' : '') +
+            (steps.length ? '<div class="hc-h">How to use it</div><ol class="hc-list">'+steps.map(x=>'<li>'+linkify(esc(x))+'</li>').join('')+'</ol>' : '') +
+            (tips.length ? '<div class="hc-h">Tips</div><ul class="hc-list tips">'+tips.map(x=>'<li>'+linkify(esc(x))+'</li>').join('')+'</ul>' : '') +
+            (yt ? '<div class="hc-video"><iframe src="'+esc(yt)+'" title="Walkthrough" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen loading="lazy"></iframe></div>'
+                : (r.video_url ? '<a class="hc-vlink" href="'+esc(r.video_url)+'" target="_blank" rel="noopener"><i class="fa-solid fa-play"></i> Watch the walkthrough</a>' : ''));
+    } else {
+        body = '<p class="hc-none">No help has been added'+(isSub?' for this tool':' for this section')+' yet'+(canEdit()?' — click Add help.':'.')+'</p>';
+    }
+    // reorder arrows on sub-tools (only in edit mode, and not while searching)
+    let mv = '';
+    if (isSub && canEdit() && !filter){
+        mv = '<span class="hc-mv">'+
+            '<button class="hc-mvbtn" data-submv="-1" data-sec="'+esc(parentKey)+'" data-sub="'+esc(s.key)+'"'+(idx===0?' disabled':'')+' title="Move up"><i class="fa-solid fa-chevron-up"></i></button>'+
+            '<button class="hc-mvbtn" data-submv="1" data-sec="'+esc(parentKey)+'" data-sub="'+esc(s.key)+'"'+(idx===subCount-1?' disabled':'')+' title="Move down"><i class="fa-solid fa-chevron-down"></i></button></span>';
+    }
+    const editBtn = canEdit()
+        ? '<button class="mini-btn hc-edit" data-key="'+esc(s.key)+'" data-label="'+esc(s.label)+'"><i class="fa-solid fa-pen"></i> '+(has?'Edit help':'Add help')+'</button>' : '';
+    const head = isSub
+        ? '<div class="hc-sec-head"><span class="hc-sub-ic"><i class="fa-solid '+esc(s.icon)+'"></i></span><h3>'+esc((r.title)||s.label)+'</h3>'+mv+editBtn+'</div>'
+        : '<div class="hc-sec-head"><span class="hc-sec-ic"><i class="fa-solid '+esc(s.icon)+'"></i></span><h2>'+esc((r.title)||s.label)+'</h2>'+editBtn+'</div>';
+    return '<section class="hc-sec'+(isSub?' hc-sub':'')+'">' + head + body + '</section>';
+}
+function render(){
+    const shown = SECTIONS.filter(secMatches);
+    // rail = clickable section list (master); main = the SELECTED section (detail)
+    if (!shown.some(s=>s.key===selKey)) selKey = shown[0] ? shown[0].key : null;
+    const railEdit = canEdit() && !filter;
+    $('hcNav').innerHTML = shown.length
+        ? shown.map((s,i)=>{
+            const link = '<a href="javascript:void(0)" class="'+(s.key===selKey?'active':'')+'" data-key="'+esc(s.key)+'"><i class="fa-solid '+esc(s.icon)+'" style="width:16px;opacity:.65;"></i> '+esc(s.label)+'</a>';
+            if (!railEdit) return link;
+            return '<div class="rail-row">'+link+'<span class="hc-mv">'+
+                '<button class="hc-mvbtn" data-secmv="-1" data-sec="'+esc(s.key)+'"'+(i===0?' disabled':'')+' title="Move up"><i class="fa-solid fa-chevron-up"></i></button>'+
+                '<button class="hc-mvbtn" data-secmv="1" data-sec="'+esc(s.key)+'"'+(i===shown.length-1?' disabled':'')+' title="Move down"><i class="fa-solid fa-chevron-down"></i></button></span></div>';
+        }).join('')
+        : '<span class="hc-none" style="padding:8px 12px;">No matches</span>';
+    const main = $('hcMain');
+    const sel = SECTIONS.find(s=>s.key===selKey);
+    if (sel){
+        const subs = (SUBS[sel.key] || []).filter(x => hasContent(ROWS[x.key]) || canEdit());
+        main.innerHTML = sectionCard(sel, false)
+            + (subs.length ? '<div class="hc-subhead">Tools in this section</div>' + subs.map((x,i)=>sectionCard(x, true, sel.key, subs.length, i)).join('') : '');
+    } else {
+        main.innerHTML = '<div class="empty"><i class="fa-regular fa-face-smile"></i>No help matches "'+esc(filter)+'".</div>';
+    }
+    $('hcNav').querySelectorAll('a[data-key]').forEach(a=>{
+        a.onclick = ()=>{ selKey = a.getAttribute('data-key'); render(); };
+    });
+    $('hcNav').querySelectorAll('.hc-mvbtn[data-secmv]').forEach(b=>{
+        b.onclick = (e)=>{ e.preventDefault(); e.stopPropagation(); moveSection(b.getAttribute('data-sec'), +b.getAttribute('data-secmv')); };
+    });
+    main.querySelectorAll('.hc-mvbtn[data-submv]').forEach(b=>{
+        b.onclick = ()=>{ moveSub(b.getAttribute('data-sec'), b.getAttribute('data-sub'), +b.getAttribute('data-submv')); };
+    });
+    main.querySelectorAll('.hc-edit[data-key]').forEach(b=>{
+        b.onclick = ()=>{ if (window.HelpBox && HelpBox.edit) HelpBox.edit(b.getAttribute('data-key'), b.getAttribute('data-label'), loadAll); };
+    });
+}
+
+$('hcSearch').addEventListener('input', function(){ filter=this.value.trim().toLowerCase(); render(); });
+
+function boot(){
+    SB = window.yrlClient; ME = window.yrlMember;
+    if (isAuthed()) $('editBtn').style.display='';
+    loadAll();
+}
+document.addEventListener('yrl-auth-ready', boot);
+if (window.yrlMember && window.yrlClient) boot();
+</script>
+</body>
+</html>
