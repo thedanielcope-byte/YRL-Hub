@@ -233,6 +233,10 @@
 
         <!-- Agent PIN sign-in -->
         <div id="pinStep" style="display:none;">
+            <div id="pkLoginBox" style="display:none;">
+                <button type="button" class="btn btn-accent" id="pkLoginBtn" onclick="pkLogin()"><i class="fa-solid fa-face-smile"></i> Sign in with Face ID</button>
+                <div style="display:flex;align-items:center;gap:10px;margin:16px 0 4px;color:var(--text-muted);font-size:12px;"><span style="flex:1;height:1px;background:var(--border,#e5e7eb);"></span>or use your PIN<span style="flex:1;height:1px;background:var(--border,#e5e7eb);"></span></div>
+            </div>
             <p>Sign in with your email and your 4-digit PIN.</p>
             <form onsubmit="pinSignIn(event)">
                 <label>Email address</label>
@@ -246,6 +250,15 @@
             <div style="text-align:center;margin-top:12px;font-size:12px;">
                 <a href="#" onclick="setLoginMode('code');return false;" style="color:var(--text-muted);font-weight:600;">No PIN? Email me a code instead</a>
             </div>
+        </div>
+
+        <!-- After a PIN sign-in: offer Face ID for next time (once per device) -->
+        <div id="pkOfferStep" style="display:none;text-align:center;">
+            <div style="font-size:38px;color:var(--accent);margin:4px 0 8px;"><i class="fa-solid fa-face-smile"></i></div>
+            <p style="font-weight:700;font-size:15px;color:var(--text,#1a1d22);margin-bottom:4px;">Use Face ID next time?</p>
+            <p>Skip the PIN and sign in with Face ID or Touch ID on this device. You can still use your PIN any time.</p>
+            <button type="button" class="btn btn-accent" id="pkOfferBtn"><i class="fa-solid fa-face-smile"></i> Turn on Face ID</button>
+            <div style="margin-top:12px;font-size:12px;"><a href="#" id="pkOfferSkip" style="color:var(--text-muted);font-weight:600;">Not now</a></div>
         </div>
 
         <!-- Step 1: email code -->
@@ -1014,6 +1027,7 @@ async function sendCode(e){
 /* ── Agent PIN sign-in (email + 4-digit PIN → verify-pin edge fn → real session) ── */
 function setLoginMode(mode){
     document.getElementById('pinStep').style.display = mode === 'pin' ? '' : 'none';
+    if (mode === 'pin') pkShowLogin();
     document.getElementById('loginStep1').style.display = mode === 'pin' ? 'none' : '';
     document.getElementById('loginStep2').style.display = 'none';
     document.getElementById('loginMsg').className = 'login-msg';
@@ -1051,6 +1065,7 @@ async function pinSignIn(e){
             return;
         }
         currentUser = data.session.user; currentMember = member;
+        await pkOfferAfterPin(data.session.access_token);
         document.getElementById('loginView').classList.add('hidden');
         await showDash();
     } catch (err) {
@@ -1059,6 +1074,90 @@ async function pinSignIn(e){
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Sign in';
     }
+}
+
+/* ── Face ID / Touch ID sign-in for hub agents (WebAuthn passkeys → hub-passkey edge fn → same one-time code
+      the PIN path gets → real session). Passkeys sync through iCloud Keychain, so one set up in Safari also
+      works in the home-screen app. Only on agent-hub hosts, only next to the PIN. ── */
+const PK_URL = SB_URL + '/functions/v1/hub-passkey';
+const PK_LIB_URL = 'https://cdn.jsdelivr.net/npm/@simplewebauthn/browser@14.0.0/dist/bundle/index.umd.min.js';
+let _pkLibP = null;
+function pkLib(){
+    if (window.SimpleWebAuthnBrowser) return Promise.resolve();
+    return _pkLibP = _pkLibP || new Promise((res, rej) => { const s = document.createElement('script'); s.src = PK_LIB_URL; s.onload = res; s.onerror = () => { _pkLibP = null; rej(new Error("Couldn't load Face ID support — check your connection.")); }; document.head.appendChild(s); });
+}
+async function pkCall(body, token){
+    const r = await fetch(PK_URL, { method: 'POST', headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + (token || SB_KEY), 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const d = await r.json().catch(() => ({ ok: false, error: 'No response' }));
+    if (!d.ok) throw new Error(d.error || 'Something went wrong');
+    return d;
+}
+const pkGet = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+const pkSet = (k, v) => { try { if (v) localStorage.setItem(k, v); else localStorage.removeItem(k); } catch (e) {} };
+async function pkAvailable(){
+    if (!window.PublicKeyCredential || !isHubHost() || !HUB_SLUGS.has(hubSlug())) return false;
+    try { return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable(); } catch (e) { return false; }
+}
+function pkDeviceLabel(){
+    const ua = navigator.userAgent;
+    const dev = /iPhone/.test(ua) ? 'iPhone' : /iPad/.test(ua) ? 'iPad' : /Android/.test(ua) ? 'Android' : /Mac/.test(ua) ? 'Mac' : /Windows/.test(ua) ? 'Windows PC' : 'Device';
+    const br = /Edg\//.test(ua) ? 'Edge' : /Chrome\//.test(ua) && !/Chromium/.test(ua) ? 'Chrome' : /Safari\//.test(ua) ? 'Safari' : /Firefox\//.test(ua) ? 'Firefox' : '';
+    return dev + (br ? ' · ' + br : '');
+}
+async function pkShowLogin(){
+    const box = document.getElementById('pkLoginBox');
+    if (box) box.style.display = (await pkAvailable()) ? '' : 'none';
+}
+async function pkLogin(){
+    const btn = document.getElementById('pkLoginBtn');
+    btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Waiting for Face ID…';
+    try {
+        await pkLib();
+        const o = await pkCall({ action: 'login-options' });
+        const response = await SimpleWebAuthnBrowser.startAuthentication({ optionsJSON: o.options });
+        const d = await pkCall({ action: 'login-verify', challenge: o.options.challenge, response });
+        const { data, error } = await sb.auth.verifyOtp({ email: d.email, token: d.otp, type: 'email' });
+        if (error || !data.session) throw new Error('Could not start your session — try again.');
+        const member = await resolveMember(data.session.user.email);
+        if (!member) { await sb.auth.signOut(); throw new Error('That account doesn\'t have portal access.'); }
+        pkSet('yrl_pk_on', '1');
+        currentUser = data.session.user; currentMember = member;
+        document.getElementById('loginView').classList.add('hidden');
+        await showDash();
+    } catch (e) {
+        if (e && e.name === 'NotAllowedError') { showLoginMsg('Face ID was cancelled, or isn\'t set up on this device yet. Sign in with your PIN and we\'ll offer to turn it on.', 'err'); }
+        else showLoginMsg((e && e.message) || 'Face ID sign-in failed — use your PIN.', 'err');
+    } finally {
+        btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-face-smile"></i> Sign in with Face ID';
+    }
+}
+/* Right after a PIN sign-in: offer Face ID once per device. Resolves when they pick, so the hub opens after. */
+async function pkOfferAfterPin(token){
+    if (pkGet('yrl_pk_on') || pkGet('yrl_pk_dismissed') || !(await pkAvailable())) return;
+    const step = document.getElementById('pkOfferStep'), pin = document.getElementById('pinStep');
+    const btn = document.getElementById('pkOfferBtn'), skip = document.getElementById('pkOfferSkip');
+    pin.style.display = 'none'; step.style.display = '';
+    document.getElementById('loginMsg').className = 'login-msg';
+    await new Promise(done => {
+        skip.onclick = (e) => { e.preventDefault(); pkSet('yrl_pk_dismissed', '1'); done(); };
+        btn.onclick = async () => {
+            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Waiting for Face ID…';
+            try {
+                await pkLib();
+                const o = await pkCall({ action: 'register-options' }, token);
+                const response = await SimpleWebAuthnBrowser.startRegistration({ optionsJSON: o.options });
+                await pkCall({ action: 'register-verify', challenge: o.options.challenge, response, label: pkDeviceLabel() }, token);
+                pkSet('yrl_pk_on', '1');
+                showLoginMsg('Face ID is on. Next time, tap Sign in with Face ID.', 'ok');
+                setTimeout(done, 1200);
+            } catch (e) {
+                if (e && e.name === 'InvalidStateError') { pkSet('yrl_pk_on', '1'); done(); return; }   // already set up on this device
+                btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-face-smile"></i> Turn on Face ID';
+                if (!(e && e.name === 'NotAllowedError')) showLoginMsg("Couldn't turn on Face ID: " + ((e && e.message) || e), 'err');
+            }
+        };
+    });
+    step.style.display = 'none';
 }
 
 async function verifyCode(e){
