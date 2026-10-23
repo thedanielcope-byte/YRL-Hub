@@ -25,7 +25,7 @@ FLAGS=(-rlvz --checksum --omit-dir-times --no-perms --itemize-changes
        --exclude='.git' --exclude='.gitattributes' --exclude='.DS_Store'
        --exclude='Disbursement Form' --exclude='*.pdf' --exclude='*.png' --exclude='*.jpg'
        --exclude='portal' --exclude='supabase' --exclude='deploy-*.sh' --exclude='.gitignore'
-       --exclude='*.md' --exclude='*.sql' --exclude='_portal-backups')
+       --exclude='*.md' --exclude='*.sql' --exclude='_portal-backups' --exclude='docs' --exclude='tools' --exclude='*.py' --exclude='CLAUDE.md')
 
 if [[ "${1:-}" == "--dry" ]]; then
   FLAGS+=(--dry-run)
