@@ -15,7 +15,7 @@
   var NOMAD = !/[?&]classic(=|&|$)/.test(location.search);
   var EXCLUDE = ['important-numbers', 'calendar-view']; // stay outside the shell (Important #'s pinned on top)
   // Appended to every tool iframe so browsers fetch fresh tool pages after a deploy. Bump on each deploy.
-  var HUB_VER = '20261020a';
+  var HUB_VER = '20261023a';
   /* Sidebar 3rd level — the tabs inside each tool page, keyed by the page in the card's href.
      key  → tabs come from hub_content via the hub_tab_index RPC (tile-grid sections / side-nav categories);
             fmt 'sec' = side-nav anchor "sec-<id>", 'anchor' = category.anchor || id, default = section id.
@@ -517,12 +517,14 @@
         '</div>' +
         '<div class="hnav-foot">' +
           '<a class="hnav-acct" href="index.html?portal=1" target="_blank" rel="noopener"><i class="fa-solid fa-user-gear"></i> Admin Hub</a>' +
+          '<button class="hnav-out hnav-fid" type="button"><i class="fa-solid fa-face-smile"></i> Face ID</button>' +
           '<button class="hnav-out" type="button"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out</button>' +
         '</div>';
       document.body.appendChild(rail);
       rail.querySelector('.hnav-nav').appendChild(nav);   // MOVE the real section nav in (keeps its click handler + select())
       var dashBtn = rail.querySelector('.hnav-dash');
-      rail.querySelector('.hnav-out').addEventListener('click', function(){ if (window.yrlSignOut) window.yrlSignOut(); });
+      rail.querySelector('.hnav-out:not(.hnav-fid)').addEventListener('click', function(){ if (window.yrlSignOut) window.yrlSignOut(); });
+      rail.querySelector('.hnav-fid').addEventListener('click', function(){ if (window.yrlFaceIdSettings) window.yrlFaceIdSettings(); });
 
       // mobile: off-canvas drawer + hamburger
       var burger = document.createElement('button'); burger.className = 'hnav-burger'; burger.type = 'button'; burger.innerHTML = '<i class="fa-solid fa-bars"></i>';
