@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moving to YRL — License Transfer Checklist</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="portal-auth.js"></script>
+    <script src="embed-mode.js?v=20260927b"></script>
+    <script src="help-box.js?v=20260916" defer></script>
+    <script src="hub-data.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --red:#c03926; --red-light:#d94a35; --red-dark:#9e2e1e;
+            --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f7f8fa;
+            --surface-3:#eef0f3; --border:#e2e5ea; --border-light:#d0d4da;
+            --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+            --green:#16a34a; --green-light:#dcfce7;
+            --radius:12px; --radius-lg:20px;
+            --shadow:0 4px 20px rgba(0,0,0,0.08);
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        html{scroll-behavior:smooth;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.55;}
+        a{text-decoration:none;color:inherit;}
+
+        /* ── Header ── */
+        .sub-header{
+            background:linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);
+            padding:26px 20px 22px;color:#fff;position:relative;overflow:hidden;
+        }
+        .sub-header::before{
+            content:'';position:absolute;inset:0;
+            background-image:radial-gradient(rgba(255,255,255,0.07) 1px,transparent 1px);
+            background-size:28px 28px;pointer-events:none;
+        }
+        .sub-header-inner{max-width:880px;margin:0 auto;position:relative;z-index:1;}
+        .back-btn{
+            display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;
+            color:rgba(255,255,255,0.85);background:rgba(255,255,255,0.12);
+            border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:7px 14px;
+            margin-bottom:16px;transition:all 0.2s;cursor:pointer;
+        }
+        .back-btn:hover{background:rgba(255,255,255,0.2);color:#fff;}
+        .header-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+        .btn-pdf{
+            display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--red);
+            border:none;border-radius:10px;padding:9px 16px;font-size:12.5px;font-weight:700;
+            cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;white-space:nowrap;
+            box-shadow:0 4px 16px rgba(0,0,0,0.15);text-decoration:none;
+        }
+        .btn-pdf:hover{background:#fff3f1;transform:translateY(-1px);color:var(--red-dark);}
+        .header-title{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:1.8px;line-height:1.1;}
+        .header-sub{font-size:13px;opacity:0.85;margin-top:6px;max-width:560px;}
+
+        /* Progress bar inside header */
+        .prog-wrap{
+            margin-top:18px;background:rgba(255,255,255,0.18);
+            border:1px solid rgba(255,255,255,0.25);border-radius:12px;
+            padding:10px 14px;display:flex;flex-direction:column;gap:8px;
+        }
+        .prog-row{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:rgba(255,255,255,0.92);}
+        .prog-count{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1.2px;color:#fff;}
+        .prog-bar{height:8px;background:rgba(255,255,255,0.18);border-radius:6px;overflow:hidden;}
+        .prog-fill{height:100%;background:linear-gradient(90deg,#fff 0%,#fce0d8 100%);width:0;transition:width 0.35s ease;border-radius:6px;}
+
+        /* Save indicator */
+        .save-tag{
+            display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;
+            color:#fff;opacity:0;transition:opacity 0.25s;
+        }
+        .save-tag.show{opacity:0.9;}
+        .save-tag i{color:#bbf7d0;}
+
+        /* ── Layout ── */
+        .main{max-width:880px;margin:0 auto;padding:22px 16px 90px;}
+
+        /* Agent banner */
+        .agent-banner{
+            display:flex;align-items:center;gap:12px;background:var(--surface);
+            border:1px solid var(--border);border-radius:12px;padding:12px 16px;
+            margin-bottom:18px;box-shadow:0 1px 3px rgba(0,0,0,0.04);
+        }
+        .agent-banner i{color:var(--red);font-size:16px;}
+        .agent-banner b{font-size:13px;}
+        .agent-banner span{font-size:12px;color:var(--text-muted);}
+
+        /* Loading state */
+        .loading{text-align:center;padding:60px 20px;color:var(--text-muted);font-size:14px;}
+
+        /* Checklist item */
+        .item{
+            background:var(--surface);border:1px solid var(--border);border-radius:14px;
+            padding:16px 18px 18px;margin-bottom:12px;
+            display:grid;grid-template-columns:auto 1fr;gap:14px;
+            transition:border-color 0.2s, background 0.2s, opacity 0.25s;
+        }
+        .item.done{background:#f5fbf6;border-color:rgba(22,163,74,0.35);}
+        .item.done .item-title{text-decoration:line-through;color:var(--text-muted);}
+        .item.done .item-body{color:var(--text-muted);}
+        .item.done .num{background:var(--green);color:#fff;}
+
+        .check-col{display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:2px;}
+        .num{
+            min-width:30px;height:30px;border-radius:50%;
+            display:flex;align-items:center;justify-content:center;
+            background:var(--surface-3);color:var(--text-sec);
+            font-weight:700;font-size:13px;border:2px solid var(--border);
+            transition:all 0.2s;
+        }
+        .checkbtn{
+            width:30px;height:30px;border-radius:50%;
+            border:2px solid var(--border);background:var(--surface);
+            display:flex;align-items:center;justify-content:center;
+            cursor:pointer;color:transparent;font-size:13px;font-weight:800;
+            transition:all 0.15s;
+        }
+        .checkbtn:hover{border-color:var(--green);background:var(--green-light);}
+        .item.done .checkbtn{background:var(--green);border-color:var(--green);color:#fff;}
+
+        .item-body-col{display:flex;flex-direction:column;gap:6px;}
+        .item-title{font-size:15px;font-weight:700;color:var(--text);line-height:1.35;}
+        .item-body{font-size:13px;color:var(--text-sec);line-height:1.55;}
+        .item-note{
+            font-size:12px;font-style:italic;color:var(--text-muted);
+            background:rgba(192,57,38,0.05);border-left:3px solid var(--red);
+            padding:8px 12px;margin-top:8px;border-radius:0 8px 8px 0;
+        }
+        .item-note strong{color:var(--red);font-style:normal;letter-spacing:0.3px;font-size:11px;text-transform:uppercase;font-weight:700;}
+        .item-meta{font-size:11px;color:var(--text-muted);margin-top:4px;}
+
+        /* ── Per-item "extras" block (always between body and note) ── */
+        .item-extras{margin-top:6px;}
+        .info-block{
+            display:flex;align-items:flex-start;gap:10px;
+            background:#eff6ff;border-left:3px solid #2563eb;
+            padding:9px 13px;border-radius:0 8px 8px 0;
+            font-size:12.5px;color:var(--text);line-height:1.5;
+        }
+        .info-block i{color:#2563eb;margin-top:3px;font-size:13px;}
+        .info-block b{font-weight:700;}
+        .action-row{display:flex;gap:8px;flex-wrap:wrap;}
+        .copy-btn{
+            display:inline-flex;align-items:center;gap:7px;
+            background:var(--surface-3);color:var(--text);
+            border:1px solid var(--border);border-radius:8px;
+            padding:7px 13px;font-size:12px;font-weight:600;
+            font-family:'Inter',sans-serif;cursor:pointer;
+            transition:all 0.15s;
+        }
+        .copy-btn:hover{border-color:var(--red);color:var(--red);}
+        .copy-btn.copied{background:var(--green-light);border-color:var(--green);color:var(--green);}
+        .copy-btn i{font-size:11px;}
+
+        /* ── Toggles (item #6) ── */
+        .toggle-list{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+        .toggle-row{
+            display:flex;align-items:center;justify-content:space-between;
+            background:var(--surface);border:1px solid var(--border);
+            border-radius:8px;padding:8px 12px;gap:10px;
+        }
+        .toggle-row .toggle-label{font-size:12.5px;font-weight:600;color:var(--text);flex:1;min-width:0;}
+        .toggle-row .toggle-label .open-link{
+            display:inline-flex;align-items:center;gap:4px;
+            font-size:11px;font-weight:600;color:var(--red);
+            margin-left:8px;text-decoration:none;white-space:nowrap;
+        }
+        .toggle-row .toggle-label .open-link:hover{text-decoration:underline;}
+        .toggle-row .toggle-label .sub-hint{
+            display:block;font-size:11px;font-weight:400;
+            color:var(--text-muted);margin-top:2px;
+        }
+        .toggle-btn{
+            display:inline-flex;align-items:center;gap:6px;
+            background:var(--surface-3);color:var(--text-sec);
+            border:1px solid var(--border);border-radius:14px;
+            padding:5px 12px;font-size:11.5px;font-weight:600;
+            font-family:'Inter',sans-serif;cursor:pointer;transition:all 0.15s;white-space:nowrap;
+        }
+        .toggle-btn:hover{border-color:var(--red);color:var(--red);}
+        .toggle-btn.done{background:#dcfce7;border-color:var(--green);color:#15803d;}
+        .toggle-btn.done:hover{background:#bbf7d0;border-color:var(--green);color:#15803d;}
+        .toggle-btn i{font-size:10px;}
+
+        /* ── Date tracker (item #17) ── */
+        .date-tracker{
+            display:flex;flex-direction:column;gap:10px;margin-top:8px;
+            background:var(--surface);border:1px solid var(--border);
+            border-radius:10px;padding:12px 14px;
+        }
+        .tracker-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+        .tracker-row label{font-size:12px;font-weight:600;color:var(--text-sec);white-space:nowrap;}
+        .tracker-input{
+            background:var(--surface-3);border:1px solid var(--border);
+            border-radius:7px;padding:7px 11px;font-size:13px;
+            font-family:'Inter',sans-serif;color:var(--text);
+            flex:1;min-width:140px;
+        }
+        .tracker-input:focus{outline:none;border-color:var(--red);background:var(--surface);}
+        .tracker-info{
+            background:var(--surface-3);border-left:3px solid var(--red);
+            border-radius:0 8px 8px 0;padding:9px 12px;font-size:12.5px;color:var(--text);
+        }
+        .tracker-info b{color:var(--red);}
+        .tracker-info.ok{border-left-color:var(--green);}
+        .tracker-info.ok b{color:var(--green);}
+        .tracker-info.warn{border-left-color:#ea580c;}
+        .tracker-info.warn b{color:#ea580c;}
+        .tracker-reset{
+            background:none;border:none;color:var(--text-muted);
+            font-size:11.5px;font-weight:600;cursor:pointer;
+            text-decoration:underline;padding:0;
+        }
+        .tracker-reset:hover{color:var(--red);}
+
+        /* ── Inline forms (items #9, #19) ── */
+        .inline-form{
+            display:flex;flex-direction:column;gap:8px;margin-top:8px;
+            background:var(--surface);border:1px solid var(--border);
+            border-radius:10px;padding:12px 14px;
+        }
+        .inline-form .form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+        .inline-form .form-row.single{grid-template-columns:1fr;}
+        .inline-form label{
+            font-size:10.5px;font-weight:700;color:var(--text-sec);
+            text-transform:uppercase;letter-spacing:0.5px;
+            display:block;margin-bottom:3px;
+        }
+        .inline-form input,.inline-form select,.inline-form textarea{
+            width:100%;background:var(--surface-3);border:1.5px solid var(--border);
+            border-radius:8px;padding:8px 12px;font-size:13px;
+            font-family:'Inter',sans-serif;color:var(--text);
+            outline:none;transition:border-color 0.15s;
+        }
+        .inline-form input:focus,.inline-form select:focus,.inline-form textarea:focus{
+            border-color:var(--red);background:var(--surface);
+        }
+        .inline-form textarea{resize:vertical;min-height:60px;}
+        .inline-form .actions{
+            display:flex;justify-content:space-between;align-items:center;
+            gap:10px;flex-wrap:wrap;margin-top:4px;
+        }
+        .submit-btn{
+            background:var(--red);color:#fff;border:none;border-radius:8px;
+            padding:8px 18px;font-size:12.5px;font-weight:700;
+            font-family:'Inter',sans-serif;cursor:pointer;
+            display:inline-flex;align-items:center;gap:6px;transition:all 0.15s;
+        }
+        .submit-btn:hover{background:var(--red-light);transform:translateY(-1px);}
+        .submit-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+        .submitted-state{
+            background:#dcfce7;color:#15803d;border:1px solid var(--green);
+            border-radius:8px;padding:10px 14px;font-size:12.5px;font-weight:600;
+            display:flex;align-items:center;gap:8px;
+        }
+        .submitted-state i{color:var(--green);}
+        .submitted-note{font-size:11.5px;color:var(--text-muted);margin-top:6px;}
+
+        /* ── Contact buttons (item #19) ── */
+        .contact-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+        .contact-btn{
+            display:inline-flex;align-items:center;gap:7px;
+            background:var(--surface-3);color:var(--text);
+            border:1px solid var(--border);border-radius:8px;
+            padding:8px 14px;font-size:12.5px;font-weight:600;
+            font-family:'Inter',sans-serif;cursor:pointer;
+            text-decoration:none;transition:all 0.15s;
+        }
+        .contact-btn:hover{border-color:var(--red);color:var(--red);}
+        .contact-btn.primary{background:var(--red);color:#fff;border-color:var(--red);}
+        .contact-btn.primary:hover{background:var(--red-light);border-color:var(--red-light);color:#fff;}
+        .contact-btn i{font-size:11px;}
+
+        /* Welcome banner (shown when all 19 complete) */
+        .welcome{
+            display:none;
+            margin-top:20px;background:linear-gradient(135deg,#c03926 0%,#9e2e1e 100%);
+            color:#fff;border-radius:16px;padding:28px 26px;text-align:center;
+            box-shadow:0 12px 36px rgba(192,57,38,0.25);
+        }
+        .welcome.show{display:block;animation:welcomePop 0.5s ease-out;}
+        @keyframes welcomePop {
+            0%{opacity:0;transform:translateY(10px);}
+            100%{opacity:1;transform:translateY(0);}
+        }
+        .welcome-icon{font-size:34px;margin-bottom:8px;}
+        .welcome h2{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1.8px;}
+        .welcome p{font-size:13.5px;opacity:0.92;margin-top:4px;}
+
+        /* Footer actions */
+        .actions{display:flex;justify-content:flex-end;margin-top:18px;}
+        .btn-reset{
+            display:inline-flex;align-items:center;gap:7px;
+            background:transparent;border:1px solid var(--border);
+            color:var(--text-muted);font-family:'Inter',sans-serif;
+            font-size:12px;font-weight:600;border-radius:8px;
+            padding:8px 14px;cursor:pointer;transition:all 0.2s;
+        }
+        .btn-reset:hover{color:var(--red);border-color:var(--red);}
+
+        /* Toast */
+        #toast{
+            position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);
+            background:var(--text);color:#fff;padding:11px 20px;border-radius:10px;
+            font-size:12.5px;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,0.25);
+            z-index:9999;transition:transform 0.3s;max-width:90vw;text-align:center;
+        }
+        #toast.show{transform:translateX(-50%) translateY(0);}
+        #toast.error{background:#dc2626;}
+
+        @media(max-width:560px){
+            .header-title{font-size:28px;}
+            .item{padding:14px 14px 16px;gap:10px;}
+            .num,.checkbtn{min-width:26px;width:26px;height:26px;font-size:12px;}
+        }
+    </style>
+<link rel="stylesheet" href="hub-theme.css?v=20260903b"><script src="hub-brand.js" defer></script></head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="sub-header">
+    <div class="sub-header-inner">
+        <div class="header-actions">
+            <a href="hub.html" class="back-btn" style="margin-bottom:0;">
+                <i class="fa-solid fa-arrow-left"></i> Back to Hub
+            </a>
+            <a href="https://wdvolamasztetwpitbwg.supabase.co/storage/v1/object/public/hub-files/sops/1780746834409_YRL_Moving_Offices_Checklist.pdf"
+               target="_blank" rel="noopener" class="btn-pdf"
+               title="Download the printable PDF version">
+                <i class="fa-solid fa-file-pdf"></i> Download PDF
+            </a>
+        </div>
+        <div class="header-title">MOVING TO YRL</div>
+        <div class="header-sub">Your step-by-step checklist for transferring your license to Your Realty Link. Check items off as you go — your progress saves automatically.</div>
+
+        <div class="prog-wrap">
+            <div class="prog-row">
+                <div><span class="prog-count" id="progCount">0 / 19</span> <span style="margin-left:10px;opacity:0.85;">complete</span></div>
+                <div class="save-tag" id="saveTag"><i class="fa-solid fa-circle-check"></i> Saved</div>
+            </div>
+            <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+        </div>
+    </div>
+</header>
+
+<!-- ── MAIN ── -->
+<main class="main">
+    <div id="helpTop"></div>
+    <script>document.addEventListener("DOMContentLoaded",function(){ window.HelpBox && HelpBox.mount({container:"#helpTop",key:"yrl-moving-offices",label:"Moving to YRL"}); });</script>
+
+    <div class="agent-banner">
+        <i class="fa-solid fa-user-tie"></i>
+        <div>
+            <b id="agentNameDisp">—</b><br>
+            <span id="agentEmailDisp">—</span>
+        </div>
+    </div>
+
+    <a href="yrl-listings-transition.html" style="display:flex;align-items:center;gap:16px;text-decoration:none;background:#fff;border:1.5px solid #e2e5ea;border-left:4px solid #c03926;border-radius:12px;padding:16px 20px;margin-bottom:20px;box-shadow:0 2px 10px rgba(0,0,0,0.05);transition:all .15s;" onmouseover="this.style.borderColor='#c03926';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='#e2e5ea';this.style.borderLeftColor='#c03926';this.style.transform='none'">
+        <div style="width:46px;height:46px;flex-shrink:0;border-radius:12px;background:rgba(192,57,38,0.1);color:#c03926;display:flex;align-items:center;justify-content:center;font-size:20px;"><i class="fa-solid fa-arrow-right-arrow-left"></i></div>
+        <div style="flex:1;min-width:0;">
+            <div style="font-weight:700;font-size:15px;color:#1a1d22;">Bringing listings or pendings with you?</div>
+            <div style="font-size:13px;color:#5a6270;">Track Mutual Release, the new YRL agreement, and transfer status in <b>Listings Transition</b>.</div>
+        </div>
+        <i class="fa-solid fa-arrow-right" style="color:#c03926;"></i>
+    </a>
+
+    <div id="listWrap"><div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading your checklist…</div></div>
+
+    <div class="welcome" id="welcomeBanner">
+        <div class="welcome-icon"><i class="fa-solid fa-house-flag"></i></div>
+        <h2>WELCOME TO YOUR REALTY LINK!</h2>
+        <p>We're glad you're here. All 19 transfer steps complete.</p>
+    </div>
+
+    <div class="actions">
+        <button class="btn-reset" id="btnReset" onclick="resetChecklist()" style="display:none;">
+            <i class="fa-solid fa-rotate-left"></i> Reset progress
+        </button>
+    </div>
+
+</main>
+
+<div id="toast"></div>
+
+<script>
+/* ============================================================
+   YRL Moving Offices Checklist — interactive, per-agent.
+   Persists in public.hub_content under 'yrl-moving-checklist:<uid>'.
+   Each agent only ever reads/writes their own row.
+   ============================================================ */
+
+const ITEMS = [
+    { n:1,  title:'Current Listings & Pendings',
+      body:'Create a list of all current listings and pendings. If you have listings to move to YRL, you must get a <b>Mutual Release from the Listing Contract</b> signed by the Seller — asking to be released from the current Brokerage and to go with you to YRL. Get a new listing agreement signed to finish out the listing, putting it in YRL\'s name.',
+      extras:'<div class="info-block"><i class="fa-solid fa-arrow-right-arrow-left"></i><div>Track each one in <a href="yrl-listings-transition.html" style="color:var(--red);font-weight:700;text-decoration:underline;">Listings Transition</a> — add the property, status, client info, and upload the Mutual Release + new YRL Agreement when signed. The office sees the same list.</div></div>',
+      note:'YRLT01 is the office code from MIBOR for any contracts. If you have a pending sale (listing or buyer), check before you move your license that you will get paid the commission you are expecting — the commission may be cut 50% instead of the normal split once you give notice you are changing offices.' },
+
+    { n:2,  title:'License Transfer Form',
+      body:'Fill out the license transfer form (do not process until day of transfer). Harvest anything to keep from Dotloop or Dropbox-type files and calendars. Keep all office phone lists, save any list of closed files if you do not have a paper copy of what you did in the current year.',
+      extras:'<div class="info-block"><i class="fa-solid fa-book-open"></i><div>Official instructions from the state: <a href="https://www.in.gov/pla/professions/real-estate-home/real-estate-transfer-guide/" target="_blank" rel="noopener" style="color:var(--red);font-weight:700;text-decoration:underline;">Indiana Real Estate Transfer Guide</a> — walks through the form and the process step by step.</div></div>' },
+
+    { n:3,  title:'Contacts List',
+      body:'Create a list of all buyers, sellers, and prospects during the last 5 years. If you know how, get a CSV file of contacts in email and database.',
+      extras:'<div class="info-block"><i class="fa-solid fa-address-book"></i><div>Build (or upload) your list in <a href="yrl-contacts.html" style="color:var(--red);font-weight:700;text-decoration:underline;">My Contacts</a> — supports a CSV import from your old CRM / Gmail / Outlook export. Lives in the portal so you and the office both have access.</div></div>' },
+
+    { n:4,  title:'Business Cards',
+      body:'Have Janet or Dan Cope order your first <b>500 business cards</b> — we will need a photo. We can remove the background and add it to the card.',
+      extras:'<div class="info-block"><i class="fa-solid fa-camera"></i><div>Upload your headshot in <a href="yrl-agent-info.html" style="color:var(--red);font-weight:700;text-decoration:underline;">My Agent Info</a>. Submitting that form will check this item off automatically.</div></div>' },
+
+    { n:5,  title:'Signs & Print Materials',
+      body:'You may temporarily use signs from YRL storage, but within 6 months you should order company signs with your own information. Signs must be uniform with other signs in the office. If you want to use yard signs for a bit, consider getting 2 or 3 sign riders with your own name and number.',
+      extras:'<div class="info-block"><i class="fa-solid fa-bullhorn"></i><div>To order signs, riders, or any print materials, use the <b>Marketing Requests</b> tile on the <a href="hub.html?open=marketing" style="color:var(--red);font-weight:700;text-decoration:underline;">main Hub</a>. Dan handles the order from there.</div></div>',
+      note:'Dan Cope can order any print materials you might want at a discount cost.' },
+
+    { n:6,  title:'License Transfer — State & MIBOR',
+      body:'You will need to transfer your license (<b>$10 online with Access Indiana</b>). MIBOR will not transfer you to our office until the State shows you are moved. You will automatically have access to your Broker Bay or Showings when you move your MIBOR membership.',
+      extras: buildItem6Extras },
+
+    { n:7,  title:'Dotloop & Email Setup',
+      body:'Ask Janet, Dan Cope, or Brenda Dean to get your Dotloop set up. You will also need an email — we will give you a <b>"yourrealtylink"</b> email, but you will want an appropriate email to forward this YRL email to your Yahoo or Gmail.',
+      note:'Please do not use Hotmail.' },
+
+    { n:8,  title:'Email Signature Block',
+      body:'Change your email signature block if you have one with your old company name to a YRL signature block.',
+      extras:'<div class="info-block"><i class="fa-solid fa-signature"></i><div>Build a polished YRL signature in seconds with the <a href="yrl-email-signature.html" style="color:var(--red);font-weight:700;text-decoration:underline;">Email Signature</a> tool — it auto-fills from your Agent Info. Copy it once, then paste into Gmail, Outlook, or Apple Mail.</div></div>' },
+
+    { n:9,  title:'Office Door Code',
+      body:'Give Brenda Dean your last four digits of your phone number so she can set the door code for the office.',
+      extras: buildItem9Extras },
+
+    { n:10, title:'Office Printer',
+      body:'Our printer has a login. If you cannot get the printer to work right away with your computer or phone, you can use the office code to print: <b>7404</b>. Please only print pages related to your real estate business.',
+      extras:'<div class="info-block"><i class="fa-solid fa-key"></i><div>Your personal printer login is the <b>last 4 digits of your cell phone</b> — same as your door code. Ask Brenda if you need help adding the printer to your computer or phone.</div></div>',
+      note:'If you need to print 600 copies for church or school — just let us know and reimburse us. It is very reasonable.' },
+
+    { n:11, title:'YRL Agent Talk (Facebook)',
+      body:'Make sure that Janet has invited you to join our Facebook page <b>YRL AGENT TALK</b> — we use this often to post info that is shared with all agents in the office. Do not invite anyone to join this site as it is private and only for our agents. We also have a YouTube channel with lots of info and videos.',
+      extras:'<div class="info-block"><i class="fa-brands fa-facebook"></i><div>Open <a href="https://www.facebook.com/groups/181988872242749" target="_blank" rel="noopener" style="color:var(--red);font-weight:700;text-decoration:underline;">YRL Agent Talk on Facebook</a> and request to join. If Janet hasn\'t invited you yet, ask her to.</div></div>' },
+
+    { n:12, title:'Office WiFi',
+      body:'Set your phone and computer to our WiFi: <b>T-mobile</b>. The login code is <b>Keystone1</b> (capital K).',
+      extras:'<div class="action-row"><button type="button" class="copy-btn" onclick="copyText(\'T-mobile\', this)"><i class="fa-solid fa-copy"></i> Copy network name</button><button type="button" class="copy-btn" onclick="copyText(\'Keystone1\', this)"><i class="fa-solid fa-copy"></i> Copy password</button></div>' },
+
+    { n:13, title:'Office Workspace',
+      body:'There are no single desks but there should always be somewhere for you to sit — two desks on a first-come, first-serve basis, plus plenty of other work areas. Ask Janet or Brenda where you can keep your own supplies and where you have a file to pick up mail.',
+      note:'We encourage you to come to the office!' },
+
+    { n:14, title:'Refrigerator Policy',
+      body:'If food is left more than a week in the refrigerator, it might get tossed.',
+      note:'Just FYI.' },
+
+    { n:15, title:'Agent Bio & Website',
+      body:'Get familiar with Homes.com and our own website. Prepare a short bio so you can be added to the agent page at <b>YourRealtyLink.com</b>.',
+      extras:'<div class="info-block"><i class="fa-solid fa-id-card"></i><div>Fill out your bio, tagline, headshot, and social links in <a href="yrl-agent-info.html" style="color:var(--red);font-weight:700;text-decoration:underline;">My Agent Info</a>. That submission is what Janet/Dan use to build your agent page on the website. Submitting it will check this item off automatically.</div></div>' },
+
+    { n:16, title:'Update Your Memberships & Profiles',
+      body:'If you have membership in any of the following, update your info: Email, List Hub, Listing Booster, Realtor.com, RPR, Zillow, personal website info, HUD Homestore, Google Business, Yelp, LinkedIn, Phone Signature, Homes.com, and your personal phone voicemail.',
+      extras: buildItem16Extras },
+
+    { n:17, title:'New Agent — MIBOR Class Requirement',
+      body:'If you are a new agent, be sure to check with MIBOR about the agent class you need to complete <b>within 60 days of membership</b>.',
+      extras: buildItem17Extras },
+
+    { n:18, title:'Shared Office Laptop',
+      body:'There is an extra small laptop at the office with the login <b>4942</b>. You should never save anything on it — email it to your home or bring a USB stick. This computer is rarely shared, but it is very inconvenient if someone has saved their emails on a shared computer.' },
+
+    { n:19, title:'Writing Contracts — Always Ask First',
+      body:'<b>ALWAYS ASK</b> if you need help with anything, especially writing contracts. Call Janet first, then Brenda. We might not be able to answer right away, but we can text you back and say give us ten minutes or 30!',
+      extras: buildItem19Extras }
+];
+
+/* Persistence: one shared row in hub_content with content_key = 'yrl-moving-checklist'.
+   Value is a map keyed by agent uid → { items, name, email, updated_at }.
+   Each agent reads/writes only their own slice, merging on save so we don't
+   stomp other agents' progress. (Matches the AGENT_PROGRESS_KEY pattern.) */
+const SHARED_KEY = 'yrl-moving-checklist';
+
+let currentUser = null;
+let state = { items: {} };     // THIS agent's slice
+
+function _getClient() {
+    if (window.yrlClient) return window.yrlClient;
+    if (window.supabase?.createClient) return null;
+    return null;
+}
+
+function agentDisplayName(u) {
+    if (!u) return '';
+    return u.user_metadata?.full_name || u.user_metadata?.name || (u.email ? u.email.split('@')[0] : 'Agent');
+}
+
+document.addEventListener('yrl-auth-ready', async ({ detail }) => {
+    currentUser = detail.user;
+    init();
+});
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(async () => {
+        if (currentUser) return;
+        const client = _getClient(); if (!client) return;
+        const { data } = await client.auth.getSession();
+        if (data.session) { currentUser = data.session.user; init(); }
+    }, 800);
+});
+
+async function init() {
+    document.getElementById('agentNameDisp').textContent  = agentDisplayName(currentUser);
+    document.getElementById('agentEmailDisp').textContent = currentUser?.email || '';
+
+    try {
+        const map = (typeof loadHubContent === 'function') ? (await loadHubContent(SHARED_KEY)) : null;
+        const slice = map && map[currentUser.id];
+        if (slice && slice.items) state = slice;
+        else state = { items: {}, name: agentDisplayName(currentUser), email: currentUser.email };
+    } catch (e) {
+        state = { items: {}, name: agentDisplayName(currentUser), email: currentUser.email };
+    }
+    renderList();
+    updateProgress();
+    document.getElementById('btnReset').style.display = 'inline-flex';
+}
+
+/* Single source of truth for an item's HTML. Order inside .item-body-col:
+   title → body → extras (optional) → note (optional) → completed-meta (when checked).
+   `extras` may be a string (static HTML) OR a function that returns HTML — the function
+   form lets items render stateful content (toggles, forms, trackers) from `state.itemData`. */
+function renderItemHtml(it, done) {
+    let extrasHtml = '';
+    try { extrasHtml = typeof it.extras === 'function' ? it.extras() : (it.extras || ''); }
+    catch (e) { extrasHtml = '<div class="info-block"><i class="fa-solid fa-triangle-exclamation"></i><div>Could not render extras: ' + esc(e.message) + '</div></div>'; }
+    return `<div class="item ${done?'done':''}" id="item-${it.n}">
+        <div class="check-col">
+            <div class="num">${it.n}</div>
+            <button class="checkbtn" onclick="toggleItem(${it.n})" aria-label="Mark complete">
+                <i class="fa-solid fa-check"></i>
+            </button>
+        </div>
+        <div class="item-body-col">
+            <div class="item-title">${it.title}</div>
+            <div class="item-body">${it.body}</div>
+            ${extrasHtml ? `<div class="item-extras">${extrasHtml}</div>` : ''}
+            ${it.note   ? `<div class="item-note"><strong>Note —</strong> ${it.note}</div>` : ''}
+            ${done      ? `<div class="item-meta"><i class="fa-solid fa-check" style="color:var(--green);"></i> Completed</div>` : ''}
+        </div>
+    </div>`;
+}
+
+/* HTML-escape helper (used by stateful extras renderers) */
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+/* Re-render a single item in place (after the user changes its sub-state) */
+function rerenderItem(n){
+    const it = ITEMS.find(x => x.n === n);
+    const el = document.getElementById('item-' + n);
+    if (it && el) el.outerHTML = renderItemHtml(it, !!state.items[n]);
+}
+
+/* Read this agent's sub-state for an item (toggles, form submission timestamps, etc.) */
+function itemData(n){ return (state.itemData && state.itemData[n]) || {}; }
+
+/* Patch + persist this agent's sub-state for an item.
+   Merges with whatever's already there. Saves the full map (re-fetch + merge) so we
+   never clobber concurrent edits from the admin or other devices. */
+async function saveItemDataPatch(itemN, patch){
+    state.itemData = state.itemData || {};
+    state.itemData[itemN] = Object.assign({}, state.itemData[itemN] || {}, patch);
+    state.updated_at = new Date().toISOString();
+    try {
+        if (typeof saveHubContent !== 'function' || typeof loadHubContent !== 'function') return;
+        const latest = (await loadHubContent(SHARED_KEY)) || {};
+        latest[currentUser.id] = state;
+        const ok = await saveHubContent(SHARED_KEY, latest);
+        if (ok) flashSave();
+    } catch(e) { toast('Save failed: ' + e.message, 'error'); }
+}
+
+/* Set the parent checkbox state for an item (and persist the whole slice). */
+async function setItemDone(n, done){
+    state.items[n] = !!done;
+    state.updated_at = new Date().toISOString();
+    try {
+        if (typeof saveHubContent !== 'function' || typeof loadHubContent !== 'function') return;
+        const latest = (await loadHubContent(SHARED_KEY)) || {};
+        latest[currentUser.id] = state;
+        await saveHubContent(SHARED_KEY, latest);
+    } catch(_) {}
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   PER-ITEM EXTRAS — interactive blocks for items 6, 9, 17, 19
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ── Item #6: License Transfer — State + MIBOR with 4 status toggles ── */
+const ITEM6_TOGGLES = [
+    { key:'state_submitted',   label:'State transfer submitted' },
+    { key:'state_approved',    label:'State transfer approved' },
+    { key:'mibor_notified',    label:'MIBOR notified of state transfer' },
+    { key:'mibor_transferred', label:'MIBOR transferred (Broker Bay &amp; Showings active)' }
+];
+function buildItem6Extras() {
+    const d = itemData(6);
+    return `
+    <div class="info-block">
+        <i class="fa-solid fa-id-card"></i>
+        <div>
+            Transfer your license through Indiana's portal (<b>$10</b>):
+            <a href="https://mylicense.in.gov/eGov/Login.aspx?ReturnUrl=%2FeGov%2FHome.aspx" target="_blank" rel="noopener" style="color:var(--red);font-weight:700;text-decoration:underline;">mylicense.in.gov</a>.
+            Once the State shows you've moved, log in to the
+            <a href="https://member.mibor.com/en-us/" target="_blank" rel="noopener" style="color:var(--red);font-weight:700;text-decoration:underline;">MIBOR member portal</a>
+            to complete the MIBOR side. <b>State must be done first</b> — MIBOR will not transfer you until then.
+        </div>
+    </div>
+    <div class="toggle-list">
+        ${ITEM6_TOGGLES.map(t => {
+            const cur = d[t.key];
+            const done = !!(cur && cur.done);
+            const ds = (done && cur.date) ? new Date(cur.date).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '';
+            return `<div class="toggle-row">
+                <div class="toggle-label">${t.label}</div>
+                <button type="button" class="toggle-btn ${done?'done':''}" onclick="toggleItem6('${t.key}')">
+                    ${done ? `<i class="fa-solid fa-check"></i> Done ${ds}` : 'Mark done'}
+                </button>
+            </div>`;
+        }).join('')}
+    </div>`;
+}
+async function toggleItem6(key) {
+    const cur = itemData(6)[key];
+    const wantOn = !(cur && cur.done);
+    await saveItemDataPatch(6, { [key]: wantOn ? { done:true, date:new Date().toISOString() } : null });
+    // Parent auto-checks when all 4 toggles ON
+    const allOn = ITEM6_TOGGLES.every(t => {
+        const v = (state.itemData[6] || {})[t.key];
+        return v && v.done;
+    });
+    if (allOn !== !!state.items[6]) await setItemDone(6, allOn);
+    rerenderItem(6);
+    updateProgress();
+}
+
+/* ── Item #16: Update Memberships & Profiles — 14 platforms, each individually toggleable.
+   Parent #16 stays manually checkable (some agents won't have all of these and that's fine). ── */
+const ITEM16_PLATFORMS = [
+    { key:'email',          label:'Email signature (old company &rarr; YRL)', hint:'If you already updated this in step #8, just check it off.' },
+    { key:'listhub',        label:'List Hub',                                 hint:'MLS data syndication settings.' },
+    { key:'listingbooster', label:'Listing Booster' },
+    { key:'realtor',        label:'Realtor.com',                              link:'https://www.realtor.com' },
+    { key:'rpr',            label:'RPR (Realtors Property Resource)',         link:'https://www.narrpr.com' },
+    { key:'zillow',         label:'Zillow',                                   link:'https://www.zillow.com' },
+    { key:'website',        label:'Your personal website',                    hint:'Brokerage name, license info, contact details.' },
+    { key:'hud',            label:'HUD Homestore',                            link:'https://www.hudhomestore.com' },
+    { key:'google',         label:'Google Business Profile',                  link:'https://business.google.com' },
+    { key:'yelp',           label:'Yelp for Business',                        link:'https://biz.yelp.com' },
+    { key:'linkedin',       label:'LinkedIn',                                 link:'https://www.linkedin.com' },
+    { key:'phonesig',       label:'Phone text-message signature',             hint:'iPhone Settings &rarr; Messages, or your Android equivalent.' },
+    { key:'homescom',       label:'Homes.com',                                link:'https://www.homes.com' },
+    { key:'voicemail',      label:'Personal phone voicemail',                 hint:'Mention YRL when you re-record.' }
+];
+function buildItem16Extras() {
+    const d = itemData(16);
+    const total = ITEM16_PLATFORMS.length;
+    const done  = ITEM16_PLATFORMS.filter(p => { const v = d[p.key]; return v && v.done; }).length;
+    return `
+    <div class="info-block">
+        <i class="fa-solid fa-list-check"></i>
+        <div>
+            <b>${done} of ${total} done.</b> Update your brokerage info on each platform you actually use. Skip the ones you don't — this list is for reference, not all required.
+        </div>
+    </div>
+    <div class="toggle-list">
+        ${ITEM16_PLATFORMS.map(p => {
+            const v = d[p.key];
+            const isDone = !!(v && v.done);
+            const ds = (isDone && v.date) ? new Date(v.date).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '';
+            return `<div class="toggle-row">
+                <div class="toggle-label">
+                    <span>${p.label}</span>
+                    ${p.link ? `<a class="open-link" href="${esc(p.link)}" target="_blank" rel="noopener" onclick="event.stopPropagation();"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open</a>` : ''}
+                    ${p.hint ? `<span class="sub-hint">${p.hint}</span>` : ''}
+                </div>
+                <button type="button" class="toggle-btn ${isDone?'done':''}" onclick="toggleItem16Platform('${esc(p.key)}')">
+                    ${isDone ? `<i class="fa-solid fa-check"></i> Done ${ds}` : 'Mark done'}
+                </button>
+            </div>`;
+        }).join('')}
+    </div>`;
+}
+async function toggleItem16Platform(key) {
+    const cur = itemData(16)[key];
+    const wantOn = !(cur && cur.done);
+    await saveItemDataPatch(16, { [key]: wantOn ? { done:true, date:new Date().toISOString() } : null });
+    rerenderItem(16);
+}
+
+/* ── Item #9: Door Code request → FormSubmit to Brenda ── */
+function buildItem9Extras() {
+    const d = itemData(9);
+    if (d.submitted_at) {
+        const ds = new Date(d.submitted_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+        return `<div class="submitted-state"><i class="fa-solid fa-circle-check"></i> Sent to Brenda on ${esc(ds)}</div>
+        <div class="submitted-note">Phone number changed? <a href="#" onclick="resubmitItem9(event)" style="color:var(--red);font-weight:700;">Resubmit</a></div>`;
+    }
+    const fn = (window.yrlUser && window.yrlUser.user_metadata && (window.yrlUser.user_metadata.full_name || window.yrlUser.user_metadata.name)) || '';
+    const parts = fn.split(/\s+/);
+    const first = parts[0] || '';
+    const last  = parts.slice(1).join(' ') || '';
+    return `<form class="inline-form" id="form9" onsubmit="submitItem9(event)">
+        <div class="form-row">
+            <div><label>First name *</label><input type="text" name="firstname" required value="${esc(first)}"></div>
+            <div><label>Last name *</label><input type="text" name="lastname" required value="${esc(last)}"></div>
+        </div>
+        <div class="form-row single">
+            <div><label>Cell phone *</label><input type="tel" name="cell" required placeholder="317-555-1234"></div>
+        </div>
+        <div class="form-row single">
+            <div><label>Notes (optional)</label><textarea name="notes" placeholder="Anything Brenda should know"></textarea></div>
+        </div>
+        <div class="actions">
+            <span style="font-size:11.5px;color:var(--text-muted);">Goes to Brenda Dean &mdash; Brenda@brendadeanteam.com</span>
+            <button type="submit" class="submit-btn"><i class="fa-solid fa-paper-plane"></i> Send to Brenda</button>
+        </div>
+    </form>`;
+}
+async function submitItem9(e) {
+    e.preventDefault();
+    const form = e.target;
+    const btn = form.querySelector('button[type="submit"]');
+    btn.disabled = true; const orig = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending…';
+    try {
+        const fd = new FormData(form);
+        const first = (fd.get('firstname')||'').trim();
+        const last  = (fd.get('lastname')||'').trim();
+        const cell  = (fd.get('cell')||'').trim();
+        const notes = (fd.get('notes')||'').trim();
+        const last4 = cell.replace(/\D/g,'').slice(-4);
+        const body = new FormData();
+        body.append('_subject', `Door Code Request from ${first} ${last}`);
+        body.append('_captcha', 'false');
+        body.append('_template', 'table');
+        body.append('Agent name',  `${first} ${last}`);
+        body.append('Agent email', (window.yrlUser && window.yrlUser.email) || '');
+        body.append('Cell phone',  cell);
+        body.append('Door code (last 4 of cell)', last4);
+        if (notes) body.append('Notes', notes);
+        await fetch('https://formsubmit.co/Brenda@brendadeanteam.com', { method:'POST', body, mode:'no-cors' }).catch(()=>{});
+        await saveItemDataPatch(9, { submitted_at: new Date().toISOString() });
+        await setItemDone(9, true);
+        rerenderItem(9);
+        updateProgress();
+        toast('Sent to Brenda!');
+    } catch(err) {
+        btn.disabled = false; btn.innerHTML = orig;
+        toast('Send failed: ' + err.message, 'error');
+    }
+}
+async function resubmitItem9(e) {
+    e.preventDefault();
+    state.itemData = state.itemData || {};
+    state.itemData[9] = {};
+    await setItemDone(9, false);
+    state.updated_at = new Date().toISOString();
+    try {
+        const latest = (await loadHubContent(SHARED_KEY)) || {};
+        latest[currentUser.id] = state;
+        await saveHubContent(SHARED_KEY, latest);
+    } catch(_) {}
+    rerenderItem(9);
+    updateProgress();
+}
+
+/* ── Item #17: MIBOR class deadline tracker ── */
+const MIBOR_STATUS_OPTS = [
+    { v:'not_started', label:'Not started' },
+    { v:'registered',  label:'Registered for class' },
+    { v:'completed',   label:'Class completed' }
+];
+function buildItem17Extras() {
+    const d = itemData(17);
+    const startDate = d.membership_start || '';
+    const status = d.status || 'not_started';
+    let deadlineDate = null, daysLeft = null, deadlineStr = '';
+    if (startDate) {
+        const start = new Date(startDate + 'T00:00:00');
+        deadlineDate = new Date(start); deadlineDate.setDate(deadlineDate.getDate() + 60);
+        const today = new Date(); today.setHours(0,0,0,0);
+        daysLeft = Math.ceil((deadlineDate - today) / 86400000);
+        deadlineStr = deadlineDate.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+    }
+    let infoClass = '', infoMsg = '';
+    if (!startDate) {
+        infoMsg = 'Enter your MIBOR membership start date to begin tracking the 60-day class deadline.';
+    } else if (status === 'completed') {
+        infoClass = ' ok';
+        infoMsg = `<b>✓ Class completed.</b> No deadline pressure.`;
+    } else if (daysLeft > 14) {
+        infoMsg = `<b>${daysLeft} days remaining</b> — deadline is ${esc(deadlineStr)}.`;
+    } else if (daysLeft > 0) {
+        infoClass = ' warn';
+        infoMsg = `<b>Only ${daysLeft} day${daysLeft===1?'':'s'} left</b> — deadline is ${esc(deadlineStr)}. Register now if you haven't.`;
+    } else {
+        infoClass = ' warn';
+        infoMsg = `<b>Deadline has passed</b> (${esc(deadlineStr)}). Contact MIBOR right away.`;
+    }
+    return `
+    <div class="info-block">
+        <i class="fa-solid fa-graduation-cap"></i>
+        <div>
+            New agents have <b>60 days</b> from MIBOR membership start to complete the required class.
+            Find class info and register through the
+            <a href="https://member.mibor.com/en-us/" target="_blank" rel="noopener" style="color:var(--red);font-weight:700;text-decoration:underline;">MIBOR member portal</a>.
+        </div>
+    </div>
+    <div class="date-tracker">
+        <div class="tracker-row">
+            <label>MIBOR membership start:</label>
+            <input type="date" class="tracker-input" id="ti17-date" value="${esc(startDate)}" onchange="setMemberStart(this.value)">
+        </div>
+        <div class="tracker-row">
+            <label>Class status:</label>
+            <select class="tracker-input" id="ti17-status" onchange="setMiborStatus(this.value)">
+                ${MIBOR_STATUS_OPTS.map(s => `<option value="${s.v}"${status===s.v?' selected':''}>${esc(s.label)}</option>`).join('')}
+            </select>
+        </div>
+        <div class="tracker-info${infoClass}">${infoMsg}</div>
+        ${startDate ? `<div style="display:flex;justify-content:flex-end;"><button type="button" class="tracker-reset" onclick="resetItem17()">Reset tracker</button></div>` : ''}
+    </div>`;
+}
+async function setMemberStart(date) {
+    await saveItemDataPatch(17, { membership_start: date || null });
+    rerenderItem(17);
+}
+async function setMiborStatus(status) {
+    await saveItemDataPatch(17, { status });
+    const shouldBeDone = (status === 'completed');
+    if (shouldBeDone !== !!state.items[17]) {
+        await setItemDone(17, shouldBeDone);
+        updateProgress();
+    }
+    rerenderItem(17);
+}
+async function resetItem17() {
+    if (!confirm('Reset the MIBOR class tracker? This clears the date and status.')) return;
+    state.itemData = state.itemData || {};
+    state.itemData[17] = {};
+    if (state.items[17]) await setItemDone(17, false);
+    state.updated_at = new Date().toISOString();
+    try {
+        const latest = (await loadHubContent(SHARED_KEY)) || {};
+        latest[currentUser.id] = state;
+        await saveHubContent(SHARED_KEY, latest);
+    } catch(_) {}
+    rerenderItem(17);
+    updateProgress();
+}
+
+/* ── Item #19: Writing Contracts — Janet contact buttons + Help Request form ── */
+function buildItem19Extras() {
+    const d = itemData(19);
+    const countNote = d.submit_count ? `You've sent ${d.submit_count} so far.` : '';
+    return `
+    <div class="info-block">
+        <i class="fa-solid fa-phone"></i>
+        <div>Always reach out to <b>Janet</b> first for contract questions. If she can't answer right away, the help request below also reaches Brenda as backup.</div>
+    </div>
+    <div class="contact-row">
+        <a href="tel:3179977404" class="contact-btn primary"><i class="fa-solid fa-phone"></i> Call Janet (317-997-7404)</a>
+        <a href="sms:3179977404" class="contact-btn"><i class="fa-solid fa-message"></i> Text Janet</a>
+    </div>
+    <form class="inline-form" id="form19" onsubmit="submitItem19(event)" style="margin-top:10px;">
+        <div class="form-row">
+            <div><label>Subject *</label><input type="text" name="subject" required placeholder="e.g. Need help with counter-offer"></div>
+            <div>
+                <label>Contract type</label>
+                <select name="contract_type">
+                    <option value="">— select —</option>
+                    <option value="Purchase Agreement">Purchase Agreement</option>
+                    <option value="Listing Agreement">Listing Agreement</option>
+                    <option value="Amendment / Counter">Amendment / Counter-offer</option>
+                    <option value="Inspection / Repairs">Inspection / Repairs</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-row single">
+            <div><label>What's stuck? *</label><textarea name="question" required placeholder="Describe what you need help with."></textarea></div>
+        </div>
+        <div class="form-row">
+            <div>
+                <label>Urgency</label>
+                <select name="urgency">
+                    <option value="ASAP" selected>ASAP</option>
+                    <option value="Today">Today</option>
+                    <option value="This week">This week</option>
+                    <option value="Whenever you can">Whenever you can</option>
+                </select>
+            </div>
+            <div></div>
+        </div>
+        <div class="actions">
+            <span style="font-size:11.5px;color:var(--text-muted);">Goes to Janet, cc Brenda. ${esc(countNote)}</span>
+            <button type="submit" class="submit-btn"><i class="fa-solid fa-paper-plane"></i> Send help request</button>
+        </div>
+    </form>`;
+}
+async function submitItem19(e) {
+    e.preventDefault();
+    const form = e.target;
+    const btn  = form.querySelector('button[type="submit"]');
+    btn.disabled = true; const orig = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending…';
+    try {
+        const fd = new FormData(form);
+        const subject  = (fd.get('subject') || '').trim();
+        const ctype    = (fd.get('contract_type') || '').trim();
+        const question = (fd.get('question') || '').trim();
+        const urgency  = (fd.get('urgency')  || '').trim();
+        const body = new FormData();
+        body.append('_subject', `Contract Help (${urgency}): ${subject}`);
+        body.append('_cc', 'Brenda@brendadeanteam.com');
+        body.append('_captcha', 'false');
+        body.append('_template', 'table');
+        body.append('Agent',       (window.yrlUser && (window.yrlUser.user_metadata?.full_name || window.yrlUser.email)) || '');
+        body.append('Agent email', (window.yrlUser && window.yrlUser.email) || '');
+        body.append('Subject',     subject);
+        if (ctype) body.append('Contract type', ctype);
+        body.append('Urgency',     urgency);
+        body.append("What's stuck", question);
+        await fetch('https://formsubmit.co/janet@yourrealtylink.com', { method:'POST', body, mode:'no-cors' }).catch(()=>{});
+        const d = itemData(19);
+        const isFirst = !d.first_submitted_at;
+        const now = new Date().toISOString();
+        const patch = { last_submitted_at: now, submit_count: (d.submit_count || 0) + 1 };
+        if (isFirst) patch.first_submitted_at = now;
+        await saveItemDataPatch(19, patch);
+        if (isFirst) { await setItemDone(19, true); updateProgress(); }
+        form.reset();
+        const sel = form.querySelector('select[name="urgency"]'); if (sel) sel.value = 'ASAP';
+        btn.disabled = false; btn.innerHTML = orig;
+        rerenderItem(19);
+        toast('Help request sent — Janet (and Brenda) will see it.');
+    } catch(err) {
+        btn.disabled = false; btn.innerHTML = orig;
+        toast('Send failed: ' + err.message, 'error');
+    }
+}
+
+function renderList() {
+    const wrap = document.getElementById('listWrap');
+    wrap.innerHTML = ITEMS.map(it => renderItemHtml(it, !!state.items[it.n])).join('');
+}
+
+function toggleItem(n) {
+    state.items[n] = !state.items[n];
+    const el = document.getElementById('item-' + n);
+    const it = ITEMS.find(x => x.n === n);
+    el.outerHTML = renderItemHtml(it, !!state.items[n]);
+    updateProgress();
+    saveDebounced();
+}
+
+/* Copy a string to the clipboard and show a brief "Copied" state on the button. */
+function copyText(value, btn) {
+    const original = btn.innerHTML;
+    const flash = () => {
+        btn.classList.add('copied');
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied';
+        setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = original; }, 1500);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(value).then(flash).catch(() => fallback());
+    } else { fallback(); }
+    function fallback() {
+        const ta = document.createElement('textarea');
+        ta.value = value; ta.setAttribute('readonly','');
+        ta.style.position = 'absolute'; ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select(); try { document.execCommand('copy'); } catch(_) {}
+        document.body.removeChild(ta);
+        flash();
+    }
+}
+
+function updateProgress() {
+    const done = ITEMS.filter(it => state.items[it.n]).length;
+    document.getElementById('progCount').textContent = done + ' / ' + ITEMS.length;
+    document.getElementById('progFill').style.width = ((done / ITEMS.length) * 100) + '%';
+    const welcome = document.getElementById('welcomeBanner');
+    if (done === ITEMS.length) welcome.classList.add('show'); else welcome.classList.remove('show');
+}
+
+let _saveT;
+function saveDebounced() {
+    clearTimeout(_saveT);
+    _saveT = setTimeout(async () => {
+        state.name = agentDisplayName(currentUser);
+        state.email = currentUser?.email || '';
+        state.updated_at = new Date().toISOString();
+        try {
+            if (typeof saveHubContent !== 'function' || typeof loadHubContent !== 'function') return;
+            // Re-fetch the latest map and merge our slice, so concurrent edits
+            // from other agents don't get overwritten by our save.
+            const latest = (await loadHubContent(SHARED_KEY)) || {};
+            latest[currentUser.id] = state;
+            const ok = await saveHubContent(SHARED_KEY, latest);
+            if (ok) flashSave(); else toast('Save failed', 'error');
+        } catch(e) { toast('Save failed: ' + e.message, 'error'); }
+    }, 350);
+}
+
+function flashSave() {
+    const t = document.getElementById('saveTag');
+    t.classList.add('show');
+    clearTimeout(t._h);
+    t._h = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+async function resetChecklist() {
+    if (!confirm('Clear all checked items and start over?')) return;
+    state.items = {};
+    state.updated_at = new Date().toISOString();
+    renderList();
+    updateProgress();
+    try {
+        if (typeof saveHubContent !== 'function' || typeof loadHubContent !== 'function') return;
+        const latest = (await loadHubContent(SHARED_KEY)) || {};
+        latest[currentUser.id] = state;
+        await saveHubContent(SHARED_KEY, latest);
+        toast('Checklist reset.');
+    } catch(e) { toast('Reset failed: ' + e.message, 'error'); }
+}
+
+let _toastT;
+function toast(msg, type) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.className = ''; if (type) t.classList.add(type);
+    void t.offsetWidth; t.classList.add('show');
+    clearTimeout(_toastT); _toastT = setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+<script src="back-link.js?v=20260917"></script>
+</body>
+</html>

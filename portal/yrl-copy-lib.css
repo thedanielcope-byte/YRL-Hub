@@ -1,0 +1,88 @@
+/* ============================================================
+   yrl-copy-lib.css — shared styling for the YRL copy libraries
+   (Scripts, Email Templates, Letters & Mailers).
+   Each page is a list of copy-ready blocks with a copy button.
+   ============================================================ */
+:root{
+  --red:#c03926; --red-light:#d94a35; --red-dark:#9e2e1e;
+  --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f7f8fa; --surface-3:#eef0f3;
+  --border:#e2e5ea; --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+  --radius:14px; --shadow:0 4px 20px rgba(0,0,0,.08);
+  --ok:#2e9e5b; --warn:#c2820b;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+a{text-decoration:none;color:inherit}
+
+.page-header{background:linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);padding:28px 24px 24px}
+.header-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.back-btn{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff;padding:9px 18px;border-radius:100px;font-size:13px;font-weight:600;white-space:nowrap}
+.back-btn:hover{background:rgba(255,255,255,.26)}
+.header-title h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(26px,4vw,38px);letter-spacing:1.5px;color:#fff;line-height:1.1}
+.header-title p{font-size:13px;color:rgba(255,255,255,.85)}
+
+.wrap{max-width:960px;margin:0 auto;padding:32px 24px 90px}
+
+/* jump nav */
+.jump{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 26px}
+.jump a{font-size:12.5px;font-weight:600;padding:7px 13px;border-radius:100px;background:var(--surface);border:1px solid var(--border);color:var(--text-sec)}
+.jump a:hover{border-color:var(--red);color:var(--red)}
+
+/* compliance strip */
+.rules{background:#fdf8ec;border:1px solid #f0e2c0;border-left:4px solid var(--warn);border-radius:12px;padding:15px 18px;margin:0 0 28px}
+.rules h3{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#8a5d06;margin:0 0 8px}
+.rules ul{margin:0;padding-left:18px}
+.rules li{font-size:12.5px;color:#5a5238;line-height:1.6;margin-bottom:4px}
+.rules li b{color:#3f3a26}
+
+/* piece */
+.piece{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin:0 0 22px;overflow:hidden;scroll-margin-top:16px}
+.piece-head{padding:20px 24px 0}
+.piece-head h2{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1.1px;line-height:1.1}
+.piece-head .why{font-size:13px;color:var(--text-sec);line-height:1.6;margin-top:7px}
+.piece-head .why b{color:var(--text)}
+.piece-body{padding:16px 24px 22px}
+
+/* copy block */
+.cb{border:1px solid var(--border);border-radius:11px;background:var(--surface-2);margin:14px 0 0;overflow:hidden}
+.cb-top{display:flex;align-items:center;gap:10px;padding:9px 12px 9px 14px;background:var(--surface-3);border-bottom:1px solid var(--border)}
+.cb-top .lbl{flex:1;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text-sec)}
+.cb-copy{display:inline-flex;align-items:center;gap:6px;background:var(--red);color:#fff;border:none;border-radius:7px;padding:6px 12px;font:inherit;font-size:11.5px;font-weight:700;cursor:pointer}
+.cb-copy:hover{background:var(--red-dark)}
+.cb-copy.done{background:var(--ok)}
+.cb-text{padding:15px 17px;font-size:13.5px;line-height:1.72;white-space:pre-wrap;color:#242a31}
+.cb-text em{color:var(--text-muted);font-style:italic}
+.cb-text .mf{background:rgba(192,57,38,.09);color:var(--red-dark);padding:1px 5px;border-radius:4px;font-weight:600;font-size:.94em}
+
+/* subject line row for emails */
+.subj{padding:11px 17px;border-bottom:1px dashed var(--border);font-size:13px;color:var(--text-sec);background:#fff}
+.subj b{color:var(--text)}
+
+/* note under a block */
+.note{font-size:12.5px;color:var(--text-muted);line-height:1.6;margin:10px 0 0;padding-left:14px;border-left:2px solid var(--border)}
+.note b{color:var(--text-sec)}
+
+/* objection list */
+.obj{border-top:1px solid var(--border);padding:16px 0 0;margin:16px 0 0}
+.obj:first-of-type{border-top:none;padding-top:0;margin-top:0}
+.obj .q{font-size:14.5px;font-weight:700;color:var(--red-dark);margin-bottom:4px}
+.obj .q:before{content:'“'}
+.obj .q:after{content:'”'}
+
+.tip{background:#f2f7f6;border:1px solid #d6e6e3;border-left:4px solid #0f766e;border-radius:10px;padding:13px 16px;margin:14px 0 0;font-size:12.5px;line-height:1.6;color:#3d4a48}
+.tip b{color:#12312e}
+
+.mrea-link{display:inline-flex;align-items:center;gap:7px;margin-top:12px;font-size:12.5px;font-weight:700;color:#0f766e}
+.mrea-link:hover{text-decoration:underline}
+
+@media(max-width:560px){
+  .wrap{padding:24px 16px 80px}
+  .piece-head,.piece-body{padding-left:16px;padding-right:16px}
+}
+@media print{
+  .page-header,.jump,.cb-copy,.mrea-link{display:none !important}
+  body{background:#fff}
+  .piece{border:1px solid #ccc;box-shadow:none;break-inside:avoid;page-break-inside:avoid}
+  .cb-text{white-space:pre-wrap}
+}

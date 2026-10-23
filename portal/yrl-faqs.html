@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQs — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="portal-auth.js"></script>
+    <script src="embed-mode.js?v=20260927b"></script>
+    <script src="help-box.js?v=20260916" defer></script>
+    <style>
+        :root{
+            --red:#c03926; --red-light:#d94a35; --red-dark:#9e2e1e;
+            --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f7f8fa; --surface-3:#eef0f3;
+            --border:#e2e5ea; --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+            --radius:14px; --shadow:0 4px 20px rgba(0,0,0,0.08);
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
+        a{text-decoration:none;color:inherit;}
+        .page-header{background:linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);padding:26px 22px;}
+        .header-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+        .header-left{display:flex;align-items:center;gap:16px;}
+        .back-btn{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:9px 16px;border-radius:100px;font-size:13px;font-weight:600;white-space:nowrap;}
+        .back-btn:hover{background:rgba(255,255,255,0.26);}
+        .header-title h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(26px,4vw,38px);letter-spacing:1.5px;color:#fff;line-height:1.1;}
+        .header-title p{font-size:13px;color:rgba(255,255,255,0.85);}
+        .btn-edit{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.18);border:1.5px solid rgba(255,255,255,0.35);color:#fff;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:all 0.15s;white-space:nowrap;}
+        .btn-edit:hover{background:rgba(255,255,255,0.3);}
+        .btn-edit.active{background:#fff;color:var(--red);}
+        .wrap{max-width:1000px;margin:0 auto;padding:34px 22px 90px;}
+        .search-wrap{position:relative;margin-bottom:22px;}
+        .search-wrap i{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:14px;}
+        .search-input{width:100%;padding:13px 16px 13px 42px;border:1.5px solid var(--border);border-radius:12px;font-family:'Inter',sans-serif;font-size:15px;background:var(--surface);}
+        .search-input:focus{outline:none;border-color:var(--red);}
+        .faq-topic{margin-bottom:26px;}
+        .faq-topic-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+        .faq-topic-head h2{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--text);}
+        .faq-topic-ctl{display:flex;gap:6px;margin-left:auto;}
+        .faq-item{background:var(--surface);border:1px solid var(--border);border-radius:11px;margin-bottom:9px;overflow:hidden;}
+        .faq-q{display:flex;align-items:center;gap:12px;padding:15px 18px;cursor:pointer;font-weight:600;font-size:14.5px;color:var(--text);}
+        .faq-q:hover{background:var(--surface-2);}
+        .faq-q .chev{margin-left:auto;color:var(--text-muted);transition:transform 0.2s;flex-shrink:0;}
+        .faq-item.open .faq-q .chev{transform:rotate(90deg);}
+        .faq-a{display:none;padding:0 18px 16px 44px;font-size:14px;color:var(--text-sec);line-height:1.6;white-space:pre-line;}
+        .faq-item.open .faq-a{display:block;}
+        .faq-item-ctl{display:none;gap:6px;padding:0 18px 14px 44px;}
+        body.faq-editing .faq-item-ctl{display:flex;}
+        .mini-btn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--border);background:#fff;border-radius:7px;padding:5px 11px;font-size:12px;font-weight:600;font-family:'Inter',sans-serif;color:var(--text-sec);cursor:pointer;}
+        .mini-btn:hover{border-color:var(--red);color:var(--red);}
+        .mini-btn.del:hover{border-color:#ef4444;color:#ef4444;background:#fef2f2;}
+        .add-row{display:none;}
+        body.faq-editing .add-row{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 2px;}
+        .add-btn{display:inline-flex;align-items:center;gap:6px;border:1.5px dashed var(--red);background:rgba(192,57,38,0.06);color:var(--red);border-radius:9px;padding:9px 15px;font-size:13px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;}
+        .add-btn.wide{width:100%;justify-content:center;margin-top:8px;}
+        .empty{text-align:center;padding:50px 20px;color:var(--text-muted);}
+        .empty i{font-size:38px;opacity:.3;display:block;margin-bottom:12px;}
+        /* modal */
+        .fm-ov{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:6000;display:flex;align-items:center;justify-content:center;padding:18px;}
+        .fm{background:var(--surface);border-radius:16px;box-shadow:0 20px 60px rgba(15,23,42,.3);width:100%;max-width:520px;max-height:92vh;overflow:auto;}
+        .fm-h{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);}
+        .fm-h h3{margin:0;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--text);}
+        .fm-x{border:none;background:none;font-size:22px;color:var(--text-muted);cursor:pointer;}
+        .fm-b{padding:18px 20px;display:flex;flex-direction:column;gap:12px;}
+        .fm-b label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin-bottom:5px;}
+        .fm-b input,.fm-b textarea,.fm-b select{width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:inherit;font-size:14px;color:var(--text);background:var(--surface);}
+        .fm-b textarea{min-height:120px;resize:vertical;}
+        .fm-foot{display:flex;justify-content:flex-end;gap:8px;padding:4px 20px 20px;}
+        .btn-primary{background:var(--red);color:#fff;border:none;border-radius:9px;padding:10px 18px;font-size:13px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;}
+        .btn-ghost{background:var(--surface-3);color:var(--text);border:none;border-radius:9px;padding:10px 18px;font-size:13px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;}
+        .flash{font-size:12px;font-weight:600;color:#16a34a;opacity:0;transition:opacity 0.3s;}
+        .flash.show{opacity:1;}
+    </style>
+    <link rel="stylesheet" href="hub-theme.css?v=20260903b"><script src="hub-brand.js" defer></script>
+</head>
+<body>
+
+<header class="page-header">
+    <div class="header-inner">
+        <div class="header-left">
+            <a href="hub.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Hub</a>
+            <div class="header-title">
+                <h1><i class="fa-solid fa-circle-question" style="font-size:0.8em;opacity:.9;"></i> FAQs</h1>
+                <p>Frequently asked questions — answers to what agents ask most</p>
+            </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+            <span class="flash" id="saveFlash">&#10003; Saved</span>
+            <button class="btn-edit" id="editBtn" onclick="toggleEditMode()"><i class="fa-solid fa-pen"></i> Edit</button>
+        </div>
+    </div>
+</header>
+
+<div class="wrap">
+    <div id="helpTop"></div>
+    <script>document.addEventListener("DOMContentLoaded",function(){ window.HelpBox && HelpBox.mount({container:"#helpTop",key:"yrl-faqs",label:"FAQs"}); });</script>
+
+    <div class="search-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" class="search-input" id="faqSearch" placeholder="Search the FAQs…" autocomplete="off">
+    </div>
+
+    <div id="faqView"><div class="empty"><i class="fa-solid fa-spinner fa-spin"></i>Loading FAQs…</div></div>
+</div>
+
+<script src="hub-data.js"></script>
+<script src="edit-gate.js?v=20260916"></script>
+<script>
+const FAQ_KEY = 'yrl-faqs';
+let state = { topics: [] };
+let editMode = false;
+let filter = '';
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const uid = () => Math.random().toString(36).slice(2,9);
+
+function isAuthed(){ return !!(window.yrlMember && (window.yrlMember.role==='owner' || window.yrlMember.role==='nomad_admin')); }
+
+async function init(){
+    const data = await loadHubContent(FAQ_KEY);
+    state = (data && Array.isArray(data.topics)) ? data : { topics: [] };
+    render();
+}
+async function persist(){
+    const ok = await saveHubContent(FAQ_KEY, state);
+    if (ok){ const f=$('saveFlash'); if(f){ f.classList.add('show'); setTimeout(()=>f.classList.remove('show'),2000); } }
+}
+
+/* ── edit mode ── */
+function toggleEditMode(){
+    if (editMode){ editMode=false; document.body.classList.remove('faq-editing'); $('editBtn').classList.remove('active'); $('editBtn').innerHTML='<i class="fa-solid fa-pen"></i> Edit'; render(); return; }
+    editGate(function(){
+        if (!isAuthed()) return;
+        editMode=true; document.body.classList.add('faq-editing'); $('editBtn').classList.add('active'); $('editBtn').innerHTML='<i class="fa-solid fa-check"></i> Done'; render();
+    });
+}
+
+/* ── render ── */
+function matches(it){
+    if (!filter) return true;
+    return (it.q+' '+it.a).toLowerCase().indexOf(filter) !== -1;
+}
+function render(){
+    const view = $('faqView');
+    const topics = state.topics || [];
+    if (!topics.length && !editMode){
+        view.innerHTML = '<div class="empty"><i class="fa-regular fa-circle-question"></i>No FAQs yet — check back soon.</div>';
+        return;
+    }
+    let html = '';
+    topics.forEach((t) => {
+        const items = (t.items||[]).filter(matches);
+        if (!items.length && !editMode && filter) return;   // hide topics with no matches while searching
+        if (!items.length && !editMode && !t.items.length) return;
+        html += '<div class="faq-topic" data-tid="'+esc(t.id)+'">' +
+            '<div class="faq-topic-head"><h2>'+esc(t.name||'Topic')+'</h2>' +
+              (editMode ? '<div class="faq-topic-ctl"><button class="mini-btn" onclick="renameTopic(\''+t.id+'\')"><i class="fa-solid fa-pen"></i> Rename</button><button class="mini-btn del" onclick="deleteTopic(\''+t.id+'\')"><i class="fa-solid fa-trash"></i></button></div>' : '') +
+            '</div>';
+        (editMode ? t.items : items).forEach((it) => {
+            html += '<div class="faq-item" data-iid="'+esc(it.id)+'">' +
+                '<div class="faq-q" onclick="toggleItem(this)"><i class="fa-solid fa-circle-question" style="color:var(--red);font-size:.9em;"></i> '+esc(it.q)+'<i class="fa-solid fa-chevron-right chev"></i></div>' +
+                '<div class="faq-a">'+esc(it.a)+'</div>' +
+                (editMode ? '<div class="faq-item-ctl"><button class="mini-btn" onclick="editItem(\''+t.id+'\',\''+it.id+'\')"><i class="fa-solid fa-pen"></i> Edit</button><button class="mini-btn del" onclick="deleteItem(\''+t.id+'\',\''+it.id+'\')"><i class="fa-solid fa-trash"></i> Delete</button></div>' : '') +
+            '</div>';
+        });
+        if (editMode) html += '<div class="add-row"><button class="add-btn" onclick="addItem(\''+t.id+'\')"><i class="fa-solid fa-plus"></i> Add Q&amp;A</button></div>';
+        html += '</div>';
+    });
+    if (editMode) html += '<button class="add-btn wide" onclick="addTopic()"><i class="fa-solid fa-folder-plus"></i> Add topic</button>';
+    if (!html) html = '<div class="empty"><i class="fa-regular fa-face-smile"></i>No FAQs match "'+esc(filter)+'".</div>';
+    view.innerHTML = html;
+}
+function toggleItem(el){ el.parentElement.classList.toggle('open'); }
+
+/* ── topic + item CRUD (owner/admin) ── */
+function addTopic(){
+    const name = prompt('New topic name (e.g. Commissions, Listings, Tech):'); if (!name || !name.trim()) return;
+    state.topics.push({ id:'t'+uid(), name:name.trim(), items:[] }); persist(); render();
+}
+function renameTopic(tid){
+    const t = state.topics.find(x=>x.id===tid); if(!t) return;
+    const name = prompt('Rename topic:', t.name); if (name===null) return;
+    t.name = name.trim() || t.name; persist(); render();
+}
+function deleteTopic(tid){
+    const t = state.topics.find(x=>x.id===tid); if(!t) return;
+    if (!confirm('Delete the topic "'+t.name+'" and all its Q&As?')) return;
+    state.topics = state.topics.filter(x=>x.id!==tid); persist(); render();
+}
+function addItem(tid){ openItemModal(tid, null); }
+function editItem(tid, iid){ openItemModal(tid, iid); }
+function deleteItem(tid, iid){
+    const t = state.topics.find(x=>x.id===tid); if(!t) return;
+    if (!confirm('Delete this question?')) return;
+    t.items = t.items.filter(x=>x.id!==iid); persist(); render();
+}
+function openItemModal(tid, iid){
+    const t = state.topics.find(x=>x.id===tid); if(!t) return;
+    const it = iid ? t.items.find(x=>x.id===iid) : null;
+    const ov = document.createElement('div'); ov.className='fm-ov';
+    ov.innerHTML = '<div class="fm">' +
+        '<div class="fm-h"><h3>'+(it?'Edit Q&amp;A':'Add Q&amp;A')+'</h3><button class="fm-x">&times;</button></div>' +
+        '<div class="fm-b">' +
+            '<div><label>Question</label><input id="fmQ" type="text" value="'+esc(it?it.q:'')+'" placeholder="What agents ask…"></div>' +
+            '<div><label>Answer</label><textarea id="fmA" placeholder="The answer. Line breaks are kept.">'+esc(it?it.a:'')+'</textarea></div>' +
+        '</div>' +
+        '<div class="fm-foot"><button class="btn-ghost" data-x>Cancel</button><button class="btn-primary" id="fmSave">Save</button></div>' +
+    '</div>';
+    ov.addEventListener('click', (e)=>{ if(e.target===ov) ov.remove(); });
+    document.body.appendChild(ov);
+    ov.querySelector('.fm-x').onclick = ()=>ov.remove();
+    ov.querySelector('[data-x]').onclick = ()=>ov.remove();
+    ov.querySelector('#fmSave').onclick = ()=>{
+        const q = ov.querySelector('#fmQ').value.trim(); const a = ov.querySelector('#fmA').value.trim();
+        if (!q){ ov.querySelector('#fmQ').focus(); return; }
+        if (it){ it.q=q; it.a=a; } else { t.items.push({ id:'i'+uid(), q:q, a:a }); }
+        persist(); ov.remove(); render();
+    };
+}
+
+$('faqSearch').addEventListener('input', function(){ filter = this.value.trim().toLowerCase(); render(); });
+
+document.addEventListener('yrl-auth-ready', init);
+if (window.yrlMember) init();
+</script>
+</body>
+</html>

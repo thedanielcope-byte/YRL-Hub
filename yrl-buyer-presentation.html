@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buyer Consultation — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --red:          #c03926;
+            --red-light:    #d94a35;
+            --red-dark:     #9e2e1e;
+            --bg:           #f2f4f7;
+            --surface:      #ffffff;
+            --surface-2:    #f7f8fa;
+            --surface-3:    #eef0f3;
+            --border:       #e2e5ea;
+            --text:         #1a1d22;
+            --text-sec:     #5a6270;
+            --text-muted:   #9ca3af;
+            --radius:       12px;
+            --radius-lg:    20px;
+            --shadow:       0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        a { text-decoration: none; color: inherit; }
+        img { display: block; max-width: 100%; }
+
+        /* ══════════════════════════════════════
+           SETUP SCREEN (form before presenting)
+        ══════════════════════════════════════ */
+        .setup-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        .setup-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            max-width: 520px;
+            width: 100%;
+            overflow: hidden;
+        }
+        .setup-header {
+            background: linear-gradient(150deg, #a82f1e 0%, #c03926 45%, #9e2e1e 100%);
+            padding: 32px 36px;
+            text-align: center;
+            position: relative;
+        }
+        .setup-header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
+            background-size: 28px 28px;
+            pointer-events: none;
+        }
+        .setup-header img {
+            max-width: 140px;
+            margin: 0 auto 16px;
+            background: #fff;
+            border-radius: 10px;
+            padding: 10px 16px;
+        }
+        .setup-header h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 36px;
+            letter-spacing: 2px;
+            color: #fff;
+        }
+        .setup-header p {
+            color: rgba(255,255,255,0.7);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+        .setup-body {
+            padding: 32px 36px 36px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-sec);
+            margin-bottom: 6px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 15px;
+            font-family: inherit;
+            color: var(--text);
+            background: var(--surface);
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(192,57,38,0.1);
+        }
+        .form-group input::placeholder {
+            color: var(--text-muted);
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        .start-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--red);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+        .start-btn:hover {
+            background: var(--red-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(192,57,38,0.3);
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .back-link:hover { color: var(--red); }
+
+        /* ══════════════════════════════════════
+           PRESENTATION MODE
+        ══════════════════════════════════════ */
+        .presentation { display: none; }
+        .presentation.active { display: block; }
+        .setup-screen.hidden { display: none; }
+
+        /* ── Sticky nav bar ── */
+        .pres-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(26,26,26,0.95);
+            backdrop-filter: blur(12px);
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+        }
+        .pres-nav-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .pres-nav img {
+            height: 28px;
+        }
+        .pres-nav-title {
+            color: #fff;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 18px;
+            letter-spacing: 1px;
+        }
+        .pres-nav-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .pres-nav-btn {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 7px 14px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .pres-nav-btn:hover {
+            background: rgba(255,255,255,0.25);
+        }
+        .pres-nav-btn.red {
+            background: var(--red);
+            border-color: var(--red);
+        }
+        .pres-nav-btn.red:hover {
+            background: var(--red-dark);
+        }
+
+        /* ── Progress dots ── */
+        .pres-progress {
+            position: fixed;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 99;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .pres-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(192,57,38,0.2);
+            border: 2px solid rgba(192,57,38,0.4);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .pres-dot.active {
+            background: var(--red);
+            border-color: var(--red);
+            transform: scale(1.3);
+        }
+        .pres-dot:hover {
+            border-color: var(--red);
+            transform: scale(1.2);
+        }
+
+        /* ── Slide sections ── */
+        .slide {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 40px 60px;
+            position: relative;
+        }
+        .slide:nth-child(odd) {
+            background: #fff;
+        }
+        .slide:nth-child(even) {
+            background: var(--bg);
+        }
+        .slide-inner {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        /* ── Slide 1: Title ── */
+        .slide-title {
+            background: linear-gradient(150deg, #a82f1e 0%, #c03926 45%, #9e2e1e 100%) !important;
+            text-align: center;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+        .slide-title::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
+            background-size: 32px 32px;
+            pointer-events: none;
+        }
+        .slide-title .slide-inner { position: relative; z-index: 1; }
+        .title-logo {
+            max-width: 200px;
+            margin: 0 auto 40px;
+            background: #fff;
+            border-radius: 14px;
+            padding: 16px 24px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+        }
+        .title-label {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            opacity: 0.6;
+            margin-bottom: 12px;
+        }
+        .title-main {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(40px, 8vw, 72px);
+            letter-spacing: 3px;
+            line-height: 1.05;
+            margin-bottom: 16px;
+        }
+        .title-area {
+            font-size: clamp(18px, 3vw, 24px);
+            opacity: 0.8;
+            font-weight: 300;
+        }
+        .title-budget {
+            font-size: 18px;
+            opacity: 0.6;
+            margin-top: 8px;
+            font-weight: 300;
+        }
+        .title-agent {
+            margin-top: 40px;
+            font-size: 15px;
+            opacity: 0.7;
+        }
+        .title-agent strong {
+            display: block;
+            font-size: 18px;
+            opacity: 1;
+        }
+
+        /* ── Content slides ── */
+        .slide-heading {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(32px, 5vw, 48px);
+            letter-spacing: 2px;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        .slide-subheading {
+            font-size: 15px;
+            color: var(--text-sec);
+            margin-bottom: 36px;
+        }
+        .slide-heading .accent { color: var(--red); }
+
+        /* ── Goals grid ── */
+        .goals-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 32px;
+        }
+        .goal-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 32px 24px;
+            text-align: center;
+        }
+        .goal-num {
+            width: 56px;
+            height: 56px;
+            background: var(--red);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px;
+            margin: 0 auto 16px;
+        }
+        .goal-card h3 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .goal-card p {
+            font-size: 13px;
+            color: var(--text-sec);
+            line-height: 1.6;
+        }
+
+        /* ── Stats grid ── */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 32px 0;
+        }
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 28px 20px;
+            text-align: center;
+        }
+        .stat-num {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 48px;
+            color: var(--red);
+            line-height: 1;
+        }
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-sec);
+            margin-top: 6px;
+        }
+
+        /* ── Marketing plan / service list ── */
+        .marketing-list {
+            list-style: none;
+            counter-reset: mkt;
+        }
+        .marketing-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            padding: 24px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .marketing-list li:last-child { border-bottom: none; }
+        .mkt-icon {
+            width: 50px;
+            height: 50px;
+            min-width: 50px;
+            background: rgba(192,57,38,0.08);
+            border: 1px solid rgba(192,57,38,0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: var(--red);
+        }
+        .mkt-text h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .mkt-text p {
+            font-size: 14px;
+            color: var(--text-sec);
+            line-height: 1.6;
+        }
+
+        /* ── Diff grid (Why YRL / How We Find) ── */
+        .diff-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 32px;
+        }
+        .diff-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        .diff-card i {
+            font-size: 24px;
+            color: var(--red);
+            min-width: 28px;
+            margin-top: 2px;
+        }
+        .diff-card h4 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .diff-card p {
+            font-size: 13px;
+            color: var(--text-sec);
+        }
+
+        /* ── Steps timeline ── */
+        .steps-timeline {
+            margin: 32px 0;
+        }
+        .step-item {
+            display: flex;
+            gap: 20px;
+            padding-bottom: 32px;
+            position: relative;
+        }
+        .step-item:not(:last-child)::before {
+            content: '';
+            position: absolute;
+            left: 23px;
+            top: 50px;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+        .step-num {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            background: var(--red);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 22px;
+            position: relative;
+            z-index: 1;
+        }
+        .step-content h3 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .step-content p {
+            font-size: 14px;
+            color: var(--text-sec);
+            line-height: 1.6;
+        }
+
+        /* ── Compensation agreement slide ── */
+        .comp-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 32px;
+        }
+        .comp-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 28px 24px;
+        }
+        .comp-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .comp-card h3 i {
+            color: var(--red);
+            font-size: 20px;
+        }
+        .comp-card p {
+            font-size: 14px;
+            color: var(--text-sec);
+            line-height: 1.7;
+        }
+        .comp-steps {
+            margin-top: 16px;
+            list-style: none;
+        }
+        .comp-steps li {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 12px 0;
+            border-top: 1px solid var(--surface-3);
+        }
+        .comp-steps li:first-child { border-top: none; padding-top: 0; }
+        .comp-step-num {
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+            background: var(--red);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 16px;
+        }
+        .comp-steps li span {
+            font-size: 13px;
+            color: var(--text-sec);
+            line-height: 1.6;
+            padding-top: 5px;
+        }
+        .comp-note {
+            margin-top: 28px;
+            padding: 20px 24px;
+            background: rgba(192,57,38,0.04);
+            border: 1px solid rgba(192,57,38,0.15);
+            border-radius: var(--radius);
+            font-size: 14px;
+            color: var(--text-sec);
+            line-height: 1.7;
+        }
+        .comp-note strong {
+            color: var(--text);
+        }
+
+        /* ── Final CTA slide ── */
+        .slide-cta {
+            background: linear-gradient(150deg, #a82f1e 0%, #c03926 45%, #9e2e1e 100%) !important;
+            text-align: center;
+            color: #fff;
+        }
+        .slide-cta .slide-inner { position: relative; z-index: 1; }
+        .cta-heading {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(36px, 7vw, 60px);
+            letter-spacing: 2px;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+        .cta-sub {
+            font-size: 18px;
+            opacity: 0.8;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .cta-contact {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: var(--radius-lg);
+            padding: 28px 48px;
+        }
+        .cta-contact strong {
+            font-size: 20px;
+        }
+        .cta-contact span {
+            font-size: 28px;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 2px;
+        }
+        .cta-contact small {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .slide { padding: 80px 24px 60px; }
+            .goals-grid { grid-template-columns: 1fr; }
+            .stats-row { grid-template-columns: 1fr; }
+            .diff-grid { grid-template-columns: 1fr; }
+            .comp-cards { grid-template-columns: 1fr; }
+            .pres-progress { display: none; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+
+        /* ── Print / PDF ── */
+        @media print {
+            .pres-nav, .pres-progress, .pres-nav-btn { display: none !important; }
+            .slide {
+                min-height: auto;
+                page-break-after: always;
+                padding: 40px;
+            }
+            .slide:last-child { page-break-after: avoid; }
+            body { background: #fff; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     SETUP FORM
+══════════════════════════════════════ -->
+<div class="setup-screen" id="setupScreen">
+    <div class="setup-card">
+        <div class="setup-header">
+            <img src="https://wdvolamasztetwpitbwg.supabase.co/storage/v1/object/public/hub-files/brand/yrl-logo-color.png"
+                 alt="Your Realty Link">
+            <h1>Buyer Consultation</h1>
+            <p>Customize your presentation for this client</p>
+        </div>
+        <div class="setup-body">
+            <div class="form-group">
+                <label>Client Name(s)</label>
+                <input type="text" id="clientName" placeholder="e.g. Michael & Emily Johnson">
+            </div>
+            <div class="form-group">
+                <label>Target Area</label>
+                <input type="text" id="targetArea" placeholder="e.g. Carmel, Fishers, Westfield">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Budget Range</label>
+                    <input type="text" id="budgetRange" placeholder="e.g. $300,000 - $400,000">
+                </div>
+                <div class="form-group">
+                    <label>Agent Name</label>
+                    <input type="text" id="agentName" placeholder="Your name" value="">
+                </div>
+            </div>
+            <button class="start-btn" onclick="startPresentation()">
+                <i class="fa-solid fa-play"></i> &nbsp;Start Presentation
+            </button>
+            <a href="yrl-client-buyers.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Buyer Tools</a>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PRESENTATION
+══════════════════════════════════════ -->
+<div class="presentation" id="presentation">
+
+    <!-- Nav bar -->
+    <nav class="pres-nav">
+        <div class="pres-nav-left">
+            <img src="https://wdvolamasztetwpitbwg.supabase.co/storage/v1/object/public/hub-files/brand/yrl-logo-color.png"
+                 alt="YRL" style="background:#fff;border-radius:6px;padding:4px 8px;">
+            <span class="pres-nav-title">Buyer Consultation</span>
+        </div>
+        <div class="pres-nav-right">
+            <button class="pres-nav-btn" onclick="exitPresentation()"><i class="fa-solid fa-arrow-left"></i> Edit</button>
+            <button class="pres-nav-btn red" onclick="window.print()"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+        </div>
+    </nav>
+
+    <!-- Progress dots -->
+    <div class="pres-progress" id="presProgress"></div>
+
+    <!-- SLIDE 1: Title -->
+    <div class="slide slide-title" data-slide="0">
+        <div class="slide-inner">
+            <img src="https://wdvolamasztetwpitbwg.supabase.co/storage/v1/object/public/hub-files/brand/yrl-logo-color.png"
+                 alt="Your Realty Link" class="title-logo">
+            <div class="title-label">Prepared Exclusively For</div>
+            <div class="title-main" id="presClientName"></div>
+            <div class="title-area" id="presArea"></div>
+            <div class="title-budget" id="presBudget" style="display:none"></div>
+            <div class="title-agent">
+                <strong id="presAgentLine"></strong>
+                Your Realty Link &bull; yourrealtylink.com
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 2: About YRL -->
+    <div class="slide" data-slide="1">
+        <div class="slide-inner">
+            <div class="slide-heading">About <span class="accent">Your Realty Link</span></div>
+            <div class="slide-subheading">Local expertise. Personal service. Real results.</div>
+
+            <p style="font-size:15px;color:var(--text-sec);line-height:1.8;margin-bottom:28px;">
+                Your Realty Link is a full-service real estate brokerage serving Central Indiana. Led by Principal Broker Janet Giles-Schultz, our team of experienced MIBOR agents brings deep local market knowledge, skilled negotiation, and a commitment to finding you the right home at the right price.
+            </p>
+
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-num">MIBOR</div>
+                    <div class="stat-label">MLS Member &mdash; Full Market Access</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num">Team</div>
+                    <div class="stat-label">Support &mdash; Multiple Agents Working for You</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num">100%</div>
+                    <div class="stat-label">Dedicated to Your Success</div>
+                </div>
+            </div>
+
+            <p style="font-size:14px;color:var(--text-muted);margin-top:20px;text-align:center;">
+                2302 E Southport Rd, Indianapolis IN 46227 &bull; 317-997-7404 &bull; yourrealtylink.com
+            </p>
+        </div>
+    </div>
+
+    <!-- SLIDE 3: Three Goals Today -->
+    <div class="slide" data-slide="2">
+        <div class="slide-inner">
+            <div class="slide-heading">Our <span class="accent">Three Goals</span> Today</div>
+            <div class="slide-subheading">We respect your time. Here's exactly what we'll cover together.</div>
+
+            <div class="goals-grid">
+                <div class="goal-card">
+                    <div class="goal-num">1</div>
+                    <h3>Understand Your Needs</h3>
+                    <p>Learn what you're looking for, your timeline, your must-haves, and your deal-breakers &mdash; so we can find the right home, not just any home.</p>
+                </div>
+                <div class="goal-card">
+                    <div class="goal-num">2</div>
+                    <h3>Explain the Process</h3>
+                    <p>Walk you through exactly how buying a home works in Indiana &mdash; from pre-approval to closing day &mdash; so there are no surprises.</p>
+                </div>
+                <div class="goal-card">
+                    <div class="goal-num">3</div>
+                    <h3>Decide If We're a Fit</h3>
+                    <p>You'll decide if you want us on your team, and we'll decide if we can deliver the results you deserve. No pressure, just honesty.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 4: The Buyer Compensation Agreement -->
+    <div class="slide" data-slide="3">
+        <div class="slide-inner">
+            <div class="slide-heading">The Buyer <span class="accent">Compensation Agreement</span></div>
+            <div class="slide-subheading">As of August 2024, all buyers must sign a written agreement before touring homes. Here's what that means for you.</div>
+
+            <div class="comp-cards">
+                <div class="comp-card">
+                    <h3><i class="fa-solid fa-file-contract"></i> What Is It?</h3>
+                    <p>A written agreement between you and your agent that outlines the services you'll receive and how your agent is compensated. It's now required by Indiana law before we can show you any homes.</p>
+                </div>
+                <div class="comp-card">
+                    <h3><i class="fa-solid fa-lightbulb"></i> Why Does It Exist?</h3>
+                    <p>The real estate industry changed its rules to make agent compensation more transparent. This protects you by ensuring you know exactly what services you're getting and what they cost &mdash; before you start looking.</p>
+                </div>
+                <div class="comp-card">
+                    <h3><i class="fa-solid fa-gears"></i> How Does It Work?</h3>
+                    <p>Three simple steps:</p>
+                    <ul class="comp-steps">
+                        <li>
+                            <div class="comp-step-num">1</div>
+                            <span>We agree on the services I'll provide and my compensation</span>
+                        </li>
+                        <li>
+                            <div class="comp-step-num">2</div>
+                            <span>We search for homes together &mdash; I represent YOUR interests</span>
+                        </li>
+                        <li>
+                            <div class="comp-step-num">3</div>
+                            <span>At closing, seller concessions often cover the cost &mdash; but you're protected either way</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="comp-note">
+                <strong>Your Realty Link agents earn their compensation.</strong> We negotiate on your behalf, protect your interests, and guide you through one of the biggest financial decisions of your life.
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 5: What We Do For You -->
+    <div class="slide" data-slide="4">
+        <div class="slide-inner">
+            <div class="slide-heading">What We <span class="accent">Do For You</span></div>
+            <div class="slide-subheading">From the first search to closing day, here's how we serve our buyers.</div>
+
+            <ul class="marketing-list">
+                <li>
+                    <div class="mkt-icon"><i class="fa-solid fa-magnifying-glass-location"></i></div>
+                    <div class="mkt-text">
+                        <h3>Find the Right Homes</h3>
+                        <p>We search the MIBOR MLS daily, monitor coming-soon listings, and tap into our network to find homes that match your criteria &mdash; including some that haven't hit the market yet.</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="mkt-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                    <div class="mkt-text">
+                        <h3>Schedule &amp; Manage Showings</h3>
+                        <p>We coordinate all showings around your schedule, preview homes when possible, and give you honest feedback on every property.</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="mkt-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+                    <div class="mkt-text">
+                        <h3>Negotiate Your Best Deal</h3>
+                        <p>We analyze comparable sales, craft competitive offers, and negotiate price, terms, repairs, and concessions to protect your investment.</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="mkt-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div class="mkt-text">
+                        <h3>Protect Your Interests</h3>
+                        <p>We review every document, coordinate inspections, ensure contingencies are met, and make sure nothing falls through the cracks.</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="mkt-icon"><i class="fa-solid fa-handshake"></i></div>
+                    <div class="mkt-text">
+                        <h3>Guide You to Closing</h3>
+                        <p>From accepted offer to keys in hand, we manage every deadline, communicate with all parties, and make sure closing day goes smoothly.</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- SLIDE 6: How We Find Your Home -->
+    <div class="slide" data-slide="5">
+        <div class="slide-inner">
+            <div class="slide-heading">How We <span class="accent">Find Your Home</span></div>
+            <div class="slide-subheading">We don't wait for the perfect home to appear. We go find it.</div>
+
+            <div class="diff-grid">
+                <div class="diff-card">
+                    <i class="fa-solid fa-database"></i>
+                    <div>
+                        <h4>MIBOR MLS Access</h4>
+                        <p>Full access to every active listing in Central Indiana. We set up automated searches so you see new homes the minute they hit the market.</p>
+                    </div>
+                </div>
+                <div class="diff-card">
+                    <i class="fa-solid fa-eye"></i>
+                    <div>
+                        <h4>Coming Soon &amp; Off-Market</h4>
+                        <p>Our agent network gives us access to homes before they're publicly listed. Sometimes the best home never makes it to Zillow.</p>
+                    </div>
+                </div>
+                <div class="diff-card">
+                    <i class="fa-solid fa-hammer"></i>
+                    <div>
+                        <h4>New Construction</h4>
+                        <p>We represent you with builders at no extra cost. Builders have their own agents &mdash; you should have yours to negotiate on your behalf.</p>
+                    </div>
+                </div>
+                <div class="diff-card">
+                    <i class="fa-solid fa-bell"></i>
+                    <div>
+                        <h4>Daily Market Monitoring</h4>
+                        <p>We watch the market every day. Price reductions, new listings, back-on-market properties &mdash; you'll know about them before other buyers.</p>
+                    </div>
+                </div>
+                <div class="diff-card">
+                    <i class="fa-solid fa-users"></i>
+                    <div>
+                        <h4>Team Network</h4>
+                        <p>Every agent on our team is looking for homes for their buyers. When one of us hears about a match, the whole team knows.</p>
+                    </div>
+                </div>
+                <div class="diff-card">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <div>
+                        <h4>Market Analysis</h4>
+                        <p>We provide comparable sales data on every home you're serious about, so you know exactly what it's worth before making an offer.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 7: Making an Offer -->
+    <div class="slide" data-slide="6">
+        <div class="slide-inner">
+            <div class="slide-heading">Making <span class="accent">an Offer</span></div>
+            <div class="slide-subheading">Here's exactly what happens when you find the right home.</div>
+
+            <div class="steps-timeline">
+                <div class="step-item">
+                    <div class="step-num">1</div>
+                    <div class="step-content">
+                        <h3>Review Comparable Sales</h3>
+                        <p>We pull recent sales data so you know the home's true market value &mdash; not just the asking price.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">2</div>
+                    <div class="step-content">
+                        <h3>Craft Your Offer</h3>
+                        <p>We help you determine the right price, terms, contingencies, and timeline based on market conditions and your goals.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">3</div>
+                    <div class="step-content">
+                        <h3>Present &amp; Negotiate</h3>
+                        <p>We present your offer professionally and negotiate on your behalf. In multiple-offer situations, we position you to win.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">4</div>
+                    <div class="step-content">
+                        <h3>Inspection &amp; Due Diligence</h3>
+                        <p>We coordinate the home inspection, review the report with you, and negotiate repairs or credits if needed.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">5</div>
+                    <div class="step-content">
+                        <h3>Appraisal &amp; Financing</h3>
+                        <p>We work with your lender to ensure the appraisal and financing stay on track. If issues arise, we have solutions.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">6</div>
+                    <div class="step-content">
+                        <h3>Final Walkthrough &amp; Closing</h3>
+                        <p>One last look to make sure everything is right, then we meet at the closing table. Keys in hand &mdash; you're home.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 8: Why Your Realty Link -->
+    <div class="slide" data-slide="7">
+        <div class="slide-inner">
+            <div class="slide-heading">Why <span class="accent">Your Realty Link</span></div>
+            <div class="slide-subheading">What sets us apart from other agents and brokerages in Central Indiana.</div>
+
+            <div class="diff-grid">
+                <div class="diff-card">
+                    <i class="fa-solid fa-users"></i>
+                    <div>
+                        <h4>Team Advantage</h4>
+                        <p>When you hire one of our agents, you get the whole team working to find your home. More eyes, more connections, more opportunities.</p>
+                    </div>
+                </div>
+                <div class="diff-card">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                    <div>
+                        <h4>Local Market Experts</h4>
+                        <p>We live and work in Central Indiana. We know the neighborhoods, the schools, the market trends, and which areas fit your lifestyle.</p>
+                    </div>
+                </div>
+                <div class="diff-card">
+                    <i class="fa-solid fa-compass"></i>
+                    <div>
+                        <h4>Professional Guidance</h4>
+                        <p>From pre-approval to closing, we guide you through every step so you feel confident and informed throughout the entire process.</p>
+                    </div>
+                </div>
+                <div class="diff-card">
+                    <i class="fa-solid fa-handshake-angle"></i>
+                    <div>
+                        <h4>Skilled Negotiation</h4>
+                        <p>We negotiate to protect your investment and save you money. Our goal isn't just to find a home &mdash; it's to get you the best possible deal.</p>
+                    </div>
+                </div>
+                <div class="diff-card">
+                    <i class="fa-solid fa-comments"></i>
+                    <div>
+                        <h4>Communication First</h4>
+                        <p>You'll never wonder what's going on. Regular updates, new listing alerts, and honest feedback &mdash; you'll always know where things stand.</p>
+                    </div>
+                </div>
+                <div class="diff-card">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <div>
+                        <h4>Full-Service Brokerage</h4>
+                        <p>From the first consultation to the closing table, we handle everything. MLS access, contracts, negotiations, inspections, appraisals &mdash; all of it.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 9: CTA -->
+    <div class="slide slide-cta" data-slide="8">
+        <div class="slide-inner">
+            <div class="cta-heading">Ready to Find Your<br>New Home?</div>
+            <div class="cta-sub" id="presCTA"></div>
+            <div class="cta-contact">
+                <strong>Janet Giles-Schultz</strong>
+                <span>317-997-7404</span>
+                <small>Principal Broker &bull; Your Realty Link</small>
+                <small>janet@yourrealtylink.com &bull; yourrealtylink.com</small>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function startPresentation() {
+    const name = document.getElementById('clientName').value.trim() || 'Valued Client';
+    const area = document.getElementById('targetArea').value.trim() || '';
+    const budget = document.getElementById('budgetRange').value.trim() || '';
+    const agent = document.getElementById('agentName').value.trim() || '';
+
+    document.getElementById('presClientName').textContent = name;
+
+    if (area) {
+        document.getElementById('presArea').textContent = area;
+        document.getElementById('presArea').style.display = '';
+    } else {
+        document.getElementById('presArea').style.display = 'none';
+    }
+
+    if (budget) {
+        document.getElementById('presBudget').textContent = 'Budget: ' + budget;
+        document.getElementById('presBudget').style.display = '';
+    } else {
+        document.getElementById('presBudget').style.display = 'none';
+    }
+
+    if (agent) {
+        document.getElementById('presAgentLine').textContent = 'Presented by ' + agent;
+    } else {
+        document.getElementById('presAgentLine').textContent = '';
+    }
+
+    // Build CTA text
+    let ctaText;
+    if (name !== 'Valued Client' && area) {
+        ctaText = name + ", let's find your perfect home in " + area + ". We'd love to be on your team.";
+    } else if (name !== 'Valued Client') {
+        ctaText = name + ", let's find your perfect home. We'd love to be on your team.";
+    } else {
+        ctaText = "Let's find your perfect home. We'd love to be on your team.";
+    }
+    document.getElementById('presCTA').textContent = ctaText;
+
+    document.getElementById('setupScreen').classList.add('hidden');
+    document.getElementById('presentation').classList.add('active');
+    window.scrollTo(0, 0);
+
+    buildProgressDots();
+    observeSlides();
+}
+
+function exitPresentation() {
+    document.getElementById('setupScreen').classList.remove('hidden');
+    document.getElementById('presentation').classList.remove('active');
+    window.scrollTo(0, 0);
+}
+
+function buildProgressDots() {
+    const slides = document.querySelectorAll('.slide');
+    const prog = document.getElementById('presProgress');
+    prog.innerHTML = '';
+    slides.forEach((s, i) => {
+        const dot = document.createElement('div');
+        dot.className = 'pres-dot' + (i === 0 ? ' active' : '');
+        dot.title = 'Slide ' + (i + 1);
+        dot.onclick = () => s.scrollIntoView({ behavior: 'smooth' });
+        prog.appendChild(dot);
+    });
+}
+
+function observeSlides() {
+    const dots = document.querySelectorAll('.pres-dot');
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const idx = parseInt(entry.target.dataset.slide);
+                dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+            }
+        });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.slide').forEach(s => observer.observe(s));
+}
+</script>
+
+</body>
+</html>

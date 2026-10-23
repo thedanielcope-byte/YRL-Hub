@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>MREA 1.3 · The 80/20 Audit — Your Realty Link</title>
+<script src="portal-auth.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="tiger-shell.css?v=20260927b">
+<link rel="stylesheet" href="tiger-module.css">
+<link rel="stylesheet" href="mrea-module.css">
+</head>
+<body class="tiger-shell mrea-shell" data-tiger-module="1.3" data-tiger-title="The 80/20 Audit" data-tiger-ns="mrea" data-tiger-program="Millionaire Agent Path">
+
+<button class="tiger-menu-btn" id="tigerMenuBtn" aria-label="Modules"><i class="fa-solid fa-bars"></i></button>
+<aside class="tiger-side" id="tigerSide"></aside>
+<div class="tiger-backdrop" id="tigerBackdrop"></div>
+
+<main class="tiger-main">
+
+<div class="reader-topbar">
+  <div class="prog">
+    <div class="track"><i id="tigerProgressBar"></i></div>
+    <div class="prog-lbl" id="tigerProgressLabel">0% complete</div>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn btn-ghost" data-tiger-action="pdf"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
+  <button class="btn btn-primary" data-tiger-action="save"><i class="fa-solid fa-floppy-disk"></i> <span>Save</span></button>
+</div>
+
+<header class="reader-head">
+  <p class="reader-eyebrow">Phase 1 · Module 1.3 <span class="chip">Audit</span></p>
+  <h1 class="reader-title">The 80/20 Audit</h1>
+  <p class="reader-lede">Roughly 20% of what you do produces roughly 80% of what you earn. Most agents have never checked which 20%. Reconstruct last week honestly, tag every activity, and find out how much of your week actually pays you.</p>
+  <p class="reader-who">Worksheet for <b data-tiger-name>Agent</b> · <span data-tiger-date></span> · saves automatically as you type</p>
+</header>
+
+<div class="print-only" style="text-align:center;margin:0 0 6px">
+  <strong>YOUR REALTY LINK · THE MILLIONAIRE AGENT PATH</strong> — Module 1.3: The 80/20 Audit
+</div>
+
+<div class="reader-body">
+<section class="card"><h2><span class="n">01</span>Activity is not productivity</h2><p class="teach">You can be genuinely busy and genuinely unproductive at the same time — the two feel identical from the inside. The only way to tell them apart is to write the week down and grade it.</p><p class="teach">In this business the 20% is short and boring: <b>generating leads, going on listing appointments, marketing listings, and building leverage.</b> Nearly everything else — however necessary — is the 80%.</p><div class="callout">The 80% is not worthless. Contracts have to be written and files have to close. The question is only whether <i>you</i> should be the one doing it, and whether it happens before or after your 20%.</div></section>
+<section class="card"><h2><span class="n">02</span>Reconstruct last week</h2><p class="sub">List your real activities and hours. Mark each one 20% (directly produces business) or 80% (everything else). Ten rows is usually enough.</p><div class="mrea-tablewrap"><table class="mrea-table"><thead><tr><th>Activity</th><th class="num" style="width:88px">Hours</th><th style="width:132px">Type</th></tr></thead><tbody id="auditRows"></tbody></table></div><template class="audit-seed" data-n="1"></template><template class="audit-seed" data-n="2"></template><template class="audit-seed" data-n="3"></template><template class="audit-seed" data-n="4"></template><template class="audit-seed" data-n="5"></template><template class="audit-seed" data-n="6"></template><template class="audit-seed" data-n="7"></template><template class="audit-seed" data-n="8"></template><template class="audit-seed" data-n="9"></template><template class="audit-seed" data-n="10"></template><p class="mrea-note"><i class="fa-solid fa-circle-info"></i> Rule of thumb: if it directly created a lead, an appointment, a listing, or leverage — it&#x27;s 20%. If it happened <i>because</i> you already had business, it&#x27;s 80%.</p></section>
+<section class="card"><h2><span class="n">03</span>Your real ratio</h2><div class="mrea-stats"><div class="mrea-stat" id="stHours"></div><div class="mrea-stat" id="st20"></div><div class="mrea-stat" id="st80"></div></div><div class="mrea-verdict" id="aVerdict"><p class="vt">What this means</p><h3 class="vh">Fill in last week</h3><p class="vp">Hours and tags above will grade the week for you.</p></div><input type="hidden" data-tiger="pct20" id="pct20"></section>
+<section class="card"><h2><span class="n">04</span>Cut, delegate, protect</h2><p class="teach">Three moves, in order. <b>Cut</b> what shouldn&#x27;t happen at all. <b>Delegate</b> what should happen but not by you. <b>Protect</b> the 20% by putting it on the calendar before anything else can claim the time.</p><div class="tiger-list" data-list="cut" data-list-title="80% work I will stop doing entirely" data-min="3" data-placeholder="e.g. rebuilding the same CMA layout from scratch every time"></div><div class="tiger-list" data-list="delegate" data-list-title="80% work someone else should do" data-min="3" data-placeholder="e.g. scheduling showings, ordering photos, listing data entry"></div><div class="field"><label class="field-label" for="protect">The 20% block I am putting on my calendar this week <span class="field-hint">day, time, and what happens in it</span></label><textarea id="protect" data-tiger="protect" placeholder="Mon–Thu 8:00–10:00am — lead generation only. No showings booked before 10."></textarea></div><div class="grid2"><div class="field"><label class="field-label" for="sign">Signed</label><input class="tiger-input" id="sign" data-tiger="sign" inputmode="text" placeholder="Your name"></div><div class="field"><label class="field-label" for="signdate">Date</label><input class="tiger-input" id="signdate" data-tiger="signdate" inputmode="text" placeholder="MM/DD/YYYY"></div></div></section>
+</div>
+
+<div class="actions"><div class="actions-in">
+  <span class="note"><i class="fa-solid fa-cloud"></i> Your answers save automatically to your account — pick up on any device.</span>
+  <button class="btn btn-ghost" data-tiger-action="txt"><i class="fa-solid fa-list"></i> Download list</button>
+  <button class="btn btn-ghost" data-tiger-action="pdf"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
+  <button class="btn btn-ghost" data-tiger-action="reset"><i class="fa-solid fa-eraser"></i> Clear</button>
+  <button class="btn btn-primary" data-tiger-action="complete"><i class="fa-solid fa-check"></i> Mark complete</button>
+</div></div>
+
+</main>
+
+<script src="hub-data.js"></script>
+<script src="mrea-nav.js"></script>
+<script src="yrl-tiger.js"></script>
+<script src="mrea-kit.js"></script>
+<script>
+
+(function(){
+  var K=MREA, N=10, host=K.$('auditRows');
+  var seed=[['Lead generation calls / follow-up','','20'],['Listing appointments','','20'],
+            ['Marketing my listings','','20'],['Showings','','80'],['Contract & paperwork','','80'],
+            ['Email / phone admin','','80'],['','',''],['','',''],['','',''],['','','']];
+  for(var i=1;i<=N;i++){
+    var s=seed[i-1], tr=document.createElement('tr');
+    tr.innerHTML='<td><input class="tiger-input" id="a'+i+'n" data-tiger="a'+i+'n" placeholder="'+(s[0]||'Activity')+'"></td>'+
+      '<td class="num" style="width:88px"><input class="tiger-input" id="a'+i+'h" data-tiger="a'+i+'h" inputmode="decimal" placeholder="0"></td>'+
+      '<td style="width:132px"><select class="tiger-input" id="a'+i+'t" data-tiger="a'+i+'t">'+
+      '<option value="">—</option><option value="20">20% (pays)</option><option value="80">80% (support)</option></select></td>';
+    host.appendChild(tr);
+  }
+  function paint(){
+    var tot=0,t20=0;
+    for(var i=1;i<=N;i++){
+      var h=K.nval('a'+i+'h'), t=K.val('a'+i+'t');
+      if(h>0){tot+=h; if(t==='20')t20+=h;}
+    }
+    var pct = tot>0 ? Math.round(t20/tot*100) : 0;
+    K.stat('stHours', K.cnt(tot,1), 'Hours logged', tot>55?'a long week':'');
+    K.stat('st20', K.cnt(t20,1), 'Hours on the 20%', pct+'% of your week');
+    K.stat('st80', K.cnt(tot-t20,1), 'Hours on the 80%', (100-pct)+'% of your week');
+    var h=K.$('pct20'); if(h) h.value=pct;
+    if(tot<=0){ K.verdict('aVerdict','', 'Fill in last week', ['Add hours and tag each row to grade the week.']); return; }
+    var c,copy;
+    if(pct>=40){c='ok';copy=[''+pct+'% of your week paid you','That is a strong ratio and rarer than you&#x27;d think. Protect it — the usual failure mode from here is letting servicing quietly eat the block back. Put the 20% on the calendar before anything else claims the time.'];}
+    else if(pct>=25){c='warn';copy=[''+pct+'% of your week paid you','Workable, but there is real money in the gap. Look at your 80% rows: the ones that repeat every week are the ones worth writing into a system or handing to admin help first.'];}
+    else if(pct>=12){c='warn';copy=['Only '+pct+'% of your week paid you','This is the most common result and it is exactly what a plateau looks like from the inside. You are not lazy — you are busy on the wrong things. Start by moving one hour a day from the 80% into lead generation.'];}
+    else {c='bad';copy=['Just '+pct+'% of your week paid you','Almost your entire week is going to work that only exists because you already had business. That is a treadmill: when the current pipeline closes, nothing replaces it. Cut or delegate two rows below, this week, and defend one daily block.'];}
+    K.verdict('aVerdict', c, copy[0], [copy[1]]);
+    K.publish({week_hours:K.round(tot,1), week_pct20:pct});
+  }
+  var ids=[]; for(var j=1;j<=N;j++){ids.push('a'+j+'h');ids.push('a'+j+'t');}
+  K.bind(ids, paint);
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buyer Closing Scripts — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --red: #c03926; --red-light: #d94a35; --red-dark: #9e2e1e;
+            --bg: #f2f4f7; --surface: #ffffff; --surface-2: #f7f8fa; --surface-3: #eef0f3;
+            --border: #e2e5ea; --text: #1a1d22; --text-sec: #5a6270; --text-muted: #9ca3af;
+            --radius: 12px; --radius-lg: 20px; --shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+        a { text-decoration: none; color: inherit; }
+
+        .sub-header {
+            background: linear-gradient(150deg, #a82f1e 0%, #c03926 45%, #9e2e1e 100%);
+            padding: 28px 20px; border-bottom: 4px solid rgba(0,0,0,0.15);
+            position: relative; overflow: hidden;
+        }
+        .sub-header::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
+            background-size: 28px 28px; pointer-events: none;
+        }
+        .sub-header-inner {
+            max-width: 800px; margin: 0 auto; display: flex; align-items: center;
+            justify-content: space-between; position: relative; z-index: 1;
+        }
+        .sub-header-left { display: flex; align-items: center; gap: 20px; }
+        .sub-header-logo { max-width: 100px; background: #fff; border-radius: 10px; padding: 8px 14px; box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
+        .sub-header-text h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(24px, 5vw, 36px); letter-spacing: 2px; color: #fff; line-height: 1; }
+        .sub-header-text p { color: rgba(255,255,255,0.7); font-size: 13px; margin-top: 4px; }
+        .back-btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35);
+            color: #fff; padding: 9px 18px; border-radius: 100px; font-size: 12.5px;
+            font-weight: 600; transition: all 0.2s; white-space: nowrap;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .main { max-width: 800px; margin: 0 auto; padding: 40px 20px 90px; }
+
+        .intro-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); padding: 28px 32px; margin-bottom: 32px;
+        }
+        .intro-card h2 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .intro-card p { font-size: 14px; color: var(--text-sec); line-height: 1.7; }
+
+        .script-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); margin-bottom: 20px; overflow: hidden;
+            transition: border-color 0.2s;
+        }
+        .script-card:hover { border-color: rgba(192,57,38,0.3); }
+
+        .script-card-header {
+            padding: 20px 28px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 16px;
+        }
+        .script-card-num {
+            width: 44px; height: 44px; min-width: 44px;
+            background: var(--red); color: #fff; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Bebas Neue', sans-serif; font-size: 22px;
+        }
+        .script-card-meta h3 { font-size: 17px; font-weight: 700; }
+        .script-card-meta p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+        .script-card-body { padding: 24px 28px; }
+
+        .say {
+            background: rgba(192,57,38,0.04); border-left: 3px solid var(--red);
+            padding: 16px 20px; border-radius: 0 8px 8px 0;
+            font-size: 15px; line-height: 1.85; color: var(--text);
+        }
+        .tip {
+            margin-top: 14px; font-size: 13px; color: var(--text-muted);
+            font-style: italic; padding-left: 18px;
+            border-left: 2px solid var(--surface-3);
+        }
+
+        .when-tag {
+            display: inline-block; background: rgba(192,57,38,0.08); color: var(--red);
+            font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 100px;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
+        .footer {
+            text-align: center; padding: 40px 20px 32px; color: var(--text-muted); font-size: 12px;
+        }
+        .footer-logo { max-width: 130px; margin: 0 auto 14px; opacity: 0.5; }
+
+        @media (max-width: 600px) {
+            .sub-header-inner { flex-direction: column; gap: 16px; text-align: center; }
+            .sub-header-left { flex-direction: column; }
+            .script-card-body { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="sub-header">
+    <div class="sub-header-inner">
+        <div class="sub-header-left">
+            <img src="https://wdvolamasztetwpitbwg.supabase.co/storage/v1/object/public/hub-files/brand/yrl-logo-color.png"
+                 alt="Your Realty Link" class="sub-header-logo">
+            <div class="sub-header-text">
+                <h1>Buyer Closing Scripts</h1>
+                <p>7 proven approaches to get the buyer compensation agreement signed</p>
+            </div>
+        </div>
+        <a href="yrl-client-buyers.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Buyer Tools</a>
+    </div>
+</header>
+
+<main class="main">
+
+    <div class="intro-card">
+        <h2>Getting the Agreement Signed</h2>
+        <p>After you've explained the buying process, walked through the compensation agreement, and answered their questions, it's time to ask for the commitment. Choose the closing approach that fits the moment. You don't need all seven &mdash; pick the one that matches the conversation and the buyer's personality.</p>
+    </div>
+
+    <!-- Close 1 -->
+    <div class="script-card">
+        <div class="script-card-header">
+            <div class="script-card-num">1</div>
+            <div class="script-card-meta">
+                <h3>The Protection Close</h3>
+                <p><span class="when-tag">Best for: Cautious buyers</span></p>
+            </div>
+        </div>
+        <div class="script-card-body">
+            <div class="say">
+                Here's the way I see it &mdash; you're about to make the biggest purchase of your life. You wouldn't buy a car without a mechanic checking it out. You wouldn't sign a contract without a lawyer reviewing it. So why would you buy a home without someone whose only job is to protect your interests?
+                <br><br>
+                That's what I do. Go ahead and let me represent you &mdash; I'll make sure you're protected every step of the way.
+            </div>
+        </div>
+    </div>
+
+    <!-- Close 2 -->
+    <div class="script-card">
+        <div class="script-card-header">
+            <div class="script-card-num">2</div>
+            <div class="script-card-meta">
+                <h3>The Market Reality Close</h3>
+                <p><span class="when-tag">Best for: Competitive markets</span></p>
+            </div>
+        </div>
+        <div class="script-card-body">
+            <div class="say">
+                Here's what's happening in <em>[target area]</em> right now &mdash; good homes are going under contract within days, sometimes with multiple offers. Buyers who aren't prepared lose out. By signing the agreement today, we're ready to move the moment the right home hits the market.
+                <br><br>
+                You won't be scrambling to get paperwork done while another buyer takes your home. Let's get you ready now so you don't miss out.
+            </div>
+            <div class="tip">Reference specific market stats if you have them &mdash; "The last three homes in Carmel under $400K went pending in less than a week."</div>
+        </div>
+    </div>
+
+    <!-- Close 3 -->
+    <div class="script-card">
+        <div class="script-card-header">
+            <div class="script-card-num">3</div>
+            <div class="script-card-meta">
+                <h3>The Value Close</h3>
+                <p><span class="when-tag">Best for: Price-conscious buyers</span></p>
+            </div>
+        </div>
+        <div class="script-card-body">
+            <div class="say">
+                I know compensation is on your mind, so let me put it in perspective. The average buyer agent saves their client between 5% and 10% off the asking price through skilled negotiation. On a $350,000 home, that's $17,000 to $35,000. My compensation is a fraction of that.
+                <br><br>
+                So even in the rare case where the seller doesn't cover my fee, you're still coming out ahead &mdash; often by tens of thousands of dollars. Hiring me isn't a cost. It's an investment that pays for itself.
+            </div>
+        </div>
+    </div>
+
+    <!-- Close 4 -->
+    <div class="script-card">
+        <div class="script-card-header">
+            <div class="script-card-num">4</div>
+            <div class="script-card-meta">
+                <h3>The Transparency Close</h3>
+                <p><span class="when-tag">Best for: Skeptical buyers</span></p>
+            </div>
+        </div>
+        <div class="script-card-body">
+            <div class="say">
+                I want to be completely transparent with you. This agreement isn't something I invented &mdash; it's required for every buyer agent in Indiana. The reason it exists is to protect you. It puts in writing exactly what I'll do for you and exactly what it costs. No surprises, no hidden fees.
+                <br><br>
+                Everything is right here in black and white. That's actually a good thing, isn't it? Let's go through it together and get you started.
+            </div>
+            <div class="tip">Hand them the agreement as you say this. Pen in hand. Confidence matters.</div>
+        </div>
+    </div>
+
+    <!-- Close 5 -->
+    <div class="script-card">
+        <div class="script-card-header">
+            <div class="script-card-num">5</div>
+            <div class="script-card-meta">
+                <h3>The Team Advantage Close</h3>
+                <p><span class="when-tag">Best for: Buyers comparing agents</span></p>
+            </div>
+        </div>
+        <div class="script-card-body">
+            <div class="say">
+                When you sign with me, you're not just getting one agent &mdash; you're getting the entire Your Realty Link team working to find your home. Every agent on our team shares listings, shares leads, and shares opportunities.
+                <br><br>
+                That means more eyes looking for your perfect home, more connections to hear about coming-soon properties, and more experienced agents in your corner. Why work with one agent when you can have a whole team?
+            </div>
+        </div>
+    </div>
+
+    <!-- Close 6 -->
+    <div class="script-card">
+        <div class="script-card-header">
+            <div class="script-card-num">6</div>
+            <div class="script-card-meta">
+                <h3>The No-Pressure Close</h3>
+                <p><span class="when-tag">Best for: Hesitant buyers</span></p>
+            </div>
+        </div>
+        <div class="script-card-body">
+            <div class="say">
+                I'm not here to pressure you into anything. My job is to make sure you have the information you need to make a great decision. You've told me you want to buy a home in <em>[target area]</em>. I've shown you how I can help you do that.
+                <br><br>
+                The agreement is straightforward &mdash; it outlines what I do for you and how I'm compensated. If at any point you feel like I'm not delivering, we can talk about it. But I think once we start working together, you'll see exactly why my clients trust me with their biggest investment.
+            </div>
+            <div class="tip">Follow with a pause. Then: "So &mdash; are you ready to get started?" Silence after this is your friend.</div>
+        </div>
+    </div>
+
+    <!-- Close 7 -->
+    <div class="script-card">
+        <div class="script-card-header">
+            <div class="script-card-num">7</div>
+            <div class="script-card-meta">
+                <h3>The Dream Close</h3>
+                <p><span class="when-tag">Best for: Emotionally motivated buyers</span></p>
+            </div>
+        </div>
+        <div class="script-card-body">
+            <div class="say">
+                So, you told me you're looking for <em>[reference their specific needs &mdash; backyard for the kids, closer to work, first home together]</em>. All we need to do now is sign the agreement so I can start making that happen.
+                <br><br>
+                I've already got a few properties in mind that I think you're going to love. Let's get you into your new home.
+            </div>
+            <div class="tip">This is the most powerful close because it connects the signature to their personal motivation. Use their own words from the pre-qualifying call. Reference what they told you they wanted and tie the agreement to making it real.</div>
+        </div>
+    </div>
+
+    <!-- Pro Tips -->
+    <div class="intro-card" style="margin-top: 32px; border-color: rgba(192,57,38,0.2); background: rgba(192,57,38,0.02);">
+        <h2 style="color: var(--red);"><i class="fa-solid fa-lightbulb"></i> &nbsp;Pro Tips</h2>
+        <ul style="font-size: 14px; color: var(--text-sec); line-height: 2; padding-left: 20px; margin-top: 12px;">
+            <li>After you deliver a closing line, <strong>be quiet</strong>. The first person who speaks loses.</li>
+            <li>Have the agreement printed and ready before the consultation starts. Pen on the table.</li>
+            <li>If they object, use the <a href="yrl-buyer-objections.html" style="color:var(--red);font-weight:600;">Buyer Objection Handlers</a> and then close again with a different script.</li>
+            <li>Always tie back to their motivation &mdash; the "why" they told you during the pre-qualifying call.</li>
+            <li>The buyer compensation agreement is required by law. You're not asking for a favor &mdash; you're completing a necessary step. Be confident.</li>
+            <li>Practice these scripts until they feel natural. The words should be yours, not memorized lines.</li>
+        </ul>
+    </div>
+
+</main>
+
+<footer class="footer">
+    <img src="https://wdvolamasztetwpitbwg.supabase.co/storage/v1/object/public/hub-files/brand/yrl-logo-color.png"
+         alt="Your Realty Link" class="footer-logo" onerror="this.style.display='none'">
+    <p>&copy; 2026 Your Realty Link &nbsp;&middot;&nbsp; All Rights Reserved</p>
+</footer>
+
+</body>
+</html>

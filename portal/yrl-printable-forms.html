@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Printable Forms — Your Realty Link</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="portal-auth.js"></script>
+<link rel="stylesheet" href="yrl-copy-lib.css">
+<style>
+  /* ── the printable sheet ── */
+  .sheet{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);
+         padding:30px 34px;margin:0 0 26px;max-width:820px}
+  .sheet-hd{display:flex;align-items:flex-start;gap:16px;border-bottom:2px solid var(--red);padding-bottom:13px;margin-bottom:18px}
+  .sheet-hd .t{flex:1}
+  .sheet-hd h2{font-family:'Bebas Neue',sans-serif;font-size:27px;letter-spacing:1.1px;line-height:1;color:var(--text)}
+  .sheet-hd .sub{font-size:12px;color:var(--text-muted);margin-top:3px}
+  .sheet-hd .brand{text-align:right;font-size:11px;line-height:1.5;color:var(--text-sec);flex:none}
+  .sheet-hd .brand b{display:block;font-size:13px;color:var(--red);font-weight:800}
+  @media screen and (max-width:560px){ .sheet{padding:20px 16px} .sheet-hd{flex-wrap:wrap} .sheet-hd .brand{text-align:left} }
+
+  .grp{margin:0 0 18px}
+  .grp > h3{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--red);font-weight:800;
+            border-bottom:1px solid var(--border);padding-bottom:5px;margin-bottom:11px}
+  .row{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:11px}
+  .fld{flex:1;min-width:150px}
+  .fld label{display:block;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-sec);margin-bottom:3px}
+  .fld .line{border-bottom:1px solid #b9bfc8;height:22px}
+  .fld .line.tall{height:44px}
+  .fld .line.xtall{height:74px}
+  .fld .hint{font-size:10px;color:var(--text-muted);margin-top:2px;display:block}
+
+  .boxes{display:flex;flex-wrap:wrap;gap:9px 18px;margin-top:2px}
+  .boxes span{font-size:12px;color:#2b3138;display:inline-flex;align-items:center;gap:6px}
+  .boxes span:before{content:'';width:12px;height:12px;border:1.5px solid #8b939e;border-radius:3px;display:inline-block;flex:none}
+
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .rank{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px dotted #d8dde3}
+  .rank:last-child{border-bottom:none}
+  .rank .num{flex:none;width:20px;font-size:11px;font-weight:800;color:var(--red)}
+  .rank .ln{flex:1;border-bottom:1px solid #b9bfc8;height:19px}
+
+  .foot{border-top:1px solid var(--border);margin-top:20px;padding-top:11px;font-size:10px;color:var(--text-muted);line-height:1.55}
+  .foot b{color:var(--text-sec)}
+
+  .printbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 14px}
+  .btn-print{display:inline-flex;align-items:center;gap:8px;background:var(--red);color:#fff;border:none;border-radius:9px;
+             padding:10px 17px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+  .btn-print:hover{background:var(--red-dark)}
+  .printnote{font-size:12px;color:var(--text-muted)}
+
+  @media print{
+    .page-header,.jump,.rules,.printbar,.printnote,.tip{display:none !important}
+    body{background:#fff}
+    .wrap{padding:0;max-width:none}
+    .sheet{border:none;box-shadow:none;padding:0;margin:0;max-width:none;page-break-after:always}
+    .sheet:last-of-type{page-break-after:auto}
+    .grp{margin-bottom:14px}
+  }
+  @page{margin:14mm}
+</style>
+<link rel="stylesheet" href="hub-theme.css?v=20260903b"><script src="hub-brand.js" defer></script>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="header-inner">
+    <a href="yrl-marketing.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Marketing</a>
+    <div class="header-title">
+      <h1><i class="fa-solid fa-clipboard-list" style="font-size:.8em;opacity:.9"></i> Printable Forms</h1>
+      <p>Print, clip to a board, fill in by hand — the two you'll use most</p>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="jump">
+    <a href="#wishlist">Buyer Wishlist</a>
+    <a href="#feature-sheet">Property Feature Sheet</a>
+  </div>
+
+  <div class="rules">
+    <h3><i class="fa-solid fa-triangle-exclamation"></i> Using these</h3>
+    <ul>
+      <li><b>Fair housing — the wishlist.</b> Write down what the buyer tells you they want. Do not suggest or steer toward areas based on who lives there, and don't answer "what's the neighborhood like?" with anything about people. Point them at public data — schools, crime statistics, census — and let them draw their own conclusions.</li>
+      <li><b>Schools.</b> Record the district the buyer names. Don't rate schools or advise which are "good" — direct them to the Indiana Department of Education and the school corporation.</li>
+      <li><b>The feature sheet is marketing, not a disclosure.</b> Everything on it must be accurate and verifiable. Square footage, year built, taxes and school assignment come from public record or the seller's disclosure — never from memory or a guess.</li>
+      <li><b>Never state a commission</b> on a feature sheet or anywhere else.</li>
+      <li>Print at 100% scale. Both sheets are designed to fit one page each.</li>
+    </ul>
+  </div>
+
+  <!-- ══════════════ BUYER WISHLIST ══════════════ -->
+  <h2 style="font-family:'Bebas Neue';font-size:22px;letter-spacing:1px;margin:0 0 4px" id="wishlist">Buyer Wishlist — First Meeting</h2>
+  <p style="font-size:13px;color:var(--text-sec);margin:0 0 12px;max-width:70ch">Fill this in <b>with</b> the buyer, not for them. The must-have versus nice-to-have split is the part that saves you six weekends of showings — make them choose.</p>
+  <div class="printbar">
+    <button class="btn-print" onclick="window.print()"><i class="fa-solid fa-print"></i> Print both sheets</button>
+    <span class="printnote">Prints as two separate pages</span>
+  </div>
+
+  <div class="sheet">
+    <div class="sheet-hd">
+      <div class="t">
+        <h2>Buyer Wishlist</h2>
+        <div class="sub">First meeting worksheet · complete together</div>
+      </div>
+      <div class="brand"><b>YOUR REALTY LINK</b>
+        Agent: ______________________<br>
+        Phone: ______________________<br>
+        Date: _______________________</div>
+    </div>
+
+    <div class="grp">
+      <h3>Who</h3>
+      <div class="row">
+        <div class="fld"><label>Name(s)</label><div class="line"></div></div>
+        <div class="fld"><label>Best phone</label><div class="line"></div></div>
+      </div>
+      <div class="row">
+        <div class="fld"><label>Email</label><div class="line"></div></div>
+        <div class="fld"><label>Current address</label><div class="line"></div></div>
+      </div>
+      <div class="row">
+        <div class="fld"><label>Currently</label>
+          <div class="boxes"><span>Renting</span><span>Own — must sell first</span><span>Own — keeping it</span><span>Other</span></div></div>
+      </div>
+    </div>
+
+    <div class="grp">
+      <h3>Timing &amp; Money</h3>
+      <div class="row">
+        <div class="fld"><label>Need to be in by</label><div class="line"></div></div>
+        <div class="fld"><label>What's driving that date?</label><div class="line"></div></div>
+      </div>
+      <div class="row">
+        <div class="fld"><label>Pre-approved?</label>
+          <div class="boxes"><span>Yes — letter on file</span><span>In progress</span><span>Not yet</span><span>Cash</span></div></div>
+      </div>
+      <div class="row">
+        <div class="fld"><label>Lender &amp; loan officer</label><div class="line"></div></div>
+        <div class="fld"><label>Loan type</label>
+          <div class="boxes"><span>Conv</span><span>FHA</span><span>VA</span><span>USDA</span><span>Other</span></div></div>
+      </div>
+      <div class="row">
+        <div class="fld"><label>Price range</label><div class="line"></div></div>
+        <div class="fld"><label>Comfortable monthly payment</label><div class="line"></div><span class="hint">Often the more useful number of the two</span></div>
+      </div>
+      <div class="row">
+        <div class="fld"><label>Funds available for down payment &amp; closing</label><div class="line"></div></div>
+      </div>
+    </div>
+
+    <div class="grp">
+      <h3>The Home</h3>
+      <div class="row">
+        <div class="fld"><label>Bedrooms</label><div class="line"></div></div>
+        <div class="fld"><label>Bathrooms</label><div class="line"></div></div>
+        <div class="fld"><label>Min. square feet</label><div class="line"></div></div>
+        <div class="fld"><label>Garage</label><div class="line"></div></div>
+      </div>
+      <div class="row">
+        <div class="fld"><label>Style</label>
+          <div class="boxes"><span>Ranch</span><span>Two-story</span><span>Split</span><span>New build</span><span>Historic</span><span>Condo/Twin</span><span>No preference</span></div></div>
+      </div>
+      <div class="row">
+        <div class="fld"><label>Condition</label>
+          <div class="boxes"><span>Move-in ready</span><span>Minor updates OK</span><span>Happy to renovate</span></div></div>
+      </div>
+      <div class="row">
+        <div class="fld"><label>Lot / outdoor</label><div class="line"></div><span class="hint">Fenced yard, acreage, no yard work, water, wooded…</span></div>
+      </div>
+    </div>
+
+    <div class="grp">
+      <h3>Where</h3>
+      <div class="row">
+        <div class="fld"><label>Areas or towns the buyer is interested in</label><div class="line"></div><span class="hint">Record what they tell you</span></div>
+      </div>
+      <div class="row">
+        <div class="fld"><label>School district (if buyer specifies)</label><div class="line"></div></div>
+        <div class="fld"><label>Commute to</label><div class="line"></div><span class="hint">And acceptable drive time</span></div>
+      </div>
+    </div>
+
+    <div class="grp">
+      <h3>Must Have vs Nice to Have</h3>
+      <p style="font-size:11px;color:var(--text-muted);margin:-4px 0 9px">Only five each. If everything is a must-have, nothing is.</p>
+      <div class="two">
+        <div>
+          <div style="font-size:11px;font-weight:800;color:var(--red);margin-bottom:5px">MUST HAVE — won't buy without</div>
+          <div class="rank"><span class="num">1</span><span class="ln"></span></div>
+          <div class="rank"><span class="num">2</span><span class="ln"></span></div>
+          <div class="rank"><span class="num">3</span><span class="ln"></span></div>
+          <div class="rank"><span class="num">4</span><span class="ln"></span></div>
+          <div class="rank"><span class="num">5</span><span class="ln"></span></div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:800;color:var(--text-sec);margin-bottom:5px">NICE TO HAVE — would love, could live without</div>
+          <div class="rank"><span class="num">1</span><span class="ln"></span></div>
+          <div class="rank"><span class="num">2</span><span class="ln"></span></div>
+          <div class="rank"><span class="num">3</span><span class="ln"></span></div>
+          <div class="rank"><span class="num">4</span><span class="ln"></span></div>
+          <div class="rank"><span class="num">5</span><span class="ln"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grp">
+      <h3>Dealbreakers &amp; Notes</h3>
+      <div class="row">
+        <div class="fld"><label>Absolute dealbreakers</label><div class="line tall"></div><span class="hint">Busy road, stairs, septic, HOA, pool, flood zone…</span></div>
+      </div>
+      <div class="row">
+        <div class="fld"><label>Anything else I should know</label><div class="line tall"></div></div>
+      </div>
+      <div class="row">
+        <div class="fld"><label>Buyer representation agreement signed</label>
+          <div class="boxes"><span>Yes — date: ____________</span><span>Scheduled: ____________</span></div>
+          <span class="hint">Required in writing before touring homes</span></div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <b>Your Realty Link</b> · 2302 E Southport Rd, Indianapolis IN 46227 · 317-997-7404 · yourrealtylink.com<br>
+      Equal Housing Opportunity. Areas and schools recorded as stated by the buyer. Your Realty Link does not advise on the desirability of any area or school; buyers are encouraged to consult public data sources and visit in person.
+    </div>
+  </div>
+
+  <div class="tip"><b>The five-and-five limit is the whole point of this form.</b> A buyer who has ranked their must-haves stops asking to see homes that don't have them — and when the right one appears, they recognise it, because they wrote down what it looked like.</div>
+
+  <!-- ══════════════ FEATURE SHEET ══════════════ -->
+  <h2 style="font-family:'Bebas Neue';font-size:22px;letter-spacing:1px;margin:34px 0 4px" id="feature-sheet">Property Feature Sheet</h2>
+  <p style="font-size:13px;color:var(--text-sec);margin:0 0 12px;max-width:70ch">For the kitchen counter at an open house, the flyer box, and the home book. Fill it in and print, or print blank and write on it. <b>Everything on it has to be verifiable.</b></p>
+  <div class="printbar">
+    <button class="btn-print" onclick="window.print()"><i class="fa-solid fa-print"></i> Print both sheets</button>
+    <span class="printnote">Take the filled copy to Canva if you want it branded</span>
+  </div>
+
+  <div class="sheet">
+    <div class="sheet-hd">
+      <div class="t">
+        <h2>Property Details</h2>
+        <div class="sub">Address: ______________________________________________</div>
+      </div>
+      <div class="brand"><b>YOUR REALTY LINK</b>
+        Listed by: ___________________<br>
+        Phone: ______________________<br>
+        MLS #: ______________________</div>
+    </div>
+
+    <div class="grp">
+      <h3>The Basics</h3>
+      <div class="row">
+        <div class="fld"><label>Price</label><div class="line"></div></div>
+        <div class="fld"><label>Bedrooms</label><div class="line"></div></div>
+        <div class="fld"><label>Full baths</label><div class="line"></div></div>
+        <div class="fld"><label>Half baths</label><div class="line"></div></div>
+      </div>
+      <div class="row">
+        <div class="fld"><label>Finished sq ft</label><div class="line"></div><span class="hint">Per public record</span></div>
+        <div class="fld"><label>Year built</label><div class="line"></div></div>
+        <div class="fld"><label>Lot size</label><div class="line"></div></div>
+        <div class="fld"><label>Garage</label><div class="line"></div></div>
+      </div>
+      <div class="row">
+        <div class="fld"><label>Annual taxes</label><div class="line"></div><span class="hint">Per county record — note exemptions</span></div>
+        <div class="fld"><label>HOA &amp; dues</label><div class="line"></div></div>
+        <div class="fld"><label>County / township</label><div class="line"></div></div>
+      </div>
+      <div class="row">
+        <div class="fld"><label>School corporation</label><div class="line"></div><span class="hint">As assigned by the district — buyers should verify</span></div>
+      </div>
+    </div>
+
+    <div class="grp">
+      <h3>Systems &amp; Ages</h3>
+      <div class="row">
+        <div class="fld"><label>Roof</label><div class="line"></div></div>
+        <div class="fld"><label>Furnace</label><div class="line"></div></div>
+        <div class="fld"><label>A/C</label><div class="line"></div></div>
+        <div class="fld"><label>Water heater</label><div class="line"></div></div>
+      </div>
+      <div class="row">
+        <div class="fld"><label>Water</label>
+          <div class="boxes"><span>City</span><span>Well</span></div></div>
+        <div class="fld"><label>Sewer</label>
+          <div class="boxes"><span>City</span><span>Septic</span></div></div>
+        <div class="fld"><label>Heat source</label><div class="line"></div></div>
+      </div>
+    </div>
+
+    <div class="grp">
+      <h3>What Makes It Special</h3>
+      <p style="font-size:11px;color:var(--text-muted);margin:-4px 0 9px">Six features, best first. Describe the home — never the neighbors.</p>
+      <div class="rank"><span class="num">1</span><span class="ln"></span></div>
+      <div class="rank"><span class="num">2</span><span class="ln"></span></div>
+      <div class="rank"><span class="num">3</span><span class="ln"></span></div>
+      <div class="rank"><span class="num">4</span><span class="ln"></span></div>
+      <div class="rank"><span class="num">5</span><span class="ln"></span></div>
+      <div class="rank"><span class="num">6</span><span class="ln"></span></div>
+    </div>
+
+    <div class="grp">
+      <h3>Recent Updates</h3>
+      <div class="row">
+        <div class="fld"><label>What &amp; when</label><div class="line xtall"></div><span class="hint">Dates matter to buyers — "kitchen 2023" beats "updated kitchen"</span></div>
+      </div>
+    </div>
+
+    <div class="grp">
+      <h3>Showings &amp; Offers</h3>
+      <div class="row">
+        <div class="fld"><label>Showing instructions</label><div class="line"></div></div>
+        <div class="fld"><label>Possession</label><div class="line"></div></div>
+      </div>
+      <div class="row">
+        <div class="fld"><label>Offer deadline (if any)</label><div class="line"></div></div>
+        <div class="fld"><label>Included / excluded items</label><div class="line"></div></div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <b>Your Realty Link</b> · 2302 E Southport Rd, Indianapolis IN 46227 · 317-997-7404 · yourrealtylink.com<br>
+      Information deemed reliable but not guaranteed. Square footage, taxes, lot size and school assignment are from public record and should be independently verified by the buyer. Equal Housing Opportunity.
+    </div>
+  </div>
+
+  <div class="tip"><b>Put a sign-in prompt on the counter next to it.</b> The feature sheet is what visitors take away — the sign-in is what you take away. One without the other is half an open house. <a class="mrea-link" href="yrl-mrea-3-6-listing-engine.html" style="margin:0">The listing lead-capture checklist →</a></div>
+
+</div>
+
+<script src="yrl-copy-lib.js"></script>
+</body>
+</html>

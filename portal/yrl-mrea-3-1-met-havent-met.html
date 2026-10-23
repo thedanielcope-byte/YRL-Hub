@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>MREA 3.1 · Met vs Haven&#x27;t Met — Your Realty Link</title>
+<script src="portal-auth.js"></script>
+<script src="embed-mode.js?v=20260927b"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="tiger-shell.css?v=20260927b">
+<link rel="stylesheet" href="tiger-module.css">
+<link rel="stylesheet" href="mrea-module.css">
+</head>
+<body class="tiger-shell mrea-shell" data-tiger-module="3.1" data-tiger-title="Met vs Haven&#x27;t Met" data-tiger-ns="mrea" data-tiger-program="Millionaire Agent Path">
+
+<button class="tiger-menu-btn" id="tigerMenuBtn" aria-label="Modules"><i class="fa-solid fa-bars"></i></button>
+<aside class="tiger-side" id="tigerSide"></aside>
+<div class="tiger-backdrop" id="tigerBackdrop"></div>
+
+<main class="tiger-main">
+
+<div class="reader-topbar">
+  <div class="prog">
+    <div class="track"><i id="tigerProgressBar"></i></div>
+    <div class="prog-lbl" id="tigerProgressLabel">0% complete</div>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn btn-ghost" data-tiger-action="pdf"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
+  <button class="btn btn-primary" data-tiger-action="save"><i class="fa-solid fa-floppy-disk"></i> <span>Save</span></button>
+</div>
+
+<header class="reader-head">
+  <p class="reader-eyebrow">Phase 3 · Module 3.1 <span class="chip">Worksheet</span></p>
+  <h1 class="reader-title">Met vs Haven&#x27;t Met</h1>
+  <p class="reader-lede">Before you can run a touch program you have to know who you&#x27;re running it on. This is the sorting exercise — two buckets, one honest count, and a plan for the gap between what you have and what your income requires.</p>
+  <p class="reader-who">Worksheet for <b data-tiger-name>Agent</b> · <span data-tiger-date></span> · saves automatically as you type</p>
+</header>
+
+<div class="print-only" style="text-align:center;margin:0 0 6px">
+  <strong>YOUR REALTY LINK · THE MILLIONAIRE AGENT PATH</strong> — Module 3.1: Met vs Haven&#x27;t Met
+</div>
+
+<div class="reader-body">
+<section class="card"><h2><span class="n">01</span>Two buckets, that&#x27;s all</h2><p class="teach"><b>Met</b> is anyone who would recognise your name — past clients, sphere, people you&#x27;ve spoken with on the phone, anyone you&#x27;ve actually met. They produce repeat and referral business, which is the cheapest business there is.</p><p class="teach"><b>Haven&#x27;t Met</b> is a chosen audience that doesn&#x27;t know you yet — a geographic farm, a neighbourhood, a demographic list. They produce new business. It costs more per sale, but it scales without consuming your hours.</p><div class="callout">A cold form-fill that never turned into a conversation is <b>Haven&#x27;t Met</b>, no matter how it arrived. The test is simple: would they recognise your name? If not, they haven&#x27;t met you.</div></section>
+<section class="card"><h2><span class="n">02</span>Count what you actually have</h2><p class="sub">Open the CRM and count. Estimating here defeats the entire point.</p><p class="teach" style="margin-bottom:4px"><b>Met</b></p><div class="grid2"><div class="field"><label class="field-label" for="c_past">Past clients</label><input class="tiger-input" id="c_past" data-tiger="c_past" inputmode="numeric" placeholder="45"></div><div class="field"><label class="field-label" for="c_sphere">Sphere — friends, family, neighbours</label><input class="tiger-input" id="c_sphere" data-tiger="c_sphere" inputmode="numeric" placeholder="110"></div></div><div class="grid2"><div class="field"><label class="field-label" for="c_spoken">Leads I&amp;#x27;ve actually spoken with</label><input class="tiger-input" id="c_spoken" data-tiger="c_spoken" inputmode="numeric" placeholder="60"></div><div class="field"><label class="field-label" for="c_allied">Allied resources <span class="field-hint">lenders, title, inspectors, contractors, agents</span></label><input class="tiger-input" id="c_allied" data-tiger="c_allied" inputmode="numeric" placeholder="20"></div></div><p class="teach" style="margin:18px 0 4px"><b>Haven&#x27;t Met</b></p><div class="grid2"><div class="field"><label class="field-label" for="c_farm">Geographic farm addresses</label><input class="tiger-input" id="c_farm" data-tiger="c_farm" inputmode="numeric" placeholder="0"></div><div class="field"><label class="field-label" for="c_lists">Other lists I hold <span class="field-hint">demographic, absentee owner, expired, etc.</span></label><input class="tiger-input" id="c_lists" data-tiger="c_lists" inputmode="numeric" placeholder="0"></div></div><div class="grid2"><div class="field"><label class="field-label" for="c_goal_sides">Closed sides I need per year <span class="field-hint">from Module 2.1</span></label><input class="tiger-input" id="c_goal_sides" data-tiger="c_goal_sides" inputmode="numeric" placeholder="24"></div><div class="field"><label class="field-label" for="c_mix">% of that from the Met side</label><input class="tiger-input" id="c_mix" data-tiger="c_mix" inputmode="numeric" placeholder="50"></div></div></section>
+<section class="card"><h2><span class="n">03</span>Where you stand</h2><div class="mrea-stats"><div class="mrea-stat" id="stMetNow"></div><div class="mrea-stat" id="stHMNow"></div><div class="mrea-stat" id="stCapacity"></div><div class="mrea-stat hot" id="stGap"></div></div><div class="mrea-verdict" id="sVerdict"><p class="vt">What this means</p><h3 class="vh">Count your two buckets</h3><p class="vp">The gap between what you have and what you need is the plan.</p></div><input type="hidden" data-tiger="met_total" id="met_total"><input type="hidden" data-tiger="hm_total" id="hm_total"></section>
+<section class="card"><h2><span class="n">04</span>Tag it, then feed it</h2><p class="teach">A count is useless if it lives on this page. Get the tags into the CRM so the touch programs can actually target them — and so next quarter&#x27;s count takes thirty seconds instead of an afternoon.</p><div class="check"><input type="checkbox" id="t_met" data-tiger-check="t_met"><label for="t_met">Every contact tagged <b>met</b> or <b>havent-met</b> in the CRM</label></div><div class="check"><input type="checkbox" id="t_allied" data-tiger-check="t_allied"><label for="t_allied">Allied resources tagged separately — they get one-on-one contact, not just mail</label></div><div class="check"><input type="checkbox" id="t_referred" data-tiger-check="t_referred"><label for="t_referred">A <b>referred_by</b> field exists and gets filled in</label></div><div class="check"><input type="checkbox" id="t_dates" data-tiger-check="t_dates"><label for="t_dates">Birthday and home-purchase-anniversary fields populated</label></div><div class="check"><input type="checkbox" id="t_dupes" data-tiger-check="t_dupes"><label for="t_dupes">Duplicates merged and dead addresses removed</label></div><div class="tiger-list" data-list="met_forgot" data-list-title="People who should be in Met and aren&amp;#x27;t yet" data-min="6" data-placeholder="e.g. the buyers from the Greenwood closing last spring, my dentist, the couple from the Avon open house"></div><div class="field"><label class="field-label" for="met_plan">How I&amp;#x27;m closing the gap <span class="field-hint">name the mechanism, not the intention</span></label><textarea id="met_plan" data-tiger="met_plan" placeholder="Two names a day from open houses and closings; build a 2,000-home farm in Southport by November."></textarea></div><div class="grid2"><div class="field"><label class="field-label" for="sign">Signed</label><input class="tiger-input" id="sign" data-tiger="sign" inputmode="text" placeholder="Your name"></div><div class="field"><label class="field-label" for="signdate">Date</label><input class="tiger-input" id="signdate" data-tiger="signdate" inputmode="text" placeholder="MM/DD/YYYY"></div></div></section>
+</div>
+
+<div class="actions"><div class="actions-in">
+  <span class="note"><i class="fa-solid fa-cloud"></i> Your answers save automatically to your account — pick up on any device.</span>
+  <button class="btn btn-ghost" data-tiger-action="txt"><i class="fa-solid fa-list"></i> Download list</button>
+  <button class="btn btn-ghost" data-tiger-action="pdf"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
+  <button class="btn btn-ghost" data-tiger-action="reset"><i class="fa-solid fa-eraser"></i> Clear</button>
+  <button class="btn btn-primary" data-tiger-action="complete"><i class="fa-solid fa-check"></i> Mark complete</button>
+</div></div>
+
+</main>
+
+<script src="hub-data.js"></script>
+<script src="mrea-nav.js"></script>
+<script src="yrl-tiger.js"></script>
+<script src="mrea-kit.js"></script>
+<script>
+
+(function(){
+  var K=MREA;
+  function paint(){
+    var met=K.nval('c_past')+K.nval('c_sphere')+K.nval('c_spoken')+K.nval('c_allied');
+    var hm=K.nval('c_farm')+K.nval('c_lists');
+    var sides=K.nval('c_goal_sides'), mix=K.nval('c_mix')||50;
+    var capacity = (met/6) + (hm/50);
+    K.$('met_total').value=met; K.$('hm_total').value=hm;
+    K.stat('stMetNow', K.cnt(met,0), 'Met contacts', met>0?'worth ~'+K.cnt(met/6,1)+' sides/yr':'');
+    K.stat('stHMNow', K.cnt(hm,0), "Haven't Met", hm>0?'worth ~'+K.cnt(hm/50,1)+' sides/yr':'');
+    K.stat('stCapacity', K.cnt(capacity,1), 'Sides your database can produce', 'if worked properly');
+    if(!(sides>0)){
+      K.stat('stGap','—','Gap','enter your goal');
+      K.verdict('sVerdict','', met>0?'Now enter your goal':'Count your two buckets',
+        ['The gap between what you have and what you need is the plan.']);
+      return;
+    }
+    var gap=sides-capacity;
+    K.stat('stGap', gap>0?K.cnt(gap,1):'0', 'Sides short', gap>0?'from database size alone':'you have enough');
+    var metNeed=Math.ceil(sides*(mix/100)*6), hmNeed=Math.ceil(sides*(1-mix/100)*50);
+    var lines=[], c, head;
+    if(gap<=0){
+      c='ok'; head='Your database is big enough';
+      lines.push('At '+K.cnt(met,0)+' Met and '+K.cnt(hm,0)+" Haven't Met, worked properly, this database supports about <b>"+K.cnt(capacity,1)+' sides</b> against a goal of '+K.cnt(sides,0)+'.');
+      lines.push('So if the closings are not appearing, size is not your problem — <b>frequency</b> is. Nothing here produces anything until it is on a touch schedule. Go to <b>Module 3.3</b>.');
+    } else {
+      c = gap>sides*0.5 ? 'bad' : 'warn';
+      head = K.cnt(gap,1)+' sides short on database size alone';
+      lines.push('Your database currently supports about <b>'+K.cnt(capacity,1)+' sides</b> a year. You need <b>'+K.cnt(sides,0)+'</b>. No amount of skill closes that gap — there simply are not enough people in it.');
+      lines.push('For your '+K.round(mix,0)+'/'+K.round(100-mix,0)+' mix you would need roughly <b>'+K.cnt(metNeed,0)+' Met</b> and <b>'+K.cnt(hmNeed,0)+" Haven't Met</b> contacts.");
+      if(hm<100) lines.push("You have almost nothing on the Haven't Met side. That is the fastest gap to close, because it is a list rather than a relationship — pick a farm this month.");
+      lines.push('List the people below who should already be in Met and are not. Most agents find between twenty and a hundred sitting in their phone.');
+    }
+    K.verdict('sVerdict', c, head, lines);
+    K.publish({met_now:met, hm_now:hm, db_capacity_sides:K.round(capacity,1)});
+  }
+  K.bind(['c_past','c_sphere','c_spoken','c_allied','c_farm','c_lists','c_goal_sides','c_mix'], paint);
+  MREA.metrics().then(function(m){
+    if(!m) return;
+    var g=K.$('c_goal_sides');
+    if(g && !g.value && m.sides_needed){ g.value=m.sides_needed; }
+    var mn=K.$('c_sphere');
+    if(mn && !mn.value && m.met_now){ mn.value=m.met_now; }
+    paint();
+  });
+})();
+
+</script>
+</body>
+</html>

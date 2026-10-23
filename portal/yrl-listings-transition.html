@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listings & Pendings Tracking — Your Realty Link</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="portal-auth.js"></script>
+<script src="embed-mode.js?v=20260927b"></script>
+    <script src="hub-data.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --red:#c03926; --red-light:#d94a35; --red-dark:#9e2e1e;
+            --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f7f8fa;
+            --surface-3:#eef0f3; --border:#e2e5ea;
+            --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+            --green:#16a34a; --green-light:#dcfce7;
+            --orange:#ea580c; --blue:#1d4ed8;
+            --radius:12px; --radius-lg:20px;
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;}
+        a{text-decoration:none;color:inherit;}
+
+        .sub-header{background:linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);padding:26px 20px 22px;color:#fff;position:relative;overflow:hidden;}
+        .sub-header::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.07) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;}
+        .sub-header-inner{max-width:980px;margin:0 auto;position:relative;z-index:1;}
+        .back-btn{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:rgba(255,255,255,0.85);background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:7px 14px;margin-bottom:14px;cursor:pointer;}
+        .back-btn:hover{background:rgba(255,255,255,0.2);color:#fff;}
+        .header-row{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;}
+        .header-title{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:1.4px;line-height:1.05;}
+        .header-sub{font-size:13px;opacity:0.85;margin-top:5px;max-width:560px;}
+
+        .main{max-width:980px;margin:0 auto;padding:20px 16px 80px;}
+
+        /* Status chips toolbar */
+        .filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+        .filter-chip{
+            display:inline-flex;align-items:center;gap:6px;
+            background:var(--surface);border:1px solid var(--border);
+            border-radius:20px;padding:6px 12px;font-size:12px;font-weight:600;
+            color:var(--text-sec);cursor:pointer;transition:all 0.15s;
+        }
+        .filter-chip.active{background:var(--red);color:#fff;border-color:var(--red);}
+        .filter-chip:hover{border-color:var(--red);}
+        .filter-chip.active:hover{background:var(--red-light);}
+        .filter-chip .count{
+            display:inline-block;background:rgba(0,0,0,0.08);
+            border-radius:10px;padding:1px 7px;font-size:10.5px;font-weight:700;margin-left:2px;
+        }
+        .filter-chip.active .count{background:rgba(255,255,255,0.25);color:#fff;}
+
+        .toolbar-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+        .btn{display:inline-flex;align-items:center;gap:7px;border:none;border-radius:8px;padding:8px 14px;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:700;cursor:pointer;transition:all 0.15s;text-decoration:none;}
+        .btn-primary{background:var(--red);color:#fff;}
+        .btn-primary:hover{background:var(--red-light);transform:translateY(-1px);}
+        .btn-ghost{background:var(--surface-3);color:var(--text);border:1px solid var(--border);}
+        .btn-ghost:hover{border-color:var(--red);color:var(--red);}
+
+        /* Listing card */
+        .listing-list{display:flex;flex-direction:column;gap:12px;}
+        .listing{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 18px;}
+        .listing-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-bottom:10px;}
+        .listing-addr{font-size:16px;font-weight:800;line-height:1.25;}
+        .listing-sub{font-size:11.5px;color:var(--text-muted);margin-top:3px;text-transform:uppercase;letter-spacing:0.4px;font-weight:600;}
+        .listing-actions{display:flex;gap:6px;}
+        .icon-btn{background:none;border:1px solid var(--border);color:var(--text-muted);cursor:pointer;padding:6px 9px;border-radius:7px;font-size:12px;}
+        .icon-btn:hover{border-color:var(--red);color:var(--red);}
+
+        .listing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
+        @media(max-width:560px){.listing-grid{grid-template-columns:1fr 1fr;}}
+        .listing-stat{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;}
+        .listing-stat-v{font-size:13px;font-weight:600;color:var(--text);margin-top:2px;}
+
+        /* Status stepper */
+        .status-stepper{display:flex;align-items:center;gap:0;margin-bottom:10px;flex-wrap:wrap;}
+        .step{
+            display:flex;align-items:center;gap:6px;padding:6px 10px;
+            background:var(--surface-3);border:1px solid var(--border);
+            font-size:11px;font-weight:700;color:var(--text-muted);
+            border-radius:6px;text-transform:uppercase;letter-spacing:0.4px;
+            white-space:nowrap;margin-right:4px;margin-bottom:4px;
+        }
+        .step.done{background:var(--green-light);border-color:var(--green);color:#15803d;}
+        .step.current{background:var(--red);border-color:var(--red);color:#fff;}
+        .step .dot{width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block;}
+
+        /* Document indicators */
+        .doc-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;}
+        .doc-chip{
+            display:inline-flex;align-items:center;gap:6px;
+            background:var(--surface-3);border:1px solid var(--border);
+            border-radius:7px;padding:5px 10px;font-size:11.5px;font-weight:600;
+            color:var(--text-muted);text-decoration:none;
+        }
+        .doc-chip.uploaded{background:var(--green-light);color:#15803d;border-color:var(--green);}
+        .doc-chip.uploaded:hover{background:#bbf7d0;}
+        .doc-chip i{font-size:11px;}
+
+        .notes-block{margin-top:10px;font-size:12.5px;color:var(--text-sec);line-height:1.5;background:var(--surface-3);border-left:3px solid var(--border);padding:8px 12px;border-radius:0 8px 8px 0;}
+
+        /* Empty state */
+        .empty{text-align:center;padding:50px 20px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);}
+        .empty i{font-size:38px;opacity:0.3;margin-bottom:10px;display:block;}
+        .empty h3{font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px;}
+        .empty p{font-size:13px;max-width:380px;margin:0 auto 16px;}
+        .loading{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:13px;}
+
+        .count-row{font-size:12px;color:var(--text-muted);margin-bottom:10px;}
+
+        /* Modal */
+        .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;align-items:center;justify-content:center;padding:20px;}
+        .modal-overlay.open{display:flex;}
+        .modal{background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:640px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.35);}
+        .modal-head{padding:18px 22px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+        .modal-title{font-family:'Bebas Neue',sans-serif;font-size:21px;letter-spacing:1.3px;}
+        .modal-close{background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-muted);line-height:1;}
+        .modal-close:hover{color:var(--red);}
+        .modal-body{padding:14px 22px;}
+        .modal-foot{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+
+        .section-label{font-size:10.5px;font-weight:800;color:var(--red);text-transform:uppercase;letter-spacing:0.7px;padding-bottom:6px;border-bottom:1px solid var(--border);margin:14px 0 10px;}
+        .section-label:first-of-type{margin-top:0;}
+        .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+        .field-row.cols-1{grid-template-columns:1fr;}
+        @media(max-width:520px){.field-row{grid-template-columns:1fr;}}
+        .field label{display:block;font-size:10.5px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;}
+        .field input,.field select,.field textarea{width:100%;background:var(--surface-3);border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13.5px;font-family:'Inter',sans-serif;color:var(--text);outline:none;}
+        .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--red);background:var(--surface);}
+        .field textarea{resize:vertical;min-height:65px;}
+
+        /* Document upload widget */
+        .doc-upload{
+            background:var(--surface-3);border:1.5px dashed var(--border);
+            border-radius:9px;padding:10px 12px;display:flex;align-items:center;gap:10px;
+            margin-bottom:10px;
+        }
+        .doc-upload.uploaded{border-style:solid;border-color:var(--green);background:var(--green-light);}
+        .doc-upload .label{font-size:12px;font-weight:700;color:var(--text);flex:1;}
+        .doc-upload .label .hint{display:block;font-size:11px;color:var(--text-muted);font-weight:500;margin-top:1px;}
+        .doc-upload.uploaded .label{color:#065f46;}
+        .doc-upload .doc-actions{display:flex;gap:6px;}
+        .doc-btn{
+            display:inline-flex;align-items:center;gap:6px;
+            background:#fff;color:var(--red);border:1.5px dashed var(--red);
+            border-radius:7px;padding:6px 11px;font-size:11.5px;font-weight:600;
+            font-family:'Inter',sans-serif;cursor:pointer;
+        }
+        .doc-btn:hover{background:rgba(192,57,38,0.08);}
+        .doc-btn.view{background:var(--green);color:#fff;border:none;text-decoration:none;}
+        .doc-btn.remove{background:#fff;color:#dc2626;border-color:#fecaca;border-style:solid;}
+
+        #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--text);color:#fff;padding:11px 22px;border-radius:10px;font-size:12.5px;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,0.25);z-index:9999;transition:transform 0.3s;max-width:90vw;text-align:center;}
+        #toast.show{transform:translateX(-50%) translateY(0);}
+        #toast.error{background:#dc2626;}
+        #toast.success{background:var(--green);}
+    </style>
+<link rel="stylesheet" href="hub-theme.css?v=20260903b"><script src="hub-brand.js" defer></script></head>
+<body>
+
+<header class="sub-header">
+    <div class="sub-header-inner">
+        <a href="yrl-moving-offices.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Moving to YRL</a>
+        <div class="header-row">
+            <div>
+                <div class="header-title">LISTINGS &amp; PENDINGS TRACKING</div>
+                <div class="header-sub">Track every listing and pending you're bringing over to YRL — Mutual Release, new YRL agreement, and transfer status all in one place.</div>
+            </div>
+            <button class="btn btn-primary" onclick="openListingModal()"><i class="fa-solid fa-plus"></i> Add Listing / Pending</button>
+        </div>
+    </div>
+</header>
+
+<main class="main">
+
+    <div class="filter-row" id="filterRow"></div>
+
+    <div class="toolbar-actions">
+        <button class="btn btn-ghost" onclick="exportCsv()" title="Download as CSV"><i class="fa-solid fa-file-arrow-down"></i> Export CSV</button>
+    </div>
+
+    <div class="count-row" id="countLine">—</div>
+    <div id="listWrap"><div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
+</main>
+
+<!-- Add/Edit modal -->
+<div class="modal-overlay" id="lModal" onclick="if(event.target===this)closeListingModal()">
+    <div class="modal">
+        <div class="modal-head">
+            <div class="modal-title" id="lModalTitle">Add Listing / Pending</div>
+            <button class="modal-close" onclick="closeListingModal()">&times;</button>
+        </div>
+        <form class="modal-body" id="lForm" onsubmit="saveListing(event)">
+            <div class="section-label">Property</div>
+            <div class="field-row cols-1">
+                <div class="field"><label>Property Address *</label><input type="text" id="l-address" required placeholder="123 Main St, Indianapolis, IN 46201"></div>
+            </div>
+            <div class="field-row">
+                <div class="field"><label>MLS / BLC #</label><input type="text" id="l-mls" placeholder="21998765"></div>
+                <div class="field">
+                    <label>Side</label>
+                    <select id="l-side">
+                        <option value="">— select —</option>
+                        <option value="listing">Listing</option>
+                        <option value="buyer">Buyer</option>
+                        <option value="both">Both</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Deal Type</label>
+                    <select id="l-deal_type">
+                        <option value="active_listing">Active Listing</option>
+                        <option value="pending_sale">Pending Sale</option>
+                    </select>
+                </div>
+                <div class="field"><label>Current Brokerage</label><input type="text" id="l-current_brokerage" placeholder="Brokerage you're leaving"></div>
+            </div>
+
+            <div class="section-label">Client</div>
+            <div class="field-row">
+                <div class="field"><label>Client Name</label><input type="text" id="l-client_name"></div>
+                <div class="field"><label>Client Email</label><input type="email" id="l-client_email"></div>
+                <div class="field"><label>Client Phone</label><input type="tel" id="l-client_phone"></div>
+            </div>
+
+            <div class="section-label">Financials &amp; Date</div>
+            <div class="field-row">
+                <div class="field"><label>List Price ($)</label><input type="number" id="l-list_price" step="0.01" min="0"></div>
+                <div class="field"><label>Sale Price ($)</label><input type="number" id="l-sale_price" step="0.01" min="0"></div>
+                <div class="field"><label>Expected Close</label><input type="date" id="l-expected_close_date"></div>
+                <div class="field"><label>Commission Expected ($)</label><input type="number" id="l-commission_expected" step="0.01" min="0"></div>
+            </div>
+
+            <div class="section-label">Transfer Status &amp; Documents</div>
+            <div class="field-row cols-1">
+                <div class="field">
+                    <label>Transfer Status</label>
+                    <select id="l-transfer_status">
+                        <option value="needs_release">Needs Mutual Release from Seller</option>
+                        <option value="release_signed">Mutual Release Signed</option>
+                        <option value="yrl_agreement_signed">New YRL Agreement Signed</option>
+                        <option value="transferred">Transferred to YRL</option>
+                        <option value="closed">Closed at YRL</option>
+                    </select>
+                </div>
+            </div>
+            <div class="doc-upload" id="docMR">
+                <div class="label">Mutual Release <span class="hint">PDF or image, optional</span></div>
+                <div class="doc-actions">
+                    <input type="file" id="mrFile" accept=".pdf,image/*" style="display:none;" onchange="uploadDoc(this,'mutual_release')">
+                    <a id="mrView" class="doc-btn view" target="_blank" rel="noopener" style="display:none;"><i class="fa-solid fa-eye"></i> View</a>
+                    <button type="button" class="doc-btn" onclick="document.getElementById('mrFile').click()"><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload</button>
+                    <button type="button" id="mrRemove" class="doc-btn remove" onclick="clearDoc('mutual_release')" style="display:none;"><i class="fa-solid fa-xmark"></i> Remove</button>
+                </div>
+            </div>
+            <div class="doc-upload" id="docYRL">
+                <div class="label">New YRL Agreement <span class="hint">PDF or image, optional</span></div>
+                <div class="doc-actions">
+                    <input type="file" id="yrlFile" accept=".pdf,image/*" style="display:none;" onchange="uploadDoc(this,'yrl_agreement')">
+                    <a id="yrlView" class="doc-btn view" target="_blank" rel="noopener" style="display:none;"><i class="fa-solid fa-eye"></i> View</a>
+                    <button type="button" class="doc-btn" onclick="document.getElementById('yrlFile').click()"><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload</button>
+                    <button type="button" id="yrlRemove" class="doc-btn remove" onclick="clearDoc('yrl_agreement')" style="display:none;"><i class="fa-solid fa-xmark"></i> Remove</button>
+                </div>
+            </div>
+
+            <div class="section-label">Notes</div>
+            <div class="field-row cols-1">
+                <div class="field"><label>Notes</label><textarea id="l-notes" placeholder="Anything else relevant — referral fees, special terms, deadlines, etc."></textarea></div>
+            </div>
+
+            <input type="hidden" id="l-id">
+            <input type="hidden" id="l-mutual_release_url">
+            <input type="hidden" id="l-yrl_agreement_url">
+        </form>
+        <div class="modal-foot">
+            <button type="button" class="btn btn-ghost" id="lDeleteBtn" onclick="deleteCurrent()" style="display:none;color:#dc2626;border-color:#fecaca;"><i class="fa-solid fa-trash"></i> Delete</button>
+            <div style="margin-left:auto;display:flex;gap:8px;">
+                <button type="button" class="btn btn-ghost" onclick="closeListingModal()">Cancel</button>
+                <button type="submit" form="lForm" class="btn btn-primary" id="lSaveBtn"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const SB_URL = 'https://wdvolamasztetwpitbwg.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indkdm9sYW1hc3p0ZXR3cGl0YndnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3Nzc2MTYsImV4cCI6MjA5MTM1MzYxNn0.uiGIaZwr88ZNtAobfSV-axlpXB3sos2Rcw3FiFm6JO8';
+
+const STATUS_STAGES = [
+    { v:'needs_release',         label:'Needs Release' },
+    { v:'release_signed',        label:'Release Signed' },
+    { v:'yrl_agreement_signed',  label:'YRL Signed' },
+    { v:'transferred',           label:'Transferred' },
+    { v:'closed',                label:'Closed' }
+];
+const STATUS_LABELS = Object.fromEntries(STATUS_STAGES.map((s,i) => [s.v, { label: s.label, idx: i }]));
+
+let currentUser = null;
+let listings = [];
+let currentFilter = 'all';   // all | needs_release | release_signed | ... | closed
+
+document.addEventListener('yrl-auth-ready', async ({ detail }) => {
+    currentUser = detail.user; init();
+});
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(async () => {
+        if (currentUser) return;
+        if (!window.yrlClient) return;
+        const { data } = await window.yrlClient.auth.getSession();
+        if (data.session) { currentUser = data.session.user; init(); }
+    }, 700);
+});
+
+async function getToken(){
+    if (!window.yrlClient) throw new Error('Not signed in');
+    const { data } = await window.yrlClient.auth.getSession();
+    if (!data.session) throw new Error('Session expired');
+    return data.session.access_token;
+}
+function sbHeaders(token, extra){ return Object.assign({apikey:SB_KEY, Authorization:'Bearer '+token, 'Content-Type':'application/json'}, extra||{}); }
+function agentDisplayName(u){ return u.user_metadata?.full_name || u.user_metadata?.name || (u.email||'').split('@')[0] || 'Agent'; }
+
+async function init(){ await loadListings(); }
+
+async function loadListings(){
+    document.getElementById('listWrap').innerHTML = '<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div>';
+    try {
+        const token = await getToken();
+        const res = await fetch(SB_URL+'/rest/v1/agent_listings_transition?select=*&order=updated_at.desc', { headers: sbHeaders(token) });
+        if (!res.ok) throw new Error('HTTP '+res.status);
+        listings = await res.json();
+        renderFilters();
+        renderListings();
+    } catch(e) {
+        document.getElementById('listWrap').innerHTML = '<div class="empty"><i class="fa-solid fa-triangle-exclamation"></i><h3>Couldn\'t load list</h3><p>'+esc(e.message)+'</p><button class="btn btn-primary" onclick="loadListings()">Try again</button></div>';
+    }
+}
+
+function renderFilters(){
+    const counts = { all: listings.length };
+    STATUS_STAGES.forEach(s => { counts[s.v] = listings.filter(l => l.transfer_status === s.v).length; });
+    const chip = (v, label, n) => `<div class="filter-chip ${currentFilter===v?'active':''}" onclick="setFilter('${v}')">${esc(label)} <span class="count">${n}</span></div>`;
+    let html = chip('all', 'All', counts.all);
+    STATUS_STAGES.forEach(s => { html += chip(s.v, s.label, counts[s.v]); });
+    document.getElementById('filterRow').innerHTML = html;
+}
+function setFilter(v){ currentFilter = v; renderFilters(); renderListings(); }
+
+function renderListings(){
+    const wrap = document.getElementById('listWrap');
+    let list = listings.slice();
+    if (currentFilter !== 'all') list = list.filter(l => l.transfer_status === currentFilter);
+    document.getElementById('countLine').textContent = list.length + ' of ' + listings.length + ' record' + (listings.length===1?'':'s');
+    if (!list.length) {
+        if (!listings.length) {
+            wrap.innerHTML = '<div class="empty"><i class="fa-solid fa-house-circle-check"></i><h3>No listings or pendings yet</h3><p>Add each active listing and pending you\'re bringing over to YRL so the office can track the transfer and you don\'t miss a commission.</p><button class="btn btn-primary" onclick="openListingModal()"><i class="fa-solid fa-plus"></i> Add your first one</button></div>';
+        } else {
+            wrap.innerHTML = '<div class="empty"><i class="fa-solid fa-filter"></i><h3>Nothing in this status</h3><p>No records matching the current filter.</p></div>';
+        }
+        return;
+    }
+    wrap.innerHTML = '<div class="listing-list">' + list.map(renderListing).join('') + '</div>';
+}
+
+function renderListing(l){
+    const status = STATUS_LABELS[l.transfer_status] || { label: l.transfer_status, idx: 0 };
+    const side = l.side ? l.side.replace(/^./, m => m.toUpperCase()) : '—';
+    const dealType = l.deal_type === 'pending_sale' ? 'Pending Sale' : 'Active Listing';
+    const sub = `${dealType} · ${side} side${l.mls_number ? ' · MLS '+esc(l.mls_number) : ''}`;
+    const closeDate = l.expected_close_date ? new Date(l.expected_close_date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+    const money = v => v == null || v === '' ? '—' : '$' + Number(v).toLocaleString('en-US', { minimumFractionDigits:0, maximumFractionDigits:0 });
+    const stepHtml = STATUS_STAGES.map((s,i) => {
+        const cls = i < status.idx ? 'done' : (i === status.idx ? 'current' : '');
+        return `<div class="step ${cls}"><span class="dot"></span>${esc(s.label)}</div>`;
+    }).join('');
+    const mrChip = l.mutual_release_url
+        ? `<a class="doc-chip uploaded" href="${esc(l.mutual_release_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation();"><i class="fa-solid fa-file-check"></i> Mutual Release uploaded</a>`
+        : `<span class="doc-chip"><i class="fa-regular fa-circle"></i> Mutual Release not uploaded</span>`;
+    const yrlChip = l.yrl_agreement_url
+        ? `<a class="doc-chip uploaded" href="${esc(l.yrl_agreement_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation();"><i class="fa-solid fa-file-check"></i> YRL Agreement uploaded</a>`
+        : `<span class="doc-chip"><i class="fa-regular fa-circle"></i> YRL Agreement not uploaded</span>`;
+    return `<div class="listing">
+        <div class="listing-head">
+            <div>
+                <div class="listing-addr">${esc(l.property_address)}</div>
+                <div class="listing-sub">${esc(sub)}</div>
+            </div>
+            <div class="listing-actions">
+                <button class="icon-btn" title="Edit" onclick="openListingModal('${esc(l.id)}')"><i class="fa-solid fa-pen"></i> Edit</button>
+            </div>
+        </div>
+        <div class="status-stepper">${stepHtml}</div>
+        <div class="listing-grid">
+            <div><div class="listing-stat">Client</div><div class="listing-stat-v">${esc(l.client_name || '—')}</div></div>
+            <div><div class="listing-stat">${l.deal_type === 'pending_sale' ? 'Sale Price' : 'List Price'}</div><div class="listing-stat-v">${money(l.deal_type === 'pending_sale' ? l.sale_price : l.list_price)}</div></div>
+            <div><div class="listing-stat">Commission</div><div class="listing-stat-v">${money(l.commission_expected)}</div></div>
+            <div><div class="listing-stat">Close</div><div class="listing-stat-v">${esc(closeDate)}</div></div>
+        </div>
+        <div class="doc-row">${mrChip}${yrlChip}</div>
+        ${l.notes ? `<div class="notes-block"><strong>Notes:</strong> ${esc(l.notes)}</div>` : ''}
+    </div>`;
+}
+
+/* ── Add / Edit modal ──────────────────────────────────────────── */
+function openListingModal(id){
+    document.getElementById('lModalTitle').textContent = id ? 'Edit Listing / Pending' : 'Add Listing / Pending';
+    document.getElementById('lDeleteBtn').style.display = id ? '' : 'none';
+    document.getElementById('lForm').reset();
+    document.getElementById('l-id').value = id || '';
+    document.getElementById('l-mutual_release_url').value = '';
+    document.getElementById('l-yrl_agreement_url').value = '';
+    updateDocChrome('mutual_release', '');
+    updateDocChrome('yrl_agreement', '');
+    if (id) {
+        const l = listings.find(x => x.id === id);
+        if (l) {
+            document.getElementById('l-address').value             = l.property_address || '';
+            document.getElementById('l-mls').value                  = l.mls_number || '';
+            document.getElementById('l-side').value                 = l.side || '';
+            document.getElementById('l-deal_type').value            = l.deal_type || 'active_listing';
+            document.getElementById('l-current_brokerage').value    = l.current_brokerage || '';
+            document.getElementById('l-client_name').value          = l.client_name || '';
+            document.getElementById('l-client_email').value         = l.client_email || '';
+            document.getElementById('l-client_phone').value         = l.client_phone || '';
+            document.getElementById('l-list_price').value           = l.list_price ?? '';
+            document.getElementById('l-sale_price').value           = l.sale_price ?? '';
+            document.getElementById('l-expected_close_date').value  = l.expected_close_date || '';
+            document.getElementById('l-commission_expected').value  = l.commission_expected ?? '';
+            document.getElementById('l-transfer_status').value      = l.transfer_status || 'needs_release';
+            document.getElementById('l-notes').value                = l.notes || '';
+            document.getElementById('l-mutual_release_url').value   = l.mutual_release_url || '';
+            document.getElementById('l-yrl_agreement_url').value    = l.yrl_agreement_url || '';
+            updateDocChrome('mutual_release', l.mutual_release_url || '');
+            updateDocChrome('yrl_agreement', l.yrl_agreement_url || '');
+        }
+    }
+    document.getElementById('lModal').classList.add('open');
+    setTimeout(() => document.getElementById('l-address').focus(), 60);
+}
+function closeListingModal(){ document.getElementById('lModal').classList.remove('open'); }
+
+function updateDocChrome(which, url){
+    const box  = document.getElementById(which === 'mutual_release' ? 'docMR' : 'docYRL');
+    const view = document.getElementById(which === 'mutual_release' ? 'mrView' : 'yrlView');
+    const rm   = document.getElementById(which === 'mutual_release' ? 'mrRemove' : 'yrlRemove');
+    if (url) {
+        box.classList.add('uploaded');
+        view.style.display = ''; view.href = url;
+        rm.style.display = '';
+    } else {
+        box.classList.remove('uploaded');
+        view.style.display = 'none'; view.removeAttribute('href');
+        rm.style.display = 'none';
+    }
+}
+async function uploadDoc(input, which){
+    const file = input.files && input.files[0];
+    if (!file) return;
+    if (file.size > 20 * 1024 * 1024) { toast('File over 20 MB — please pick a smaller one.', 'error'); return; }
+    try {
+        const url = await uploadHubFile(file, 'transition-docs');
+        document.getElementById(which === 'mutual_release' ? 'l-mutual_release_url' : 'l-yrl_agreement_url').value = url;
+        updateDocChrome(which, url);
+        toast('Uploaded — remember to Save', 'success');
+    } catch(e) {
+        toast('Upload failed: '+e.message, 'error');
+    } finally {
+        input.value = '';
+    }
+}
+function clearDoc(which){
+    document.getElementById(which === 'mutual_release' ? 'l-mutual_release_url' : 'l-yrl_agreement_url').value = '';
+    updateDocChrome(which, '');
+}
+
+async function saveListing(e){
+    e.preventDefault();
+    const btn = document.getElementById('lSaveBtn');
+    btn.disabled = true; const orig = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…';
+    try {
+        const id = document.getElementById('l-id').value || null;
+        const numOrNull = v => v === '' || v == null ? null : Number(v);
+        const payload = {
+            property_address:     document.getElementById('l-address').value.trim(),
+            mls_number:           document.getElementById('l-mls').value.trim() || null,
+            side:                 document.getElementById('l-side').value || null,
+            deal_type:            document.getElementById('l-deal_type').value || null,
+            current_brokerage:    document.getElementById('l-current_brokerage').value.trim() || null,
+            client_name:          document.getElementById('l-client_name').value.trim() || null,
+            client_email:         document.getElementById('l-client_email').value.trim() || null,
+            client_phone:         document.getElementById('l-client_phone').value.trim() || null,
+            list_price:           numOrNull(document.getElementById('l-list_price').value),
+            sale_price:           numOrNull(document.getElementById('l-sale_price').value),
+            expected_close_date:  document.getElementById('l-expected_close_date').value || null,
+            commission_expected:  numOrNull(document.getElementById('l-commission_expected').value),
+            transfer_status:      document.getElementById('l-transfer_status').value || 'needs_release',
+            mutual_release_url:   document.getElementById('l-mutual_release_url').value || null,
+            yrl_agreement_url:    document.getElementById('l-yrl_agreement_url').value || null,
+            notes:                document.getElementById('l-notes').value.trim() || null,
+            agent_name:           agentDisplayName(currentUser),
+            agent_email:          currentUser.email || null
+        };
+        const token = await getToken();
+        const url = id ? (SB_URL+'/rest/v1/agent_listings_transition?id=eq.'+encodeURIComponent(id)) : (SB_URL+'/rest/v1/agent_listings_transition');
+        const method = id ? 'PATCH' : 'POST';
+        const res = await fetch(url, { method, headers: sbHeaders(token, {'Prefer':'return=representation'}), body: JSON.stringify(payload) });
+        if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(err.message || ('HTTP '+res.status)); }
+        toast(id ? 'Updated' : 'Added', 'success');
+        closeListingModal();
+        await loadListings();
+    } catch(err) {
+        toast('Save failed: '+err.message, 'error');
+    } finally {
+        btn.disabled = false; btn.innerHTML = orig;
+    }
+}
+
+async function deleteCurrent(){
+    const id = document.getElementById('l-id').value;
+    if (!id) return;
+    if (!confirm('Delete this record? This cannot be undone.')) return;
+    try {
+        const token = await getToken();
+        const res = await fetch(SB_URL+'/rest/v1/agent_listings_transition?id=eq.'+encodeURIComponent(id), { method:'DELETE', headers: sbHeaders(token) });
+        if (!res.ok && res.status !== 204) throw new Error('HTTP '+res.status);
+        toast('Deleted', 'success');
+        closeListingModal();
+        await loadListings();
+    } catch(err){ toast('Delete failed: '+err.message, 'error'); }
+}
+
+/* ── CSV export ────────────────────────────────────────────────── */
+function exportCsv(){
+    const cols = ['property_address','mls_number','side','deal_type','current_brokerage','client_name','client_email','client_phone','list_price','sale_price','expected_close_date','commission_expected','transfer_status','mutual_release_url','yrl_agreement_url','notes'];
+    const head = cols.map(csvQ).join(',');
+    const body = listings.map(l => cols.map(k => csvQ(l[k]==null?'':l[k])).join(',')).join('\n');
+    const csv  = '﻿' + head + '\n' + body;
+    const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url;
+    a.download = 'listings-transition-' + new Date().toISOString().slice(0,10) + '.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast('Exported ' + listings.length + ' records');
+}
+function csvQ(v){ const s = String(v); return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; }
+
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+let _toastT;
+function toast(msg, type){
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.className = ''; if (type) t.classList.add(type);
+    void t.offsetWidth; t.classList.add('show');
+    clearTimeout(_toastT); _toastT = setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>

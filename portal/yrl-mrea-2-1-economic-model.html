@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>MREA 2.1 · Your Economic Model — Your Realty Link</title>
+<script src="portal-auth.js"></script>
+<script src="embed-mode.js?v=20260927b"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="tiger-shell.css?v=20260927b">
+<link rel="stylesheet" href="tiger-module.css">
+<link rel="stylesheet" href="mrea-module.css">
+</head>
+<body class="tiger-shell mrea-shell" data-tiger-module="2.1" data-tiger-title="Your Economic Model" data-tiger-ns="mrea" data-tiger-program="Millionaire Agent Path">
+
+<button class="tiger-menu-btn" id="tigerMenuBtn" aria-label="Modules"><i class="fa-solid fa-bars"></i></button>
+<aside class="tiger-side" id="tigerSide"></aside>
+<div class="tiger-backdrop" id="tigerBackdrop"></div>
+
+<main class="tiger-main">
+
+<div class="reader-topbar">
+  <div class="prog">
+    <div class="track"><i id="tigerProgressBar"></i></div>
+    <div class="prog-lbl" id="tigerProgressLabel">0% complete</div>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn btn-ghost" data-tiger-action="pdf"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
+  <button class="btn btn-primary" data-tiger-action="save"><i class="fa-solid fa-floppy-disk"></i> <span>Save</span></button>
+</div>
+
+<header class="reader-head">
+  <p class="reader-eyebrow">Phase 2 · Module 2.1 <span class="chip">Calculator</span></p>
+  <h1 class="reader-title">Your Economic Model</h1>
+  <p class="reader-lede">The single most useful page in this whole path. Start with the income you want to keep and work backward to the number of appointments you need this week. No guessing, no vibes — just arithmetic you can act on Monday morning.</p>
+  <p class="reader-who">Worksheet for <b data-tiger-name>Agent</b> · <span data-tiger-date></span> · saves automatically as you type</p>
+</header>
+
+<div class="print-only" style="text-align:center;margin:0 0 6px">
+  <strong>YOUR REALTY LINK · THE MILLIONAIRE AGENT PATH</strong> — Module 2.1: Your Economic Model
+</div>
+
+<div class="reader-body">
+<section class="card"><h2><span class="n">01</span>Work backward, not forward</h2><p class="teach">Most agents run the model forward: work hard, see what happens, hope it&#x27;s enough. The model runs better in reverse. Net income you want → gross commission you must produce → closed sides → listings and buyers → appointments → leads. Each step is division.</p><p class="teach">Once you&#x27;ve done it, you stop asking &ldquo;am I doing enough?&rdquo; and start asking &ldquo;did I hit twenty-six appointments this month?&rdquo; — a question that has an answer.</p><div class="callout confirm">Enter <b>your</b> numbers, not benchmarks. Pull your average sale price and your average commission per side from your own last twelve months of closings, or ask Janet Giles-Schultz (317-997-7404) to run them with you.</div></section>
+<section class="card"><h2><span class="n">02</span>Your inputs</h2><p class="sub">Every field updates the math below as you type.</p><div class="grid2"><div class="field"><label class="field-label" for="net_goal">Net income I want to keep <span class="field-hint">after expenses, before personal tax</span></label><div class="input-money"><input class="tiger-input" id="net_goal" data-tiger="net_goal" inputmode="numeric" placeholder="150,000"></div></div><div class="field"><label class="field-label" for="avg_price">My average sale price <span class="field-hint">your last 12 months</span></label><div class="input-money"><input class="tiger-input" id="avg_price" data-tiger="avg_price" inputmode="numeric" placeholder="285,000"></div></div></div><div class="grid2"><div class="field"><label class="field-label" for="comm_pct">Average commission % per side <span class="field-hint">negotiated per transaction</span></label><input class="tiger-input" id="comm_pct" data-tiger="comm_pct" inputmode="decimal" placeholder="2.75"></div><div class="field"><label class="field-label" for="split_pct">My split after brokerage (%) <span class="field-hint">your share — confirm with Janet</span></label><input class="tiger-input" id="split_pct" data-tiger="split_pct" inputmode="numeric" placeholder="80"></div></div><div class="grid2"><div class="field"><label class="field-label" for="cos_pct">Cost of sales (% of my GCI) <span class="field-hint">paid to buyer/listing specialists — 0 if solo</span></label><input class="tiger-input" id="cos_pct" data-tiger="cos_pct" inputmode="decimal" placeholder="0"></div><div class="field"><label class="field-label" for="opex_pct">Operating expenses (% of my GCI) <span class="field-hint">marketing, tech, dues, auto — 25–30% is typical</span></label><input class="tiger-input" id="opex_pct" data-tiger="opex_pct" inputmode="decimal" placeholder="28"></div></div><div class="callout">Commission is negotiable on every transaction and is not set by any brokerage or association. These fields are your own historical averages for planning only — never a rate card.</div></section>
+<section class="card"><h2><span class="n">03</span>What you have to produce</h2><div class="mrea-stats"><div class="mrea-stat" id="stGCI"></div><div class="mrea-stat" id="stSides"></div><div class="mrea-stat" id="stVolume"></div><div class="mrea-stat" id="stPerSide"></div></div><p class="mrea-note"><i class="fa-solid fa-circle-info"></i> &ldquo;Sides&rdquo; means closed transactions where you represented someone — one house you both listed and sold is two sides.</p></section>
+<section class="card"><h2><span class="n">04</span>Split into listings and buyers</h2><p class="sub">A properly marketed listing should produce roughly one closed buyer on its own. That&amp;#x27;s why the model leans on the listing side.</p><div class="mrea-stats"><div class="mrea-stat" id="stListSold"></div><div class="mrea-stat" id="stBuySold"></div><div class="mrea-stat" id="stListMo"></div></div><div class="grid2"><div class="field"><label class="field-label" for="listing_share">% of my sides from the listing side <span class="field-hint">50 is the balanced target</span></label><input class="tiger-input" id="listing_share" data-tiger="listing_share" inputmode="numeric" placeholder="50"></div><div class="field"><label class="field-label" for="conv_appt_list">My appointment → listing taken rate (%) <span class="field-hint">prequalified appointments; 80 is a strong benchmark</span></label><input class="tiger-input" id="conv_appt_list" data-tiger="conv_appt_list" inputmode="numeric" placeholder="70"></div></div><div class="grid2"><div class="field"><label class="field-label" for="conv_list_sold">My listing taken → sold rate (%) <span class="field-hint">65 is a common benchmark</span></label><input class="tiger-input" id="conv_list_sold" data-tiger="conv_list_sold" inputmode="numeric" placeholder="65"></div><div class="field"><label class="field-label" for="conv_buyer">My buyer appointment → signed BRA (%) <span class="field-hint">a written agreement is required before touring</span></label><input class="tiger-input" id="conv_buyer" data-tiger="conv_buyer" inputmode="numeric" placeholder="65"></div></div></section>
+<section class="card"><h2><span class="n">05</span>Your appointment number</h2><p class="sub">This is the number that actually goes on your calendar.</p><div class="mrea-stats"><div class="mrea-stat" id="stSellerAppt"></div><div class="mrea-stat" id="stBuyerAppt"></div><div class="mrea-stat hot" id="stWeekly"></div></div><div class="mrea-verdict" id="eVerdict"><p class="vt">What this means</p><h3 class="vh">Enter your numbers above</h3><p class="vp">The whole chain runs from your net income goal down to appointments per week.</p></div><input type="hidden" data-tiger="gci_needed" id="gci_needed"><input type="hidden" data-tiger="sides_needed" id="sides_needed"><input type="hidden" data-tiger="appts_week" id="appts_week"></section>
+<section class="card"><h2><span class="n">06</span>Put it where you&#x27;ll see it</h2><p class="teach">A number you have to look up is a number you will ignore. Millionaire agents post theirs — on a whiteboard, in the CRM dashboard, on the wall behind the monitor.</p><div class="check"><input type="checkbox" id="e_post" data-tiger-check="e_post"><label for="e_post">Write my monthly appointment number somewhere I see it every day</label></div><div class="check"><input type="checkbox" id="e_share" data-tiger-check="e_share"><label for="e_share">Share my listings-taken goal with the team so it&#x27;s public</label></div><div class="check"><input type="checkbox" id="e_track" data-tiger-check="e_track"><label for="e_track">Track appointments held weekly, not monthly — monthly is too late to correct</label></div><div class="check"><input type="checkbox" id="e_review" data-tiger-check="e_review"><label for="e_review">Re-run this model every quarter, and any time the market shifts</label></div><div class="field"><label class="field-label" for="model_commit">My number, in one sentence <span class="field-hint">say it the way you&amp;#x27;d say it out loud</span></label><textarea id="model_commit" data-tiger="model_commit" placeholder="I need 4 listing appointments and 4 buyer appointments a week to keep $150,000."></textarea></div><div class="grid2"><div class="field"><label class="field-label" for="sign">Signed</label><input class="tiger-input" id="sign" data-tiger="sign" inputmode="text" placeholder="Your name"></div><div class="field"><label class="field-label" for="signdate">Date</label><input class="tiger-input" id="signdate" data-tiger="signdate" inputmode="text" placeholder="MM/DD/YYYY"></div></div></section>
+</div>
+
+<div class="actions"><div class="actions-in">
+  <span class="note"><i class="fa-solid fa-cloud"></i> Your answers save automatically to your account — pick up on any device.</span>
+  <button class="btn btn-ghost" data-tiger-action="txt"><i class="fa-solid fa-list"></i> Download list</button>
+  <button class="btn btn-ghost" data-tiger-action="pdf"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
+  <button class="btn btn-ghost" data-tiger-action="reset"><i class="fa-solid fa-eraser"></i> Clear</button>
+  <button class="btn btn-primary" data-tiger-action="complete"><i class="fa-solid fa-check"></i> Mark complete</button>
+</div></div>
+
+</main>
+
+<script src="hub-data.js"></script>
+<script src="mrea-nav.js"></script>
+<script src="yrl-tiger.js"></script>
+<script src="mrea-kit.js"></script>
+<script>
+
+(function(){
+  var K=MREA;
+  function paint(){
+    var net=K.nval('net_goal'), price=K.nval('avg_price'), comm=K.nval('comm_pct'),
+        split=K.nval('split_pct'), cos=K.nval('cos_pct'), opex=K.nval('opex_pct');
+    var keepRate = (100-cos-opex)/100;
+    if(!(net>0&&price>0&&comm>0)||keepRate<=0){
+      ['stGCI','stSides','stVolume','stPerSide','stListSold','stBuySold','stListMo','stSellerAppt','stBuyerAppt','stWeekly']
+        .forEach(function(i){K.stat(i,'—','');});
+      K.verdict('eVerdict','','Enter your numbers above',
+        [keepRate<=0&&net>0?'Your cost of sales plus operating expenses is 100% or more of your gross — nothing is left to keep. Lower one of them before the model can run.':'The whole chain runs from your net income goal down to appointments per week.']);
+      return;
+    }
+    var gci = net/keepRate;
+    var perSideCompany = price*(comm/100);
+    var perSideMe = perSideCompany*(split>0?split/100:1);
+    var sides = gci/perSideMe;
+    var volume = sides*price;
+
+    K.stat('stGCI', K.money(gci), 'Gross commission needed', 'to keep '+K.money(net));
+    K.stat('stSides', K.cnt(Math.ceil(sides),0), 'Closed sides a year', K.cnt(sides/12,1)+' per month');
+    K.stat('stVolume', K.money(volume), 'Sales volume', 'at '+K.money(price)+' average');
+    K.stat('stPerSide', K.money(perSideMe), 'You keep per side', 'after your split');
+
+    var share=K.nval('listing_share'); if(!(share>0)) share=50;
+    var listSold = sides*(share/100), buySold = sides - listSold;
+    var cAL=K.nval('conv_appt_list')||80, cLS=K.nval('conv_list_sold')||65, cB=K.nval('conv_buyer')||65;
+    var listTaken = cLS>0 ? listSold/(cLS/100) : 0;
+    var sellerAppts = cAL>0 ? listTaken/(cAL/100) : 0;
+    var buyerAgree = buySold/0.8;
+    var buyerAppts = cB>0 ? buyerAgree/(cB/100) : 0;
+
+    K.stat('stListSold', K.cnt(Math.ceil(listSold),0), 'Listings sold / yr', K.cnt(listSold/12,1)+' per month');
+    K.stat('stBuySold', K.cnt(Math.ceil(buySold),0), 'Buyers closed / yr', K.cnt(buySold/12,1)+' per month');
+    K.stat('stListMo', K.cnt(listTaken/12,1), 'Listings to TAKE / month', 'your minimum');
+    K.stat('stSellerAppt', K.cnt(sellerAppts/12,1), 'Seller appts / month', '');
+    K.stat('stBuyerAppt', K.cnt(buyerAppts/12,1), 'Buyer appts / month', '');
+    var wk=(sellerAppts+buyerAppts)/52;
+    K.stat('stWeekly', K.cnt(wk,1), 'Appointments / week', 'the number that matters');
+
+    K.$('gci_needed').value=Math.round(gci);
+    K.$('sides_needed').value=Math.round(sides);
+    K.$('appts_week').value=K.round(wk,1);
+
+    var c = wk<=6?'ok':(wk<=12?'warn':'bad');
+    var lines=[
+      'To keep <b>'+K.money(net)+'</b> you need <b>'+K.money(gci)+'</b> in gross commission — about <b>'+K.cnt(Math.ceil(sides),0)+' closed sides</b> and <b>'+K.money(volume)+'</b> in volume.',
+      'That comes down to <b>'+K.cnt(listTaken/12,1)+' listings taken every month</b> and roughly <b>'+K.cnt(wk,1)+' appointments a week</b>. That is the whole job.'
+    ];
+    if(wk>12) lines.push('That weekly number is high enough that you will not personally hold all of them for long. Raising your conversion rates (Module 2.2) or adding leverage (Phase 4) will do more than adding hours.');
+    else if(cAL<70||cB<60) lines.push('Your conversion rates are doing a lot of damage here. Every point you add to them removes appointments from this number — work Module 2.2 before you work harder.');
+    K.verdict('eVerdict', c, K.cnt(wk,1)+' appointments a week', lines);
+
+    K.publish({net_goal:Math.round(net), gci_needed:Math.round(gci), avg_price:Math.round(price),
+      comm_pct:comm, sides_needed:Math.round(sides), listings_taken_mo:K.round(listTaken/12,1),
+      seller_appts_mo:K.round(sellerAppts/12,1), buyer_appts_mo:K.round(buyerAppts/12,1),
+      appts_week:K.round(wk,1)});
+  }
+  K.bind(['net_goal','avg_price','comm_pct','split_pct','cos_pct','opex_pct',
+          'listing_share','conv_appt_list','conv_list_sold','conv_buyer'], paint);
+})();
+
+</script>
+</body>
+</html>

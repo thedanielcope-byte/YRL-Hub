@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog — Your Realty Link Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+    <script src="portal-auth.js"></script>
+    <style>
+        :root{--red:#c03926;--red-dark:#9e2e1e;--bg:#f2f4f7;--surface:#fff;--surface-2:#f7f8fa;--surface-3:#eef0f3;--border:#e2e5ea;--text:#1a1d22;--text-sec:#5a6270;--text-muted:#9ca3af;--radius:12px;}
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);}
+        a{text-decoration:none;color:inherit;}
+        .page-header{background:linear-gradient(150deg,#a82f1e,#c03926 55%,#9e2e1e);padding:24px;}
+        .header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+        .back-btn{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff;padding:9px 16px;border-radius:100px;font-size:13px;font-weight:600;}
+        .header-title h1{font-family:'Bebas Neue';font-size:30px;letter-spacing:1.4px;color:#fff;}
+        .header-title p{font-size:12.5px;color:rgba(255,255,255,.85);}
+        .wrap{max-width:1200px;margin:0 auto;padding:26px 24px 90px;display:grid;grid-template-columns:280px 1fr;gap:22px;align-items:start;}
+        @media(max-width:820px){.wrap{grid-template-columns:1fr;}}
+        .side{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;position:sticky;top:16px;}
+        .side h3{font-family:'Bebas Neue';font-size:18px;letter-spacing:1px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
+        .btn{border:none;border-radius:9px;padding:10px 15px;font-size:13px;font-weight:700;font-family:'Inter';cursor:pointer;}
+        .btn-red{background:var(--red);color:#fff;}
+        .btn-ghost{background:var(--surface-2);color:var(--text-sec);border:1.5px solid var(--border);}
+        .postlist{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+        .pl-item{border:1px solid var(--border);border-radius:9px;padding:10px 12px;cursor:pointer;background:var(--surface);}
+        .pl-item:hover{border-color:var(--red);}
+        .pl-item.active{border-color:var(--red);background:rgba(192,57,38,.05);}
+        .pl-title{font-size:13px;font-weight:700;line-height:1.3;}
+        .pl-meta{font-size:11px;color:var(--text-muted);margin-top:3px;display:flex;gap:6px;align-items:center;}
+        .badge{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;padding:2px 7px;border-radius:5px;}
+        .b-draft{background:var(--surface-3);color:var(--text-sec);}
+        .b-live{background:rgba(22,163,74,.12);color:#16a34a;}
+        .b-sched{background:rgba(37,99,235,.12);color:#2563eb;}
+        .editor{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
+        label{display:block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec);margin:16px 0 6px;}
+        input,select,textarea{width:100%;background:var(--surface-2);border:1.5px solid var(--border);border-radius:9px;padding:10px 12px;font-size:14px;font-family:'Inter';outline:none;}
+        input:focus,select:focus,textarea:focus{border-color:var(--red);}
+        .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+        @media(max-width:560px){.row{grid-template-columns:1fr;}}
+        .hint{font-size:11px;color:var(--text-muted);margin-top:4px;}
+        #editorQ{background:var(--surface);border:1.5px solid var(--border);border-radius:0 0 9px 9px;min-height:280px;font-size:15px;}
+        .ql-toolbar.ql-snow{border-radius:9px 9px 0 0;border-color:var(--border);}
+        .ql-container.ql-snow{border-color:var(--border);}
+        .cover-row{display:flex;align-items:center;gap:12px;}
+        .cover-prev{width:90px;height:60px;border-radius:8px;background:var(--surface-3);object-fit:cover;border:1px solid var(--border);}
+        .upbtn{display:inline-flex;align-items:center;gap:8px;background:var(--surface-2);border:1.5px dashed var(--border);border-radius:9px;padding:10px 14px;font-size:13px;font-weight:700;color:var(--text-sec);cursor:pointer;}
+        .upbtn:hover{border-color:var(--red);color:var(--red);}
+        .faqrow{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:8px;align-items:start;}
+        .faqrow textarea{min-height:38px;font-size:13px;}
+        .faqdel{background:none;border:none;color:var(--red);font-size:18px;cursor:pointer;padding-top:8px;}
+        .actions{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap;align-items:center;}
+        .flash{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#16a34a;color:#fff;padding:11px 20px;border-radius:100px;font-size:13px;font-weight:700;opacity:0;transition:opacity .25s;z-index:9999;}
+        .flash.show{opacity:1;}
+        .flash.err{background:#dc2626;}
+        .live-note{font-size:12px;color:var(--text-muted);margin-top:8px;line-height:1.5;}
+    </style>
+</head>
+<body>
+<header class="page-header">
+    <div class="header-inner">
+        <a href="admin.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Admin</a>
+        <div class="header-title"><h1><i class="fa-solid fa-newspaper"></i> Blog</h1><p>Write a post and publish it to yourrealtylink.com</p></div>
+    </div>
+</header>
+
+<div style="max-width:1100px;margin:16px auto 0;padding:0 20px;">
+  <details style="background:var(--surface,#fff);border:1px solid var(--border,#e2e5ea);border-left:4px solid var(--red,#c03926);border-radius:12px;padding:14px 18px;" open>
+    <summary style="cursor:pointer;font-weight:700;color:var(--text,#1a1d22);"><i class="fa-solid fa-circle-question" style="color:var(--red,#c03926);"></i> How to publish a blog post</summary>
+    <ol style="margin:12px 0 4px;padding-left:20px;font-size:13.5px;line-height:1.7;color:var(--text-sec,#5a6270);">
+      <li>Click <b>New</b> (left) to start a post.</li>
+      <li>Type a <b>Title</b> — the web address (slug) fills in automatically.</li>
+      <li>Pick a <b>Category</b> and upload a <b>Cover image</b>.</li>
+      <li>Write a short <b>Summary</b> (shows in the blog list &amp; on Google).</li>
+      <li>Write the <b>Post body</b> — add headings, links, and images with the toolbar.</li>
+      <li>(Optional) add <b>FAQ</b> questions for SEO.</li>
+      <li>Set the <b>Author</b> and <b>Publish date/time</b> — a future time <i>schedules</i> it.</li>
+      <li>Click <b>Publish</b> (or <b>Save draft</b> to finish later).</li>
+    </ol>
+    <p style="margin:8px 0 0;font-size:12.5px;color:var(--text-muted,#9ca3af);">Goes live at <a href="https://yourrealtylink.com/blog/" target="_blank" rel="noopener" style="color:var(--red,#c03926);">yourrealtylink.com/blog/</a> automatically within ~15 minutes (or at your scheduled time). Drafts stay private.</p>
+  </details>
+</div>
+
+<div class="wrap">
+    <aside class="side">
+        <h3>Posts <button class="btn btn-red" style="padding:6px 12px;" onclick="newPost()"><i class="fa-solid fa-plus"></i> New</button></h3>
+        <div class="postlist" id="postList"><div class="hint">Loading…</div></div>
+    </aside>
+
+    <main class="editor">
+        <label>Title</label>
+        <input id="f-title" placeholder="e.g. 5 Things Every First-Time Buyer Should Know" oninput="autoSlug()">
+        <div class="row">
+            <div><label>URL slug</label><input id="f-slug" placeholder="5-things-first-time-buyers"><div class="hint">yourrealtylink.com/blog/<span id="slugPrev">…</span>/</div></div>
+            <div><label>Category</label>
+                <select id="f-category">
+                    <option>News</option><option>Buying a Home</option><option>Selling a Home</option>
+                    <option>Market Update</option><option>Neighborhoods</option><option>Investment Properties</option>
+                    <option>Financing</option><option>Home Tips</option>
+                </select>
+            </div>
+        </div>
+        <label>Cover image</label>
+        <div class="cover-row">
+            <img id="coverPrev" class="cover-prev" alt="" style="display:none;">
+            <button type="button" class="upbtn" onclick="document.getElementById('coverFile').click()"><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload cover image</button>
+            <input type="file" id="coverFile" accept=".png,.jpg,.jpeg,.webp" style="display:none" onchange="uploadCover(this)">
+            <span id="coverStatus" class="hint"></span>
+        </div>
+        <input type="hidden" id="f-cover">
+
+        <label>Short summary (shown on the blog list + as the description)</label>
+        <textarea id="f-excerpt" rows="2" placeholder="One or two sentences that describe the post."></textarea>
+
+        <label>Post body</label>
+        <div id="editorQ"></div>
+        <div class="hint">Use the toolbar for headings, bold, lists, links, and images. Headings become the “In This Article” menu automatically.</div>
+
+        <label>FAQ (optional — great for SEO)</label>
+        <div id="faqBox"></div>
+        <button type="button" class="btn btn-ghost" style="margin-top:6px;" onclick="addFaq()"><i class="fa-solid fa-plus"></i> Add a question</button>
+
+        <div class="row" style="margin-top:6px;">
+            <div><label>Author</label><input id="f-author" placeholder="Your Realty Link"></div>
+            <div><label>Publish date &amp; time</label><input id="f-when" type="datetime-local"><div class="hint">Set a future time to schedule it.</div></div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-ghost" onclick="save('draft')"><i class="fa-solid fa-floppy-disk"></i> Save draft</button>
+            <button class="btn btn-red" onclick="save('published')"><i class="fa-solid fa-cloud-arrow-up"></i> Publish</button>
+            <button class="btn btn-ghost" id="delBtn" style="color:var(--red);display:none;" onclick="del()"><i class="fa-solid fa-trash"></i> Delete</button>
+            <span id="editingId" style="display:none;"></span>
+        </div>
+        <p class="live-note"><i class="fa-solid fa-circle-info"></i> Publishing saves the post now; it goes live on yourrealtylink.com automatically within about 15 minutes (or at your scheduled time). Drafts stay private.</p>
+    </main>
+</div>
+
+<div class="flash" id="flash"></div>
+
+<script src="hub-data.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+<script>
+const CID='cf007287-a76c-4c9a-bd33-051816db6322';
+let SB=null, quill=null, editing=null, faqs=[];
+
+function flash(msg, err){ const f=document.getElementById('flash'); f.textContent=msg; f.classList.toggle('err',!!err); f.classList.add('show'); setTimeout(()=>f.classList.remove('show'),2400); }
+function slugify(s){ return (s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
+function autoSlug(){ const t=document.getElementById('f-title').value; const s=document.getElementById('f-slug'); if(!s.dataset.touched){ s.value=slugify(t); } document.getElementById('slugPrev').textContent=slugify(s.value||t)||'…'; }
+document.getElementById('f-slug').addEventListener('input',function(){this.dataset.touched='1';document.getElementById('slugPrev').textContent=slugify(this.value)||'…';});
+
+function initQuill(){
+    quill=new Quill('#editorQ',{theme:'snow',modules:{toolbar:[[{header:[2,3,false]}],['bold','italic','link'],[{list:'ordered'},{list:'bullet'}],['blockquote'],['image'],['clean']]}});
+    quill.getModule('toolbar').addHandler('image',function(){
+        const inp=document.createElement('input'); inp.type='file'; inp.accept='.png,.jpg,.jpeg,.webp'; inp.click();
+        inp.onchange=async ()=>{ const f=inp.files[0]; if(!f)return; flash('Uploading image…');
+            try{ const url=await uploadHubFile(f,'blog'); const r=quill.getSelection(true); quill.insertEmbed(r.index,'image',url); quill.setSelection(r.index+1); }
+            catch(e){ flash('Image upload failed',1); } };
+    });
+}
+
+async function uploadCover(inp){
+    const f=inp.files[0]; if(!f)return; const st=document.getElementById('coverStatus'); st.textContent='Uploading…';
+    try{ const url=await uploadHubFile(f,'blog'); document.getElementById('f-cover').value=url;
+        const img=document.getElementById('coverPrev'); img.src=url; img.style.display=''; st.textContent='✓ Uploaded'; }
+    catch(e){ st.textContent='Upload failed'; }
+    inp.value='';
+}
+
+function renderFaqs(){
+    const box=document.getElementById('faqBox'); box.innerHTML='';
+    faqs.forEach((f,i)=>{ const d=document.createElement('div'); d.className='faqrow';
+        d.innerHTML='<input placeholder="Question" value="'+(f.q||'').replace(/"/g,'&quot;')+'" oninput="faqs['+i+'].q=this.value">'+
+                    '<textarea placeholder="Answer" oninput="faqs['+i+'].a=this.value">'+(f.a||'')+'</textarea>'+
+                    '<button class="faqdel" onclick="faqs.splice('+i+',1);renderFaqs()">&times;</button>';
+        box.appendChild(d); });
+}
+function addFaq(){ faqs.push({q:'',a:''}); renderFaqs(); }
+
+function blank(){
+    editing=null; faqs=[];
+    document.getElementById('f-title').value=''; const s=document.getElementById('f-slug'); s.value=''; delete s.dataset.touched;
+    document.getElementById('f-category').value='News'; document.getElementById('f-excerpt').value='';
+    document.getElementById('f-cover').value=''; document.getElementById('coverPrev').style.display='none';
+    document.getElementById('coverStatus').textContent='';
+    document.getElementById('f-author').value='Your Realty Link';
+    const dt=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16);
+    document.getElementById('f-when').value=dt;
+    document.getElementById('slugPrev').textContent='…';
+    document.getElementById('delBtn').style.display='none';
+    if(quill) quill.setContents([]); renderFaqs();
+    document.querySelectorAll('.pl-item').forEach(x=>x.classList.remove('active'));
+}
+function newPost(){ blank(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+function load(p){
+    editing=p.id; faqs=Array.isArray(p.faqs)?JSON.parse(JSON.stringify(p.faqs)):[];
+    document.getElementById('f-title').value=p.title||'';
+    const s=document.getElementById('f-slug'); s.value=p.slug||''; s.dataset.touched='1';
+    document.getElementById('slugPrev').textContent=p.slug||'…';
+    document.getElementById('f-category').value=p.category||'News';
+    document.getElementById('f-excerpt').value=p.excerpt||'';
+    document.getElementById('f-cover').value=p.cover_image||'';
+    const img=document.getElementById('coverPrev'); if(p.cover_image){img.src=p.cover_image;img.style.display='';}else{img.style.display='none';}
+    document.getElementById('coverStatus').textContent='';
+    document.getElementById('f-author').value=p.author||'Your Realty Link';
+    if(p.publish_at){ const d=new Date(p.publish_at); document.getElementById('f-when').value=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16); }
+    document.getElementById('delBtn').style.display='';
+    if(quill){ quill.root.innerHTML=p.body_html||''; }
+    renderFaqs();
+    window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function refresh(){
+    const {data,error}=await SB.from('blog_posts').select('*').eq('client_id',CID).order('publish_at',{ascending:false});
+    const list=document.getElementById('postList');
+    if(error){ list.innerHTML='<div class="hint">Could not load posts.</div>'; return; }
+    if(!data||!data.length){ list.innerHTML='<div class="hint">No posts yet. Click “New”.</div>'; return; }
+    const now=Date.now();
+    list.innerHTML=data.map(p=>{
+        let b='<span class="badge b-draft">Draft</span>';
+        if(p.status==='published'){ b = (new Date(p.publish_at).getTime()>now) ? '<span class="badge b-sched">Scheduled</span>' : '<span class="badge b-live">Live</span>'; }
+        const d=new Date(p.publish_at).toLocaleDateString();
+        return '<div class="pl-item" data-id="'+p.id+'"><div class="pl-title">'+(p.title||'(untitled)')+'</div><div class="pl-meta">'+b+' · '+d+'</div></div>';
+    }).join('');
+    list.querySelectorAll('.pl-item').forEach(el=>el.onclick=()=>{ list.querySelectorAll('.pl-item').forEach(x=>x.classList.remove('active')); el.classList.add('active'); load(data.find(p=>p.id===el.dataset.id)); });
+    window._posts=data;
+}
+
+async function save(status){
+    const title=document.getElementById('f-title').value.trim();
+    if(!title){ flash('Add a title first',1); return; }
+    let slug=slugify(document.getElementById('f-slug').value||title);
+    const whenLocal=document.getElementById('f-when').value;
+    const publish_at=whenLocal? new Date(whenLocal).toISOString() : new Date().toISOString();
+    const rec={ client_id:CID, slug, title, category:document.getElementById('f-category').value,
+        excerpt:document.getElementById('f-excerpt').value.trim(), cover_image:document.getElementById('f-cover').value.trim(),
+        body_html:quill.root.innerHTML, author:document.getElementById('f-author').value.trim()||'Your Realty Link',
+        faqs:faqs.filter(f=>(f.q||'').trim()), status, publish_at, updated_at:new Date().toISOString() };
+    let res;
+    if(editing){ res=await SB.from('blog_posts').update(rec).eq('id',editing); }
+    else { res=await SB.from('blog_posts').insert(rec); }
+    if(res.error){ flash('Save failed: '+res.error.message,1); return; }
+    flash(status==='published'?'Published — live shortly':'Draft saved');
+    await refresh();
+    if(!editing){ // select the just-created row
+        const row=(window._posts||[]).find(p=>p.slug===slug); if(row) load(row);
+    }
+}
+
+async function del(){
+    if(!editing) return; if(!confirm('Delete this post? (It will also come off the site on the next build.)')) return;
+    const {error}=await SB.from('blog_posts').delete().eq('id',editing);
+    if(error){ flash('Delete failed',1); return; }
+    flash('Deleted'); blank(); refresh();
+}
+
+function boot(){
+    if(!(window.yrlMember && (window.yrlMember.role==='owner'||window.yrlMember.role==='nomad_admin'))){
+        document.querySelector('.wrap').innerHTML='<div style="padding:40px;text-align:center;color:var(--text-sec);">This page is for the broker/admin only.</div>'; return;
+    }
+    SB=window.yrlClient; initQuill(); blank(); refresh();
+}
+document.addEventListener('yrl-auth-ready', boot);
+if(window.yrlMember) boot();
+</script>
+</body>
+</html>

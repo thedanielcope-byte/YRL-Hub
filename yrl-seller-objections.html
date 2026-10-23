@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Objection Handlers — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --red: #c03926; --red-light: #d94a35; --red-dark: #9e2e1e;
+            --bg: #f2f4f7; --surface: #ffffff; --surface-2: #f7f8fa; --surface-3: #eef0f3;
+            --border: #e2e5ea; --text: #1a1d22; --text-sec: #5a6270; --text-muted: #9ca3af;
+            --radius: 12px; --radius-lg: 20px; --shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+        a { text-decoration: none; color: inherit; }
+
+        .sub-header {
+            background: linear-gradient(150deg, #a82f1e 0%, #c03926 45%, #9e2e1e 100%);
+            padding: 28px 20px; border-bottom: 4px solid rgba(0,0,0,0.15);
+            position: relative; overflow: hidden;
+        }
+        .sub-header::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
+            background-size: 28px 28px; pointer-events: none;
+        }
+        .sub-header-inner {
+            max-width: 800px; margin: 0 auto; display: flex; align-items: center;
+            justify-content: space-between; position: relative; z-index: 1;
+        }
+        .sub-header-left { display: flex; align-items: center; gap: 20px; }
+        .sub-header-logo { max-width: 100px; background: #fff; border-radius: 10px; padding: 8px 14px; box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
+        .sub-header-text h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(24px, 5vw, 36px); letter-spacing: 2px; color: #fff; line-height: 1; }
+        .sub-header-text p { color: rgba(255,255,255,0.7); font-size: 13px; margin-top: 4px; }
+        .back-btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35);
+            color: #fff; padding: 9px 18px; border-radius: 100px; font-size: 12.5px;
+            font-weight: 600; transition: all 0.2s; white-space: nowrap;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .main { max-width: 800px; margin: 0 auto; padding: 40px 20px 90px; }
+
+        .intro-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); padding: 28px 32px; margin-bottom: 32px;
+        }
+        .intro-card h2 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .intro-card p { font-size: 14px; color: var(--text-sec); line-height: 1.7; }
+
+        /* Quick jump nav */
+        .jump-nav {
+            display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px;
+        }
+        .jump-btn {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 100px;
+            padding: 8px 16px; font-size: 13px; font-weight: 600; color: var(--text-sec);
+            cursor: pointer; transition: all 0.2s; font-family: inherit;
+        }
+        .jump-btn:hover, .jump-btn.active {
+            border-color: var(--red); color: var(--red); background: rgba(192,57,38,0.04);
+        }
+
+        /* Objection card */
+        .objection {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); margin-bottom: 24px; overflow: hidden;
+        }
+        .objection-header {
+            padding: 20px 28px; border-bottom: 1px solid var(--border);
+            cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+            transition: background 0.2s;
+        }
+        .objection-header:hover { background: var(--surface-2); }
+        .objection-header h3 {
+            font-size: 17px; font-weight: 700; color: var(--text);
+            display: flex; align-items: center; gap: 12px;
+        }
+        .objection-header h3 i { color: var(--red); font-size: 20px; }
+        .objection-toggle {
+            color: var(--text-muted); font-size: 16px; transition: transform 0.3s;
+        }
+        .objection.open .objection-toggle { transform: rotate(180deg); }
+        .objection-body {
+            max-height: 0; overflow: hidden; transition: max-height 0.4s ease;
+        }
+        .objection.open .objection-body { max-height: 2000px; }
+        .objection-content { padding: 24px 28px; }
+
+        .response {
+            margin-bottom: 24px; padding-bottom: 24px;
+            border-bottom: 1px solid var(--surface-3);
+        }
+        .response:last-child { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+        .response-label {
+            font-size: 11px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--red); margin-bottom: 8px;
+        }
+        .response-alt {
+            font-size: 11px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--text-muted); margin-bottom: 8px;
+        }
+        .say {
+            background: rgba(192,57,38,0.04); border-left: 3px solid var(--red);
+            padding: 14px 18px; border-radius: 0 8px 8px 0;
+            font-size: 15px; line-height: 1.8; color: var(--text);
+        }
+        .tip {
+            margin-top: 12px; font-size: 13px; color: var(--text-muted);
+            font-style: italic; padding-left: 18px;
+            border-left: 2px solid var(--surface-3);
+        }
+
+        .isolate-box {
+            background: var(--surface-2); border-radius: var(--radius);
+            padding: 14px 18px; margin-bottom: 16px;
+        }
+        .isolate-box strong { color: var(--red); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .isolate-box p { font-size: 14px; color: var(--text-sec); margin-top: 4px; line-height: 1.6; }
+
+        .footer {
+            text-align: center; padding: 40px 20px 32px; color: var(--text-muted); font-size: 12px;
+        }
+        .footer-logo { max-width: 130px; margin: 0 auto 14px; opacity: 0.5; }
+
+        @media (max-width: 600px) {
+            .sub-header-inner { flex-direction: column; gap: 16px; text-align: center; }
+            .sub-header-left { flex-direction: column; }
+            .objection-content { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="sub-header">
+    <div class="sub-header-inner">
+        <div class="sub-header-left">
+            <img src="https://wdvolamasztetwpitbwg.supabase.co/storage/v1/object/public/hub-files/brand/yrl-logo-color.png"
+                 alt="Your Realty Link" class="sub-header-logo">
+            <div class="sub-header-text">
+                <h1>Objection Handlers</h1>
+                <p>Proven responses to the most common listing objections</p>
+            </div>
+        </div>
+        <a href="yrl-client-sellers.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Seller Tools</a>
+    </div>
+</header>
+
+<main class="main">
+
+    <div class="intro-card">
+        <h2>The Isolate Technique</h2>
+        <p>For every objection, start the same way: <strong>Isolate the objection.</strong> Ask: "Other than [their concern], is there any other reason you wouldn't list with me today?" This separates real objections from stalling and focuses the conversation on solving one specific concern.</p>
+    </div>
+
+    <div class="jump-nav">
+        <button class="jump-btn active" onclick="showAll()">All</button>
+        <button class="jump-btn" onclick="jumpTo('other-agents')">Other Agents</button>
+        <button class="jump-btn" onclick="jumpTo('never-heard')">Never Heard of Us</button>
+        <button class="jump-btn" onclick="jumpTo('less-commission')">Less Commission</button>
+        <button class="jump-btn" onclick="jumpTo('think-it-over')">Think It Over</button>
+        <button class="jump-btn" onclick="jumpTo('more-money')">More Money</button>
+        <button class="jump-btn" onclick="jumpTo('pricing')">Price Too Low</button>
+    </div>
+
+    <!-- OBJECTION 1: Other Agents -->
+    <div class="objection open" id="other-agents">
+        <div class="objection-header" onclick="toggleObj(this)">
+            <h3><i class="fa-solid fa-users"></i> "I have other agents to interview"</h3>
+            <i class="fa-solid fa-chevron-down objection-toggle"></i>
+        </div>
+        <div class="objection-body">
+            <div class="objection-content">
+                <div class="isolate-box">
+                    <strong>Isolate First</strong>
+                    <p>"Other than wanting to interview other agents, is there any other reason you wouldn't list with me today?"</p>
+                </div>
+                <div class="response">
+                    <div class="response-label">Response</div>
+                    <div class="say">
+                        At this point in our conversation, when a seller says they would list with me and still goes through with additional appointments, it's usually because they feel obligated to have the other agent over. Is that the case here?
+                        <br><br>
+                        Let me save you time as well as start the process tomorrow to find you a buyer. After all, while you are waiting to be polite, there may be a buyer out there that needs to buy tomorrow. We want them to know about your house, right?
+                        <br><br>
+                        Let me do this &mdash; I don't mind. I've done it for many of my sellers. I'll call the other agents and tell them that you liked them and were looking forward to meeting with them, but you decided to list with me. And if they have a buyer, we would love for them to bring them by. And of course if they buy the house, I'll naturally pay them part of my commission.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OBJECTION 2: Never Heard of Company -->
+    <div class="objection" id="never-heard">
+        <div class="objection-header" onclick="toggleObj(this)">
+            <h3><i class="fa-solid fa-building"></i> "We've never heard of your company"</h3>
+            <i class="fa-solid fa-chevron-down objection-toggle"></i>
+        </div>
+        <div class="objection-body">
+            <div class="objection-content">
+                <div class="isolate-box">
+                    <strong>Isolate First</strong>
+                    <p>"Other than not having heard of us, is there any other reason you wouldn't list with me today?"</p>
+                </div>
+                <div class="response">
+                    <div class="response-label">Response</div>
+                    <div class="say">
+                        I can appreciate that. In fact, thank you for bringing that up. As we think about who really sells a house, it is the agent, not the company, right?
+                        <br><br>
+                        At Your Realty Link, every agent on our team wants to help get your house sold. We work together, not against each other. At other companies I've seen, agents competed against each other for recognition. There is no financial benefit if one agent sells a house and another doesn't.
+                        <br><br>
+                        Wouldn't you rather have an agent that has the support of the entire team and all the agents helping to sell your house, instead of a company where the agent is on their own to sell it?
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OBJECTION 3: Less Commission -->
+    <div class="objection" id="less-commission">
+        <div class="objection-header" onclick="toggleObj(this)">
+            <h3><i class="fa-solid fa-percent"></i> "The other agent would do it for less commission"</h3>
+            <i class="fa-solid fa-chevron-down objection-toggle"></i>
+        </div>
+        <div class="objection-body">
+            <div class="objection-content">
+                <div class="isolate-box">
+                    <strong>Isolate First</strong>
+                    <p>"Other than the commission, is there any other reason you wouldn't list with me today?"</p>
+                </div>
+                <div class="response">
+                    <div class="response-label">Response A</div>
+                    <div class="say">
+                        So what I hear you saying is you want to net the most money possible, right? Every seller that decides to choose me wants the same thing. See, many people think that they will get the same price regardless of who is conducting the negotiations, which we already know isn't true &mdash; otherwise top companies wouldn't pay hundreds of thousands of dollars to hire the best negotiators.
+                        <br><br>
+                        The other agent has already shown you their negotiation skills by giving up their own money. What will happen when you ask them to take care of your money? Won't they give it away faster than they gave their own money away?
+                        <br><br>
+                        I think you prefer a bulldog like me that will watch your money and negotiate on your behalf. Right?
+                    </div>
+                </div>
+                <div class="response">
+                    <div class="response-alt">Response B</div>
+                    <div class="say">
+                        I understand your hope to save money, and it sounds like you are interested in putting the most money in your pocket &mdash; is that right?
+                        <br><br>
+                        See, the MLS shows the average agent in your city is negotiating about 95% of the list price. The same MLS shows me at over 99%. So you can see that I get sellers more money than the average agent. So if you are interested in placing more money in your pocket, then hire me to negotiate for you.
+                        <br><br>
+                        Since you intend to get the most money, let's sign the listing agreement and get you moving to where you want to be.
+                    </div>
+                </div>
+                <div class="response">
+                    <div class="response-alt">Response C</div>
+                    <div class="say">
+                        Has there ever been a time in your life when you paid less for something and found out that you got what you paid for? This time is like that &mdash; may I explain?
+                        <br><br>
+                        See, many agents take a lesser commission because they haven't been taught negotiating skills. You are placing one of your most expensive possessions into the hands of someone that has proven to you that the best sales tactic they know how to do is to lower the price. And if they lower their price to sell your house, then you won't be saving any money &mdash; in fact you could lose money.
+                        <br><br>
+                        I know if you are like my other sellers, you will choose a bulldog like me that will watch your money as much as I watch mine.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OBJECTION 4: Think It Over -->
+    <div class="objection" id="think-it-over">
+        <div class="objection-header" onclick="toggleObj(this)">
+            <h3><i class="fa-solid fa-brain"></i> "We want to think it over"</h3>
+            <i class="fa-solid fa-chevron-down objection-toggle"></i>
+        </div>
+        <div class="objection-body">
+            <div class="objection-content">
+                <div class="isolate-box">
+                    <strong>Isolate First</strong>
+                    <p>"Other than wanting to think it over, is there any other reason you wouldn't list with me today?"</p>
+                </div>
+                <div class="response">
+                    <div class="response-label">Response A</div>
+                    <div class="say">
+                        Great. It is important that you make the right decision. What specifically do you need to think about?
+                    </div>
+                    <div class="tip">If they mention another agent, switch to the "other agents" handler. If it's price, go to the pricing handler.</div>
+                </div>
+                <div class="response">
+                    <div class="response-alt">Response B</div>
+                    <div class="say">
+                        I can appreciate that. This is a pretty important decision you're about to make to sell your house. This is what other people have had me do and I'm more than happy to do it for you.
+                        <br><br>
+                        Let's fill out the paperwork and then you can think it over. When you choose to hire me, you can give me a call. That way if you choose to hire me, I'll come by and pick up the paperwork and I can get your house on the market in minutes.
+                    </div>
+                    <div class="tip">Fill out the paperwork, then say: "If you feel comfortable, you can allow me to take the paperwork and when you call me tomorrow, if you say you've decided not to list with me, I will rip up the contract and mail it to you. If you decide to list with me, then I can get the sign up and the marketing started immediately. Doesn't that make sense?"</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OBJECTION 5: Another Agent Said More Money -->
+    <div class="objection" id="more-money">
+        <div class="objection-header" onclick="toggleObj(this)">
+            <h3><i class="fa-solid fa-arrow-trend-up"></i> "Another agent said they could get me more money"</h3>
+            <i class="fa-solid fa-chevron-down objection-toggle"></i>
+        </div>
+        <div class="objection-body">
+            <div class="objection-content">
+                <div class="isolate-box">
+                    <strong>Isolate First</strong>
+                    <p>"Other than that, is there any other reason you wouldn't list with me today?"</p>
+                </div>
+                <div class="response">
+                    <div class="response-label">Response</div>
+                    <div class="say">
+                        Wow. Are they going to buy the house? The reason I ask is in today's market the buyer determines the price they want to offer and you determine if you'll accept it.
+                        <br><br>
+                        I could put your house on the market at the price the other agent is willing to, and you know what scares me about that? You would have the same problem that you'll have with any agent. Agents in our area know what a house is worth, and when they have a buyer, they sit down at the computer and find houses in the price range their buyer is willing to pay. They show the houses that are the best value.
+                        <br><br>
+                        Based on what I showed you this evening, does it make sense that they would show your house with a higher price than the others? Of course they would &mdash; if they wanted to sell another house they had listed, they would use your house to convince the buyers they were getting a better deal on the other house. In essence, you would help the other house look like a great value.
+                        <br><br>
+                        So the question is: Do you want to help sell other houses?
+                    </div>
+                </div>
+                <div class="response">
+                    <div class="response-alt">If they still want a higher price</div>
+                    <div class="say">
+                        I can understand what you want. Let me help you out. Since the other agent says they can get a higher price, why don't you ask them to put in their contract that if they ask for a price reduction or bring you a lower offer, then you can cancel the contract. See how quickly they start talking a different language. I mean, after all, if they can get you that price, then they should be willing to put that stipulation in the contract, right?
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OBJECTION 6: Price Too Low -->
+    <div class="objection" id="pricing">
+        <div class="objection-header" onclick="toggleObj(this)">
+            <h3><i class="fa-solid fa-dollar-sign"></i> "Your price is too low / I think it's worth more"</h3>
+            <i class="fa-solid fa-chevron-down objection-toggle"></i>
+        </div>
+        <div class="objection-body">
+            <div class="objection-content">
+                <div class="response">
+                    <div class="response-label">Phrase 1: The Market Interpreter</div>
+                    <div class="say">I don't make the market &mdash; I only interpret it. The market is telling us we need to price it right. I'm the professional, like a doctor, and I am telling you the market shows we need to price it right. Otherwise you're going to have a terrible disease called "no showings."</div>
+                </div>
+                <div class="response">
+                    <div class="response-label">Phrase 2: The Reality Check</div>
+                    <div class="say">The National Association of Realtors tracks statistics for us, and they state that ten showings, no offers, or two weeks without a showing means the house is overpriced.</div>
+                </div>
+                <div class="response">
+                    <div class="response-label">Phrase 3: The Auction Effect</div>
+                    <div class="say">Have you ever been to an auction? It's amazing to watch the bidding go up and up when more than one person is interested. Well, by pricing the property right, you can create that same auction effect. When you price yours to be the best value, you may have more than one buyer interested, creating an auction effect that drives the price up and gets you more money. You want to have the most money, right?</div>
+                </div>
+                <div class="response">
+                    <div class="response-label">Phrase 4: The Stock Analogy</div>
+                    <div class="say">If you bought stock last year and that stock was $49 per share, and today you want to sell that same stock and it is worth $25 per share, what could we sell it at? $25, right? I don't make the market, I interpret it, and the market is telling us we need to sell at market price.</div>
+                </div>
+                <div class="response">
+                    <div class="response-label">Phrase 5: The Messenger</div>
+                    <div class="say">Don't kill the messenger. I am only delivering the message the market is stating. Anytime you feel uncomfortable, then you know I am telling you the truth. You do want your agent to be honest, don't you?</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<footer class="footer">
+    <img src="https://wdvolamasztetwpitbwg.supabase.co/storage/v1/object/public/hub-files/brand/yrl-logo-color.png"
+         alt="Your Realty Link" class="footer-logo" onerror="this.style.display='none'">
+    <p>&copy; 2026 Your Realty Link &nbsp;&middot;&nbsp; All Rights Reserved</p>
+</footer>
+
+<script>
+function toggleObj(header) {
+    header.closest('.objection').classList.toggle('open');
+}
+
+function jumpTo(id) {
+    document.querySelectorAll('.jump-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    const el = document.getElementById(id);
+    if (el) {
+        el.classList.add('open');
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+function showAll() {
+    document.querySelectorAll('.jump-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    document.querySelectorAll('.objection').forEach(o => o.classList.add('open'));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>

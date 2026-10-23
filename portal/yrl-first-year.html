@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your First Year — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* ============================================
+           BRAND TOKENS
+           ============================================ */
+        :root {
+            --red:          #c03926;
+            --red-light:    #d94a35;
+            --red-dark:     #9e2e1e;
+            --gray:         #6e6e70;
+            --gray-light:   #9a9a9c;
+
+            --bg:           #f2f4f7;
+            --surface:      #ffffff;
+            --surface-2:    #f7f8fa;
+            --surface-3:    #eef0f3;
+            --border:       #e2e5ea;
+            --border-light: #d0d4da;
+
+            --text:         #1a1d22;
+            --text-sec:     #5a6270;
+            --text-muted:   #9ca3af;
+
+            --green:        #16a34a;
+            --green-soft:   #dcfce7;
+
+            --radius:       12px;
+            --radius-lg:    20px;
+            --shadow:       0 4px 20px rgba(0,0,0,0.08);
+            --shadow-red:   0 6px 28px color-mix(in srgb, var(--red) 22%, transparent);
+        }
+
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        a { text-decoration: none; color: inherit; }
+        img { display: block; max-width: 100%; }
+
+        /* ============================================
+           SUBPAGE HEADER
+           ============================================ */
+        .sub-header {
+            background: linear-gradient(150deg, var(--red-dark) 0%, var(--red) 45%, var(--red-dark) 100%);
+            padding: 28px 20px;
+            border-bottom: 4px solid rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        .sub-header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
+            background-size: 28px 28px;
+            pointer-events: none;
+        }
+        .sub-header-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            position: relative;
+            z-index: 1;
+        }
+        .sub-header-left { display: flex; align-items: center; gap: 20px; }
+        .sub-header-logo {
+            max-width: 120px;
+            background: #fff;
+            border-radius: 10px;
+            padding: 10px 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        }
+        .sub-header-text h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(28px, 5vw, 42px);
+            letter-spacing: 2px;
+            color: #fff;
+            line-height: 1;
+        }
+        .sub-header-text p {
+            color: rgba(255,255,255,0.7);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+        .header-right { display:flex; align-items:center; gap:10px; }
+        .user-chip {
+            color: rgba(255,255,255,0.75);
+            font-size: 12.5px;
+            font-weight: 500;
+            max-width: 140px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .back-btn, .signout-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(255,255,255,0.18);
+            border: 1px solid rgba(255,255,255,0.35);
+            color: #fff;
+            padding: 9px 18px;
+            border-radius: 100px;
+            font-size: 12.5px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .back-btn:hover, .signout-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-1px);
+        }
+
+        /* ============================================
+           MAIN LAYOUT
+           ============================================ */
+        .main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 44px 20px 90px;
+        }
+
+        /* ============================================
+           PROGRESS PANEL
+           ============================================ */
+        .progress-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 30px 32px;
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            box-shadow: var(--shadow);
+            margin-bottom: 44px;
+            flex-wrap: wrap;
+        }
+        .ring-wrap { position: relative; width: 118px; height: 118px; flex-shrink: 0; }
+        .ring-wrap svg { transform: rotate(-90deg); }
+        .ring-bg   { fill: none; stroke: var(--surface-3); stroke-width: 10; }
+        .ring-fill {
+            fill: none;
+            stroke: var(--red);
+            stroke-width: 10;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.6s ease;
+        }
+        .ring-label {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .ring-label .pct {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 30px;
+            letter-spacing: 1px;
+            line-height: 1;
+            color: var(--text);
+        }
+        .ring-label .sub { font-size: 10.5px; color: var(--text-muted); letter-spacing: 0.5px; }
+
+        .progress-copy { flex: 1; min-width: 260px; }
+        .progress-copy h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 26px;
+            letter-spacing: 1.5px;
+            line-height: 1.1;
+        }
+        .progress-copy p { font-size: 13px; color: var(--text-sec); margin-top: 6px; }
+
+        .pace-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+        .pace-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: color-mix(in srgb, var(--red) 8%, transparent);
+            border: 1px solid color-mix(in srgb, var(--red) 20%, transparent);
+            color: var(--red);
+            border-radius: 100px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .start-btn {
+            background: none;
+            border: 1px dashed var(--border-light);
+            color: var(--text-muted);
+            border-radius: 100px;
+            padding: 6px 14px;
+            font-size: 11.5px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+        }
+        .start-btn:hover { color: var(--red); border-color: var(--red); }
+
+        .stat-strip { display: flex; gap: 28px; flex-wrap: wrap; }
+        .stat-strip .stat { text-align: center; }
+        .stat-strip .num {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px;
+            letter-spacing: 1px;
+            line-height: 1;
+            color: var(--red);
+        }
+        .stat-strip .lbl {
+            font-size: 10.5px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-top: 3px;
+        }
+
+        /* ============================================
+           SECTION HEADER
+           ============================================ */
+        .sec-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+        .sec-icon {
+            width: 46px; height: 46px;
+            background: color-mix(in srgb, var(--red) 8%, transparent);
+            border: 1px solid color-mix(in srgb, var(--red) 20%, transparent);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--red);
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .sec-header h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px;
+            letter-spacing: 2px;
+            line-height: 1;
+        }
+        .sec-header p { font-size: 12.5px; color: var(--text-muted); margin-top: 3px; }
+
+        /* ============================================
+           MONTH CARDS
+           ============================================ */
+        .month-list { display: flex; flex-direction: column; gap: 14px; }
+
+        .month-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .month-card.is-current {
+            border-color: color-mix(in srgb, var(--red) 45%, transparent);
+            box-shadow: 0 4px 22px color-mix(in srgb, var(--red) 13%, transparent);
+        }
+        .month-card.is-done .month-num { background: var(--green-soft); color: var(--green); }
+
+        .month-head {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 20px 26px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .month-head:hover { background: var(--surface-2); }
+
+        .month-num {
+            width: 50px; height: 50px;
+            border-radius: 14px;
+            background: color-mix(in srgb, var(--red) 9%, transparent);
+            color: var(--red);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+        .month-num .m { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; opacity: 0.75; }
+        .month-num .n { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; }
+
+        .month-meta { flex: 1; min-width: 0; }
+        .month-meta h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 22px;
+            letter-spacing: 1.5px;
+            line-height: 1.15;
+            display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+        }
+        .month-meta p { font-size: 12.5px; color: var(--text-sec); margin-top: 2px; }
+
+        .tag {
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 3px 9px;
+            border-radius: 100px;
+            font-family: 'Inter', sans-serif;
+        }
+        .tag-now  { background: var(--red); color: #fff; }
+        .tag-done { background: var(--green-soft); color: var(--green); }
+
+        .month-prog { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+        .mini-bar { width: 74px; height: 6px; background: var(--surface-3); border-radius: 100px; overflow: hidden; }
+        .mini-bar span { display: block; height: 100%; background: var(--red); border-radius: 100px; transition: width 0.4s ease; }
+        .month-card.is-done .mini-bar span { background: var(--green); }
+        .month-prog .count { font-size: 11.5px; color: var(--text-muted); font-weight: 600; white-space: nowrap; }
+        .chev { color: var(--text-muted); transition: transform 0.25s ease; font-size: 14px; }
+        .month-card.open .chev { transform: rotate(180deg); }
+
+        .month-body { display: none; padding: 0 26px 22px; }
+        .month-card.open .month-body { display: block; }
+        .month-overview {
+            font-size: 13px;
+            color: var(--text-sec);
+            background: var(--surface-2);
+            border-left: 3px solid var(--border-light);
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 16px;
+        }
+
+        .lesson-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--surface);
+        }
+        .lesson-row:last-child { margin-bottom: 0; }
+        .lesson-row:hover { border-color: color-mix(in srgb, var(--red) 35%, transparent); transform: translateX(3px); }
+
+        .lesson-check {
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            border: 2px solid var(--border-light);
+            display: flex; align-items: center; justify-content: center;
+            color: transparent;
+            font-size: 11px;
+            flex-shrink: 0;
+        }
+        .lesson-row.done .lesson-check {
+            background: var(--green); border-color: var(--green); color: #fff;
+        }
+        .lesson-info { flex: 1; min-width: 0; }
+        .lesson-info h4 { font-size: 14px; font-weight: 650; line-height: 1.3; }
+        .lesson-row.done .lesson-info h4 { color: var(--text-sec); }
+        .lesson-info p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .lesson-time {
+            font-size: 11px; color: var(--text-muted);
+            display: flex; align-items: center; gap: 5px;
+            flex-shrink: 0;
+        }
+
+        /* ============================================
+           LESSON READER
+           ============================================ */
+        .reader {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 200;
+            overflow-y: auto;
+            display: none;
+        }
+        .reader.open { display: block; }
+
+        .reader-bar {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            background: rgba(255,255,255,0.94);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 20px;
+        }
+        .reader-bar-inner {
+            max-width: 780px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: space-between; gap: 14px;
+        }
+        .reader-back {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: none; border: none; cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px; font-weight: 600; color: var(--text-sec);
+        }
+        .reader-back:hover { color: var(--red); }
+        .reader-crumb { font-size: 11.5px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.4px; }
+        .save-flash {
+            font-size: 11.5px; font-weight: 600; color: var(--green);
+            opacity: 0; transition: opacity 0.3s ease; white-space: nowrap;
+        }
+        .save-flash.show { opacity: 1; }
+
+        .reader-inner { max-width: 780px; margin: 0 auto; padding: 40px 20px 100px; }
+
+        .reader-inner > h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(30px, 6vw, 42px);
+            letter-spacing: 1.5px;
+            line-height: 1.05;
+            margin-bottom: 10px;
+        }
+        .reader-sub { font-size: 14px; color: var(--text-sec); margin-bottom: 30px; }
+
+        /* video slot */
+        /* Kept narrow on purpose: a 90-second talking-head intro shouldn't
+           push the lesson list below the fold. */
+        .month-video { margin-bottom: 18px; max-width: 460px; }
+        .month-video .video-slot { margin-bottom: 8px; }
+        .month-video-cap {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            display: flex; align-items: center; gap: 6px;
+        }
+        .month-video-cap i { color: var(--red); }
+        .lesson-time .has-video { color: var(--red); font-size: 12px; }
+
+        .video-slot {
+            position: relative;
+            padding-top: 56.25%;
+            background: #12151a;
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 32px;
+        }
+        .video-slot iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+        /* lesson body typography */
+        .lesson-body { font-size: 15.5px; line-height: 1.75; color: #23272e; }
+        .lesson-body h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 23px;
+            letter-spacing: 1.2px;
+            color: var(--text);
+            margin: 34px 0 12px;
+            line-height: 1.15;
+        }
+        .lesson-body p  { margin-bottom: 16px; }
+        .lesson-body ul, .lesson-body ol { margin: 0 0 18px 22px; }
+        .lesson-body li { margin-bottom: 8px; }
+        .lesson-body strong { font-weight: 650; color: var(--text); }
+
+        .lesson-body .callout {
+            background: color-mix(in srgb, var(--red) 5.5%, transparent);
+            border-left: 3px solid var(--red);
+            border-radius: 0 10px 10px 0;
+            padding: 16px 20px;
+            margin: 24px 0;
+        }
+        .lesson-body .callout p:last-child { margin-bottom: 0; }
+
+        .lesson-body .script {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px 20px;
+            margin: 24px 0;
+            font-size: 14.5px;
+        }
+        .lesson-body .script p { margin-bottom: 10px; }
+        .lesson-body .script p:last-child { margin-bottom: 0; }
+        .lesson-body .script strong { color: var(--red); }
+
+        .lesson-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+            font-size: 13.5px;
+        }
+        .lesson-body th, .lesson-body td {
+            border: 1px solid var(--border);
+            padding: 9px 12px;
+            text-align: left;
+        }
+        .lesson-body th { background: var(--surface-2); font-weight: 650; }
+
+        /* generic reader block */
+        .block {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 26px 28px;
+            margin-top: 30px;
+        }
+        .block > h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 21px;
+            letter-spacing: 1.3px;
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 4px;
+        }
+        .block > h3 i { color: var(--red); font-size: 15px; }
+        .block > .hint { font-size: 12px; color: var(--text-muted); margin-bottom: 18px; }
+
+        /* action items */
+        .action-item {
+            display: flex; align-items: flex-start; gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--surface-3);
+            cursor: pointer;
+        }
+        .action-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .action-box {
+            width: 21px; height: 21px; flex-shrink: 0; margin-top: 1px;
+            border: 2px solid var(--border-light);
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            color: transparent; font-size: 10px;
+            transition: all 0.15s ease;
+        }
+        .action-item.checked .action-box { background: var(--green); border-color: var(--green); color: #fff; }
+        .action-item span { font-size: 14px; line-height: 1.5; }
+        .action-item.checked span { color: var(--text-muted); text-decoration: line-through; }
+
+        /* quiz */
+        .quiz-q { margin-bottom: 26px; }
+        .quiz-q:last-of-type { margin-bottom: 0; }
+        .quiz-q > p { font-size: 14.5px; font-weight: 650; margin-bottom: 12px; }
+        .quiz-opt {
+            display: flex; align-items: flex-start; gap: 11px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 11px 14px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.15s ease;
+        }
+        .quiz-opt:hover { border-color: var(--border-light); background: var(--surface-2); }
+        .quiz-opt .dot {
+            width: 17px; height: 17px; flex-shrink: 0; margin-top: 2px;
+            border: 2px solid var(--border-light);
+            border-radius: 50%;
+        }
+        .quiz-opt.picked { border-color: var(--red); background: color-mix(in srgb, var(--red) 5%, transparent); }
+        .quiz-opt.picked .dot { border-color: var(--red); background: var(--red); box-shadow: inset 0 0 0 3px #fff; }
+        .quiz-opt.right { border-color: var(--green); background: var(--green-soft); }
+        .quiz-opt.right .dot { border-color: var(--green); background: var(--green); box-shadow: inset 0 0 0 3px var(--green-soft); }
+        .quiz-opt.wrong { border-color: #ef4444; background: rgba(239,68,68,0.06); }
+        .quiz-opt.wrong .dot { border-color: #ef4444; background: #ef4444; box-shadow: inset 0 0 0 3px rgba(239,68,68,0.12); }
+        .quiz-locked .quiz-opt { cursor: default; }
+        .quiz-explain {
+            font-size: 13px;
+            color: var(--text-sec);
+            background: var(--surface-2);
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-top: 8px;
+            display: none;
+        }
+        .quiz-locked .quiz-explain { display: block; }
+        .quiz-result { font-size: 13.5px; font-weight: 600; margin-top: 18px; }
+        .quiz-result.pass { color: var(--green); }
+        .quiz-result.fail { color: var(--red); }
+
+        /* notes */
+        .notes-area {
+            width: 100%;
+            min-height: 150px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 16px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            line-height: 1.65;
+            color: var(--text);
+            resize: vertical;
+            background: var(--surface-2);
+        }
+        .notes-area:focus { outline: none; border-color: var(--red); background: var(--surface); }
+
+        /* buttons */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+            border: none; border-radius: 100px;
+            padding: 13px 30px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13.5px; font-weight: 650;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-primary { background: var(--red); color: #fff; }
+        .btn-primary:hover { background: var(--red-light); box-shadow: var(--shadow-red); transform: translateY(-1px); }
+        .btn-primary:disabled { background: var(--border-light); color: #fff; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-ghost { background: var(--surface); border: 1.5px solid var(--border); color: var(--text-sec); }
+        .btn-ghost:hover { border-color: var(--red); color: var(--red); }
+
+        .reader-foot {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 14px; flex-wrap: wrap;
+            margin-top: 32px;
+        }
+        .complete-note { font-size: 12px; color: var(--text-muted); }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .footer {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 36px 20px;
+            text-align: center;
+        }
+        .footer-logo { max-width: 110px; margin: 0 auto 14px; opacity: 0.45; }
+        .footer p { font-size: 12px; color: var(--text-muted); }
+        .footer a { color: var(--red); }
+        .footer a:hover { color: var(--red-light); }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 720px) {
+            .sub-header-inner { flex-direction: column; align-items: flex-start; }
+            .progress-panel { gap: 22px; padding: 24px; }
+            .month-head { padding: 16px 18px; gap: 12px; }
+            .month-body { padding: 0 18px 18px; }
+            .month-prog .mini-bar { display: none; }
+            .lesson-time { display: none; }
+            .block { padding: 22px 20px; }
+        }
+    </style>
+
+    <script src="portal-auth.js"></script>
+<script src="embed-mode.js?v=20260927b"></script>
+    <script src="help-box.js?v=20260916" defer></script>
+    <link rel="stylesheet" href="hub-theme.css?v=20260903b"><script src="hub-brand.js" defer></script>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     HEADER
+═══════════════════════════════════════ -->
+<header class="sub-header">
+    <div class="sub-header-inner">
+        <div class="sub-header-left">
+            <img src="https://yrlagent.com/wp-content/uploads/2026/04/Your-Realty-Link-ver6.6-4-final.png" alt="Your Realty Link" class="sub-header-logo">
+            <div class="sub-header-text">
+                <h1>Your First Year</h1>
+                <p>A twelve-month program for new agents</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <span id="yrl-user-name" class="user-chip"></span>
+            <button class="signout-btn" onclick="yrlSignOut()">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+            </button>
+            <a href="yrl-agent-training.html" class="back-btn">
+                <i class="fa-solid fa-arrow-left"></i> Training
+            </a>
+        </div>
+    </div>
+</header>
+
+
+<!-- ═══════════════════════════════════════
+     MAIN
+═══════════════════════════════════════ -->
+<main class="main">
+    <div id="helpTop"></div>
+    <script>document.addEventListener("DOMContentLoaded",function(){ window.HelpBox && HelpBox.mount({container:"#helpTop",key:"yrl-first-year",label:"Your First Year"}); });</script>
+
+    <!-- ─── PROGRESS PANEL ─── -->
+    <div class="progress-panel">
+        <div class="ring-wrap">
+            <svg width="118" height="118" viewBox="0 0 118 118">
+                <circle class="ring-bg"   cx="59" cy="59" r="50"></circle>
+                <circle class="ring-fill" cx="59" cy="59" r="50" id="ringFill"
+                        stroke-dasharray="314.16" stroke-dashoffset="314.16"></circle>
+            </svg>
+            <div class="ring-label">
+                <span class="pct" id="ringPct">0%</span>
+                <span class="sub">complete</span>
+            </div>
+        </div>
+
+        <div class="progress-copy">
+            <h2 id="paceHeadline">Welcome to your first year</h2>
+            <p id="paceCopy">Every month is open — work at your own speed. We'll show you where a typical agent would be.</p>
+            <div class="pace-row">
+                <span class="pace-pill" id="pacePill" style="display:none;">
+                    <i class="fa-solid fa-location-arrow"></i> <span id="pacePillText"></span>
+                </span>
+                <button class="start-btn" id="startBtn" onclick="editStartDate()">Set your start date</button>
+            </div>
+        </div>
+
+        <div class="stat-strip">
+            <div class="stat">
+                <div class="num" id="statLessons">0</div>
+                <div class="lbl">Lessons done</div>
+            </div>
+            <div class="stat">
+                <div class="num" id="statMonths">0</div>
+                <div class="lbl">Months done</div>
+            </div>
+            <div class="stat">
+                <div class="num" id="statActions">0</div>
+                <div class="lbl">Actions taken</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── CURRICULUM ─── -->
+    <div class="sec-header">
+        <div class="sec-icon"><i class="fa-solid fa-seedling"></i></div>
+        <div>
+            <h2>The Program</h2>
+            <p>Twelve months, three lessons each — open in any order</p>
+        </div>
+    </div>
+
+    <div class="month-list" id="monthList"></div>
+
+</main>
+
+
+<!-- ═══════════════════════════════════════
+     LESSON READER
+═══════════════════════════════════════ -->
+<div class="reader" id="reader">
+    <div class="reader-bar">
+        <div class="reader-bar-inner">
+            <button class="reader-back" onclick="closeReader()">
+                <i class="fa-solid fa-arrow-left"></i> Back to program
+            </button>
+            <span class="save-flash" id="saveFlash"><i class="fa-solid fa-check"></i> Saved</span>
+            <span class="reader-crumb" id="readerCrumb"></span>
+        </div>
+    </div>
+    <div class="reader-inner" id="readerInner"></div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════ -->
+<footer class="footer">
+    <img src="https://yrlagent.com/wp-content/uploads/2026/04/Your-Realty-Link-ver6.6-4-final.png" alt="Your Realty Link" class="footer-logo"
+         onerror="this.style.display='none'">
+    <p>&copy; 2026 Your Realty Link &nbsp;&middot;&nbsp; All Rights Reserved &nbsp;&middot;&nbsp;
+       <a href="https://www.yourrealtylink.com" target="_blank">yourrealtylink.com</a>
+    </p>
+</footer>
+
+
+<!-- curriculum content -->
+<script src="yrl-first-year-content.js"></script>
+
+<script>
+/* ============================================================
+   Your First Year — progress engine
+   Data lives in Supabase (yrl_first_year_progress / _enrollment).
+   localStorage is a mirror so the page still works if the
+   network hiccups; Supabase wins on load when it responds.
+   ============================================================ */
+
+const LS_KEY   = 'yrl_first_year_v1';
+const PASS_PCT = 0.67;                 /* 2 of 3 to pass a quiz */
+
+let state = { startedOn: null, lessons: {} };   /* lessons[id] = {done, actions[], quizScore, quizTotal, notes} */
+let sb    = null;                               /* supabase client, set on auth-ready */
+let uid   = null;
+let openReaderId = null;
+let saveTimer = null;
+
+/* ─── helpers ─────────────────────────────────────────────── */
+const allLessons = () => FIRST_YEAR.flatMap(m => m.lessons.map(l => ({ ...l, month: m.month, monthTitle: m.title })));
+const findLesson = id => allLessons().find(l => l.id === id);
+const rec = id => (state.lessons[id] ||= { done: false, actions: [], quizScore: null, quizTotal: null, notes: '' });
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+
+/* ─── persistence ─────────────────────────────────────────── */
+function saveLocal() {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) { /* quota — ignore */ }
+}
+
+function loadLocal() {
+    try {
+        const raw = localStorage.getItem(LS_KEY);
+        if (raw) state = Object.assign({ startedOn: null, lessons: {} }, JSON.parse(raw));
+    } catch (e) { /* corrupt — start fresh */ }
+}
+
+function flashSaved() {
+    const f = document.getElementById('saveFlash');
+    f.classList.add('show');
+    clearTimeout(flashSaved._t);
+    flashSaved._t = setTimeout(() => f.classList.remove('show'), 1600);
+}
+
+/* Push one lesson's record up. Debounced so typing notes doesn't spam. */
+function pushLesson(id, immediate) {
+    saveLocal();
+    if (!sb || !uid) return;
+    clearTimeout(saveTimer);
+    const doPush = async () => {
+        const r = rec(id);
+        const { error } = await sb.from('yrl_first_year_progress').upsert({
+            user_id:      uid,
+            lesson_id:    id,
+            completed_at: r.done ? (r.completedAt || new Date().toISOString()) : null,
+            actions:      r.actions,
+            quiz_score:   r.quizScore,
+            quiz_total:   r.quizTotal,
+            notes:        r.notes
+        }, { onConflict: 'user_id,lesson_id' });
+        if (!error) flashSaved();
+        else console.warn('[first-year] save failed', error.message);
+    };
+    if (immediate) doPush(); else saveTimer = setTimeout(doPush, 900);
+}
+
+async function pushEnrollment() {
+    saveLocal();
+    if (!sb || !uid || !state.startedOn) return;
+    await sb.from('yrl_first_year_enrollment')
+            .upsert({ user_id: uid, started_on: state.startedOn }, { onConflict: 'user_id' });
+}
+
+async function pullRemote() {
+    if (!sb || !uid) return;
+    const [prog, enr] = await Promise.all([
+        sb.from('yrl_first_year_progress').select('*').eq('user_id', uid),
+        sb.from('yrl_first_year_enrollment').select('*').eq('user_id', uid).maybeSingle()
+    ]);
+
+    if (prog.error) { console.warn('[first-year] load failed', prog.error.message); return; }
+
+    if (prog.data && prog.data.length) {
+        state.lessons = {};
+        for (const row of prog.data) {
+            state.lessons[row.lesson_id] = {
+                done:        !!row.completed_at,
+                completedAt: row.completed_at,
+                actions:     Array.isArray(row.actions) ? row.actions : [],
+                quizScore:   row.quiz_score,
+                quizTotal:   row.quiz_total,
+                notes:       row.notes || ''
+            };
+        }
+    }
+
+    if (enr.data && enr.data.started_on) {
+        state.startedOn = enr.data.started_on;
+    } else if (!state.startedOn) {
+        /* First visit — enroll them today so the pace indicator has an anchor. */
+        state.startedOn = new Date().toISOString().slice(0, 10);
+        pushEnrollment();
+    }
+
+    saveLocal();
+    renderAll();
+}
+
+/* ─── pace ────────────────────────────────────────────────── */
+function suggestedMonth() {
+    if (!state.startedOn) return null;
+    const start = new Date(state.startedOn + 'T00:00:00');
+    if (isNaN(start)) return null;
+    const now = new Date();
+    const months = (now.getFullYear() - start.getFullYear()) * 12
+                 + (now.getMonth() - start.getMonth())
+                 + (now.getDate() >= start.getDate() ? 0 : -1);
+    return Math.min(12, Math.max(1, months + 1));
+}
+
+function editStartDate() {
+    const current = state.startedOn || new Date().toISOString().slice(0, 10);
+    const input = prompt('What date did you start at YRL?  (YYYY-MM-DD)', current);
+    if (!input) return;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(input.trim()) || isNaN(new Date(input.trim() + 'T00:00:00'))) {
+        alert('Please use the format YYYY-MM-DD, for example 2026-03-14.');
+        return;
+    }
+    state.startedOn = input.trim();
+    pushEnrollment();
+    renderAll();
+}
+
+/* ─── stats ───────────────────────────────────────────────── */
+function stats() {
+    const all = allLessons();
+    const done = all.filter(l => rec(l.id).done).length;
+    const monthsDone = FIRST_YEAR.filter(m => m.lessons.every(l => rec(l.id).done)).length;
+    const actions = all.reduce((n, l) => n + rec(l.id).actions.length, 0);
+    return { total: all.length, done, monthsDone, actions, pct: all.length ? done / all.length : 0 };
+}
+
+/* ─── render: overview ────────────────────────────────────── */
+function renderAll() {
+    const s = stats();
+    const CIRC = 2 * Math.PI * 50;
+
+    document.getElementById('ringFill').style.strokeDashoffset = CIRC * (1 - s.pct);
+    document.getElementById('ringPct').textContent   = Math.round(s.pct * 100) + '%';
+    document.getElementById('statLessons').textContent = s.done;
+    document.getElementById('statMonths').textContent  = s.monthsDone;
+    document.getElementById('statActions').textContent = s.actions;
+
+    /* pace */
+    const sm = suggestedMonth();
+    const pill = document.getElementById('pacePill');
+    const startBtn = document.getElementById('startBtn');
+    const headline = document.getElementById('paceHeadline');
+    const copy = document.getElementById('paceCopy');
+
+    if (sm) {
+        const m = FIRST_YEAR.find(x => x.month === sm);
+        pill.style.display = '';
+        document.getElementById('pacePillText').textContent =
+            'Suggested pace: Month ' + sm + (m ? ' — ' + m.title : '');
+        startBtn.textContent = 'Started ' + new Date(state.startedOn + 'T00:00:00')
+            .toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    } else {
+        pill.style.display = 'none';
+        startBtn.textContent = 'Set your start date';
+    }
+
+    if (s.done === 0) {
+        headline.textContent = 'Welcome to your first year';
+        copy.textContent = 'Every month is open — work at your own speed. The pace marker just shows where a typical agent would be.';
+    } else if (s.done === s.total) {
+        headline.textContent = 'You finished the program';
+        copy.textContent = 'All twelve months complete. Go back through anything you want to revisit — your notes are still here.';
+    } else {
+        headline.textContent = s.done + ' of ' + s.total + ' lessons complete';
+        copy.textContent = 'Keep going. Nothing is locked — jump to whatever you need this week.';
+    }
+
+    renderMonths();
+}
+
+function renderMonths() {
+    const sm = suggestedMonth();
+    const host = document.getElementById('monthList');
+    const openIds = new Set([...host.querySelectorAll('.month-card.open')].map(el => +el.dataset.month));
+
+    host.innerHTML = FIRST_YEAR.map(m => {
+        const done  = m.lessons.filter(l => rec(l.id).done).length;
+        const all   = m.lessons.length;
+        const isDone = done === all;
+        const isCur  = sm === m.month && !isDone;
+        const cls = ['month-card'];
+        if (openIds.has(m.month)) cls.push('open');
+        if (isDone) cls.push('is-done');
+        if (isCur)  cls.push('is-current');
+
+        const tag = isDone ? '<span class="tag tag-done">Complete</span>'
+                  : isCur  ? '<span class="tag tag-now">You\'re here</span>' : '';
+
+        return `
+        <div class="${cls.join(' ')}" data-month="${m.month}">
+            <div class="month-head" onclick="toggleMonth(${m.month})">
+                <div class="month-num"><span class="m">Month</span><span class="n">${m.month}</span></div>
+                <div class="month-meta">
+                    <h3>${esc(m.title)} ${tag}</h3>
+                    <p>${esc(m.subtitle)}</p>
+                </div>
+                <div class="month-prog">
+                    <div class="mini-bar"><span style="width:${(done / all) * 100}%"></span></div>
+                    <span class="count">${done}/${all}</span>
+                    <i class="fa-solid fa-chevron-down chev"></i>
+                </div>
+            </div>
+            <div class="month-body">
+                <div class="month-overview">${esc(m.overview)}</div>
+                ${m.video ? `<div class="month-video"><div class="video-slot"><iframe src="${esc(m.video)}"
+                     allowfullscreen title="${esc(m.title)} introduction"
+                     referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+                     <p class="month-video-cap"><i class="fa-solid fa-circle-play"></i> Start here — ${esc(m.title)} in 90 seconds</p></div>` : ''}
+                ${m.lessons.map((l, i) => {
+                    const r = rec(l.id);
+                    return `
+                    <div class="lesson-row ${r.done ? 'done' : ''}" onclick="openReader('${l.id}')">
+                        <div class="lesson-check"><i class="fa-solid fa-check"></i></div>
+                        <div class="lesson-info">
+                            <h4>${i + 1}. ${esc(l.title)}</h4>
+                            <p>${esc(l.summary)}</p>
+                        </div>
+                        <div class="lesson-time">
+                            ${l.video ? '<i class="fa-solid fa-circle-play has-video" title="Includes a video"></i>' : ''}
+                            <i class="fa-regular fa-clock"></i> ${l.minutes} min
+                        </div>
+                    </div>`;
+                }).join('')}
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function toggleMonth(n) {
+    document.querySelector(`.month-card[data-month="${n}"]`).classList.toggle('open');
+}
+
+/* ─── render: reader ──────────────────────────────────────── */
+function openReader(id) {
+    const l = findLesson(id);
+    if (!l) return;
+    openReaderId = id;
+    const r = rec(id);
+
+    const quizLocked = r.quizScore !== null;
+
+    document.getElementById('readerCrumb').textContent = 'Month ' + l.month + ' · ' + l.monthTitle;
+    document.getElementById('readerInner').innerHTML = `
+        <h1>${esc(l.title)}</h1>
+        <p class="reader-sub">${esc(l.summary)} &nbsp;·&nbsp; ${l.minutes} min read</p>
+
+        ${l.video ? `<div class="video-slot"><iframe src="${esc(l.video)}" allowfullscreen
+             title="${esc(l.title)} video" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>` : ''}
+
+        <div class="lesson-body">${l.body}</div>
+
+        <div class="block">
+            <h3><i class="fa-solid fa-list-check"></i> Do this week</h3>
+            <p class="hint">Tick these off as you go — they save automatically.</p>
+            ${l.actions.map((a, i) => `
+                <div class="action-item ${r.actions.includes(i) ? 'checked' : ''}" onclick="toggleAction(${i})">
+                    <div class="action-box"><i class="fa-solid fa-check"></i></div>
+                    <span>${esc(a)}</span>
+                </div>`).join('')}
+        </div>
+
+        <div class="block">
+            <h3><i class="fa-solid fa-circle-question"></i> Knowledge check</h3>
+            <p class="hint">${quizLocked
+                ? 'You scored ' + r.quizScore + ' of ' + r.quizTotal + '. Answers are shown below.'
+                : 'Answer all ' + l.quiz.length + ' to finish the lesson.'}</p>
+            <div id="quizHost" class="${quizLocked ? 'quiz-locked' : ''}">
+                ${l.quiz.map((q, qi) => `
+                    <div class="quiz-q" data-q="${qi}">
+                        <p>${qi + 1}. ${esc(q.q)}</p>
+                        ${q.options.map((o, oi) => `
+                            <div class="quiz-opt ${quizLocked ? (oi === q.answer ? 'right' : '') : ''}"
+                                 data-opt="${oi}" onclick="pickAnswer(${qi}, ${oi})">
+                                <div class="dot"></div><span>${esc(o)}</span>
+                            </div>`).join('')}
+                        <div class="quiz-explain">${esc(q.explain)}</div>
+                    </div>`).join('')}
+            </div>
+            <div id="quizResult"></div>
+            ${quizLocked ? '<button class="btn btn-ghost" style="margin-top:18px" onclick="retakeQuiz()"><i class="fa-solid fa-rotate-left"></i> Retake</button>'
+                         : '<button class="btn btn-primary" style="margin-top:18px" id="quizSubmit" onclick="submitQuiz()" disabled>Check my answers</button>'}
+        </div>
+
+        <div class="block">
+            <h3><i class="fa-solid fa-pen-to-square"></i> Your notes</h3>
+            <p class="hint">Private to you. Saved as you type.</p>
+            <textarea class="notes-area" id="notesArea" placeholder="What stood out? What are you going to try?"
+                      oninput="onNotesInput()">${esc(r.notes)}</textarea>
+        </div>
+
+        <div class="reader-foot">
+            <span class="complete-note" id="completeNote"></span>
+            <button class="btn ${r.done ? 'btn-ghost' : 'btn-primary'}" id="completeBtn" onclick="toggleComplete()"></button>
+        </div>
+    `;
+
+    quizPicks = {};
+    updateCompleteBtn();
+    document.getElementById('reader').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    window.scrollTo(0, 0);
+    document.getElementById('reader').scrollTop = 0;
+}
+
+function closeReader() {
+    document.getElementById('reader').classList.remove('open');
+    document.body.style.overflow = '';
+    openReaderId = null;
+    renderAll();
+}
+
+/* ─── actions ─────────────────────────────────────────────── */
+function toggleAction(i) {
+    const r = rec(openReaderId);
+    const at = r.actions.indexOf(i);
+    if (at === -1) r.actions.push(i); else r.actions.splice(at, 1);
+    document.querySelectorAll('.action-item')[i].classList.toggle('checked', r.actions.includes(i));
+    pushLesson(openReaderId);
+    updateCompleteBtn();
+}
+
+/* ─── quiz ────────────────────────────────────────────────── */
+let quizPicks = {};
+
+function pickAnswer(qi, oi) {
+    if (document.getElementById('quizHost').classList.contains('quiz-locked')) return;
+    quizPicks[qi] = oi;
+    const row = document.querySelector(`.quiz-q[data-q="${qi}"]`);
+    row.querySelectorAll('.quiz-opt').forEach(el => el.classList.toggle('picked', +el.dataset.opt === oi));
+    const l = findLesson(openReaderId);
+    document.getElementById('quizSubmit').disabled = Object.keys(quizPicks).length < l.quiz.length;
+}
+
+function submitQuiz() {
+    const l = findLesson(openReaderId);
+    const r = rec(openReaderId);
+    let score = 0;
+
+    l.quiz.forEach((q, qi) => {
+        const row = document.querySelector(`.quiz-q[data-q="${qi}"]`);
+        const picked = quizPicks[qi];
+        if (picked === q.answer) score++;
+        row.querySelectorAll('.quiz-opt').forEach(el => {
+            const oi = +el.dataset.opt;
+            el.classList.remove('picked');
+            if (oi === q.answer) el.classList.add('right');
+            else if (oi === picked) el.classList.add('wrong');
+        });
+    });
+
+    r.quizScore = score;
+    r.quizTotal = l.quiz.length;
+    document.getElementById('quizHost').classList.add('quiz-locked');
+
+    const passed = score / l.quiz.length >= PASS_PCT;
+    document.getElementById('quizResult').innerHTML =
+        `<p class="quiz-result ${passed ? 'pass' : 'fail'}">You scored ${score} of ${l.quiz.length}. ` +
+        (passed ? 'Nice work — you can mark this lesson complete.'
+                : 'Have another look at the lesson, then retake it.') + '</p>';
+
+    document.getElementById('quizSubmit').outerHTML =
+        '<button class="btn btn-ghost" style="margin-top:18px" onclick="retakeQuiz()"><i class="fa-solid fa-rotate-left"></i> Retake</button>';
+
+    pushLesson(openReaderId, true);
+    updateCompleteBtn();
+}
+
+function retakeQuiz() {
+    const r = rec(openReaderId);
+    r.quizScore = null;
+    r.quizTotal = null;
+    pushLesson(openReaderId, true);
+    openReader(openReaderId);
+}
+
+/* ─── notes ───────────────────────────────────────────────── */
+function onNotesInput() {
+    rec(openReaderId).notes = document.getElementById('notesArea').value;
+    pushLesson(openReaderId);
+}
+
+/* ─── completion ──────────────────────────────────────────── */
+function quizPassed(id) {
+    const l = findLesson(id), r = rec(id);
+    return r.quizScore !== null && r.quizScore / l.quiz.length >= PASS_PCT;
+}
+
+function updateCompleteBtn() {
+    const btn = document.getElementById('completeBtn');
+    if (!btn) return;
+    const r = rec(openReaderId);
+    const note = document.getElementById('completeNote');
+
+    if (r.done) {
+        btn.className = 'btn btn-ghost';
+        btn.innerHTML = '<i class="fa-solid fa-rotate-left"></i> Mark as not complete';
+        btn.disabled = false;
+        note.textContent = 'Completed. It still counts if you come back to it.';
+        return;
+    }
+
+    const ok = quizPassed(openReaderId);
+    btn.className = 'btn btn-primary';
+    btn.innerHTML = '<i class="fa-solid fa-check"></i> Mark lesson complete';
+    btn.disabled = !ok;
+    note.textContent = ok ? '' : 'Pass the knowledge check to complete this lesson.';
+}
+
+function toggleComplete() {
+    const r = rec(openReaderId);
+    if (!r.done && !quizPassed(openReaderId)) return;
+    r.done = !r.done;
+    r.completedAt = r.done ? new Date().toISOString() : null;
+    pushLesson(openReaderId, true);
+    updateCompleteBtn();
+
+    if (r.done) {
+        const l = findLesson(openReaderId);
+        const month = FIRST_YEAR.find(m => m.month === l.month);
+        const idx = month.lessons.findIndex(x => x.id === openReaderId);
+        const next = month.lessons[idx + 1]
+                  || (FIRST_YEAR.find(m => m.month === l.month + 1) || {}).lessons?.[0];
+        if (next) setTimeout(() => openReader(next.id), 550);
+        else closeReader();
+    }
+}
+
+/* ─── boot ────────────────────────────────────────────────── */
+loadLocal();
+/* Anchor the pace marker immediately so it works even if Supabase is slow
+   or unreachable. pullRemote() overwrites this with the stored date if the
+   agent already has one. */
+if (!state.startedOn) {
+    state.startedOn = new Date().toISOString().slice(0, 10);
+    saveLocal();
+}
+renderAll();
+
+document.addEventListener('yrl-auth-ready', e => {
+    sb  = window.yrlClient;
+    uid = e.detail.user.id;
+    pullRemote();
+});
+
+/* Esc closes the reader */
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && openReaderId) closeReader();
+});
+</script>
+
+</body>
+</html>

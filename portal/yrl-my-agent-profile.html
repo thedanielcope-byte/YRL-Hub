@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Agent Profile — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="portal-auth.js"></script>
+    <script src="embed-mode.js?v=20260927b"></script>
+    <style>
+        :root{
+            --red:#c03926; --red-dark:#9e2e1e; --bg:#f2f4f7; --surface:#ffffff;
+            --surface-2:#f7f8fa; --border:#e2e5ea; --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.55;}
+        a{text-decoration:none;color:inherit;}
+        .page-header{background:linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);padding:26px 22px;}
+        .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+        .back-btn{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:9px 16px;border-radius:100px;font-size:13px;font-weight:600;white-space:nowrap;}
+        .back-btn:hover{background:rgba(255,255,255,0.26);}
+        .header-title h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(26px,4vw,38px);letter-spacing:1.5px;color:#fff;line-height:1.1;}
+        .header-title p{font-size:13px;color:rgba(255,255,255,0.85);}
+        .wrap{max-width:1100px;margin:0 auto;padding:0 22px;}
+        /* Tab bar — flat underline tabs (matches the hub's category tab style) */
+        .mv-tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin:18px 0 0;flex-wrap:wrap;}
+        .mv-tab{display:inline-flex;align-items:center;gap:8px;padding:12px 16px;border:none;background:none;
+            font-family:inherit;font-size:14px;font-weight:700;color:var(--text-sec);cursor:pointer;
+            border-bottom:2.5px solid transparent;margin-bottom:-1px;}
+        .mv-tab:hover{color:var(--text);}
+        .mv-tab.on{color:var(--red);border-bottom-color:var(--red);}
+        .mv-frame{width:100%;border:0;display:block;min-height:520px;background:var(--bg);}
+        /* Embedded in the hub: drop our own header, keep the tabs */
+        .embed .page-header{display:none!important;}
+        .embed .wrap{padding:0 4px;}
+        .embed .mv-tabs{margin-top:4px;}
+    </style>
+</head>
+<body>
+
+<header class="page-header">
+    <div class="header-inner">
+        <a href="hub.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Hub</a>
+        <div class="header-title">
+            <h1><i class="fa-solid fa-id-badge" style="font-size:0.8em;opacity:.9;"></i> My Agent Profile</h1>
+            <p>Your agent info and your email-signature tool — in one place.</p>
+        </div>
+    </div>
+</header>
+
+<div class="wrap">
+    <div class="mv-tabs" id="mvTabs">
+        <button class="mv-tab on" data-i="0"><i class="fa-solid fa-id-card"></i> My Agent Info</button>
+        <button class="mv-tab" data-i="1"><i class="fa-solid fa-signature"></i> Create Email Signature Tool</button>
+    </div>
+    <iframe class="mv-frame" id="mvFrame" title="My Agent Profile" loading="eager"></iframe>
+</div>
+
+<script>
+(function(){
+    var TABS = [
+        { src: 'yrl-agent-info.html' },
+        { src: 'yrl-email-signature.html' }
+    ];
+    var KEY = 'yrl-my-agent-profile-tab';
+    var frame = document.getElementById('mvFrame');
+    var tabs  = document.getElementById('mvTabs');
+    var cur = -1;
+
+    function srcFor(i){
+        // Always embed the inner tool so its own chrome is stripped; the wrapper
+        // provides the header + tabs. Carry ?subtabs through if we're in the hub.
+        var s = TABS[i].src + '?embed=1';
+        if (/[?&]subtabs(=|&|$)/.test(location.search)) s += '&subtabs=1';
+        return s;
+    }
+    function show(i){
+        if (i === cur) return;
+        cur = i;
+        try { sessionStorage.setItem(KEY, String(i)); } catch(e){}
+        [].forEach.call(tabs.querySelectorAll('.mv-tab'), function(b){ b.classList.toggle('on', +b.getAttribute('data-i') === i); });
+        frame.style.height = '520px';           // reset; the inner page will report its real height
+        frame.src = srcFor(i);
+        if (window.__yrlTabChanged) window.__yrlTabChanged(String(i));   // hub sidebar highlight follows
+    }
+
+    tabs.addEventListener('click', function(e){
+        var b = e.target.closest('.mv-tab'); if (!b) return;
+        show(+b.getAttribute('data-i'));
+    });
+
+    /* The inner tool (embed-mode.js) posts its content height. Size our iframe to
+       it, then report OUR total height up to the hub so the whole thing fits with
+       no inner scrollbar. */
+    function postUp(){
+        try {
+            var h = document.documentElement.scrollHeight || document.body.scrollHeight;
+            if (parent !== window) parent.postMessage({ __yrlEmbedH: true, height: h }, '*');
+        } catch(e){}
+    }
+    window.addEventListener('message', function(e){
+        var d = e.data;
+        if (!d || !d.__yrlEmbedH || !d.height) return;
+        if (e.source === frame.contentWindow){
+            frame.style.height = d.height + 'px';   // fit our iframe to the active tool
+            setTimeout(postUp, 30);                 // then bubble our new total up to the hub
+        }
+    });
+
+    var start = 0;
+    try { var s = sessionStorage.getItem(KEY); if (s === '0' || s === '1') start = +s; } catch(e){}
+    show(start);
+    // hub sidebar 3rd level: switch between the two tabs
+    if (window.__yrlRegisterTabs) window.__yrlRegisterTabs(function(id){ var n = +id; if (n === 0 || n === 1) show(n); });
+})();
+</script>
+<script src="mobile-tabs.js?v=20260927a" defer></script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+/* ============================================================
+   mrea-module.css — extra widgets for The Millionaire Agent Path.
+   Loads AFTER tiger-shell.css + tiger-module.css and only adds
+   new classes (mrea-*) so Tiger Training is untouched.
+   ============================================================ */
+
+.mrea-shell{
+  --mrea:#0f766e;            /* teal — distinguishes MREA from Tiger's amber */
+  --mrea-deep:#0b544e;
+  --mrea-light:#14b8a6;
+  --ok:#2e9e5b; --warn:#c2820b; --bad:#c03926;
+}
+
+/* ---------- verdict / result panel ---------- */
+.mrea-verdict{
+  margin:16px 0 4px;padding:18px 20px;border-radius:14px;
+  background:#f2f7f6;border:1px solid #d6e6e3;border-left:5px solid var(--mrea);
+}
+.mrea-verdict .vt{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--mrea);margin:0 0 8px}
+.mrea-verdict .vh{font-family:'Bebas Neue',sans-serif;font-size:30px;line-height:1.05;letter-spacing:.5px;color:#12312e;margin:0 0 6px}
+.mrea-verdict .vp{font-size:14px;line-height:1.55;color:#3d4a48;margin:0}
+.mrea-verdict .vp + .vp{margin-top:8px}
+.mrea-verdict.is-ok{background:#f1f9f4;border-color:#cfe8d9;border-left-color:var(--ok)}
+.mrea-verdict.is-ok .vt,.mrea-verdict.is-ok .vh{color:#1e6b3e}
+.mrea-verdict.is-warn{background:#fdf8ec;border-color:#f0e2c0;border-left-color:var(--warn)}
+.mrea-verdict.is-warn .vt,.mrea-verdict.is-warn .vh{color:#8a5d06}
+.mrea-verdict.is-bad{background:#fdf3f1;border-color:#f2d9d4;border-left-color:var(--bad)}
+.mrea-verdict.is-bad .vt,.mrea-verdict.is-bad .vh{color:#93291a}
+
+/* ---------- big stat row ---------- */
+.mrea-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:14px 0 2px}
+.mrea-stat{background:#fff;border:1px solid #e2e5ea;border-radius:12px;padding:16px 14px;text-align:center}
+.mrea-stat .sv{font-family:'Bebas Neue',sans-serif;font-size:32px;line-height:1;color:var(--mrea);letter-spacing:.5px}
+.mrea-stat .sl{display:block;margin-top:6px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#7a828e}
+.mrea-stat .sn{display:block;margin-top:4px;font-size:11.5px;color:#9ca3af}
+.mrea-stat.hot .sv{color:var(--bad)}
+.mrea-stat.good .sv{color:var(--ok)}
+
+/* ---------- counter (e.g. "you have planned 27 of 33") ---------- */
+.mrea-counter{
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+  margin:16px 0;padding:16px 20px;border-radius:14px;
+  background:#12312e;color:#e8f3f1;
+}
+.mrea-counter .cn{font-family:'Bebas Neue',sans-serif;font-size:52px;line-height:.9;color:var(--mrea-light)}
+.mrea-counter .cn.done{color:#5bd6a8}
+.mrea-counter .cn.over{color:#f0b429}
+.mrea-counter .ct{flex:1;min-width:200px}
+.mrea-counter .ct b{display:block;font-size:15px;margin-bottom:3px}
+.mrea-counter .ct span{font-size:13px;color:#a9c4c0;line-height:1.45}
+.mrea-counter .cbar{width:100%;height:8px;border-radius:99px;background:rgba(255,255,255,.14);overflow:hidden;margin-top:9px}
+.mrea-counter .cbar > i{display:block;height:100%;width:0;background:var(--mrea-light);transition:width .35s}
+.mrea-counter .cbar > i.done{background:#5bd6a8}
+
+/* ---------- slider scale rows (diagnostics) ---------- */
+.mrea-scale{display:flex;align-items:center;gap:14px;padding:11px 0;border-bottom:1px dashed #e6e9ee}
+.mrea-scale:last-child{border-bottom:none}
+.mrea-scale .sl-lab{flex:1;min-width:0;font-size:13.5px;line-height:1.4;color:#2b3138}
+.mrea-scale .sl-lab small{display:block;color:#9ca3af;font-size:11.5px;margin-top:2px}
+.mrea-scale input[type=range]{flex:0 0 46%;max-width:280px;accent-color:var(--mrea)}
+.mrea-scale .sl-val{flex:0 0 34px;text-align:center;font-weight:800;font-size:15px;color:var(--mrea)}
+@media(max-width:640px){
+  .mrea-scale{flex-wrap:wrap}
+  .mrea-scale input[type=range]{flex:1 1 100%;max-width:none}
+}
+
+/* ---------- horizontal bars ---------- */
+.mrea-bars{margin:14px 0 2px}
+.mrea-bar{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.mrea-bar .bl{flex:0 0 96px;font-size:12.5px;font-weight:700;color:#2b3138}
+.mrea-bar .bt{flex:1;height:22px;border-radius:6px;background:#eef0f3;overflow:hidden}
+.mrea-bar .bt > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--mrea),var(--mrea-light));transition:width .4s}
+.mrea-bar .bt > i.weak{background:linear-gradient(90deg,#c03926,#d94a35)}
+.mrea-bar .bv{flex:0 0 40px;text-align:right;font-size:12.5px;font-weight:700;color:#5a6270}
+
+/* ---------- myth / truth cards ---------- */
+.mrea-myth{border:1px solid #e2e5ea;border-radius:13px;overflow:hidden;margin-bottom:12px;background:#fff}
+.mrea-myth .mh{display:flex;gap:11px;align-items:flex-start;padding:14px 16px;background:#fdf3f1;border-bottom:1px solid #f2d9d4}
+.mrea-myth .mh .tag{flex:none;font-size:9.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:var(--bad);padding:3px 8px;border-radius:99px;margin-top:2px}
+.mrea-myth .mh p{margin:0;font-size:14px;font-weight:650;color:#93291a;line-height:1.45}
+.mrea-myth .mt{display:flex;gap:11px;align-items:flex-start;padding:14px 16px}
+.mrea-myth .mt .tag{flex:none;font-size:9.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:var(--ok);padding:3px 8px;border-radius:99px;margin-top:2px}
+.mrea-myth .mt p{margin:0;font-size:13.5px;color:#3d4a48;line-height:1.5}
+.mrea-myth .mbelieve{padding:0 16px 14px}
+
+/* ---------- compact table ---------- */
+.mrea-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+.mrea-table th{text-align:left;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:#7a828e;font-weight:800;padding:8px 10px;border-bottom:2px solid #e2e5ea}
+.mrea-table td{padding:9px 10px;border-bottom:1px solid #eef0f3;vertical-align:middle;color:#2b3138}
+.mrea-table tr:last-child td{border-bottom:none}
+.mrea-table td.num,.mrea-table th.num{text-align:right;font-variant-numeric:tabular-nums}
+.mrea-table input{width:100%;border:1px solid #e2e5ea;border-radius:7px;padding:7px 9px;font:inherit;font-size:13px;background:#fbfcfd}
+.mrea-table input:focus{outline:none;border-color:var(--mrea);background:#fff}
+.mrea-table .out{font-weight:800;color:var(--mrea);font-variant-numeric:tabular-nums}
+.mrea-tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ---------- two-column compare ---------- */
+.mrea-vs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.mrea-vs > div{border:1px solid #e2e5ea;border-radius:13px;padding:16px 17px;background:#fff}
+.mrea-vs h4{margin:0 0 9px;font-size:14.5px;color:#12312e}
+.mrea-vs ul{margin:0;padding-left:17px}
+.mrea-vs li{font-size:13px;line-height:1.55;color:#4b5563;margin-bottom:5px}
+.mrea-vs .good{border-color:#cfe8d9;background:#f7fcf9}
+.mrea-vs .bad{border-color:#f2d9d4;background:#fdf7f6}
+@media(max-width:640px){.mrea-vs{grid-template-columns:1fr}}
+
+/* ---------- month planner rows ---------- */
+.mrea-months{margin:12px 0}
+.mrea-month{display:grid;grid-template-columns:56px 1fr;gap:12px;align-items:start;padding:11px 0;border-bottom:1px solid #eef0f3}
+.mrea-month:last-child{border-bottom:none}
+.mrea-month .mn{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:.08em;color:var(--mrea);padding-top:5px}
+.mrea-month .mf input{width:100%;border:1px solid #e2e5ea;border-radius:8px;padding:9px 11px;font:inherit;font-size:13px;background:#fbfcfd}
+.mrea-month .mf input:focus{outline:none;border-color:var(--mrea);background:#fff}
+.mrea-month .mf .hint{display:block;margin-top:4px;font-size:11.5px;color:#9ca3af;line-height:1.4}
+
+/* ---------- inline note ---------- */
+.mrea-note{font-size:12.5px;color:#7a828e;line-height:1.5;margin:8px 0 0}
+.mrea-note i{color:var(--mrea)}
+
+/* ---------- source pill legend ---------- */
+.mrea-legend{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
+.mrea-legend span{font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;background:#eef4f3;color:var(--mrea-deep)}
+
+@media print{
+  .mrea-counter{background:#fff !important;color:#000 !important;border:1px solid #999}
+  .mrea-counter .cn{color:#000 !important}
+  .mrea-verdict{break-inside:avoid}
+}

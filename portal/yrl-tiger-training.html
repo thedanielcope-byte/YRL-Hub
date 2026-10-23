@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tiger Training — Your Realty Link</title>
+<script src="portal-auth.js"></script>
+<script src="embed-mode.js?v=20260927b"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="tiger-shell.css?v=20260927b">
+<style>
+:root{
+  --red:#c03926; --red-dark:#9e2e1e; --tiger:#b5661c; --tiger-light:#d98a2b;
+  --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f7f8fa; --surface-3:#eef0f3;
+  --border:#e2e5ea; --border-light:#d0d4da;
+  --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+  --radius:14px; --shadow:0 4px 20px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+
+.topbar{background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:20}
+.topbar-in{max-width:1040px;margin:0 auto;padding:12px 22px;display:flex;align-items:center;gap:14px}
+.back{display:inline-flex;align-items:center;gap:8px;color:var(--text-sec);font-weight:600;font-size:14px}
+.back:hover{color:var(--red)}
+.topbar .who{margin-left:auto;font-size:13px;color:var(--text-muted)}
+.topbar .who b{color:var(--text-sec)}
+
+.hero{background:#1c1a17;color:#f3ede4;position:relative;overflow:hidden}
+.hero .stripes{position:absolute;inset:0;opacity:.13;background:repeating-linear-gradient(58deg,var(--tiger-light) 0 3px,transparent 3px 9px,var(--red) 9px 12px,transparent 12px 34px)}
+.hero-in{position:relative;max-width:1040px;margin:0 auto;padding:44px 22px 38px;display:flex;align-items:center;gap:34px;flex-wrap:wrap}
+.hero-txt{flex:1;min-width:260px}
+.eyebrow{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--tiger-light);font-weight:700;margin:0 0 10px}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:clamp(44px,8vw,78px);line-height:.9;margin:0}
+.hero p{color:#cfc7bc;max-width:56ch;margin:12px 0 0;font-size:16px}
+/* progress ring */
+.ring{--p:0;width:132px;height:132px;border-radius:50%;flex:none;display:grid;place-items:center;
+  background:conic-gradient(var(--tiger-light) calc(var(--p)*1%), rgba(255,255,255,.12) 0)}
+.ring .inner{width:104px;height:104px;border-radius:50%;background:#1c1a17;display:grid;place-items:center;text-align:center}
+.ring .pct{font-family:'Bebas Neue',sans-serif;font-size:38px;color:#f3ede4;line-height:1}
+.ring .lbl{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#a8a099;font-weight:700}
+
+.wrap{max-width:1040px;margin:0 auto;padding:26px 22px 70px}
+.legend{display:flex;gap:20px;flex-wrap:wrap;font-size:12.5px;color:var(--text-sec);margin:4px 2px 18px}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.dot{width:11px;height:11px;border-radius:3px}
+.dot.live{background:var(--red)} .dot.done{background:#2e9e5b} .dot.soon{background:var(--border-light)}
+
+.phase{margin:22px 0;border-top:1px solid var(--border);padding-top:20px}
+.phase-head{display:flex;align-items:baseline;gap:14px;margin:0 0 14px}
+.phase-num{font-family:'Bebas Neue',sans-serif;font-size:34px;color:transparent;-webkit-text-stroke:1.4px var(--tiger);line-height:1}
+.phase-title{font-size:19px;font-weight:750;margin:0}
+.phase-goal{color:var(--text-muted);font-size:13.5px;margin-left:auto;text-align:right;max-width:40ch}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.mod{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:15px 16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:9px;min-height:112px;position:relative;transition:.15s}
+.mod.live{cursor:pointer}
+.mod.live:hover{transform:translateY(-2px);border-color:var(--red)}
+.mod.soon{opacity:.72}
+.mod .top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mod .id{font-size:11px;font-weight:800;letter-spacing:.04em;color:var(--text-muted)}
+.mod .badge{font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:99px}
+.badge.live{background:var(--red);color:#fff}
+.badge.done{background:#2e9e5b;color:#fff}
+.badge.soon{background:var(--surface-3);color:var(--text-muted)}
+.mod .name{font-size:14.5px;font-weight:650;line-height:1.28;flex:1}
+.mod .mbar{height:6px;border-radius:99px;background:var(--surface-3);overflow:hidden}
+.mod .mbar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--tiger),var(--red));border-radius:99px;transition:width .4s}
+.mod .go{font-size:12.5px;font-weight:700;color:var(--red);display:inline-flex;align-items:center;gap:6px}
+
+.woven{margin-top:34px;background:#1c1a17;color:#e9e3da;border-radius:18px;padding:24px 26px;position:relative;overflow:hidden}
+.woven .stripes{position:absolute;inset:0;opacity:.1;background:repeating-linear-gradient(58deg,var(--tiger-light) 0 2px,transparent 2px 10px)}
+.woven h3{position:relative;margin:0 0 14px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--tiger-light)}
+.woven-grid{position:relative;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.woven-item h4{margin:0 0 5px;font-size:15px}
+.woven-item p{margin:0;font-size:13px;color:#b3aaa0;line-height:1.45}
+.woven-item{border-left:2px solid var(--red);padding-left:13px}
+
+@media(max-width:640px){.phase-goal{display:none}.hero-in{gap:22px}}
+</style>
+</head>
+<body class="tiger-shell" data-tiger-page="overview">
+
+<button class="tiger-menu-btn" id="tigerMenuBtn" aria-label="Modules"><i class="fa-solid fa-bars"></i></button>
+<aside class="tiger-side" id="tigerSide"></aside>
+<div class="tiger-backdrop" id="tigerBackdrop"></div>
+
+<style>
+  .ov{padding:6px 34px 60px;max-width:900px}
+  .ov-start{display:flex;gap:24px;align-items:center;flex-wrap:wrap;background:#1c1a17;color:#f3ede4;
+    border-radius:18px;padding:24px 26px;position:relative;overflow:hidden;margin:16px 0 26px}
+  .ov-start .stripes{position:absolute;inset:0;opacity:.12;background:repeating-linear-gradient(58deg,var(--tiger-light) 0 3px,transparent 3px 9px,var(--red) 9px 12px,transparent 12px 34px)}
+  .ov-pct{position:relative;font-family:'Bebas Neue',sans-serif;font-size:64px;line-height:.85;color:var(--tiger-light)}
+  .ov-pct small{display:block;font-family:'Inter';font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#a8a099;font-weight:700;margin-top:6px}
+  .ov-start-txt{position:relative;flex:1;min-width:220px}
+  .ov-start-txt h2{margin:0 0 4px;font-size:19px}
+  .ov-start-txt p{margin:0 0 14px;color:#cfc7bc;font-size:14px}
+  .ov-cta{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;padding:11px 18px;border-radius:10px;text-decoration:none;margin:0 8px 8px 0}
+  .ov-cta.primary{background:var(--red);color:#fff}
+  .ov-cta.primary:hover{background:var(--red-dark)}
+  .ov-cta.ghost{background:rgba(255,255,255,.08);color:#f3ede4;border:1px solid rgba(255,255,255,.16)}
+  .ov-how{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin:0 0 26px}
+  .ov-step{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;box-shadow:var(--shadow)}
+  .ov-step .si{width:34px;height:34px;border-radius:9px;background:rgba(192,57,38,.1);color:var(--red);display:grid;place-items:center;font-size:15px;margin-bottom:11px}
+  .ov-step h3{margin:0 0 5px;font-size:15px}
+  .ov-step p{margin:0;font-size:13px;color:var(--text-sec);line-height:1.45}
+  /* Inside the hub embed the fixed full-height sidebar + min-height:100vh main
+     collapse the iframe to nothing (blank). Flatten to normal flow so the page
+     reports a real height and the module list sits on top. */
+  .embed .tiger-side{position:static!important;width:auto!important;height:auto!important;inset:auto!important;border-right:none;border-bottom:1px solid var(--border)}
+  .embed .tiger-nav{overflow:visible!important;max-height:none!important}
+  .embed .tiger-main{margin-left:0!important;min-height:0!important}
+  .embed .reader-topbar{position:static!important}
+  .embed .tiger-menu-btn,.embed .tiger-backdrop{display:none!important}
+</style>
+
+<main class="tiger-main">
+
+<div class="reader-topbar">
+  <a class="btn btn-ghost" href="yrl-agent-training.html" style="text-decoration:none"><i class="fa-solid fa-arrow-left"></i> <span>Training</span></a>
+  <a class="btn btn-ghost" href="hub.html" style="text-decoration:none"><i class="fa-solid fa-house"></i> <span>Hub</span></a>
+  <div class="spacer"></div>
+  <div style="font-size:13px;color:var(--text-muted)">Signed in as <b id="yrl-user-name" style="color:var(--text-sec)">…</b></div>
+</div>
+
+<header class="reader-head">
+  <p class="reader-eyebrow">Your Realty Link · CSI Realty Team <span class="chip">Course</span></p>
+  <h1 class="reader-title">Welcome to Tiger Training</h1>
+  <p class="reader-lede">The complete agent success path — from newly licensed to consistent producer. Pick a module from the list on the left and work at your own pace. Every module lets you type your answers, save them to your account, and download them as a PDF.</p>
+</header>
+
+<div class="ov">
+  <div class="ov-start">
+    <div class="stripes"></div>
+    <div class="ov-pct"><span id="ovPct">0%</span><small>Complete</small></div>
+    <div class="ov-start-txt">
+      <h2 id="ovHead">Start with your foundation</h2>
+      <p id="ovSub">Module 1.1 sets your “why” and the numbers everything else builds on.</p>
+      <a class="ov-cta primary" id="continueBtn" href="yrl-tiger-1-1-big-why-goals.html">Start Module 1.1 <i class="fa-solid fa-arrow-right"></i></a>
+      <a class="ov-cta ghost" href="yrl-tiger-tracker.html"><i class="fa-solid fa-chart-line"></i> Open the Tiger Tracker</a>
+    </div>
+  </div>
+
+  <div class="ov-how">
+    <div class="ov-step"><div class="si"><i class="fa-solid fa-list-check"></i></div><h3>Pick a module</h3><p>Use the numbered list on the left. Available modules light up; the rest are on the way.</p></div>
+    <div class="ov-step"><div class="si"><i class="fa-solid fa-pen"></i></div><h3>Do the work</h3><p>Type your answers right in the page. Everything saves to your account automatically.</p></div>
+    <div class="ov-step"><div class="si"><i class="fa-solid fa-file-pdf"></i></div><h3>Keep a copy</h3><p>Download any module as a PDF, and track your weekly numbers in the Tiger Tracker.</p></div>
+  </div>
+
+  <div class="woven">
+    <div class="stripes"></div>
+    <h3>Runs through every phase</h3>
+    <div class="woven-grid">
+      <div class="woven-item"><h4>YRL Script Book</h4><p>The right scripts drop into each module — sphere, open house, FSBO/expired, buyer &amp; listing, objections.</p></div>
+      <a class="woven-item" href="yrl-tiger-tracker.html" style="display:block"><h4>The Tiger Tracker <i class="fa-solid fa-arrow-right" style="font-size:12px;color:var(--tiger-light)"></i></h4><p>Your weekly scoreboard: conversations, appointments, contracts, closings. Scored against your goals.</p></a>
+      <div class="woven-item"><h4>Business Planning</h4><p>Revisited each quarter — your goals and numbers, kept honest.</p></div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script src="hub-data.js"></script>
+<script src="tiger-nav.js"></script>
+<script>
+(function(){
+  function email(){const u=window.yrlUser;return u&&u.email?u.email.toLowerCase():(localStorage.getItem('yrl_agent_email')||'anon');}
+  const BUILT=['0.1','0.2','0.3','0.4','0.5','1.1','1.2','1.3','1.4','2.1','2.2','2.3','2.4','2.5','2.6','3.1','3.2','3.3','3.4','3.5','4.1','4.2','4.3','4.4','4.5','4.6','4.7','5.1','5.2','5.3','6.1','6.2','6.3','6.4','6.5','6.6']; // all 36 built, in learning order
+  const TOTAL=36;
+  async function boot(){
+    const key='tiger:v1:progress:'+email();
+    let prog={};try{prog=JSON.parse(localStorage.getItem(key))||{};}catch{}
+    if(typeof loadHubContent==='function'){try{const c=await loadHubContent(key);if(c)prog=c;}catch{}}
+    let done=0;Object.values(prog).forEach(p=>{if(p&&p.done)done++;});
+    document.getElementById('ovPct').textContent=Math.round((done/TOTAL)*100)+'%';
+    const next=BUILT.find(id=>!(prog[id]&&prog[id].done));
+    const btn=document.getElementById('continueBtn');
+    const head=document.getElementById('ovHead');
+    const sub=document.getElementById('ovSub');
+    const href=(next&&window.tigerHref)?window.tigerHref(next):null;
+    if(href) btn.href=href;
+    if(!next){
+      btn.innerHTML='Review Module 0.1 <i class="fa-solid fa-arrow-right"></i>';
+      if(window.tigerHref) btn.href=window.tigerHref('0.1');
+      head.textContent="You're all caught up 🐯";
+      sub.textContent='Every module is complete — revisit any of them anytime from the list.';
+    } else if(prog[next]&&prog[next].pct>0){
+      btn.innerHTML='Continue Module '+next+' <i class="fa-solid fa-arrow-right"></i>';
+      head.textContent='Pick up where you left off';
+      sub.textContent='You started Module '+next+'. Jump back in and keep going.';
+    } else {
+      btn.innerHTML='Start Module '+next+' <i class="fa-solid fa-arrow-right"></i>';
+      head.textContent='Start here';
+      sub.textContent='Module '+next+' is your next step. Work through the list at your own pace.';
+    }
+  }
+  if(window.yrlUser) boot();
+  else{document.addEventListener('yrl-auth-ready',boot,{once:true});setTimeout(boot,3000);}
+})();
+</script>
+</body>
+</html>

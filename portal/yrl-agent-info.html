@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Agent Info — Your Realty Link</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="portal-auth.js"></script>
+    <script src="embed-mode.js?v=20260927b"></script>
+    <script src="help-box.js?v=20260916" defer></script>
+    <script src="hub-data.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --red:#c03926; --red-light:#d94a35; --red-dark:#9e2e1e;
+            --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f7f8fa;
+            --surface-3:#eef0f3; --border:#e2e5ea; --border-light:#d0d4da;
+            --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+            --green:#16a34a; --green-light:#dcfce7;
+            --radius:12px; --radius-lg:20px;
+            --shadow:0 4px 20px rgba(0,0,0,0.08);
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        html{scroll-behavior:smooth;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.55;}
+        a{text-decoration:none;color:inherit;}
+
+        /* Header */
+        .sub-header{
+            background:linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);
+            padding:28px 20px 24px;color:#fff;position:relative;overflow:hidden;
+        }
+        .sub-header::before{
+            content:'';position:absolute;inset:0;
+            background-image:radial-gradient(rgba(255,255,255,0.07) 1px,transparent 1px);
+            background-size:28px 28px;pointer-events:none;
+        }
+        .sub-header-inner{max-width:780px;margin:0 auto;position:relative;z-index:1;}
+        .back-btn{
+            display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;
+            color:rgba(255,255,255,0.85);background:rgba(255,255,255,0.12);
+            border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:7px 14px;
+            margin-bottom:16px;transition:all 0.2s;cursor:pointer;
+        }
+        .back-btn:hover{background:rgba(255,255,255,0.2);color:#fff;}
+        .header-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1.8px;line-height:1.05;}
+        .header-sub{font-size:13px;opacity:0.85;margin-top:6px;max-width:560px;}
+
+        /* Layout */
+        .main{max-width:780px;margin:0 auto;padding:24px 16px 80px;}
+
+        /* Agent banner */
+        .agent-banner{
+            display:flex;align-items:center;gap:12px;background:var(--surface);
+            border:1px solid var(--border);border-radius:12px;padding:12px 16px;
+            margin-bottom:18px;box-shadow:0 1px 3px rgba(0,0,0,0.04);
+        }
+        .agent-banner i{color:var(--red);font-size:16px;}
+        .agent-banner b{font-size:13px;}
+        .agent-banner span{font-size:12px;color:var(--text-muted);}
+
+        /* Loading state */
+        .loading{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:13px;}
+
+        /* Form sections */
+        .form-section{
+            background:var(--surface);border:1px solid var(--border);
+            border-radius:var(--radius-lg);padding:20px 22px;margin-bottom:14px;
+        }
+        .section-title{
+            display:flex;align-items:center;gap:10px;
+            font-size:13px;font-weight:800;color:var(--red);
+            text-transform:uppercase;letter-spacing:0.7px;
+            margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);
+        }
+        .section-title i{font-size:14px;}
+        .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+        .field-grid.cols-1{grid-template-columns:1fr;}
+        @media(max-width:560px){.field-grid{grid-template-columns:1fr;}}
+        .field{display:flex;flex-direction:column;gap:5px;}
+        .field.full{grid-column:1/-1;}
+        .field-label{
+            font-size:11px;font-weight:700;color:var(--text);
+            text-transform:uppercase;letter-spacing:0.5px;
+        }
+        .field-label .req{color:var(--red);}
+        .field-hint{font-size:11px;color:var(--text-muted);line-height:1.4;}
+        .field-input,.field-textarea,.field-select{
+            width:100%;background:var(--surface-3);border:1.5px solid var(--border);
+            border-radius:8px;padding:10px 14px;font-size:14px;
+            font-family:'Inter',sans-serif;color:var(--text);
+            outline:none;transition:border-color 0.15s;
+        }
+        .field-input:focus,.field-textarea:focus,.field-select:focus{
+            border-color:var(--red);background:var(--surface);
+        }
+        .field-input.error,.field-textarea.error{border-color:#ef4444;}
+        .field-textarea{resize:vertical;min-height:80px;}
+
+        /* Headshot */
+        .headshot-row{
+            display:flex;align-items:center;gap:14px;
+            padding:10px 12px;background:var(--surface-3);
+            border:1px solid var(--border);border-radius:10px;
+        }
+        .headshot-preview{
+            width:88px;height:88px;border-radius:50%;
+            background:#fff;border:2px dashed var(--border);
+            display:flex;align-items:center;justify-content:center;
+            color:var(--text-muted);font-size:32px;overflow:hidden;flex-shrink:0;
+            transition:border-color 0.2s;
+        }
+        .headshot-preview.has-image{border-style:solid;border-color:var(--green);}
+        .headshot-preview.error{border-color:#ef4444;}
+        .headshot-preview img{width:100%;height:100%;object-fit:cover;display:block;}
+        .headshot-actions{display:flex;flex-direction:column;gap:6px;align-items:flex-start;min-width:0;}
+        .btn-upload{
+            display:inline-flex;align-items:center;gap:6px;
+            background:rgba(192,57,38,0.08);color:var(--red);
+            border:1.5px dashed var(--red);border-radius:8px;
+            padding:6px 12px;font-size:12px;font-weight:600;
+            font-family:'Inter',sans-serif;cursor:pointer;
+            transition:background 0.15s;
+        }
+        .btn-upload:hover{background:rgba(192,57,38,0.15);}
+        .upload-status{font-size:11.5px;font-weight:500;color:var(--text-muted);}
+        .upload-status.uploading{color:#ea580c;}
+        .upload-status.success{color:var(--green);}
+        .upload-status.error{color:#ef4444;}
+        .headshot-hint{font-size:11.5px;color:var(--text-muted);line-height:1.4;}
+
+        /* Submit area */
+        .submit-bar{
+            display:flex;justify-content:flex-end;gap:10px;
+            margin-top:18px;flex-wrap:wrap;
+        }
+        .btn-cancel{
+            background:transparent;color:var(--text-muted);
+            border:1px solid var(--border);border-radius:9px;
+            padding:11px 22px;font-size:13px;font-weight:600;
+            font-family:'Inter',sans-serif;cursor:pointer;
+        }
+        .btn-cancel:hover{color:var(--red);border-color:var(--red);}
+        .btn-save{
+            background:var(--red);color:#fff;border:none;border-radius:9px;
+            padding:11px 26px;font-size:13px;font-weight:700;
+            font-family:'Inter',sans-serif;cursor:pointer;
+            display:inline-flex;align-items:center;gap:8px;
+            transition:all 0.15s;
+        }
+        .btn-save:hover{background:var(--red-light);transform:translateY(-1px);}
+        .btn-save:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+
+        /* Saved success indicator */
+        .saved-flash{
+            display:none;position:fixed;top:18px;left:50%;transform:translateX(-50%);
+            background:var(--green);color:#fff;padding:9px 22px;border-radius:30px;
+            font-size:13px;font-weight:700;box-shadow:0 8px 30px rgba(22,163,74,0.25);
+            z-index:9999;animation:flashIn 0.35s ease;
+        }
+        .saved-flash.show{display:inline-flex;align-items:center;gap:8px;}
+        @keyframes flashIn{
+            0%{opacity:0;transform:translate(-50%,-12px);}
+            100%{opacity:1;transform:translate(-50%,0);}
+        }
+
+        /* Toast */
+        #toast{
+            position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);
+            background:var(--text);color:#fff;padding:12px 22px;border-radius:10px;
+            font-size:13px;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,0.25);
+            z-index:9999;transition:transform 0.3s;max-width:90vw;text-align:center;
+        }
+        #toast.show{transform:translateX(-50%) translateY(0);}
+        #toast.error{background:#dc2626;}
+        /* ── Specialties + Service Areas pickers ── */
+        .chk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; }
+        @media (max-width: 560px) { .chk-grid { grid-template-columns: 1fr; } }
+        .chk { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text); cursor: pointer; padding: 4px 2px; }
+        .chk input { width: 16px; height: 16px; accent-color: var(--red); cursor: pointer; }
+        .area-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0; }
+        .area-chips:empty { display: none; }
+        .area-chip { display: inline-flex; align-items: center; gap: 6px; background: rgba(192,57,38,0.08); color: var(--red); border: 1px solid rgba(192,57,38,0.25); border-radius: 999px; padding: 4px 10px; font-size: 13px; font-weight: 600; }
+        .area-chip button { background: none; border: none; color: var(--red); cursor: pointer; font-size: 16px; line-height: 1; padding: 0; }
+        .area-options { margin-top: 8px; max-height: 240px; overflow-y: auto; border: 1.5px solid var(--border); border-radius: 10px; padding: 6px; background: var(--surface); }
+        .area-group-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-muted); padding: 8px 6px 3px; }
+        .area-opt { display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 6px; font-size: 14px; color: var(--text); cursor: pointer; }
+        .area-opt:hover { background: rgba(192,57,38,0.06); }
+        .area-opt.sel { color: var(--red); font-weight: 600; }
+        .area-opt .tick { width: 16px; text-align: center; color: var(--red); }
+        .area-empty { padding: 12px 8px; font-size: 13px; color: var(--text-muted); text-align: center; }
+        /* ── Photo gallery uploader ── */
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-top: 12px; }
+        .gphoto { position: relative; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface-3); }
+        .gphoto img { width: 100%; height: 110px; object-fit: cover; display: block; }
+        .gphoto input { width: 100%; border: 0; border-top: 1px solid var(--border); padding: 7px 9px; font-size: 12px; font-family: 'Inter', sans-serif; color: var(--text); outline: none; }
+        .gphoto .gdel { position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; border-radius: 50%; border: 0; background: rgba(0,0,0,.6); color: #fff; cursor: pointer; font-size: 15px; line-height: 22px; text-align: center; padding: 0; }
+    </style>
+<link rel="stylesheet" href="hub-theme.css?v=20260903b"><script src="hub-brand.js" defer></script></head>
+<body>
+
+<!-- Header -->
+<header class="sub-header">
+    <div class="sub-header-inner">
+        <a href="hub.html" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i> Back to Hub
+        </a>
+        <div class="header-title">MY AGENT INFO</div>
+        <div class="header-sub">Your details on file — used for business cards, your email signature, agent bio on the website, and marketing materials. Update anytime.</div>
+    </div>
+</header>
+
+<!-- Main -->
+<main class="main">
+    <div id="helpTop"></div>
+    <script>document.addEventListener("DOMContentLoaded",function(){ window.HelpBox && HelpBox.mount({container:"#helpTop",key:"yrl-agent-info",label:"My Agent Info"}); });</script>
+
+    <div class="agent-banner">
+        <i class="fa-solid fa-user-tie"></i>
+        <div>
+            <b id="agentNameDisp">—</b><br>
+            <span id="agentEmailDisp">—</span>
+        </div>
+    </div>
+
+    <div id="loadingState" class="loading">
+        <i class="fa-solid fa-spinner fa-spin"></i> Loading your info…
+    </div>
+
+    <form id="agentInfoForm" style="display:none;" autocomplete="on">
+
+        <div class="req-note" style="display:flex;align-items:center;gap:10px;background:rgba(192,57,38,0.07);border:1px solid rgba(192,57,38,0.25);border-left:4px solid var(--red,#c03926);border-radius:10px;padding:12px 16px;margin-bottom:22px;font-size:13.5px;color:var(--text,#1a1d22);">
+            <i class="fa-solid fa-circle-exclamation" style="color:var(--red,#c03926);font-size:16px;"></i>
+            <span>Fields marked with a red star <span class="req" style="color:var(--red,#c03926);font-weight:800;">*</span> are <strong>required</strong> — please fill them all in before you save.</span>
+        </div>
+
+        <!-- ── PERSONAL INFO ── -->
+        <div class="form-section">
+            <div class="section-title"><i class="fa-solid fa-id-card"></i> Personal Info</div>
+            <div class="field-grid">
+                <div class="field">
+                    <label class="field-label">First Name <span class="req">*</span></label>
+                    <input class="field-input" id="ai-first" type="text" required placeholder="Jane">
+                </div>
+                <div class="field">
+                    <label class="field-label">Last Name <span class="req">*</span></label>
+                    <input class="field-input" id="ai-last" type="text" required placeholder="Smith">
+                </div>
+                <div class="field full">
+                    <label class="field-label">Name on Business Cards <span class="req">*</span></label>
+                    <input class="field-input" id="ai-cardname" type="text" required placeholder="e.g. Jane Smith, REALTOR®">
+                </div>
+                <div class="field full">
+                    <label class="field-label">Title / Designation <span class="req">*</span></label>
+                    <input class="field-input" id="ai-title" type="text" required placeholder="e.g. REALTOR®, Broker, Commercial Broker">
+                    <span class="field-hint">Shown under your name on your website profile page.</span>
+                </div>
+                <div class="field">
+                    <label class="field-label">Cell Phone <span class="req">*</span></label>
+                    <input class="field-input" id="ai-phone" type="tel" required placeholder="317-555-1234">
+                </div>
+                <div class="field">
+                    <label class="field-label">Email Address <span class="req">*</span></label>
+                    <input class="field-input" id="ai-email" type="email" required placeholder="jane@yourrealtylink.com">
+                </div>
+                <div class="field full">
+                    <label class="field-label">Indiana Real Estate License # <span class="req">*</span></label>
+                    <input class="field-input" id="ai-license" type="text" required placeholder="RB12345678">
+                </div>
+            </div>
+        </div>
+
+        <!-- ── ADDRESS ── -->
+        <div class="form-section">
+            <div class="section-title"><i class="fa-solid fa-location-dot"></i> Address</div>
+            <div class="field-grid cols-1">
+                <div class="field full">
+                    <label class="field-label">Mailing / Home Address <span class="req">*</span></label>
+                    <input class="field-input" id="ai-address" type="text" required placeholder="123 Main St, Indianapolis, IN 46201">
+                </div>
+            </div>
+        </div>
+
+        <!-- ── HEADSHOT ── -->
+        <div class="form-section">
+            <div class="section-title"><i class="fa-solid fa-camera"></i> Headshot</div>
+            <div class="field-grid cols-1">
+                <div class="field full">
+                    <label class="field-label">Headshot Photo <span class="req">*</span></label>
+                    <div class="headshot-row" id="aiHeadshotRow">
+                        <div class="headshot-preview" id="aiHeadshotPreview" aria-label="Headshot preview">
+                            <i class="fa-solid fa-user" id="aiHeadshotIcon"></i>
+                            <img id="aiHeadshotImg" alt="Your headshot" style="display:none;">
+                        </div>
+                        <div class="headshot-actions">
+                            <input type="file" id="aiHeadshotFile" accept="image/*" style="display:none;" onchange="handleHeadshotUpload(this)">
+                            <button type="button" class="btn-upload" id="aiHeadshotBtn" onclick="document.getElementById('aiHeadshotFile').click()">
+                                <i class="fa-solid fa-arrow-up-from-bracket"></i> <span id="aiHeadshotBtnLabel">Upload photo</span>
+                            </button>
+                            <span class="upload-status" id="aiHeadshotStatus">JPG or PNG — portrait orientation works best</span>
+                            <div class="headshot-hint">You can come back and replace this any time.</div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="ai-headshot-url" value="">
+                </div>
+            </div>
+        </div>
+
+        <!-- ── BIO & MARKETING ── -->
+        <div class="form-section">
+            <div class="section-title"><i class="fa-solid fa-pen-fancy"></i> Bio &amp; Marketing</div>
+            <div class="field-grid cols-1">
+                <div class="field full">
+                    <label class="field-label">Tagline <span class="req">*</span></label>
+                    <input class="field-input" id="ai-tagline" type="text" required placeholder="e.g. Your trusted Indianapolis REALTOR®" maxlength="120">
+                    <span class="field-hint">One-line summary used in your email signature and marketing pieces.</span>
+                </div>
+                <div class="field full">
+                    <label class="field-label">Agent Bio (3–5 sentences) <span class="req">*</span></label>
+                    <textarea class="field-textarea" id="ai-notes" required placeholder="Write a short professional bio describing your background, experience, and what makes you unique as a REALTOR®."></textarea>
+                    <span class="field-hint">Used on your YourRealtyLink.com profile page.</span>
+                </div>
+                <div class="field full">
+                    <label class="field-label">Specialties</label>
+                    <div id="specialtiesBox" class="chk-grid"></div>
+                    <span class="field-hint">Check all that apply — shown on your profile page.</span>
+                </div>
+                <div class="field full">
+                    <label class="field-label">Service Areas</label>
+                    <input class="field-input" id="areaSearch" type="text" placeholder="Search cities or neighborhoods…" oninput="renderAreaOptions()" autocomplete="off">
+                    <div id="areaSelected" class="area-chips"></div>
+                    <div id="areaOptions" class="area-options"></div>
+                    <span class="field-hint">The cities &amp; neighborhoods you work — each links to that page from your profile.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── CREDENTIALS & MEDIA ── -->
+        <div class="form-section">
+            <div class="section-title"><i class="fa-solid fa-award"></i> Credentials &amp; Media</div>
+            <div class="field-grid">
+                <div class="field">
+                    <label class="field-label">Years of Experience</label>
+                    <input class="field-input" id="ai-years" type="text" inputmode="numeric" placeholder="e.g. 12">
+                </div>
+                <div class="field">
+                    <label class="field-label">Languages Spoken</label>
+                    <input class="field-input" id="ai-languages" type="text" placeholder="e.g. English, Spanish">
+                    <span class="field-hint">Comma-separated.</span>
+                </div>
+                <div class="field full">
+                    <label class="field-label">Designations</label>
+                    <input class="field-input" id="ai-designations" type="text" placeholder="e.g. ABR, GRI, SRES">
+                    <span class="field-hint">Comma-separated. Leave blank if none.</span>
+                </div>
+                <div class="field full">
+                    <label class="field-label">Intro Video (YouTube link)</label>
+                    <input class="field-input" id="ai-video" type="url" placeholder="https://youtube.com/watch?v=…">
+                    <span class="field-hint">Optional — shows as a short "Meet You" video on your profile page.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── CLIENT TESTIMONIALS ── -->
+        <div class="form-section">
+            <div class="section-title"><i class="fa-solid fa-quote-left"></i> Client Testimonials</div>
+            <p class="field-hint" style="margin:-4px 0 12px;">Add up to 3 real client quotes — shown on your profile page.</p>
+            <div class="field-grid cols-1">
+                <div class="field full">
+                    <textarea class="field-textarea" id="ai-tq1" placeholder="Client quote…" style="min-height:60px;"></textarea>
+                    <input class="field-input" id="ai-tn1" type="text" placeholder="Client name (e.g. J. Smith, Carmel)" style="margin-top:6px;">
+                </div>
+                <div class="field full">
+                    <textarea class="field-textarea" id="ai-tq2" placeholder="Client quote…" style="min-height:60px;"></textarea>
+                    <input class="field-input" id="ai-tn2" type="text" placeholder="Client name" style="margin-top:6px;">
+                </div>
+                <div class="field full">
+                    <textarea class="field-textarea" id="ai-tq3" placeholder="Client quote…" style="min-height:60px;"></textarea>
+                    <input class="field-input" id="ai-tn3" type="text" placeholder="Client name" style="margin-top:6px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- ── PHOTO GALLERY ── -->
+        <div class="form-section">
+            <div class="section-title"><i class="fa-solid fa-images"></i> Photo Gallery</div>
+            <p class="field-hint" style="margin:-4px 0 12px;">Upload photos of closings, happy clients, or events — up to 10, shown as a carousel on your profile page. Add a short caption to each if you like.</p>
+            <input type="file" id="ai-gallery-file" accept="image/*" multiple style="display:none" onchange="handleGalleryUpload(this)">
+            <button type="button" class="btn-upload" onclick="document.getElementById('ai-gallery-file').click()"><i class="fa-solid fa-arrow-up-from-bracket"></i> Add Photos</button>
+            <div id="ai-gallery-status" class="upload-status"></div>
+            <div id="ai-gallery-grid" class="gallery-grid"></div>
+        </div>
+
+        <!-- ── EMERGENCY CONTACT ── -->
+        <div class="form-section">
+            <div class="section-title"><i class="fa-solid fa-life-ring"></i> Emergency Contact</div>
+            <div class="field-grid">
+                <div class="field">
+                    <label class="field-label">Emergency Contact Name <span class="req">*</span></label>
+                    <input class="field-input" id="ai-ecname" type="text" required placeholder="John Smith">
+                </div>
+                <div class="field">
+                    <label class="field-label">Emergency Contact Phone <span class="req">*</span></label>
+                    <input class="field-input" id="ai-ecphone" type="tel" required placeholder="317-555-5678">
+                </div>
+            </div>
+        </div>
+
+        <!-- ── SOCIAL LINKS ── -->
+        <div class="form-section">
+            <div class="section-title"><i class="fa-solid fa-share-nodes"></i> Social Links (Optional)</div>
+            <div class="field-grid cols-1">
+                <div class="field full">
+                    <label class="field-label"><i class="fa-brands fa-facebook" style="color:#1877f2;"></i> Facebook URL</label>
+                    <input class="field-input" id="ai-fb" type="url" placeholder="https://facebook.com/your.username">
+                    <span class="field-hint">If left blank, your email signature uses the YRL company Facebook.</span>
+                </div>
+                <div class="field full">
+                    <label class="field-label"><i class="fa-brands fa-instagram" style="color:#e1306c;"></i> Instagram URL</label>
+                    <input class="field-input" id="ai-ig" type="url" placeholder="https://instagram.com/your.username">
+                    <span class="field-hint">If left blank, your email signature uses the YRL company Instagram.</span>
+                </div>
+                <div class="field full">
+                    <label class="field-label"><i class="fa-brands fa-linkedin" style="color:#0a66c2;"></i> LinkedIn URL</label>
+                    <input class="field-input" id="ai-li" type="url" placeholder="https://linkedin.com/in/your-name">
+                </div>
+            </div>
+        </div>
+
+        <div class="submit-bar">
+            <a href="hub.html" class="btn-cancel">Cancel</a>
+            <button type="submit" class="btn-save" id="btnSave">
+                <i class="fa-solid fa-floppy-disk"></i> Save my info
+            </button>
+        </div>
+
+    </form>
+
+</main>
+
+<div id="savedFlash" class="saved-flash"><i class="fa-solid fa-check"></i> Saved</div>
+<div id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════════
+   My Agent Info — dedicated, mobile-first replacement for the old modal.
+   Persists in hub_content:
+     'yrl-onboarding-submissions'  ← appended submission record (admin sees here)
+     'yrl-onboarding-agent-progress' ← per-agent tile statuses (onboarding dashboard)
+     'yrl-moving-checklist'        ← per-uid map; we auto-check items 4 & 15 on save
+   ════════════════════════════════════════════════════════════════════ */
+
+const SUBMISSIONS_KEY     = 'yrl-onboarding-submissions';
+const AGENT_PROGRESS_KEY  = 'yrl-onboarding-agent-progress';
+const MOVING_KEY          = 'yrl-moving-checklist';
+const AGENT_NAME_KEY      = 'yrl-onboarding-agent-name';     // localStorage
+const AGENT_DISPLAY_KEY   = 'yrl-onboarding-agent-display';  // localStorage
+const LOCAL_PROGRESS_KEY  = 'yrl-onboarding-progress';       // localStorage (mirrored tile state)
+
+let currentUser = null;
+let selectedAreas = []; // [[label, url], …]
+
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+/* ── Photo gallery uploader ── */
+const GALLERY_MAX = 10;
+let galleryPhotos = []; // [{url, caption}]
+function renderGallery() {
+  const grid = document.getElementById('ai-gallery-grid');
+  if (!grid) return;
+  grid.innerHTML = galleryPhotos.map((p, i) =>
+    '<div class="gphoto"><button type="button" class="gdel" title="Remove" onclick="removeGalleryPhoto(' + i + ')">&times;</button>'
+    + '<img src="' + esc(p.url) + '" alt="">'
+    + '<input type="text" placeholder="Caption (optional)" value="' + esc(p.caption || '') + '" oninput="galleryPhotos[' + i + '].caption=this.value">'
+    + '</div>').join('');
+}
+function removeGalleryPhoto(i) { galleryPhotos.splice(i, 1); renderGallery(); }
+async function handleGalleryUpload(input) {
+  let files = Array.from(input.files || []).filter(f => /^image\//.test(f.type));
+  input.value = '';
+  if (!files.length) return;
+  const st = document.getElementById('ai-gallery-status');
+  const remaining = GALLERY_MAX - galleryPhotos.length;
+  if (remaining <= 0) {
+    if (st) { st.textContent = "You've reached the " + GALLERY_MAX + "-photo limit — remove one to add another."; st.className = 'upload-status error'; }
+    return;
+  }
+  let skipped = 0;
+  if (files.length > remaining) { skipped = files.length - remaining; files = files.slice(0, remaining); }
+  if (st) { st.textContent = 'Uploading ' + files.length + ' photo(s)…'; st.className = 'upload-status uploading'; }
+  for (const f of files) {
+    try {
+      const url = await uploadHubFile(f, 'agent-gallery');
+      galleryPhotos.push({ url: url, caption: '' });
+      renderGallery();
+    } catch (e) {
+      if (st) { st.textContent = '✗ ' + (e.message || 'Upload failed'); st.className = 'upload-status error'; }
+    }
+  }
+  if (st) {
+    st.textContent = '✓ ' + galleryPhotos.length + ' of ' + GALLERY_MAX + ' photos'
+      + (skipped ? ' — ' + skipped + ' skipped (max ' + GALLERY_MAX + ')' : '');
+    st.className = 'upload-status success';
+  }
+}
+
+/* Preset specialties (same set as the broker directory). */
+const SPECIALTY_OPTIONS = [
+  "Buyer Representation", "Seller Representation", "First-Time Buyers",
+  "Luxury Homes", "Investment Property", "New Construction",
+  "Relocation", "Downsizing & Senior", "Commercial Real Estate",
+  "Land & Lots", "Multi-Family", "Foreclosure & Short Sale",
+  "Divorce & Estate Sales", "New Home Communities",
+];
+
+/* Cities & neighborhoods — auto-generated from the live site by build-hub-areas.py. */
+/*__AREA_OPTIONS_START__*/
+const AREA_OPTIONS = [
+  { group: "Bartholomew County", items: [
+    ["Columbus", "/cities/bartholomew-county/columbus-indiana-real-estate/"],
+  ] },
+  { group: "Boone County", items: [
+    ["Jamestown", "/cities/boone-county/jamestown-indiana-real-estate/"],
+    ["Lebanon", "/cities/boone-county/lebanon-indiana-real-estate/"],
+    ["Thorntown", "/cities/boone-county/thorntown-indiana-real-estate/"],
+    ["Whitestown", "/cities/boone-county/whitestown-indiana-real-estate/"],
+    ["Zionsville", "/cities/boone-county/zionsville-indiana-real-estate/"],
+  ] },
+  { group: "Brown County", items: [
+    ["Bean Blossom", "/cities/brown-county/bean-blossom-indiana-real-estate/"],
+    ["Nashville", "/cities/brown-county/nashville-indiana-real-estate/"],
+  ] },
+  { group: "Decatur County", items: [
+    ["Greensburg", "/cities/decatur-county/greensburg-indiana-real-estate/"],
+    ["Westport", "/cities/decatur-county/westport-indiana-real-estate/"],
+  ] },
+  { group: "Hamilton County", items: [
+    ["Arcadia", "/cities/hamilton-county/arcadia-indiana-real-estate/"],
+    ["Atlanta", "/cities/hamilton-county/atlanta-indiana-real-estate/"],
+    ["Carmel", "/cities/hamilton-county/carmel-indiana-real-estate/"],
+    ["Cicero", "/cities/hamilton-county/cicero-indiana-real-estate/"],
+    ["Fishers", "/cities/hamilton-county/fishers-indiana-real-estate/"],
+    ["Noblesville", "/cities/hamilton-county/noblesville-indiana-real-estate/"],
+    ["Sheridan", "/cities/hamilton-county/sheridan-indiana-real-estate/"],
+    ["Westfield", "/cities/hamilton-county/westfield-indiana-real-estate/"],
+  ] },
+  { group: "Hancock County", items: [
+    ["Cumberland", "/cities/hancock-county/cumberland-indiana-real-estate/"],
+    ["Fortville", "/cities/hancock-county/fortville-indiana-real-estate/"],
+    ["Greenfield", "/cities/hancock-county/greenfield-indiana-real-estate/"],
+    ["McCordsville", "/cities/hancock-county/mccordsville-indiana-real-estate/"],
+    ["New Palestine", "/cities/hancock-county/new-palestine-indiana-real-estate/"],
+    ["Shirley", "/cities/hancock-county/shirley-indiana-real-estate/"],
+  ] },
+  { group: "Hendricks County", items: [
+    ["Avon", "/cities/hendricks-county/avon-indiana-real-estate/"],
+    ["Brownsburg", "/cities/hendricks-county/brownsburg-indiana-real-estate/"],
+    ["Clayton", "/cities/hendricks-county/clayton-indiana-real-estate/"],
+    ["Coatesville", "/cities/hendricks-county/coatesville-indiana-real-estate/"],
+    ["Danville", "/cities/hendricks-county/danville-indiana-real-estate/"],
+    ["Pittsboro", "/cities/hendricks-county/pittsboro-indiana-real-estate/"],
+    ["Plainfield", "/cities/hendricks-county/plainfield-indiana-real-estate/"],
+  ] },
+  { group: "Jackson County", items: [
+    ["Seymour", "/cities/jackson-county/seymour-indiana-real-estate/"],
+  ] },
+  { group: "Jennings County", items: [
+    ["North Vernon", "/cities/jennings-county/north-vernon-indiana-real-estate/"],
+  ] },
+  { group: "Johnson County", items: [
+    ["Bargersville", "/cities/johnson-county/bargersville-indiana-real-estate/"],
+    ["Edinburgh", "/cities/johnson-county/edinburgh-indiana-real-estate/"],
+    ["Franklin", "/cities/johnson-county/franklin-indiana-real-estate/"],
+    ["Greenwood", "/cities/johnson-county/greenwood-indiana-real-estate/"],
+    ["New Whiteland", "/cities/johnson-county/new-whiteland-indiana-real-estate/"],
+    ["Princes Lakes", "/cities/johnson-county/princes-lakes-indiana-real-estate/"],
+    ["Trafalgar", "/cities/johnson-county/trafalgar-indiana-real-estate/"],
+    ["Whiteland", "/cities/johnson-county/whiteland-indiana-real-estate/"],
+  ] },
+  { group: "Madison County", items: [
+    ["Alexandria", "/cities/madison-county/alexandria-indiana-real-estate/"],
+    ["Anderson", "/cities/madison-county/anderson-indiana-real-estate/"],
+    ["Chesterfield", "/cities/madison-county/chesterfield-indiana-real-estate/"],
+    ["Elwood", "/cities/madison-county/elwood-indiana-real-estate/"],
+    ["Frankton", "/cities/madison-county/frankton-indiana-real-estate/"],
+    ["Ingalls", "/cities/madison-county/ingalls-indiana-real-estate/"],
+    ["Lapel", "/cities/madison-county/lapel-indiana-real-estate/"],
+    ["Pendleton", "/cities/madison-county/pendleton-indiana-real-estate/"],
+  ] },
+  { group: "Marion County", items: [
+    ["Beech Grove", "/cities/marion-county/beech-grove-indiana-real-estate/"],
+    ["Broad Ripple", "/cities/marion-county/broad-ripple-indianapolis-real-estate/"],
+    ["Camby", "/cities/marion-county/camby-indiana-real-estate/"],
+    ["Clermont", "/cities/marion-county/clermont-indiana-real-estate/"],
+    ["Eagle Creek", "/cities/marion-county/eagle-creek-indianapolis-real-estate/"],
+    ["Geist", "/cities/marion-county/geist-indiana-real-estate/"],
+    ["Homecroft", "/cities/marion-county/homecroft-indiana-real-estate/"],
+    ["Irvington", "/cities/marion-county/irvington-indianapolis-real-estate/"],
+    ["Lawrence", "/cities/marion-county/lawrence-indiana-real-estate/"],
+    ["Meridian Hills", "/cities/marion-county/meridian-hills-indiana-real-estate/"],
+    ["Southport", "/cities/marion-county/southport-indiana-real-estate/"],
+    ["Speedway", "/cities/marion-county/speedway-indiana-real-estate/"],
+  ] },
+  { group: "Montgomery County", items: [
+    ["Crawfordsville", "/cities/montgomery-county/crawfordsville-indiana-real-estate/"],
+  ] },
+  { group: "Morgan County", items: [
+    ["Brooklyn", "/cities/morgan-county/brooklyn-indiana-real-estate/"],
+    ["Martinsville", "/cities/morgan-county/martinsville-indiana-real-estate/"],
+    ["Monrovia", "/cities/morgan-county/monrovia-indiana-real-estate/"],
+    ["Mooresville", "/cities/morgan-county/mooresville-indiana-real-estate/"],
+  ] },
+  { group: "Parke County", items: [
+    ["Rockville", "/cities/parke-county/rockville-indiana-real-estate/"],
+  ] },
+  { group: "Putnam County", items: [
+    ["Cloverdale", "/cities/putnam-county/cloverdale-indiana-real-estate/"],
+    ["Greencastle", "/cities/putnam-county/greencastle-indiana-real-estate/"],
+  ] },
+  { group: "Shelby County", items: [
+    ["Fairland", "/cities/shelby-county/fairland-indiana-real-estate/"],
+    ["Morristown", "/cities/shelby-county/morristown-indiana-real-estate/"],
+    ["Shelbyville", "/cities/shelby-county/shelbyville-indiana-real-estate/"],
+    ["Waldron", "/cities/shelby-county/waldron-indiana-real-estate/"],
+  ] },
+  { group: "Indianapolis Neighborhoods", items: [
+    ["Bates-Hendricks", "/neighborhoods/bates-hendricks-indianapolis/"],
+    ["Broad Ripple", "/neighborhoods/broad-ripple-indianapolis/"],
+    ["Butler-Tarkington", "/neighborhoods/butler-tarkington-indianapolis/"],
+    ["Castleton", "/neighborhoods/castleton-indianapolis/"],
+    ["Center Grove", "/neighborhoods/center-grove-indiana/"],
+    ["Chatham Arch", "/neighborhoods/chatham-arch-indianapolis/"],
+    ["Cottage Home", "/neighborhoods/cottage-home-indianapolis/"],
+    ["Decatur Township", "/neighborhoods/decatur-township-indianapolis/"],
+    ["Eagle Creek", "/neighborhoods/eagle-creek-indianapolis/"],
+    ["Fall Creek Place", "/neighborhoods/fall-creek-place-indianapolis/"],
+    ["Fletcher Place", "/neighborhoods/fletcher-place-indianapolis/"],
+    ["Fountain Square", "/neighborhoods/fountain-square-indianapolis/"],
+    ["Franklin Township", "/neighborhoods/franklin-township-indianapolis/"],
+    ["Garfield Park", "/neighborhoods/garfield-park-indianapolis/"],
+    ["Geist Reservoir", "/neighborhoods/geist-reservoir-indianapolis/"],
+    ["Herron Morton Place", "/neighborhoods/herron-morton-place-indianapolis/"],
+    ["Irvington", "/neighborhoods/irvington-indianapolis/"],
+    ["Lockerbie Square", "/neighborhoods/lockerbie-square-indianapolis/"],
+    ["Mass Ave", "/neighborhoods/mass-ave-indianapolis/"],
+    ["Meridian-Kessler", "/neighborhoods/meridian-kessler-indianapolis/"],
+    ["Nora", "/neighborhoods/nora-indianapolis/"],
+    ["Old Northside", "/neighborhoods/old-northside-indianapolis/"],
+    ["Perry Township", "/neighborhoods/perry-township-indianapolis/"],
+    ["Pike Township", "/neighborhoods/pike-township-indianapolis/"],
+    ["Warren Township", "/neighborhoods/warren-township-indianapolis/"],
+  ] },
+];
+/*__AREA_OPTIONS_END__*/
+
+function renderSpecialties(selected) {
+  const set = new Set(selected || []);
+  const box = document.getElementById('specialtiesBox');
+  if (!box) return;
+  box.innerHTML = SPECIALTY_OPTIONS.map(s =>
+    `<label class="chk"><input type="checkbox" value="${esc(s)}" ${set.has(s) ? 'checked' : ''}> ${esc(s)}</label>`
+  ).join('');
+}
+function getCheckedSpecialties() {
+  return Array.from(document.querySelectorAll('#specialtiesBox input:checked')).map(i => i.value);
+}
+function renderAreaChips() {
+  const wrap = document.getElementById('areaSelected');
+  if (!wrap) return;
+  wrap.innerHTML = selectedAreas.map(([label, url]) =>
+    `<span class="area-chip">${esc(label)}<button type="button" title="Remove" onclick="removeArea('${esc(url)}')">&times;</button></span>`
+  ).join('');
+}
+function removeArea(url) {
+  selectedAreas = selectedAreas.filter(([, u]) => u !== url);
+  renderAreaChips(); renderAreaOptions();
+}
+function toggleArea(label, url) {
+  if (selectedAreas.some(([, u]) => u === url)) selectedAreas = selectedAreas.filter(([, u]) => u !== url);
+  else selectedAreas.push([label, url]);
+  renderAreaChips(); renderAreaOptions();
+}
+function renderAreaOptions() {
+  const box = document.getElementById('areaOptions');
+  if (!box) return;
+  const q = (document.getElementById('areaSearch')?.value || '').trim().toLowerCase();
+  const chosen = new Set(selectedAreas.map(([, u]) => u));
+  let html = '';
+  AREA_OPTIONS.forEach(grp => {
+    const items = grp.items.filter(([label]) => !q || label.toLowerCase().includes(q) || grp.group.toLowerCase().includes(q));
+    if (!items.length) return;
+    html += `<div class="area-group-label">${esc(grp.group)}</div>`;
+    items.forEach(([label, url]) => {
+      const on = chosen.has(url);
+      html += `<div class="area-opt ${on ? 'sel' : ''}" onclick="toggleArea('${esc(label)}','${esc(url)}')"><span class="tick">${on ? '✓' : ''}</span>${esc(label)}</div>`;
+    });
+  });
+  box.innerHTML = html || '<div class="area-empty">No matching areas. Try another search.</div>';
+}
+
+/* Prefill specialties/areas + (bio/tagline override) from the agent's OWN
+   directory entry — so a broker's change shows up here too (two-way sync). */
+async function prefillSyncedFromDirectory() {
+  renderSpecialties([]); renderAreaChips(); renderAreaOptions();
+  try {
+    if (!window.yrlClient) return;
+    const { data, error } = await window.yrlClient.rpc('get_yrl_agent_self');
+    if (error || !data) return;
+    const d = data;
+    const set = (id, v) => { const el = document.getElementById(id); if (el && v) el.value = v; };
+    if (d.tagline) set('ai-tagline', d.tagline);
+    if (d.bio)     set('ai-notes', d.bio);
+    if (d.title)   set('ai-title', d.title);
+    if (d.phone)   set('ai-phone', d.phone);
+    if (d.name) { const p = String(d.name).trim().split(/\s+/); set('ai-first', p[0]); if (p.length > 1) set('ai-last', p.slice(1).join(' ')); }
+    if (d.photo && typeof setHeadshotPreview === 'function') setHeadshotPreview(d.photo);
+    if (d.years) set('ai-years', d.years);
+    if (Array.isArray(d.languages) && d.languages.length) set('ai-languages', d.languages.join(', '));
+    if (Array.isArray(d.designations) && d.designations.length) set('ai-designations', d.designations.join(', '));
+    if (d.video) set('ai-video', d.video);
+    if (Array.isArray(d.testimonials)) {
+      d.testimonials.slice(0, 3).forEach((t, i) => {
+        var q = (t && (t.quote || t[0])) || '', n = (t && (t.name || t[1])) || '';
+        set('ai-tq' + (i + 1), q); set('ai-tn' + (i + 1), n);
+      });
+    }
+    renderSpecialties(Array.isArray(d.expertise) ? d.expertise : []);
+    selectedAreas = Array.isArray(d.areas) ? d.areas.map(a => [a[0], a[1]]) : [];
+    renderAreaChips(); renderAreaOptions();
+    galleryPhotos = Array.isArray(d.gallery) ? d.gallery.map(g =>
+      (g && typeof g === 'object' && !Array.isArray(g)) ? { url: g.url || '', caption: g.caption || '' }
+      : { url: (g && g[0]) || String(g || ''), caption: (g && g[1]) || '' }
+    ).filter(g => g.url) : [];
+    renderGallery();
+  } catch (_) {}
+}
+
+/* Auth hook */
+document.addEventListener('yrl-auth-ready', async ({ detail }) => {
+    currentUser = detail.user;
+    init();
+});
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(async () => {
+        if (currentUser) return;
+        if (!window.yrlClient) return;
+        const { data } = await window.yrlClient.auth.getSession();
+        if (data.session) { currentUser = data.session.user; init(); }
+    }, 700);
+});
+
+function agentDisplayName(u){
+    if (!u) return '';
+    return u.user_metadata?.full_name || u.user_metadata?.name || (u.email ? u.email.split('@')[0] : 'Agent');
+}
+
+async function init() {
+    document.getElementById('agentNameDisp').textContent  = agentDisplayName(currentUser);
+    document.getElementById('agentEmailDisp').textContent = currentUser?.email || '';
+
+    await prefillFromLatestSubmission();
+    await prefillSyncedFromDirectory();   // directory = source of truth for bio/tagline/specialties/areas
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('agentInfoForm').style.display = '';
+}
+
+/* Pre-fill all fields from the agent's most recent submission (matched by email). */
+async function prefillFromLatestSubmission() {
+    // First, a soft pre-fill from auth metadata so brand-new users see something
+    const fn = agentDisplayName(currentUser);
+    const parts = String(fn).trim().split(/\s+/);
+    if (parts[0]) document.getElementById('ai-first').value = parts[0];
+    if (parts.length > 1) document.getElementById('ai-last').value = parts.slice(1).join(' ');
+    if (currentUser?.email) document.getElementById('ai-email').value = currentUser.email;
+
+    try {
+        const list = (await loadHubContent(SUBMISSIONS_KEY)) || [];
+        const userEmail = (currentUser?.email || '').toLowerCase();
+        const mine = (Array.isArray(list) ? list : [])
+            .filter(s => s && s.type === 'agent-info' && (s.data?.email || '').toLowerCase() === userEmail)
+            .sort((a,b) => (b.timestamp || '').localeCompare(a.timestamp || ''));
+        const latest = mine[0];
+        if (!latest || !latest.data) return;
+        const d = latest.data;
+        const setIf = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
+        const [fnm, ...rest] = String(d.name || '').split(' ');
+        setIf('ai-first',    d.firstname || fnm || '');
+        setIf('ai-last',     d.lastname  || rest.join(' ') || '');
+        setIf('ai-cardname', d.cardname);
+        setIf('ai-title',    d.title);
+        setIf('ai-phone',    d.phone);
+        setIf('ai-email',    d.email);
+        setIf('ai-license',  d.license);
+        setIf('ai-address',  d.address);
+        setIf('ai-tagline',  d.tagline || d.bio);   // tagline is new; old submissions stored a "bio" field that meant tagline
+        setIf('ai-notes',    d.notes);
+        setIf('ai-ecname',   d.ecname);
+        setIf('ai-ecphone',  d.ecphone);
+        setIf('ai-fb',       d.facebook);
+        setIf('ai-ig',       d.instagram);
+        setIf('ai-li',       d.linkedin);
+        if (d.headshot_url) setHeadshotPreview(d.headshot_url);
+    } catch (_) { /* fall back to soft pre-fill */ }
+}
+
+/* ── Headshot upload ─────────────────────────────────────────────── */
+async function handleHeadshotUpload(input) {
+    const file = input.files && input.files[0];
+    if (!file) return;
+    if (!/^image\//.test(file.type)) { setHeadshotStatus('Please pick an image file.', 'error'); return; }
+    if (file.size > 10 * 1024 * 1024)  { setHeadshotStatus('Photo is over 10 MB — please pick a smaller file.', 'error'); return; }
+    setHeadshotStatus('Uploading…', 'uploading');
+    document.getElementById('aiHeadshotBtn').disabled = true;
+    try {
+        const url = await uploadHubFile(file, 'headshots');
+        setHeadshotPreview(url);
+        setHeadshotStatus('Photo uploaded.', 'success');
+    } catch (e) {
+        setHeadshotStatus('Upload failed: ' + (e.message || e), 'error');
+    } finally {
+        document.getElementById('aiHeadshotBtn').disabled = false;
+        input.value = '';
+    }
+}
+function setHeadshotPreview(url) {
+    const preview = document.getElementById('aiHeadshotPreview');
+    const icon    = document.getElementById('aiHeadshotIcon');
+    const img     = document.getElementById('aiHeadshotImg');
+    const btnLbl  = document.getElementById('aiHeadshotBtnLabel');
+    document.getElementById('ai-headshot-url').value = url || '';
+    if (url) {
+        img.src = url; img.style.display = 'block'; if (icon) icon.style.display = 'none';
+        preview.classList.add('has-image'); preview.classList.remove('error');
+        if (btnLbl) btnLbl.textContent = 'Replace photo';
+    } else {
+        img.removeAttribute('src'); img.style.display = 'none'; if (icon) icon.style.display = '';
+        preview.classList.remove('has-image');
+        if (btnLbl) btnLbl.textContent = 'Upload photo';
+    }
+}
+function setHeadshotStatus(msg, kind) {
+    const el = document.getElementById('aiHeadshotStatus');
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'upload-status' + (kind ? ' ' + kind : '');
+}
+
+/* ── Submit ───────────────────────────────────────────────────────── */
+document.getElementById('agentInfoForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btnSave');
+
+    const required = ['ai-first','ai-last','ai-cardname','ai-title','ai-phone','ai-email','ai-license','ai-address','ai-tagline','ai-notes','ai-ecname','ai-ecphone'];
+    let firstBad = null;
+    for (const id of required) {
+        const el = document.getElementById(id);
+        if (!el.value.trim()) { el.classList.add('error'); if (!firstBad) firstBad = el; }
+        else el.classList.remove('error');
+    }
+    if (firstBad) {
+        firstBad.focus();
+        firstBad.scrollIntoView({ behavior:'smooth', block:'center' });
+        toast('Please fill in all required fields.', 'error');
+        return;
+    }
+    // Headshot required
+    const headshotUrl = document.getElementById('ai-headshot-url').value.trim();
+    if (!headshotUrl) {
+        const preview = document.getElementById('aiHeadshotPreview');
+        if (preview) preview.classList.add('error');
+        setHeadshotStatus('Please upload a headshot photo to continue.', 'error');
+        document.getElementById('aiHeadshotRow').scrollIntoView({ behavior:'smooth', block:'center' });
+        return;
+    }
+
+    btn.disabled = true;
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…';
+
+    try {
+        const first = document.getElementById('ai-first').value.trim();
+        const last  = document.getElementById('ai-last').value.trim();
+        const fullName = (first + ' ' + last).trim();
+
+        const data = {
+            name:        fullName,
+            firstname:   first,
+            lastname:    last,
+            cardname:    document.getElementById('ai-cardname').value.trim(),
+            title:       document.getElementById('ai-title').value.trim(),
+            phone:       document.getElementById('ai-phone').value.trim(),
+            email:       document.getElementById('ai-email').value.trim(),
+            license:     document.getElementById('ai-license').value.trim(),
+            address:     document.getElementById('ai-address').value.trim(),
+            tagline:     document.getElementById('ai-tagline').value.trim(),
+            notes:       document.getElementById('ai-notes').value.trim(),
+            ecname:      document.getElementById('ai-ecname').value.trim(),
+            ecphone:     document.getElementById('ai-ecphone').value.trim(),
+            facebook:    document.getElementById('ai-fb').value.trim(),
+            instagram:   document.getElementById('ai-ig').value.trim(),
+            linkedin:    document.getElementById('ai-li').value.trim(),
+            headshot_url: headshotUrl,
+            expertise:   getCheckedSpecialties(),
+            areas:       selectedAreas.map(a => [a[0], a[1]]),
+            years:       document.getElementById('ai-years').value.trim(),
+            designations: document.getElementById('ai-designations').value.split(',').map(s => s.trim()).filter(Boolean),
+            languages:   document.getElementById('ai-languages').value.split(',').map(s => s.trim()).filter(Boolean),
+            video:       document.getElementById('ai-video').value.trim(),
+            testimonials: [1, 2, 3].map(i => ({
+                quote: (document.getElementById('ai-tq' + i).value || '').trim(),
+                name:  (document.getElementById('ai-tn' + i).value || '').trim()
+            })).filter(t => t.quote),
+            gallery: galleryPhotos.filter(p => p.url).map(p => ({ url: p.url, caption: (p.caption || '').trim() })),
+        };
+
+        // 1) Append submission (full onboarding record)
+        await appendSubmission({
+            id: uid(), type: 'agent-info',
+            timestamp: new Date().toISOString(), data
+        });
+
+        // 1b) Two-way sync: push the website-shared fields onto the agent's own
+        //     directory entry so they show on the site + the broker's directory.
+        try {
+            if (window.yrlClient) {
+                await window.yrlClient.rpc('upsert_yrl_agent_self', {
+                    p_patch: {
+                        bio: data.notes || '', tagline: data.tagline || '',
+                        expertise: data.expertise || [], areas: data.areas || [],
+                        name: data.name || '', title: data.title || '',
+                        phone: data.phone || '', photo: data.headshot_url || '',
+                        testimonials: data.testimonials || [], years: data.years || '',
+                        designations: data.designations || [], languages: data.languages || [],
+                        video: data.video || '', gallery: data.gallery || []
+                    }
+                });
+            }
+        } catch (_) { /* submission still saved; site sync will catch up next poll */ }
+
+        // 2) Mirror to onboarding flow: localStorage progress + cross-device agent_progress map
+        try {
+            localStorage.setItem(AGENT_NAME_KEY, fullName);
+            localStorage.setItem(AGENT_DISPLAY_KEY, fullName);
+            const local = JSON.parse(localStorage.getItem(LOCAL_PROGRESS_KEY) || '{}');
+            local['b-agentinfo-submitted'] = true;
+            local['d-headshot-submitted']  = true;
+            localStorage.setItem(LOCAL_PROGRESS_KEY, JSON.stringify(local));
+            const map = (await loadHubContent(AGENT_PROGRESS_KEY)) || {};
+            if (!map[fullName]) map[fullName] = { statuses:{}, lastSeen:null };
+            map[fullName].statuses['b-agentinfo'] = 'completed';
+            map[fullName].statuses['d-headshot']  = 'completed';
+            map[fullName].lastSeen = new Date().toISOString();
+            await saveHubContent(AGENT_PROGRESS_KEY, map);
+        } catch (_) { /* non-critical */ }
+
+        // 3) Auto-check items #4 (Business Cards) and #15 (Agent Bio) on the Moving to YRL checklist
+        await Promise.all([markMovingChecklistItemDone(4), markMovingChecklistItemDone(15)]);
+
+        // Done — keep them on the page with a brief flash + reset button label
+        flashSaved();
+        btn.disabled = false;
+        btn.innerHTML = orig;
+        window.scrollTo({ top:0, behavior:'smooth' });
+    } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = orig;
+        toast('Save failed: ' + (err.message || err), 'error');
+    }
+});
+
+/* ── Persistence helpers ──────────────────────────────────────────── */
+async function appendSubmission(entry) {
+    const existing = await loadHubContent(SUBMISSIONS_KEY);
+    const list = Array.isArray(existing) ? existing : [];
+    list.push(entry);
+    await saveHubContent(SUBMISSIONS_KEY, list);
+}
+
+async function markMovingChecklistItemDone(itemNumber) {
+    if (!currentUser) return;
+    try {
+        const map = (await loadHubContent(MOVING_KEY)) || {};
+        const uidS = currentUser.id;
+        const meta = currentUser.user_metadata || {};
+        const slice = map[uidS] || {
+            items: {},
+            name: meta.full_name || meta.name || (currentUser.email || '').split('@')[0],
+            email: currentUser.email || ''
+        };
+        slice.items = slice.items || {};
+        slice.items[itemNumber] = true;
+        slice.updated_at = new Date().toISOString();
+        map[uidS] = slice;
+        await saveHubContent(MOVING_KEY, map);
+    } catch (_) { /* non-blocking */ }
+}
+
+/* ── Utils ────────────────────────────────────────────────────────── */
+function uid(){ return Math.random().toString(36).slice(2, 9); }
+
+let _flashT;
+function flashSaved(){
+    const el = document.getElementById('savedFlash');
+    el.classList.add('show');
+    clearTimeout(_flashT);
+    _flashT = setTimeout(() => el.classList.remove('show'), 2400);
+}
+let _toastT;
+function toast(msg, type){
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.className = ''; if (type) t.classList.add(type);
+    void t.offsetWidth; t.classList.add('show');
+    clearTimeout(_toastT); _toastT = setTimeout(() => t.classList.remove('show'), 3500);
+}
+</script>
+<script src="back-link.js?v=20260917"></script>
+</body>
+</html>

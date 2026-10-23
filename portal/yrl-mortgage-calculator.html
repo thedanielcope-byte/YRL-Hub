@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mortgage Calculator — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="portal-auth.js"></script>
+    <script src="help-box.js?v=20260916" defer></script>
+    <style>
+        :root {
+            --red:        #c03926;
+            --red-light:  #d94a35;
+            --red-dark:   #9e2e1e;
+            --gray:       #6e6e70;
+            --bg:         #f2f4f7;
+            --surface:    #ffffff;
+            --surface-2:  #f7f8fa;
+            --surface-3:  #eef0f3;
+            --border:     #e2e5ea;
+            --text:       #1a1d22;
+            --text-sec:   #5a6270;
+            --text-muted: #9ca3af;
+            --radius:     12px;
+            --shadow:     0 4px 20px rgba(0,0,0,0.08);
+            --shadow-red: 0 6px 28px rgba(192,57,38,0.22);
+            --green:      #16a34a;
+            --blue:       #2563eb;
+            --amber:      #d97706;
+            --purple:     #7c3aed;
+        }
+
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; }
+        body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; overflow-x:hidden; }
+        a { text-decoration:none; color:inherit; }
+
+        /* ── HEADER ── */
+        .page-header {
+            background: linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);
+            padding: 28px 24px 24px;
+            position: relative;
+        }
+        .header-inner { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+        .header-left { display:flex; align-items:center; gap:18px; }
+        .back-btn {
+            display:inline-flex; align-items:center; gap:8px;
+            background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.3);
+            color:#fff; padding:9px 18px; border-radius:100px; font-size:13px; font-weight:600;
+            transition:background .2s; white-space:nowrap;
+        }
+        .back-btn:hover { background:rgba(255,255,255,0.26); }
+        .header-title h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(26px,4vw,38px); letter-spacing:1.5px; color:#fff; line-height:1.1; }
+        .header-title p { font-size:13px; color:rgba(255,255,255,0.85); }
+        .header-actions { display:flex; gap:10px; flex-wrap:wrap; }
+        .btn-header {
+            display:inline-flex; align-items:center; gap:8px; border:none; cursor:pointer;
+            padding:10px 18px; border-radius:100px; font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
+            transition:all .2s; white-space:nowrap;
+        }
+        .btn-print { background:#fff; color:var(--red); }
+        .btn-print:hover { transform:translateY(-1px); box-shadow:0 6px 18px rgba(0,0,0,0.18); }
+        .btn-reset { background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.3); color:#fff; }
+        .btn-reset:hover { background:rgba(255,255,255,0.26); }
+
+        /* ── LAYOUT ── */
+        .wrap { max-width:1100px; margin:0 auto; padding:28px 24px 80px; display:grid; grid-template-columns:1fr 380px; gap:24px; align-items:start; }
+        @media (max-width: 900px) { .wrap { grid-template-columns:1fr; } .results-col { position:static !important; } }
+
+        .panel { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); }
+        .panel-head { padding:18px 22px 14px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; }
+        .panel-head i { color:var(--red); }
+        .panel-head h2 { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:1.2px; }
+        .panel-body { padding:20px 22px; }
+
+        .field-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+        @media (max-width:560px){ .field-grid { grid-template-columns:1fr; } .header-left { flex-wrap:wrap; gap:12px; } .btn-header { padding:9px 14px; } }
+        .field { display:flex; flex-direction:column; gap:6px; }
+        .field.full { grid-column:1 / -1; }
+        .field label { font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.6px; color:var(--text-sec); display:flex; align-items:center; gap:6px; }
+        .field label .hint { color:var(--text-muted); cursor:help; }
+        .input-wrap { position:relative; display:flex; }
+        .input-wrap .prefix, .input-wrap .suffix {
+            position:absolute; top:50%; transform:translateY(-50%);
+            font-size:13.5px; color:var(--text-muted); font-weight:600; pointer-events:none;
+        }
+        .input-wrap .prefix { left:13px; }
+        .input-wrap .suffix { right:13px; }
+        .input-wrap input, .field select {
+            width:100%; background:var(--surface-2); border:1.5px solid var(--border); border-radius:9px;
+            padding:11px 13px; font-size:14.5px; font-family:'Inter',sans-serif; font-weight:600; color:var(--text);
+            outline:none; transition:border-color .15s, background .15s;
+        }
+        .input-wrap input.has-prefix { padding-left:28px; }
+        .input-wrap input.has-suffix { padding-right:34px; }
+        .input-wrap input:focus, .field select:focus { border-color:var(--red); background:#fff; }
+        .field select { appearance:none; cursor:pointer; }
+
+        /* Down payment dual input */
+        .dp-row { display:grid; grid-template-columns:1fr 110px; gap:10px; }
+
+        .adv-toggle {
+            margin-top:18px; display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none;
+            font-size:13px; font-weight:700; color:var(--red);
+        }
+        .adv-toggle i { transition:transform .2s; }
+        .adv-toggle.open i { transform:rotate(90deg); }
+        .adv-body { display:none; margin-top:16px; }
+        .adv-body.open { display:block; }
+        .adv-note { font-size:12px; color:var(--text-muted); margin-bottom:14px; }
+
+        /* ── RESULTS ── */
+        .results-col { position:sticky; top:20px; display:flex; flex-direction:column; gap:20px; }
+        .monthly-big { text-align:center; padding:22px 22px 6px; }
+        .monthly-big .label { font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text-sec); }
+        .monthly-big .amount { font-family:'Bebas Neue',sans-serif; font-size:54px; letter-spacing:1px; color:var(--red); line-height:1.1; }
+        .monthly-big .amount span { font-size:26px; }
+        .monthly-big .sub { font-size:12.5px; color:var(--text-muted); }
+
+        .donut-wrap { display:flex; justify-content:center; padding:8px 0 4px; }
+        .breakdown { padding:6px 22px 20px; }
+        .bk-row { display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-bottom:1px dashed var(--border); font-size:13.5px; }
+        .bk-row:last-child { border-bottom:none; }
+        .bk-row .bk-label { display:flex; align-items:center; gap:9px; color:var(--text-sec); font-weight:600; }
+        .bk-dot { width:11px; height:11px; border-radius:3px; flex-shrink:0; }
+        .bk-row .bk-val { font-weight:700; }
+
+        .summary { padding:4px 22px 20px; }
+        .sm-row { display:flex; justify-content:space-between; padding:8px 0; font-size:13.5px; border-bottom:1px dashed var(--border); }
+        .sm-row:last-child { border-bottom:none; }
+        .sm-row .sm-label { color:var(--text-sec); font-weight:600; }
+        .sm-row .sm-val { font-weight:700; }
+
+        .disclaimer { font-size:11.5px; color:var(--text-muted); line-height:1.55; padding:0 4px; }
+
+        /* payoff / amortization mini table */
+        .amort-table { width:100%; border-collapse:collapse; font-size:12.5px; }
+        .amort-table th { text-align:right; font-size:10.5px; text-transform:uppercase; letter-spacing:.5px; color:var(--text-muted); padding:7px 8px; border-bottom:1px solid var(--border); }
+        .amort-table th:first-child { text-align:left; }
+        .amort-table td { padding:7px 8px; text-align:right; border-bottom:1px dashed var(--border); font-weight:600; }
+        .amort-table td:first-child { text-align:left; color:var(--text-sec); }
+        .amort-table tr:last-child td { border-bottom:none; }
+
+        /* ── Branded PDF header (print only) ── */
+        .pdf-head { display:none; }
+        @media print {
+            .page-header { display:none !important; }
+            .pdf-head {
+                display:flex; align-items:center; justify-content:space-between; gap:18px;
+                padding:0 0 14px; margin-bottom:16px; border-bottom:3px solid var(--red);
+            }
+            .pdf-head img { max-height:58px; max-width:190px; object-fit:contain; }
+            .pdf-brand { text-align:right; line-height:1.45; }
+            .pdf-brand .pdf-name { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:1.2px; color:var(--red); display:block; }
+            .pdf-brand span { display:block; font-size:11.5px; color:#5a6270; font-weight:600; }
+            .pdf-title { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:1.5px; margin-bottom:10px; }
+            body { background:#fff; }
+            .wrap { grid-template-columns:1fr 1fr; padding:10px 0; gap:14px; }
+            .panel { box-shadow:none; }
+            .adv-body { display:block !important; }
+        }
+    </style>
+<link rel="stylesheet" href="hub-theme.css?v=20260903b"><script src="hub-brand.js" defer></script></head>
+<body>
+
+<header class="page-header">
+    <div class="header-inner">
+        <div class="header-left">
+            <a href="hub.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Hub</a>
+            <div class="header-title">
+                <h1>Mortgage Calculator</h1>
+                <p>Estimate a monthly payment — principal &amp; interest, taxes, insurance, PMI &amp; HOA</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn-header btn-print" onclick="shareWithClient()"><i class="fa-solid fa-share-nodes"></i> Share with client</button>
+            <button class="btn-header btn-reset" onclick="window.print()"><i class="fa-solid fa-print"></i> Print / PDF</button>
+            <button class="btn-header btn-reset" onclick="resetCalc()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+        </div>
+    </div>
+</header>
+
+<!-- Branded header — appears only on the printed / saved PDF -->
+<div class="pdf-head">
+    <img src="yrl-logo.png" alt="Your Realty Link">
+    <div class="pdf-brand">
+        <span class="pdf-name">Your Realty Link</span>
+        <span>(317) 997-7404 · yourrealtylink.com</span>
+        <span id="pdfMeta"></span>
+    </div>
+</div>
+
+<div class="wrap">
+    <div id="helpTop"></div>
+    <script>document.addEventListener("DOMContentLoaded",function(){ window.HelpBox && HelpBox.mount({container:"#helpTop",key:"yrl-mortgage-calculator",label:"the Mortgage Calculator"}); });</script>
+
+    <!-- ══ INPUTS ══ -->
+    <div class="inputs-col">
+        <div class="panel">
+            <div class="panel-head"><i class="fa-solid fa-house-chimney"></i><h2>Loan Details</h2></div>
+            <div class="panel-body">
+                <div class="field-grid">
+                    <div class="field full">
+                        <label>Home price</label>
+                        <div class="input-wrap">
+                            <span class="prefix">$</span>
+                            <input type="text" inputmode="decimal" id="price" class="has-prefix" value="350,000">
+                        </div>
+                    </div>
+
+                    <div class="field full">
+                        <label>Down payment</label>
+                        <div class="dp-row">
+                            <div class="input-wrap">
+                                <span class="prefix">$</span>
+                                <input type="text" inputmode="decimal" id="dpAmt" class="has-prefix" value="70,000">
+                            </div>
+                            <div class="input-wrap">
+                                <input type="text" inputmode="decimal" id="dpPct" class="has-suffix" value="20">
+                                <span class="suffix">%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Loan term</label>
+                        <select id="term">
+                            <option value="30" selected>30-year fixed</option>
+                            <option value="20">20-year fixed</option>
+                            <option value="15">15-year fixed</option>
+                            <option value="10">10-year fixed</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label>Interest rate</label>
+                        <div class="input-wrap">
+                            <input type="text" inputmode="decimal" id="rate" class="has-suffix" value="6.75">
+                            <span class="suffix">%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="adv-toggle" id="advToggle" onclick="toggleAdv()">
+                    <i class="fa-solid fa-chevron-right"></i> Taxes, insurance &amp; HOA
+                </div>
+                <div class="adv-body" id="advBody">
+                    <div class="adv-note">These estimates round out the true monthly cost. Edit any of them — or zero them out for a principal-&amp;-interest-only view.</div>
+                    <div class="field-grid">
+                        <div class="field">
+                            <label>Property tax <span class="hint" title="Annual property tax. Default estimates ~1.0% of home price per year.">ⓘ</span></label>
+                            <div class="input-wrap">
+                                <span class="prefix">$</span>
+                                <input type="text" inputmode="decimal" id="tax" class="has-prefix" value="3,500">
+                            </div>
+                            <span style="font-size:11px;color:var(--text-muted);">per year</span>
+                        </div>
+                        <div class="field">
+                            <label>Homeowners insurance</label>
+                            <div class="input-wrap">
+                                <span class="prefix">$</span>
+                                <input type="text" inputmode="decimal" id="ins" class="has-prefix" value="1,800">
+                            </div>
+                            <span style="font-size:11px;color:var(--text-muted);">per year</span>
+                        </div>
+                        <div class="field">
+                            <label>HOA fees</label>
+                            <div class="input-wrap">
+                                <span class="prefix">$</span>
+                                <input type="text" inputmode="decimal" id="hoa" class="has-prefix" value="0">
+                            </div>
+                            <span style="font-size:11px;color:var(--text-muted);">per month</span>
+                        </div>
+                        <div class="field">
+                            <label>PMI <span class="hint" title="Private mortgage insurance — usually required when down payment is under 20%. Typical range: 0.3%–1.5% of the loan per year.">ⓘ</span></label>
+                            <div class="input-wrap">
+                                <input type="text" inputmode="decimal" id="pmiRate" class="has-suffix" value="0.5">
+                                <span class="suffix">%/yr</span>
+                            </div>
+                            <span style="font-size:11px;color:var(--text-muted);" id="pmiNote">auto-applies when down payment &lt; 20%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Amortization snapshot -->
+        <div class="panel" style="margin-top:20px;">
+            <div class="panel-head"><i class="fa-solid fa-chart-line"></i><h2>Loan Snapshot</h2></div>
+            <div class="panel-body" style="padding-top:14px;">
+                <table class="amort-table">
+                    <thead><tr><th>Milestone</th><th>Principal Paid</th><th>Interest Paid</th><th>Balance</th></tr></thead>
+                    <tbody id="amortBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ RESULTS ══ -->
+    <div class="results-col">
+        <div class="panel">
+            <div class="monthly-big">
+                <div class="label">Estimated monthly payment</div>
+                <div class="amount"><span>$</span><span id="bigMonthly">0</span></div>
+                <div class="sub" id="loanSub">—</div>
+            </div>
+            <div class="donut-wrap">
+                <svg id="donut" width="170" height="170" viewBox="0 0 170 170"></svg>
+            </div>
+            <div class="breakdown" id="breakdown"></div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-head"><i class="fa-solid fa-sack-dollar"></i><h2>Totals</h2></div>
+            <div class="summary" id="summary"></div>
+        </div>
+
+        <div class="disclaimer">
+            <i class="fa-solid fa-circle-info"></i> Estimates only — for planning and conversation. Actual payment,
+            rate, taxes, insurance, and PMI vary by lender, credit, and property. Not a loan offer or lending advice —
+            connect with a lender for exact figures.
+        </div>
+    </div>
+</div>
+
+<!-- hub-data.js provides tenant-aware loadHubContent / saveHubContent / uploadHubFile -->
+<script src="hub-data.js"></script>
+<script>
+// ══════════════════════════════════════
+//  Mortgage Calculator
+// ══════════════════════════════════════
+const $ = (id) => document.getElementById(id);
+const fmt0 = (n) => isFinite(n) ? Math.round(n).toLocaleString('en-US') : '0';
+const fmt2 = (n) => isFinite(n) ? n.toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 }) : '0.00';
+const num = (v) => { const n = parseFloat(String(v).replace(/[^0-9.]/g, '')); return isFinite(n) ? n : 0; };
+
+const DEFAULTS = { price:'350,000', dpAmt:'70,000', dpPct:'20', term:'30', rate:'6.75', tax:'3,500', ins:'1,800', hoa:'0', pmiRate:'0.5' };
+
+/* Colors for the payment slices */
+const SLICES = [
+    { key:'pi',  label:'Principal & interest', color:'var(--red)',    raw:'#c03926' },
+    { key:'tax', label:'Property tax',         color:'var(--blue)',   raw:'#2563eb' },
+    { key:'ins', label:'Home insurance',       color:'var(--green)',  raw:'#16a34a' },
+    { key:'pmi', label:'PMI',                  color:'var(--amber)',  raw:'#d97706' },
+    { key:'hoa', label:'HOA',                  color:'var(--purple)', raw:'#7c3aed' },
+];
+
+let _syncing = false;
+
+function calc() {
+    const price = num($('price').value);
+    const dpAmt = num($('dpAmt').value);
+    const years = parseInt($('term').value, 10);
+    const rate  = num($('rate').value);
+
+    const loan = Math.max(price - dpAmt, 0);
+    const dpPct = price > 0 ? (dpAmt / price) * 100 : 0;
+
+    /* P&I via standard amortization formula */
+    const n = years * 12;
+    const r = rate / 100 / 12;
+    const pi = loan <= 0 ? 0 : (r === 0 ? loan / n : loan * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1));
+
+    const taxMo = num($('tax').value) / 12;
+    const insMo = num($('ins').value) / 12;
+    const hoaMo = num($('hoa').value);
+    /* PMI auto-applies under 20% down and drops off at/above 20% */
+    const pmiApplies = dpPct < 20 && loan > 0;
+    const pmiMo = pmiApplies ? loan * (num($('pmiRate').value) / 100) / 12 : 0;
+    $('pmiNote').textContent = pmiApplies
+        ? 'applied — down payment is under 20%'
+        : 'auto-applies when down payment < 20% (currently not applied)';
+
+    const parts = { pi, tax:taxMo, ins:insMo, pmi:pmiMo, hoa:hoaMo };
+    const total = pi + taxMo + insMo + pmiMo + hoaMo;
+
+    /* Big number + sub */
+    $('bigMonthly').textContent = fmt0(total);
+    $('loanSub').textContent = `$${fmt0(loan)} loan · ${years}-yr fixed @ ${rate}% · ${dpPct.toFixed(dpPct % 1 ? 1 : 0)}% down`;
+
+    drawDonut(parts, total);
+    renderBreakdown(parts, total);
+    renderSummary(loan, pi, n, rate, price, dpAmt);
+    renderAmort(loan, r, pi, years);
+}
+
+function drawDonut(parts, total) {
+    const svg = $('donut');
+    const cx = 85, cy = 85, R = 66, W = 26;
+    svg.innerHTML = '';
+    if (total <= 0) return;
+    let angle = -90;
+    SLICES.forEach(s => {
+        const val = parts[s.key];
+        if (val <= 0) return;
+        const sweep = (val / total) * 360;
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', arcPath(cx, cy, R, angle, angle + sweep));
+        path.setAttribute('fill', 'none');
+        path.setAttribute('stroke', s.raw);
+        path.setAttribute('stroke-width', W);
+        svg.appendChild(path);
+        angle += sweep;
+    });
+    /* center label */
+    const t1 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    t1.setAttribute('x', cx); t1.setAttribute('y', cy - 2);
+    t1.setAttribute('text-anchor', 'middle');
+    t1.setAttribute('style', 'font:800 20px Inter,sans-serif;fill:#1a1d22;');
+    t1.textContent = '$' + fmt0(total);
+    const t2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    t2.setAttribute('x', cx); t2.setAttribute('y', cy + 16);
+    t2.setAttribute('text-anchor', 'middle');
+    t2.setAttribute('style', 'font:600 10.5px Inter,sans-serif;fill:#9ca3af;letter-spacing:.5px;');
+    t2.textContent = 'PER MONTH';
+    svg.appendChild(t1); svg.appendChild(t2);
+}
+
+function arcPath(cx, cy, r, a0, a1) {
+    /* full-circle guard */
+    if (a1 - a0 >= 359.99) a1 = a0 + 359.99;
+    const rad = (d) => (d * Math.PI) / 180;
+    const x0 = cx + r * Math.cos(rad(a0)), y0 = cy + r * Math.sin(rad(a0));
+    const x1 = cx + r * Math.cos(rad(a1)), y1 = cy + r * Math.sin(rad(a1));
+    const large = a1 - a0 > 180 ? 1 : 0;
+    return `M ${x0} ${y0} A ${r} ${r} 0 ${large} 1 ${x1} ${y1}`;
+}
+
+function renderBreakdown(parts, total) {
+    $('breakdown').innerHTML = SLICES.map(s => {
+        const val = parts[s.key];
+        if (s.key !== 'pi' && val <= 0) return '';
+        return `<div class="bk-row">
+            <span class="bk-label"><span class="bk-dot" style="background:${s.raw};"></span>${s.label}</span>
+            <span class="bk-val">$${fmt2(val)}</span>
+        </div>`;
+    }).join('') + `<div class="bk-row" style="border-top:2px solid var(--border);margin-top:2px;">
+        <span class="bk-label" style="color:var(--text);">Total monthly payment</span>
+        <span class="bk-val" style="color:var(--red);">$${fmt2(total)}</span>
+    </div>`;
+}
+
+function renderSummary(loan, pi, n, rate, price, dpAmt) {
+    const totalPaid = pi * n;
+    const totalInterest = totalPaid - loan;
+    $('summary').innerHTML = `
+        <div class="sm-row"><span class="sm-label">Home price</span><span class="sm-val">$${fmt0(price)}</span></div>
+        <div class="sm-row"><span class="sm-label">Down payment</span><span class="sm-val">$${fmt0(dpAmt)}</span></div>
+        <div class="sm-row"><span class="sm-label">Loan amount</span><span class="sm-val">$${fmt0(loan)}</span></div>
+        <div class="sm-row"><span class="sm-label">Total interest paid</span><span class="sm-val">$${fmt0(Math.max(totalInterest,0))}</span></div>
+        <div class="sm-row"><span class="sm-label">Total of ${n.toLocaleString()} payments (P&amp;I)</span><span class="sm-val">$${fmt0(Math.max(totalPaid,0))}</span></div>`;
+}
+
+function renderAmort(loan, r, pi, years) {
+    /* balance after k payments: B = L(1+r)^k − P[((1+r)^k − 1)/r] */
+    const rows = [];
+    const marks = years >= 20 ? [5, 10, 15, years] : years >= 15 ? [5, 10, years] : [Math.ceil(years/2), years];
+    let html = '';
+    marks.forEach(y => {
+        const k = Math.min(y * 12, years * 12);
+        let bal;
+        if (loan <= 0) bal = 0;
+        else if (r === 0) bal = Math.max(loan - pi * k, 0);
+        else bal = Math.max(loan * Math.pow(1 + r, k) - pi * (Math.pow(1 + r, k) - 1) / r, 0);
+        const paidPrincipal = loan - bal;
+        const paidTotal = pi * k;
+        const paidInterest = Math.max(paidTotal - paidPrincipal, 0);
+        html += `<tr><td>After year ${y}</td><td>$${fmt0(paidPrincipal)}</td><td>$${fmt0(paidInterest)}</td><td>$${fmt0(bal)}</td></tr>`;
+    });
+    $('amortBody').innerHTML = html;
+}
+
+/* ── Down-payment $ ⇄ % sync ── */
+function syncFromAmt() {
+    if (_syncing) return; _syncing = true;
+    const price = num($('price').value), amt = num($('dpAmt').value);
+    $('dpPct').value = price > 0 ? +(amt / price * 100).toFixed(1) : 0;
+    _syncing = false;
+}
+function syncFromPct() {
+    if (_syncing) return; _syncing = true;
+    const price = num($('price').value), pct = num($('dpPct').value);
+    $('dpAmt').value = fmt0(price * pct / 100);
+    _syncing = false;
+}
+
+/* Re-derive $ from % when price changes (keeps % steady like Bankrate),
+   and refresh the default tax estimate if untouched. */
+function onPriceChange() {
+    syncFromPct();
+    calc();
+}
+
+function toggleAdv() {
+    $('advToggle').classList.toggle('open');
+    $('advBody').classList.toggle('open');
+}
+
+function resetCalc() {
+    Object.entries(DEFAULTS).forEach(([id, v]) => { $(id).value = v; });
+    calc();
+}
+
+/* ── Share with client: public (no-login) calculator link carrying this scenario ── */
+function buildClientUrl() {
+    const p = new URLSearchParams({
+        p:  num($('price').value),
+        d:  num($('dpAmt').value),
+        t:  $('term').value,
+        r:  num($('rate').value),
+        tx: num($('tax').value),
+        i:  num($('ins').value),
+        h:  num($('hoa').value),
+        pm: num($('pmiRate').value)
+    });
+    return location.origin + '/mortgage.html?' + p.toString();
+}
+
+async function shareWithClient() {
+    const url = buildClientUrl();
+    const total = $('bigMonthly').textContent;
+    if (navigator.share) {
+        try { await navigator.share({ title:'Mortgage estimate', text:`Estimated monthly payment: $${total}`, url }); return; } catch (e) { if (e.name === 'AbortError') return; }
+    }
+    try { await navigator.clipboard.writeText(url); calcToast('Client link copied — no login needed, numbers included'); }
+    catch { prompt('Copy this link for your client:', url); }
+}
+
+let _ctT;
+function calcToast(msg) {
+    let t = document.getElementById('calcToast');
+    if (!t) {
+        t = document.createElement('div');
+        t.id = 'calcToast';
+        t.style.cssText = 'position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:#1a1d22;color:#fff;font-size:13.5px;font-weight:600;padding:12px 22px;border-radius:100px;z-index:50;opacity:0;transition:opacity .25s;';
+        document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    requestAnimationFrame(() => { t.style.opacity = '1'; });
+    clearTimeout(_ctT);
+    _ctT = setTimeout(() => { t.style.opacity = '0'; }, 2600);
+}
+
+/* format currency-ish fields on blur */
+['price','dpAmt','tax','ins','hoa'].forEach(id => {
+    $(id).addEventListener('blur', () => { $(id).value = fmt0(num($(id).value)); calc(); });
+});
+
+$('price').addEventListener('input', onPriceChange);
+$('dpAmt').addEventListener('input', () => { syncFromAmt(); calc(); });
+$('dpPct').addEventListener('input', () => { syncFromPct(); calc(); });
+['term','rate','tax','ins','hoa','pmiRate'].forEach(id => {
+    $(id).addEventListener('input', calc);
+    $(id).addEventListener('change', calc);
+});
+
+/* Branded PDF meta: agent name (from login) + date */
+function setPdfMeta() {
+    const u = window.yrlUser;
+    const name = u ? (u.user_metadata?.full_name || u.user_metadata?.name || u.email.split('@')[0]) : '';
+    const date = new Date().toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+    $('pdfMeta').textContent = (name ? `Prepared by ${name} · ` : 'Prepared ') + date;
+}
+window.addEventListener('beforeprint', setPdfMeta);
+document.addEventListener('yrl-auth-ready', setPdfMeta);
+setPdfMeta();
+
+calc();
+</script>
+<script src="back-link.js?v=20260917"></script>
+</body>
+</html>

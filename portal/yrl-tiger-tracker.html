@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>The Tiger Tracker — Your Realty Link</title>
+<script src="portal-auth.js"></script>
+<script src="embed-mode.js?v=20260927b"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="tiger-shell.css?v=20260927b">
+<style>
+:root{
+  --red:#c03926;--red-dark:#9e2e1e;--tiger:#b5661c;--tiger-light:#d98a2b;
+  --bg:#f2f4f7;--surface:#fff;--surface-2:#f7f8fa;--surface-3:#eef0f3;
+  --border:#e2e5ea;--border-light:#d0d4da;--text:#1a1d22;--text-sec:#5a6270;--text-muted:#9ca3af;
+  --good:#2e9e5b;--radius:14px;--shadow:0 4px 20px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+.topbar-in{max-width:1080px;margin:0 auto;padding:12px 22px;display:flex;align-items:center;gap:14px}
+.back{display:inline-flex;align-items:center;gap:8px;color:var(--text-sec);font-weight:600;font-size:14px}
+.back:hover{color:var(--red)}
+.btn{display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;font-family:inherit;font-weight:600;font-size:14px;padding:10px 15px;border-radius:10px;transition:.15s}
+.btn-primary{background:var(--red);color:#fff;box-shadow:0 6px 22px rgba(192,57,38,.22)}
+.btn-primary:hover{background:var(--red-dark)}
+.btn-ghost{background:var(--surface-3);color:var(--text-sec)}
+.btn-ghost:hover{background:var(--border)}
+.spacer{flex:1}
+
+.hero{background:#1c1a17;color:#f3ede4;position:relative;overflow:hidden}
+.hero .stripes{position:absolute;inset:0;opacity:.13;background:repeating-linear-gradient(58deg,var(--tiger-light) 0 3px,transparent 3px 9px,var(--red) 9px 12px,transparent 12px 34px)}
+.hero-in{position:relative;max-width:1080px;margin:0 auto;padding:38px 22px 30px}
+.eyebrow{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--tiger-light);font-weight:700;margin:0 0 10px}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:clamp(38px,7vw,60px);line-height:.92;margin:0}
+.hero p{color:#cfc7bc;max-width:62ch;margin:12px 0 0;font-size:15.5px}
+.hero .who{margin-top:14px;font-size:13px;color:#a8a099}.hero .who b{color:#f3ede4}
+
+.wrap{max-width:1080px;margin:0 auto;padding:24px 22px 40px}
+
+/* targets */
+.targets{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:6px 0 20px}
+.tcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:15px 16px;box-shadow:var(--shadow)}
+.tcard .lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);font-weight:700}
+.tcard .val{font-family:'Bebas Neue',sans-serif;font-size:34px;line-height:1;margin-top:6px;color:var(--text)}
+.tcard .val small{font-family:'Inter';font-size:12px;color:var(--text-muted);font-weight:600}
+.tcard.progress .bar{height:6px;border-radius:99px;background:var(--surface-3);margin-top:9px;overflow:hidden}
+.tcard.progress .bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--tiger),var(--red));border-radius:99px}
+.setup-note{background:var(--surface-2);border:1px dashed var(--border-light);border-radius:12px;padding:14px 16px;color:var(--text-sec);font-size:14px;margin:6px 0 18px}
+.setup-note a{color:var(--red);font-weight:700}
+
+/* table */
+.tablewrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:820px;font-variant-numeric:tabular-nums}
+thead th{background:var(--surface-2);text-align:center;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-sec);font-weight:700;padding:13px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
+thead th.wk,tbody td.wk{text-align:left;position:sticky;left:0;background:var(--surface-2);z-index:1}
+tbody td{padding:6px 8px;border-bottom:1px solid var(--surface-3);text-align:center}
+tbody td.wk{background:var(--surface);font-weight:600;font-size:13px;color:var(--text)}
+tbody tr.thisweek td.wk{box-shadow:inset 3px 0 0 var(--red)}
+tbody input{width:64px;font-family:inherit;font-size:15px;text-align:center;border:1.5px solid transparent;background:var(--surface-2);border-radius:8px;padding:8px 4px;color:var(--text)}
+tbody input:focus{outline:none;border-color:var(--red);background:#fff}
+tbody input.wkdate{width:120px;text-align:left}
+tbody input.notes{width:150px;text-align:left}
+.rowdel{border:none;background:transparent;color:var(--text-muted);cursor:pointer;padding:6px;border-radius:7px}
+.rowdel:hover{color:var(--red);background:var(--surface-3)}
+tfoot td{padding:12px 8px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--red-dark);border-top:2px solid var(--border)}
+tfoot td.wk{text-align:left;font-family:'Inter';font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text-sec)}
+.addrow{margin:14px 0 0;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.addrow .hint{color:var(--text-muted);font-size:12.5px}
+
+.actions{position:sticky;bottom:0;z-index:30;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-top:1px solid var(--border);margin-top:22px}
+.actions-in{max-width:1080px;margin:0 auto;padding:13px 22px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.actions .note{color:var(--text-muted);font-size:12.5px;flex:1;min-width:150px}.actions .note i{color:var(--tiger)}
+.toast{position:fixed;left:50%;bottom:82px;transform:translate(-50%,20px);background:#1c1a17;color:#fff;padding:11px 20px;border-radius:99px;font-size:14px;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:.25s;z-index:100}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.print-only{display:none}
+@media print{
+  @page{margin:14mm;size:landscape}
+  .topbar,.actions,.addrow,.rowdel,.toast,.hero .stripes,.setup-note{display:none!important}
+  body{background:#fff}.hero{background:#fff;color:#000;border-bottom:3px solid var(--red)}
+  .hero .eyebrow{color:var(--red)}.hero h1,.hero p,.hero .who{color:#000}
+  .print-only{display:block}.tablewrap{box-shadow:none;border:1px solid #999}
+  tbody input{border:none;background:#fff}
+}
+@media(max-width:640px){.topbar .btn span{display:none}}
+</style>
+</head>
+<body class="tiger-shell" data-tiger-page="tracker">
+
+<button class="tiger-menu-btn" id="tigerMenuBtn" aria-label="Modules"><i class="fa-solid fa-bars"></i></button>
+<aside class="tiger-side" id="tigerSide"></aside>
+<div class="tiger-backdrop" id="tigerBackdrop"></div>
+
+<main class="tiger-main">
+
+<div class="reader-topbar">
+  <div class="spacer"></div>
+  <button class="btn btn-ghost" id="btnPdf"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
+  <button class="btn btn-ghost" id="btnCsv"><i class="fa-solid fa-table"></i> <span>CSV</span></button>
+  <button class="btn btn-primary" id="btnSave"><i class="fa-solid fa-floppy-disk"></i> <span>Save</span></button>
+</div>
+
+<header class="reader-head">
+  <p class="reader-eyebrow">Accountability <span class="chip">Weekly tool</span></p>
+  <h1 class="reader-title">The Tiger Tracker</h1>
+  <p class="reader-lede">Your weekly scoreboard. The one habit that predicts closings better than anything else is simple: track your numbers every Friday and keep them honest. Log the activities you control — the results follow.</p>
+  <p class="reader-who"><b data-name>Agent</b> · <span data-date></span> · saves automatically</p>
+</header>
+
+<div class="wrap">
+  <div id="setupNote"></div>
+  <div class="targets" id="targets"></div>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr>
+        <th class="wk">Week of</th>
+        <th>Conversations</th><th>Appts set</th><th>Listings taken</th>
+        <th>Buyers signed<br><span style="font-weight:400;text-transform:none;font-size:10px">(BRA)</span></th>
+        <th>Under contract</th><th>Closings</th><th>Notes</th><th></th>
+      </tr></thead>
+      <tbody id="rows"></tbody>
+      <tfoot><tr>
+        <td class="wk">Year to date</td>
+        <td id="sConvos">0</td><td id="sAppts">0</td><td id="sListings">0</td>
+        <td id="sBuyers">0</td><td id="sContracts">0</td><td id="sClosings">0</td>
+        <td></td><td></td>
+      </tr></tfoot>
+    </table>
+  </div>
+
+  <div class="addrow">
+    <button class="btn btn-ghost" id="btnAdd"><i class="fa-solid fa-plus"></i> Add this week</button>
+    <span class="hint">Log every week — even the slow ones. The streak is the point.</span>
+  </div>
+</div>
+
+<div class="actions"><div class="actions-in">
+  <span class="note"><i class="fa-solid fa-cloud"></i> Your tracker saves to your account — open it on any device.</span>
+  <button class="btn btn-ghost" id="btnCsv2"><i class="fa-solid fa-table"></i> Download CSV</button>
+  <button class="btn btn-ghost" id="btnPdf2"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
+  <button class="btn btn-primary" id="btnSave2"><i class="fa-solid fa-floppy-disk"></i> Save now</button>
+</div></div>
+
+</main>
+<div class="toast" id="toast"></div>
+
+<script src="hub-data.js"></script>
+<script src="tiger-nav.js"></script>
+<script>
+(function(){
+'use strict';
+const COLS=['convos','appts','listings','buyers','contracts','closings'];
+let email='anon', state={weeks:[]}, hydrated=false, tSave=null;
+
+function resolveEmail(){
+  const u=window.yrlUser;
+  if(u&&u.email) return u.email.toLowerCase();
+  return (localStorage.getItem('yrl_agent_email')||'anon').toLowerCase();
+}
+const KEY=()=>`tiger:v1:tracker:${email}`;
+const GOALKEY=()=>`tiger:v1:1.1:${email}`;
+const num=s=>parseFloat(String(s==null?'':s).replace(/[^0-9.]/g,''))||0;
+
+function agentName(){const u=window.yrlUser;return (u&&(u.user_metadata?.full_name||u.user_metadata?.name))||(email!=='anon'?email.split('@')[0]:'Agent');}
+
+/* ---- week helpers (no Date.now dependency issues; uses real browser Date) ---- */
+function mondayOf(d){const x=new Date(d);const day=(x.getDay()+6)%7;x.setDate(x.getDate()-day);return x;}
+function fmt(d){return (d.getMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear();}
+function thisMonday(){return fmt(mondayOf(new Date()));}
+
+/* ---- render ---- */
+function render(){
+  const tb=document.getElementById('rows');
+  tb.innerHTML='';
+  state.weeks.forEach((w,i)=>{
+    const tr=document.createElement('tr');
+    if(w.wk===thisMonday()) tr.className='thisweek';
+    const wk=document.createElement('td');wk.className='wk';
+    const wkin=document.createElement('input');wkin.className='wkdate';wkin.value=w.wk||'';
+    wkin.placeholder='MM/DD/YYYY';wkin.addEventListener('input',()=>{w.wk=wkin.value;schedule();});
+    wk.appendChild(wkin);tr.appendChild(wk);
+    COLS.forEach(c=>{
+      const td=document.createElement('td');
+      const inp=document.createElement('input');inp.inputMode='numeric';inp.value=w[c]||'';
+      inp.addEventListener('input',()=>{w[c]=inp.value;totals();schedule();});
+      td.appendChild(inp);tr.appendChild(td);
+    });
+    const ntd=document.createElement('td');
+    const nin=document.createElement('input');nin.className='notes';nin.value=w.notes||'';
+    nin.placeholder='—';nin.addEventListener('input',()=>{w.notes=nin.value;schedule();});
+    ntd.appendChild(nin);tr.appendChild(ntd);
+    const dtd=document.createElement('td');
+    const del=document.createElement('button');del.className='rowdel';del.innerHTML='<i class="fa-solid fa-xmark"></i>';
+    del.title='Remove week';del.addEventListener('click',()=>{state.weeks.splice(i,1);render();totals();schedule();});
+    dtd.appendChild(del);tr.appendChild(dtd);
+    tb.appendChild(tr);
+  });
+  totals();
+}
+function totals(){
+  const sum={};COLS.forEach(c=>sum[c]=0);
+  state.weeks.forEach(w=>COLS.forEach(c=>sum[c]+=num(w[c])));
+  document.getElementById('sConvos').textContent=sum.convos;
+  document.getElementById('sAppts').textContent=sum.appts;
+  document.getElementById('sListings').textContent=sum.listings;
+  document.getElementById('sBuyers').textContent=sum.buyers;
+  document.getElementById('sContracts').textContent=sum.contracts;
+  document.getElementById('sClosings').textContent=sum.closings;
+  paintTargets(sum);
+  return sum;
+}
+
+/* ---- targets from Module 1.1 ---- */
+let goals=null;
+function paintTargets(sum){
+  const host=document.getElementById('targets');
+  const note=document.getElementById('setupNote');
+  if(!goals){
+    host.innerHTML='';
+    note.innerHTML='<i class="fa-solid fa-lightbulb"></i> Set your yearly goals in <a href="yrl-tiger-1-1-big-why-goals.html">Module 1.1 — Your Big Why &amp; Goals</a> and they\'ll show here as targets to score against.';
+    return;
+  }
+  note.innerHTML='';
+  const convoGoal=num(goals.t_convos), listGoal=num(goals.t_listings),
+        buyGoal=num(goals.t_buyers), closeGoal=num(goals.deals_needed);
+  const weeksLogged=state.weeks.length||0;
+  const convoActual=weeksLogged?Math.round(sum.convos/weeksLogged):0;
+  const cards=[];
+  if(convoGoal) cards.push(prog('Conversations / wk', convoActual, convoGoal, 'avg'));
+  if(listGoal) cards.push(prog('Listings taken', sum.listings, listGoal, 'yr'));
+  if(buyGoal) cards.push(prog('Buyers signed', sum.buyers, buyGoal, 'yr'));
+  if(closeGoal) cards.push(prog('Closings', sum.closings, closeGoal, 'yr'));
+  host.innerHTML=cards.join('')||'';
+}
+function prog(label,actual,goal,kind){
+  const pct=goal?Math.min(100,Math.round((actual/goal)*100)):0;
+  return `<div class="tcard progress"><div class="lbl">${label}</div>
+    <div class="val">${actual} <small>/ ${goal} ${kind==='avg'?'goal':''}</small></div>
+    <div class="bar"><i style="width:${pct}%"></i></div></div>`;
+}
+
+/* ---- persistence ---- */
+function saveLocal(){try{localStorage.setItem(KEY(),JSON.stringify(state));}catch{}}
+async function saveCloud(silent){
+  saveLocal();
+  let ok=false;
+  if(typeof saveHubContent==='function'){try{ok=await saveHubContent(KEY(),state);}catch{}}
+  if(!silent) toast(ok?'Saved to your account':'Saved on this device');
+}
+function schedule(){if(!hydrated)return;clearTimeout(tSave);tSave=setTimeout(()=>{saveLocal();},400);}
+let toastEl=null,tT=null;
+function toast(m){toastEl=toastEl||document.getElementById('toast');toastEl.textContent=m;toastEl.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>toastEl.classList.remove('show'),2200);}
+
+/* ---- downloads ---- */
+function stub(){return `Tiger-Tracker-${agentName()}`.replace(/[^a-zA-Z0-9._-]+/g,'-');}
+function csv(){
+  const head=['Week of','Conversations','Appts set','Listings taken','Buyers signed','Under contract','Closings','Notes'];
+  const rows=state.weeks.map(w=>[w.wk||'',w.convos||0,w.appts||0,w.listings||0,w.buyers||0,w.contracts||0,w.closings||0,(w.notes||'').replace(/"/g,'""')]);
+  const s=totals();
+  rows.push(['YEAR TO DATE',s.convos,s.appts,s.listings,s.buyers,s.contracts,s.closings,'']);
+  const body=[head,...rows].map(r=>r.map(c=>/[",\n]/.test(String(c))?`"${c}"`:c).join(',')).join('\n');
+  dl(new Blob([body],{type:'text/csv'}),stub()+'.csv');
+}
+function dl(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);}
+
+/* ---- boot ---- */
+async function hydrate(){
+  email=resolveEmail();
+  // load tracker
+  let s=null;try{s=JSON.parse(localStorage.getItem(KEY()));}catch{}
+  if(typeof loadHubContent==='function'){try{const c=await loadHubContent(KEY());if(c)s=c;}catch{}}
+  if(s&&Array.isArray(s.weeks)) state=s;
+  // load goals from module 1.1
+  let g=null;try{g=JSON.parse(localStorage.getItem(GOALKEY()));}catch{}
+  if(typeof loadHubContent==='function'){try{const c=await loadHubContent(GOALKEY());if(c)g=c;}catch{}}
+  goals=g&&g.fields?g.fields:null;
+  // ensure at least the current week exists
+  if(!state.weeks.length) state.weeks.push({wk:thisMonday()});
+  hydrated=true;
+  render();
+  document.querySelectorAll('[data-name]').forEach(n=>n.textContent=agentName());
+  document.querySelectorAll('[data-date]').forEach(n=>n.textContent=new Date().toLocaleDateString());
+}
+
+function addWeek(){
+  const mon=thisMonday();
+  if(!state.weeks.some(w=>w.wk===mon)) state.weeks.unshift({wk:mon});
+  render();schedule();
+}
+
+['btnSave','btnSave2'].forEach(id=>document.getElementById(id).addEventListener('click',()=>saveCloud(false)));
+['btnPdf','btnPdf2'].forEach(id=>document.getElementById(id).addEventListener('click',()=>window.print()));
+['btnCsv','btnCsv2'].forEach(id=>document.getElementById(id).addEventListener('click',csv));
+document.getElementById('btnAdd').addEventListener('click',addWeek);
+
+if(window.yrlUser) hydrate();
+else{document.addEventListener('yrl-auth-ready',hydrate,{once:true});setTimeout(()=>{if(!hydrated)hydrate();},4000);}
+})();
+</script>
+</body>
+</html>

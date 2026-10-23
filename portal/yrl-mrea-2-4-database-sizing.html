@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>MREA 2.4 · Database Sizing — Your Realty Link</title>
+<script src="portal-auth.js"></script>
+<script src="embed-mode.js?v=20260927b"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="tiger-shell.css?v=20260927b">
+<link rel="stylesheet" href="tiger-module.css">
+<link rel="stylesheet" href="mrea-module.css">
+</head>
+<body class="tiger-shell mrea-shell" data-tiger-module="2.4" data-tiger-title="Database Sizing" data-tiger-ns="mrea" data-tiger-program="Millionaire Agent Path">
+
+<button class="tiger-menu-btn" id="tigerMenuBtn" aria-label="Modules"><i class="fa-solid fa-bars"></i></button>
+<aside class="tiger-side" id="tigerSide"></aside>
+<div class="tiger-backdrop" id="tigerBackdrop"></div>
+
+<main class="tiger-main">
+
+<div class="reader-topbar">
+  <div class="prog">
+    <div class="track"><i id="tigerProgressBar"></i></div>
+    <div class="prog-lbl" id="tigerProgressLabel">0% complete</div>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn btn-ghost" data-tiger-action="pdf"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
+  <button class="btn btn-primary" data-tiger-action="save"><i class="fa-solid fa-floppy-disk"></i> <span>Save</span></button>
+</div>
+
+<header class="reader-head">
+  <p class="reader-eyebrow">Phase 2 · Module 2.4 <span class="chip">Calculator</span></p>
+  <h1 class="reader-title">Database Sizing</h1>
+  <p class="reader-lede">Your database is your business. This module turns that from a slogan into a number: exactly how many people you need to know, how many you need to reach, what it costs, and how many names a day you have to add to get there.</p>
+  <p class="reader-who">Worksheet for <b data-tiger-name>Agent</b> · <span data-tiger-date></span> · saves automatically as you type</p>
+</header>
+
+<div class="print-only" style="text-align:center;margin:0 0 6px">
+  <strong>YOUR REALTY LINK · THE MILLIONAIRE AGENT PATH</strong> — Module 2.4: Database Sizing
+</div>
+
+<div class="reader-body">
+<section class="card"><h2><span class="n">01</span>Two audiences, two ratios</h2><p class="teach">Everyone you could do business with falls into one of two groups. <b>Met</b> — people who know you, because you&#x27;ve spoken or met in person. <b>Haven&#x27;t Met</b> — a farm, a neighbourhood, a demographic list; people you&#x27;ve chosen to market to who don&#x27;t know you yet.</p><p class="teach">Each behaves predictably when worked properly. For every <b>12 people in your Met database</b> that you touch 33 times a year, expect about <b>2 closings</b> — one repeat, one referral. For every <b>50 people in your Haven&#x27;t Met database</b> that you mail 12 times a year, expect about <b>1 closing</b>.</p><div class="callout">Met business costs less money per sale but more of your personal time. Haven&#x27;t Met costs more money but scales without your hours — which is why any agent who wants to eventually step back needs both.</div></section>
+<section class="card"><h2><span class="n">02</span>Your goal and your mix</h2><div class="grid2"><div class="field"><label class="field-label" for="db_sides">Closed sides I need per year <span class="field-hint">pulled from Module 2.1 if you&amp;#x27;ve done it</span></label><input class="tiger-input" id="db_sides" data-tiger="db_sides" inputmode="numeric" placeholder="24"></div><div class="field"><label class="field-label" for="db_mix">% of that coming from Met <span class="field-hint">50 is a healthy balance</span></label><input class="tiger-input" id="db_mix" data-tiger="db_mix" inputmode="numeric" placeholder="50"></div></div><div class="grid2"><div class="field"><label class="field-label" for="db_met_now">People in my Met database today <span class="field-hint">an honest count</span></label><input class="tiger-input" id="db_met_now" data-tiger="db_met_now" inputmode="numeric" placeholder="180"></div><div class="field"><label class="field-label" for="db_hm_now">People in my Haven&amp;#x27;t Met database today <span class="field-hint">farm and list names</span></label><input class="tiger-input" id="db_hm_now" data-tiger="db_hm_now" inputmode="numeric" placeholder="0"></div></div><div class="field"><label class="field-label" for="db_touch_cost">Average cost per touch <span class="field-hint">mail, print and postage average out around $0.50</span></label><input class="tiger-input" id="db_touch_cost" data-tiger="db_touch_cost" inputmode="decimal" placeholder="0.50"></div></section>
+<section class="card"><h2><span class="n">03</span>What you actually need</h2><div class="mrea-stats"><div class="mrea-stat" id="stMet"></div><div class="mrea-stat" id="stHM"></div><div class="mrea-stat" id="stCost"></div><div class="mrea-stat hot" id="stDaily"></div></div><div class="mrea-verdict" id="dVerdict"><p class="vt">What this means</p><h3 class="vh">Enter your goal above</h3><p class="vp">This sizes the database your income actually requires.</p></div><input type="hidden" data-tiger="met_needed" id="met_needed"><input type="hidden" data-tiger="hm_needed" id="hm_needed"><input type="hidden" data-tiger="daily_adds" id="daily_adds"></section>
+<section class="card"><h2><span class="n">04</span>Feed it every day</h2><p class="teach">There are about 240 working days in a year. Adding one name a day is 240 names — it sounds trivial and it compounds into a business. Adding three a day fills most agents&#x27; entire requirement inside of three years, from a standing start.</p><p class="teach">The four laws are short: <b>build a database, feed it every day, communicate with it systematically, and service every lead that comes your way.</b></p><div class="field"><label class="field-label" for="db_daily_commit">Names I commit to adding every working day <span class="field-hint">be realistic — a number you&amp;#x27;ll actually hit</span></label><input class="tiger-input" id="db_daily_commit" data-tiger="db_daily_commit" inputmode="numeric" placeholder="2"></div><div class="tiger-list" data-list="db_sources" data-list-title="Where tomorrow&amp;#x27;s names will come from" data-min="5" data-placeholder="e.g. open house sign-ins, past clients I&amp;#x27;ve lost touch with, my kids&amp;#x27; sports parents, closing table contacts"></div><div class="check"><input type="checkbox" id="d_tag" data-tiger-check="d_tag"><label for="d_tag">Tag every contact in the CRM as Met or Haven&#x27;t Met</label></div><div class="check"><input type="checkbox" id="d_allied" data-tiger-check="d_allied"><label for="d_allied">Tag the allied resources — people who should send me business every year</label></div><div class="check"><input type="checkbox" id="d_dates" data-tiger-check="d_dates"><label for="d_dates">Fill in birthdays and home-purchase anniversaries — they&#x27;re three of the 33 touches</label></div><div class="check"><input type="checkbox" id="d_daily" data-tiger-check="d_daily"><label for="d_daily">Add my daily name target to my calendar, not my memory</label></div><div class="grid2"><div class="field"><label class="field-label" for="sign">Signed</label><input class="tiger-input" id="sign" data-tiger="sign" inputmode="text" placeholder="Your name"></div><div class="field"><label class="field-label" for="signdate">Date</label><input class="tiger-input" id="signdate" data-tiger="signdate" inputmode="text" placeholder="MM/DD/YYYY"></div></div></section>
+</div>
+
+<div class="actions"><div class="actions-in">
+  <span class="note"><i class="fa-solid fa-cloud"></i> Your answers save automatically to your account — pick up on any device.</span>
+  <button class="btn btn-ghost" data-tiger-action="txt"><i class="fa-solid fa-list"></i> Download list</button>
+  <button class="btn btn-ghost" data-tiger-action="pdf"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
+  <button class="btn btn-ghost" data-tiger-action="reset"><i class="fa-solid fa-eraser"></i> Clear</button>
+  <button class="btn btn-primary" data-tiger-action="complete"><i class="fa-solid fa-check"></i> Mark complete</button>
+</div></div>
+
+</main>
+
+<script src="hub-data.js"></script>
+<script src="mrea-nav.js"></script>
+<script src="yrl-tiger.js"></script>
+<script src="mrea-kit.js"></script>
+<script>
+
+(function(){
+  var K=MREA;
+  function paint(){
+    var sides=K.nval('db_sides'), mix=K.nval('db_mix'), touch=K.nval('db_touch_cost')||0.50;
+    var metNow=K.nval('db_met_now'), hmNow=K.nval('db_hm_now');
+    if(!(sides>0)){
+      ['stMet','stHM','stCost','stDaily'].forEach(function(i){K.stat(i,'—','');});
+      K.verdict('dVerdict','','Enter your goal above',['This sizes the database your income actually requires.']);
+      return;
+    }
+    if(!(mix>0)) mix=50;
+    var metSales=sides*(mix/100), hmSales=sides-metSales;
+    var metNeed=Math.ceil(metSales*6);         // 12:2
+    var hmNeed=Math.ceil(hmSales*50);          // 50:1
+    var metCost=metNeed*33*touch;              // 33 touches a year
+    var hmCost=hmNeed*12*touch;                // 12 touches a year
+    var gapMet=Math.max(0,metNeed-metNow), gapHM=Math.max(0,hmNeed-hmNow);
+    var daily=(gapMet)/240;
+
+    K.stat('stMet', K.cnt(metNeed,0), 'Met contacts needed', metNow>0?'you have '+K.cnt(metNow,0):'');
+    K.stat('stHM', K.cnt(hmNeed,0), "Haven't Met needed", hmNow>0?'you have '+K.cnt(hmNow,0):'');
+    K.stat('stCost', K.money(metCost+hmCost), 'Annual touch cost', 'at '+K.money(touch,2)+' per touch');
+    K.stat('stDaily', daily>0?K.cnt(Math.max(1,Math.ceil(daily*10)/10),1):'0', 'Names to add per day', gapMet>0?'to close the Met gap in a year':'you&#x27;re there');
+
+    K.$('met_needed').value=metNeed; K.$('hm_needed').value=hmNeed;
+    K.$('daily_adds').value=K.round(daily,1);
+
+    var lines=[], c, head;
+    if(gapMet<=0&&gapHM<=0){
+      c='ok'; head='Your database is already big enough';
+      lines.push('At '+K.cnt(metNow,0)+' Met and '+K.cnt(hmNow,0)+" Haven't Met, you have the raw material for "+K.cnt(sides,0)+' sides.');
+      lines.push('So if you are not hitting that number, the problem is not size — it is that the database is not being <i>worked</i>. Go straight to <b>Module 3.3 The 33 Touch Planner</b>.');
+    } else {
+      c = daily<=3?'warn':'bad';
+      head = gapMet>0 ? K.cnt(gapMet,0)+' Met contacts short' : K.cnt(gapHM,0)+" Haven't Met contacts short";
+      lines.push('To close '+K.cnt(sides,0)+' sides you need about <b>'+K.cnt(metNeed,0)+' Met</b> and <b>'+K.cnt(hmNeed,0)+" Haven't Met</b> contacts. Right now you are "+(gapMet>0?K.cnt(gapMet,0)+' short on the Met side':'')+(gapMet>0&&gapHM>0?' and ':'')+(gapHM>0?K.cnt(gapHM,0)+" short on Haven't Met":'')+'.');
+      if(gapMet>0) lines.push('Closing the Met gap inside a year means adding about <b>'+K.cnt(Math.max(1,Math.ceil(daily*10)/10),1)+' names every working day</b>. That is one conversation at an open house, one person at a closing table, one name you already have in your phone and never entered.');
+      if(gapHM>0) lines.push("The Haven't Met gap is faster to close — it is a list, not a relationship. Pick your farm and build to "+K.cnt(hmNeed,0)+' names, then run 12 Direct against it (Module 3.4).');
+      lines.push('Budget check: working both programs at these sizes runs about <b>'+K.money(metCost+hmCost)+'</b> a year in touches.');
+    }
+    K.verdict('dVerdict', c, head, lines);
+    K.publish({db_sides:sides, met_needed:metNeed, hm_needed:hmNeed,
+      met_now:metNow, hm_now:hmNow, daily_adds:K.round(Math.max(0,daily),1),
+      touch_budget:Math.round(metCost+hmCost)});
+  }
+  K.bind(['db_sides','db_mix','db_met_now','db_hm_now','db_touch_cost'], paint);
+  MREA.metrics().then(function(m){
+    var el=K.$('db_sides');
+    if(el && !el.value && m && m.sides_needed){ el.value=m.sides_needed; paint(); }
+  });
+})();
+
+</script>
+</body>
+</html>

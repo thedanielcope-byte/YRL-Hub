@@ -199,6 +199,25 @@
         .upload-status.uploading { color:#ea580c; }
         .upload-status.success   { color:var(--green); }
         .upload-status.error     { color:#ef4444; }
+
+        /* ── Headshot field inside Agent Info Modal ── */
+        .headshot-row {
+            display:flex; align-items:center; gap:14px;
+            padding:10px 12px; background:var(--surface-3);
+            border:1px solid var(--border); border-radius:10px;
+        }
+        .headshot-preview {
+            width:84px; height:84px; border-radius:50%;
+            background:#fff; border:2px dashed var(--border);
+            display:flex; align-items:center; justify-content:center;
+            color:var(--text-muted); font-size:30px; overflow:hidden; flex-shrink:0;
+            transition:border-color 0.2s;
+        }
+        .headshot-preview.has-image { border-style:solid; border-color:var(--green); }
+        .headshot-preview.error      { border-color:#ef4444; }
+        .headshot-preview img { width:100%; height:100%; object-fit:cover; display:block; }
+        .headshot-actions { display:flex; flex-direction:column; gap:6px; align-items:flex-start; min-width:0; }
+        .headshot-hint { font-size:11.5px; color:var(--text-muted); line-height:1.4; }
         .btn-tile-cancel { background:none; color:var(--text-muted); border:1px solid var(--border); border-radius:7px; padding:6px 12px; font-size:12px; font-family:'Inter',sans-serif; cursor:pointer; }
         .btn-tile-cancel:hover { background:var(--surface-3); }
 
@@ -412,31 +431,8 @@
     </div>
 </div>
 
-<!-- ── Agent Info Modal ── -->
-<div class="modal-overlay" id="agentInfoModal" onclick="handleOverlayClick(event,'agentInfoModal')">
-    <div class="modal">
-        <button class="modal-close" onclick="closeModal('agentInfoModal')">&times;</button>
-        <div class="modal-title">Agent Information Form</div>
-        <div class="modal-sub">This information is used to create your business cards, email signature, roster listing, and marketing materials.</div>
-        <div class="modal-grid">
-            <div class="modal-field"><label class="modal-label">First Name *</label><input class="modal-input" id="ai-first" type="text" placeholder="Jane"></div>
-            <div class="modal-field"><label class="modal-label">Last Name *</label><input class="modal-input" id="ai-last" type="text" placeholder="Smith"></div>
-            <div class="modal-field full"><label class="modal-label">Name on Business Cards *</label><input class="modal-input" id="ai-cardname" type="text" placeholder="e.g. Jane Smith, REALTOR®"></div>
-            <div class="modal-field"><label class="modal-label">Cell Phone *</label><input class="modal-input" id="ai-phone" type="tel" placeholder="317-555-1234"></div>
-            <div class="modal-field"><label class="modal-label">Email Address *</label><input class="modal-input" id="ai-email" type="email" placeholder="jane@yourrealtylink.com"></div>
-            <div class="modal-field full"><label class="modal-label">Indiana Real Estate License # *</label><input class="modal-input" id="ai-license" type="text" placeholder="RB12345678"></div>
-            <div class="modal-field full"><label class="modal-label">Mailing / Home Address *</label><input class="modal-input" id="ai-address" type="text" placeholder="123 Main St, Indianapolis, IN 46201"></div>
-            <div class="modal-field full"><label class="modal-label">Tagline / Bio (for marketing) *</label><textarea class="modal-input" id="ai-bio" placeholder="A short personal tagline or bio…"></textarea></div>
-            <div class="modal-field"><label class="modal-label">Emergency Contact Name *</label><input class="modal-input" id="ai-ecname" type="text" placeholder="John Smith"></div>
-            <div class="modal-field"><label class="modal-label">Emergency Contact Phone *</label><input class="modal-input" id="ai-ecphone" type="tel" placeholder="317-555-5678"></div>
-            <div class="modal-field full"><label class="modal-label">Agent Bio - 3 to 5 Sentences *</label><textarea class="modal-input" id="ai-notes" placeholder="Write a short professional bio describing your background, experience, and what makes you unique as a REALTOR®. (3–5 sentences)"></textarea></div>
-        </div>
-        <div class="modal-actions">
-            <button class="btn-modal-cancel" onclick="closeModal('agentInfoModal')">Cancel</button>
-            <button class="btn-modal-save" onclick="submitAgentInfo()">Submit Information</button>
-        </div>
-    </div>
-</div>
+<!-- Agent Info modal removed — replaced by the dedicated page yrl-agent-info.html.
+     Tile clicks (and the legacy ?open=agent-info URL) navigate to the new page. -->
 
 <!-- ── Custom Form Fill Modal (agents) ── -->
 <div class="modal-overlay" id="customFormModal" onclick="handleOverlayClick(event,'customFormModal')">
@@ -837,7 +833,7 @@ function render() {
             } else if (tileType === 'agent-info') {
                 const submitted = prog[guide.id+'-submitted'];
                 const reqClass  = REQUIRED_IDS.includes(guide.id) ? ' tile-required' : '';
-                html += `<div class="guide-tile tile-special ${submitted?'special-submitted':''}${reqClass}" onclick="openAgentInfoModal()">
+                html += `<div class="guide-tile tile-special ${submitted?'special-submitted':''}${reqClass}" onclick="window.location.href='yrl-agent-info.html'">
                     <div class="special-icon"><i class="fa-solid ${submitted?'fa-check':'fa-id-card'}"></i></div>
                     <div style="flex:1;min-width:0;">
                         <div class="special-label">${submitted?'✓ Submitted':'Agent Info Form'}</div>
@@ -1112,12 +1108,23 @@ async function submitAgentInfo() {
         }
         el.style.borderColor = '';
     }
+    // Headshot is required too
+    const headshotUrl = document.getElementById('ai-headshot-url').value.trim();
+    if (!headshotUrl) {
+        const preview = document.getElementById('aiHeadshotPreview');
+        if (preview) preview.classList.add('error');
+        _setHeadshotStatus('Please upload a headshot photo to continue.', 'error');
+        document.getElementById('aiHeadshotRow').scrollIntoView({ behavior:'smooth', block:'center' });
+        return;
+    }
     const first = document.getElementById('ai-first').value.trim();
     const last  = document.getElementById('ai-last').value.trim();
     await appendSubmission({
         id:uid(), type:'agent-info', timestamp: new Date().toISOString(),
         data: {
             name: first+' '+last,
+            firstname: first,
+            lastname:  last,
             cardname: document.getElementById('ai-cardname').value.trim(),
             phone:    document.getElementById('ai-phone').value.trim(),
             email:    document.getElementById('ai-email').value.trim(),
@@ -1127,9 +1134,16 @@ async function submitAgentInfo() {
             ecname:   document.getElementById('ai-ecname').value.trim(),
             ecphone:  document.getElementById('ai-ecphone').value.trim(),
             notes:    document.getElementById('ai-notes').value.trim(),
+            headshot_url: headshotUrl,
         }
     });
-    const p = loadProgress(); p['b-agentinfo-submitted']=true; saveProgress(p);
+    // Mark the Agent Info tile AND the separate Headshot tile complete (no need to do it twice)
+    const p = loadProgress();
+    p['b-agentinfo-submitted'] = true;
+    p['d-headshot-submitted']  = true;
+    saveProgress(p);
+    // Auto-check item #4 (Business Cards — needs a photo) on the Moving to YRL checklist
+    markMovingChecklistItemDone(4);
     closeModal('agentInfoModal');
     render();
     alert('✓ Information submitted! Your broker will receive it shortly.');
@@ -1225,20 +1239,131 @@ async function restoreProgressFromSupabase() {
     } catch(e) { /* silent fail — local progress still intact */ }
 }
 
-/* ── Open Agent Info Modal (pre-fills name) ── */
-function openAgentInfoModal() {
+/* ── Open Agent Info Modal — pre-fills from the agent's latest submission ── */
+async function openAgentInfoModal() {
+    openModal('agentInfoModal');
+    // 1) Name fallback from local storage (in case there's no prior submission yet)
     const stored = localStorage.getItem(AGENT_DISPLAY_KEY) || localStorage.getItem(AGENT_NAME_KEY) || '';
     if (stored) {
         const parts = stored.trim().split(/\s+/);
-        const first = parts[0] || '';
-        const last  = parts.slice(1).join(' ') || '';
         const fEl = document.getElementById('ai-first');
         const lEl = document.getElementById('ai-last');
-        if (fEl && !fEl.value) fEl.value = first;
-        if (lEl && !lEl.value) lEl.value = last;
+        if (fEl && !fEl.value) fEl.value = parts[0] || '';
+        if (lEl && !lEl.value) lEl.value = parts.slice(1).join(' ') || '';
     }
-    openModal('agentInfoModal');
+    // 2) Pull latest agent-info submission for this user (matched by email)
+    try {
+        const userEmail = ((window.yrlUser && window.yrlUser.email) || '').toLowerCase();
+        const list = (await loadHubContent(SUBMISSIONS_KEY)) || [];
+        const mine = (Array.isArray(list) ? list : [])
+            .filter(s => s && s.type === 'agent-info' && (s.data?.email || '').toLowerCase() === userEmail)
+            .sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''));
+        const latest = mine[0];
+        if (latest && latest.data) {
+            const d = latest.data;
+            const [fn, ...rest] = (d.name || '').split(' ');
+            _setVal('ai-first',    d.firstname || fn || '');
+            _setVal('ai-last',     d.lastname  || rest.join(' ') || '');
+            _setVal('ai-cardname', d.cardname || '');
+            _setVal('ai-phone',    d.phone || '');
+            _setVal('ai-email',    d.email || '');
+            _setVal('ai-license',  d.license || '');
+            _setVal('ai-address',  d.address || '');
+            _setVal('ai-bio',      d.bio || '');
+            _setVal('ai-ecname',   d.ecname || '');
+            _setVal('ai-ecphone',  d.ecphone || '');
+            _setVal('ai-notes',    d.notes || '');
+            if (d.headshot_url) setHeadshotPreview(d.headshot_url);
+        }
+    } catch (_) { /* silent — modal still works */ }
 }
+function _setVal(id, v) { const el = document.getElementById(id); if (el && !el.value) el.value = v; }
+
+/* ── Headshot upload (inside Agent Info Modal) ───────────────────── */
+async function handleHeadshotUpload(input) {
+    const file = input.files && input.files[0];
+    if (!file) return;
+    if (!/^image\//.test(file.type)) {
+        _setHeadshotStatus('Please pick an image file.', 'error');
+        return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+        _setHeadshotStatus('Photo is over 10 MB — please pick a smaller file.', 'error');
+        return;
+    }
+    _setHeadshotStatus('Uploading…', 'uploading');
+    document.getElementById('aiHeadshotBtn').disabled = true;
+    try {
+        const url = await uploadHubFile(file, 'headshots');
+        setHeadshotPreview(url);
+        _setHeadshotStatus('Photo uploaded.', 'success');
+    } catch (e) {
+        _setHeadshotStatus('Upload failed: ' + (e.message || e), 'error');
+    } finally {
+        document.getElementById('aiHeadshotBtn').disabled = false;
+        input.value = '';   // allow re-selecting the same file
+    }
+}
+function setHeadshotPreview(url) {
+    const preview = document.getElementById('aiHeadshotPreview');
+    const icon    = document.getElementById('aiHeadshotIcon');
+    const img     = document.getElementById('aiHeadshotImg');
+    const btnLbl  = document.getElementById('aiHeadshotBtnLabel');
+    document.getElementById('ai-headshot-url').value = url || '';
+    if (url) {
+        img.src = url;
+        img.style.display = 'block';
+        if (icon) icon.style.display = 'none';
+        preview.classList.add('has-image');
+        preview.classList.remove('error');
+        if (btnLbl) btnLbl.textContent = 'Replace photo';
+    } else {
+        img.removeAttribute('src');
+        img.style.display = 'none';
+        if (icon) icon.style.display = '';
+        preview.classList.remove('has-image');
+        if (btnLbl) btnLbl.textContent = 'Upload photo';
+    }
+}
+function _setHeadshotStatus(msg, kind) {
+    const el = document.getElementById('aiHeadshotStatus');
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'upload-status' + (kind ? ' ' + kind : '');
+}
+
+/* ── Cross-page write: mark item #N on the Moving to YRL checklist done ── */
+const MOVING_CHECKLIST_KEY = 'yrl-moving-checklist';
+async function markMovingChecklistItemDone(itemNumber) {
+    if (!window.yrlUser) return;
+    try {
+        const map  = (await loadHubContent(MOVING_CHECKLIST_KEY)) || {};
+        const uid  = window.yrlUser.id;
+        const meta = window.yrlUser.user_metadata || {};
+        const slice = map[uid] || {
+            items: {},
+            name: meta.full_name || meta.name || (window.yrlUser.email || '').split('@')[0],
+            email: window.yrlUser.email || ''
+        };
+        slice.items = slice.items || {};
+        slice.items[itemNumber] = true;
+        slice.updated_at = new Date().toISOString();
+        map[uid] = slice;
+        await saveHubContent(MOVING_CHECKLIST_KEY, map);
+    } catch (_) { /* non-blocking */ }
+}
+
+/* ── Legacy URL handler ──
+   Old links/bookmarks pointing at yrl-onboarding.html?open=agent-info now
+   forward to the dedicated Agent Info page so nothing breaks. */
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        const params = new URLSearchParams(window.location.search || '');
+        if (params.get('open') === 'agent-info') {
+            window.location.replace('yrl-agent-info.html');
+        }
+    } catch (_) {}
+});
 
 /* ── Sync agent status to Supabase (fire-and-forget) ── */
 async function syncAgentProgress(guideId, status) {

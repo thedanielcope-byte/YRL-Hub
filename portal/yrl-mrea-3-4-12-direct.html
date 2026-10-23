@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>MREA 3.4 · The 12 Direct Planner — Your Realty Link</title>
+<script src="portal-auth.js"></script>
+<script src="embed-mode.js?v=20260927b"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="tiger-shell.css?v=20260927b">
+<link rel="stylesheet" href="tiger-module.css">
+<link rel="stylesheet" href="mrea-module.css">
+</head>
+<body class="tiger-shell mrea-shell" data-tiger-module="3.4" data-tiger-title="The 12 Direct Planner" data-tiger-ns="mrea" data-tiger-program="Millionaire Agent Path">
+
+<button class="tiger-menu-btn" id="tigerMenuBtn" aria-label="Modules"><i class="fa-solid fa-bars"></i></button>
+<aside class="tiger-side" id="tigerSide"></aside>
+<div class="tiger-backdrop" id="tigerBackdrop"></div>
+
+<main class="tiger-main">
+
+<div class="reader-topbar">
+  <div class="prog">
+    <div class="track"><i id="tigerProgressBar"></i></div>
+    <div class="prog-lbl" id="tigerProgressLabel">0% complete</div>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn btn-ghost" data-tiger-action="pdf"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
+  <button class="btn btn-primary" data-tiger-action="save"><i class="fa-solid fa-floppy-disk"></i> <span>Save</span></button>
+</div>
+
+<header class="reader-head">
+  <p class="reader-eyebrow">Phase 3 · Module 3.4 <span class="chip">Planner</span></p>
+  <h1 class="reader-title">The 12 Direct Planner</h1>
+  <p class="reader-lede">Twelve mailings a year to people who don&#x27;t know you yet. It costs more per closing than working your sphere and it has one enormous advantage: it scales without using up your hours. Pick the farm, design the year once, let it run.</p>
+  <p class="reader-who">Worksheet for <b data-tiger-name>Agent</b> · <span data-tiger-date></span> · saves automatically as you type</p>
+</header>
+
+<div class="print-only" style="text-align:center;margin:0 0 6px">
+  <strong>YOUR REALTY LINK · THE MILLIONAIRE AGENT PATH</strong> — Module 3.4: The 12 Direct Planner
+</div>
+
+<div class="reader-body">
+<section class="card"><h2><span class="n">01</span>The trade you&#x27;re making</h2><p class="teach">For every <b>50 people</b> you mail 12 times a year, expect about <b>1 closing</b>. Worse than the 12:2 you get from your sphere — but you can run it against five thousand people without adding an hour to your week.</p><p class="teach">That is the whole reason it matters. Sphere marketing is limited by your personal capacity. Farm marketing is limited only by budget. An agent who wants to eventually step back from daily selling needs the second kind.</p><div class="callout">Pick the farm where Your Realty Link is already strong online — the city pages with real maps, curated community events and local blog coverage. Mail plus a deep local page beats mail alone. Don&#x27;t scatter across six towns.</div></section>
+<section class="card"><h2><span class="n">02</span>Your farm</h2><div class="grid2"><div class="field"><label class="field-label" for="f_area">The farm <span class="field-hint">a named neighbourhood or town, not &amp;ldquo;the south side&amp;rdquo;</span></label><input class="tiger-input" id="f_area" data-tiger="f_area" inputmode="text" placeholder="Center Grove / White River Township"></div><div class="field"><label class="field-label" for="f_size">Addresses in it</label><input class="tiger-input" id="f_size" data-tiger="f_size" inputmode="numeric" placeholder="1800"></div></div><div class="grid2"><div class="field"><label class="field-label" for="f_turn">Homes that sell there per year <span class="field-hint">roughly — ask Janet to pull it from MIBOR</span></label><input class="tiger-input" id="f_turn" data-tiger="f_turn" inputmode="numeric" placeholder="110"></div><div class="field"><label class="field-label" for="f_cost">Cost per mailed piece <span class="field-hint">print + postage</span></label><input class="tiger-input" id="f_cost" data-tiger="f_cost" inputmode="decimal" placeholder="0.55"></div></div><div class="mrea-stats"><div class="mrea-stat" id="stFarmSales"></div><div class="mrea-stat" id="stFarmCost"></div><div class="mrea-stat" id="stFarmPer"></div><div class="mrea-stat" id="stFarmShare"></div></div><div class="mrea-verdict" id="fVerdict"><p class="vt">What this means</p><h3 class="vh">Describe your farm</h3><p class="vp">Size and cost decide whether this program is worth running at all.</p></div></section>
+<section class="card"><h2><span class="n">03</span>The twelve pieces</h2><p class="sub">Prefilled with a year built from pages YRL already has live. Every piece should drive somewhere real.</p><div class="mrea-months" id="directRows"></div><div class="mrea-counter"><span class="cn" id="dCount">0</span><div class="ct"><b id="dHead">Plan all twelve</b><span id="dSub">Design and schedule the whole year at once, then leave it alone.</span><span class="cbar"><i id="dBar"></i></span></div></div></section>
+<section class="card"><h2><span class="n">04</span>Before you mail a thing</h2><div class="check"><input type="checkbox" id="f_pages" data-tiger-check="f_pages"><label for="f_pages">Every piece drives to a page that already exists — city guide, market update, vendors, valuation</label></div><div class="check"><input type="checkbox" id="f_track" data-tiger-check="f_track"><label for="f_track">A trackable destination on each piece so I can source the response</label></div><div class="check"><input type="checkbox" id="f_all" data-tiger-check="f_all"><label for="f_all">All twelve designed and scheduled in one sitting</label></div><div class="check"><input type="checkbox" id="f_year" data-tiger-check="f_year"><label for="f_year">Committed to a full twelve months before judging results</label></div><div class="check"><input type="checkbox" id="f_crm" data-tiger-check="f_crm"><label for="f_crm">Farm list loaded into the CRM tagged <b>havent-met</b></label></div><div class="callout">Give it the full year. Farm marketing that gets cancelled in month four has cost you everything and bought you nothing — the response curve is back-loaded, because you are waiting for people to need you.</div><div class="field"><label class="field-label" for="f_commit">My farm commitment</label><textarea id="f_commit" data-tiger="f_commit" placeholder="1,800 homes in Center Grove, 12 pieces, ~$12,000 for the year, judged in December."></textarea></div><div class="grid2"><div class="field"><label class="field-label" for="sign">Signed</label><input class="tiger-input" id="sign" data-tiger="sign" inputmode="text" placeholder="Your name"></div><div class="field"><label class="field-label" for="signdate">Date</label><input class="tiger-input" id="signdate" data-tiger="signdate" inputmode="text" placeholder="MM/DD/YYYY"></div></div></section>
+</div>
+
+<div class="actions"><div class="actions-in">
+  <span class="note"><i class="fa-solid fa-cloud"></i> Your answers save automatically to your account — pick up on any device.</span>
+  <button class="btn btn-ghost" data-tiger-action="txt"><i class="fa-solid fa-list"></i> Download list</button>
+  <button class="btn btn-ghost" data-tiger-action="pdf"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
+  <button class="btn btn-ghost" data-tiger-action="reset"><i class="fa-solid fa-eraser"></i> Clear</button>
+  <button class="btn btn-primary" data-tiger-action="complete"><i class="fa-solid fa-check"></i> Mark complete</button>
+</div></div>
+
+</main>
+
+<script src="hub-data.js"></script>
+<script src="mrea-nav.js"></script>
+<script src="yrl-tiger.js"></script>
+<script src="mrea-kit.js"></script>
+<script>
+
+(function(){
+  var K=MREA;
+  var P=[
+    ['JAN','Year in Review — what homes sold for here last year (ranges only)'],
+    ['FEB','Just Listed / Just Sold card'],
+    ['MAR','&ldquo;3 things that decide your sale price&rdquo; — spring selling season'],
+    ['APR','Neighbourhood market snapshot'],
+    ['MAY','Just Listed / Just Sold card'],
+    ['JUN','&ldquo;Sell now or wait?&rdquo; — drives to the home valuation'],
+    ['JUL','Community events calendar for the area — the fridge piece'],
+    ['AUG','Just Listed / Just Sold card'],
+    ['SEP','Fall market snapshot'],
+    ['OCT','Your home&#x27;s equity + tax-timing prep'],
+    ['NOV','Trusted local vendor directory card'],
+    ['DEC','Holiday card + next-year outlook']
+  ];
+  var host=K.$('directRows');
+  P.forEach(function(p,i){
+    var n=i+1, row=document.createElement('div');
+    row.className='mrea-month';
+    row.innerHTML='<div class="mn">'+p[0]+'</div><div class="mf">'+
+      '<input class="tiger-input" id="d'+n+'" data-tiger="d'+n+'" placeholder="'+p[1]+'"></div>';
+    host.appendChild(row);
+  });
+  function paint(){
+    var n=0; for(var i=1;i<=12;i++){ if(K.val('d'+i).trim()!=='') n++; }
+    var cn=K.$('dCount'), bar=K.$('dBar');
+    cn.textContent=n; cn.className='cn'+(n>=12?' done':'');
+    bar.style.width=Math.min(100,n/12*100)+'%'; bar.className=(n>=12?'done':'');
+    if(n>=12){ K.set('dHead','All twelve planned'); K.set('dSub','Design them, schedule them, then leave the program alone for a year.'); }
+    else { K.set('dHead','Plan all twelve'); K.set('dSub',(12-n)+' to go. Empty rows use the suggested piece.'); }
+
+    var size=K.nval('f_size'), cost=K.nval('f_cost')||0.55, turn=K.nval('f_turn');
+    if(size>0){
+      var sales=size/50, annual=size*12*cost, per=sales>0?annual/sales:0;
+      K.stat('stFarmSales', K.cnt(sales,1), 'Closings a year', 'at the 50:1 ratio');
+      K.stat('stFarmCost', K.money(annual), 'Annual cost', K.cnt(size,0)+' × 12 pieces');
+      K.stat('stFarmPer', K.money(per), 'Cost per closing', '');
+      K.stat('stFarmShare', turn>0?K.round(sales/turn*100,1)+'%':'—', 'Share of the farm', turn>0?'of '+K.cnt(turn,0)+' sales/yr':'enter annual turnover');
+      var c = per<=600?'ok':(per<=900?'warn':'bad');
+      var lines=['A farm of <b>'+K.cnt(size,0)+'</b> mailed twelve times runs about <b>'+K.money(annual)+'</b> a year and should produce roughly <b>'+K.cnt(sales,1)+' closings</b> — about '+K.money(per)+' each.'];
+      if(turn>0){
+        var share=sales/turn*100;
+        if(share>18) lines.push('That would be about '+K.round(share,1)+'% of everything that sells there — an ambitious share for a farm you are just starting. Treat the first year as buying recognition, not closings.');
+        else lines.push('That is roughly '+K.round(share,1)+'% of the homes that sell there each year — a realistic target for a consistently worked farm.');
+      }
+      if(size<1000) lines.push('Under a thousand addresses the ratio gets lumpy — one good year and one empty one. If budget allows, build toward 1,500–2,500 before judging the program.');
+      lines.push('Compare this against your sphere: Met business costs a fraction of this per closing. Farm marketing earns its place by scaling without your hours, not by being cheap.');
+      K.verdict('fVerdict', c, K.cnt(sales,1)+' closings a year from this farm', lines);
+      K.publish({farm_size:size, farm_cost:Math.round(annual), farm_sales:K.round(sales,1)});
+    } else {
+      ['stFarmSales','stFarmCost','stFarmPer','stFarmShare'].forEach(function(i){K.stat(i,'—','');});
+      K.verdict('fVerdict','','Describe your farm',['Size and cost decide whether this program is worth running at all.']);
+    }
+  }
+  var ids=['f_size','f_cost','f_turn'];
+  for(var i=1;i<=12;i++) ids.push('d'+i);
+  K.bind(ids, paint);
+})();
+
+</script>
+</body>
+</html>

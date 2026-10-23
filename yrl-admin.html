@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <style>
         :root {
@@ -385,6 +386,8 @@
         .voh-status.live        { background:rgba(192,57,38,0.12);  color:var(--red); }
         .voh-status.post_event  { background:rgba(13,148,136,0.10); color:#0d9488; }
         .voh-status.complete    { background:rgba(22,163,74,0.12);  color:var(--green); }
+        .voh-status.in_review   { background:rgba(29,78,216,0.10);  color:#1d4ed8; }
+        .voh-status.completed   { background:rgba(22,163,74,0.12);  color:var(--green); }
         .voh-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:8px 16px; font-size:12.5px; color:var(--text-sec); margin-bottom:10px; }
         .voh-grid strong { color:var(--text); font-weight:600; display:block; font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-muted); margin-bottom:2px; }
         .voh-toggle-row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 12px; border:1px solid var(--border); border-radius:8px; background:var(--surface-2); margin-bottom:6px; font-size:12.5px; }
@@ -460,7 +463,7 @@
     <header class="sub-header">
         <div class="sub-header-inner">
             <div class="sub-header-left">
-                <img src="https://yrlagent.com/wp-content/uploads/2026/04/Your-Realty-Link-ver6.6-4-final.png"
+                <img src="https://wdvolamasztetwpitbwg.supabase.co/storage/v1/object/public/hub-files/brand/yrl-logo-color.png"
                      alt="Your Realty Link" class="sub-header-logo">
                 <div class="sub-header-text">
                     <h1>Admin Tools</h1>
@@ -501,6 +504,31 @@
                 <button class="btn-add-card edit-only" style="display:none" onclick="openCardModal('tracking')"><i class="fa-solid fa-plus"></i> Add Link</button>
             </div>
             <div class="link-grid" id="gridTracking"></div>
+        </div>
+
+        <!-- ── HUB ACCESS CONTROL ── -->
+        <div class="admin-section" id="sectionAccess">
+            <div class="section-header-row">
+                <div class="section-label"><i class="fa-solid fa-shield-halved"></i> Hub Access Control</div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <button class="btn-refresh-subs" onclick="loadAuthorizedAgents()"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
+                    <button class="btn-add-card" onclick="openAccessModal()"><i class="fa-solid fa-user-plus"></i> Add Agent</button>
+                </div>
+            </div>
+            <div id="accessListWrap"><div class="no-subs">Loading…</div></div>
+        </div>
+
+        <!-- ── AGENT PROFILES & LICENSING ── -->
+        <div class="admin-section" id="sectionProfiles">
+            <div class="section-header-row">
+                <div class="section-label"><i class="fa-solid fa-id-badge"></i> Agent Profiles &amp; Licensing</div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <button class="btn-refresh-subs" onclick="loadAgentProfiles()"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
+                    <button class="btn-add-card" onclick="openProfileModal()"><i class="fa-solid fa-user-plus"></i> Add Agent</button>
+                </div>
+            </div>
+            <div id="profileAlerts"></div>
+            <div id="profileListWrap"><div class="no-subs">Loading…</div></div>
         </div>
 
         <!-- ── SOPs ── -->
@@ -549,6 +577,23 @@
             <div id="vohEventsList"><div class="no-subs">Loading…</div></div>
         </div>
 
+        <!-- ── CLOSING REQUESTS / CDA ── -->
+        <div class="admin-section">
+            <div class="section-header-row">
+                <div class="section-label"><i class="fa-solid fa-file-circle-check"></i> Closing Requests &amp; Disbursement Forms</div>
+                <button class="btn-refresh-subs" style="margin-left:0" onclick="loadClosingRequests()">
+                    <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                </button>
+            </div>
+            <div class="mktg-filter-row">
+                <button class="sub-filter-btn active" onclick="filterClosing('all',this)">All</button>
+                <button class="sub-filter-btn" onclick="filterClosing('submitted',this)">New</button>
+                <button class="sub-filter-btn" onclick="filterClosing('in_review',this)">In Review</button>
+                <button class="sub-filter-btn" onclick="filterClosing('completed',this)">Completed</button>
+            </div>
+            <div id="closingList"><div class="no-subs">Loading…</div></div>
+        </div>
+
         <!-- ── AGENT ONBOARDING PROGRESS ── -->
         <div class="admin-section">
             <div class="section-label"><i class="fa-solid fa-users"></i> Agent Onboarding Progress</div>
@@ -560,6 +605,74 @@
             <div id="agentProgressWrap">
                 <div class="no-agents">Loading…</div>
             </div>
+        </div>
+
+        <!-- ── MOVING TO YRL — CHECKLIST PROGRESS ── -->
+        <div class="admin-section">
+            <div class="section-label"><i class="fa-solid fa-clipboard-check"></i> Moving to YRL — Transfer Checklist Progress</div>
+            <div style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:12px;">
+                <button class="btn-refresh-subs" onclick="loadMovingProgress()">
+                    <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                </button>
+            </div>
+            <div id="movingProgressWrap">
+                <div class="no-agents">Loading…</div>
+            </div>
+        </div>
+
+        <!-- ── ALL AGENT CONTACTS (read-only) ── -->
+        <div class="admin-section">
+            <div class="section-header-row">
+                <div class="section-label"><i class="fa-solid fa-address-book"></i> All Agent Contacts</div>
+                <button class="btn-refresh-subs" style="margin-left:0;" onclick="loadAllContacts()">
+                    <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                </button>
+            </div>
+            <div class="mktg-filter-row">
+                <select id="contactsAgentFilter" class="voh-input" style="max-width:240px;" onchange="renderAllContacts()">
+                    <option value="">All agents</option>
+                </select>
+                <select id="contactsTypeFilter" class="voh-input" style="max-width:160px;" onchange="renderAllContacts()">
+                    <option value="">All types</option>
+                    <option value="buyer">Buyer</option>
+                    <option value="seller">Seller</option>
+                    <option value="prospect">Prospect</option>
+                    <option value="lead">Lead</option>
+                    <option value="past_client">Past client</option>
+                    <option value="vendor">Vendor</option>
+                    <option value="other">Other</option>
+                </select>
+                <input type="search" id="contactsSearch" class="voh-input" placeholder="Search name, email, phone…" style="max-width:240px;" oninput="renderAllContacts()">
+                <button class="btn-refresh-subs" onclick="exportContactsCsv()" title="Download filtered contacts as CSV"><i class="fa-solid fa-file-arrow-down"></i> CSV</button>
+                <button class="btn-refresh-subs" onclick="exportContactsPdf()" title="Download filtered contacts as PDF"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+            </div>
+            <div id="contactsAdminWrap"><div class="no-subs">Loading…</div></div>
+        </div>
+
+        <!-- ── LISTINGS & PENDINGS TRANSITION (read-only) ── -->
+        <div class="admin-section">
+            <div class="section-header-row">
+                <div class="section-label"><i class="fa-solid fa-arrow-right-arrow-left"></i> Listings &amp; Pendings Transition</div>
+                <button class="btn-refresh-subs" style="margin-left:0;" onclick="loadAllListings()">
+                    <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                </button>
+            </div>
+            <div class="mktg-filter-row">
+                <select id="listingsAgentFilter" class="voh-input" style="max-width:240px;" onchange="renderAllListings()">
+                    <option value="">All agents</option>
+                </select>
+                <select id="listingsStatusFilter" class="voh-input" style="max-width:200px;" onchange="renderAllListings()">
+                    <option value="">All statuses</option>
+                    <option value="needs_release">Needs Release</option>
+                    <option value="release_signed">Release Signed</option>
+                    <option value="yrl_agreement_signed">YRL Signed</option>
+                    <option value="transferred">Transferred</option>
+                    <option value="closed">Closed</option>
+                </select>
+                <button class="btn-refresh-subs" onclick="exportListingsCsv()" title="Download filtered records as CSV"><i class="fa-solid fa-file-arrow-down"></i> CSV</button>
+                <button class="btn-refresh-subs" onclick="exportListingsPdf()" title="Download filtered records as PDF"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+            </div>
+            <div id="listingsAdminWrap"><div class="no-subs">Loading…</div></div>
         </div>
 
         <!-- ── AGENT SUBMISSIONS ── -->
@@ -650,6 +763,137 @@
     </div>
 </div>
 
+<!-- ── Add Agent Access modal ── -->
+<div class="modal-overlay" id="accessModal">
+    <div class="modal-box">
+        <h3>Grant Hub Access</h3>
+        <div class="modal-field">
+            <label class="modal-label">Email *</label>
+            <input class="modal-input" id="accessEmail" type="email" placeholder="agent@yourrealtylink.com">
+        </div>
+        <div class="modal-field">
+            <label class="modal-label">Name</label>
+            <input class="modal-input" id="accessName" type="text" placeholder="Agent's name (optional)">
+        </div>
+        <div class="modal-field">
+            <label class="modal-label">Cell Phone *</label>
+            <input class="modal-input" id="accessPhone" type="tel" placeholder="317-555-1234" oninput="derivePin()">
+            <div style="font-size:11px;color:var(--text-muted);margin-top:-6px;margin-bottom:4px;">
+                Login PIN (last 4 digits): <strong id="derivedPin" style="color:var(--red);font-size:13px;letter-spacing:2px;">—</strong>
+            </div>
+        </div>
+        <div id="accessModalError" style="display:none;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:10px 14px;font-size:13px;color:#dc2626;margin-bottom:10px;"></div>
+        <div class="modal-actions">
+            <button class="btn-modal-cancel" onclick="closeAccessModal()">Cancel</button>
+            <button class="btn-modal-save" id="btnAccessSave" onclick="saveAccess()">Grant Access</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Agent Profile modal ── -->
+<div class="modal-overlay" id="profileModal">
+    <div class="modal-box" style="max-width:520px;">
+        <h3 id="profileModalTitle">Add Agent Profile</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="modal-field" style="grid-column:1/-1;">
+                <label class="modal-label">Full Name *</label>
+                <input class="modal-input" id="profName" type="text" placeholder="Agent's full name">
+            </div>
+            <div class="modal-field">
+                <label class="modal-label">Email *</label>
+                <input class="modal-input" id="profEmail" type="email" placeholder="agent@email.com">
+            </div>
+            <div class="modal-field">
+                <label class="modal-label">Phone</label>
+                <input class="modal-input" id="profPhone" type="tel" placeholder="317-555-0000">
+            </div>
+            <div class="modal-field">
+                <label class="modal-label">License Number</label>
+                <input class="modal-input" id="profLicense" type="text" placeholder="RB12345678">
+            </div>
+            <div class="modal-field">
+                <label class="modal-label">License State</label>
+                <input class="modal-input" id="profLicState" type="text" value="IN" placeholder="IN">
+            </div>
+            <div class="modal-field">
+                <label class="modal-label">License Expiration</label>
+                <input class="modal-input" id="profLicExp" type="date">
+            </div>
+            <div class="modal-field">
+                <label class="modal-label">License Type</label>
+                <select class="modal-input" id="profLicType">
+                    <option value="active">Active</option>
+                    <option value="referral">Referral</option>
+                    <option value="broker">Broker</option>
+                    <option value="managing_broker">Managing Broker</option>
+                    <option value="suspended">Suspended</option>
+                    <option value="transferred">Transferred</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+            <div class="modal-field">
+                <label class="modal-label">License Status</label>
+                <select class="modal-input" id="profLicStatus">
+                    <option value="active">Active</option>
+                    <option value="pending">Pending</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="expired">Expired</option>
+                </select>
+            </div>
+            <div class="modal-field">
+                <label class="modal-label">CE Due Date</label>
+                <input class="modal-input" id="profCeDue" type="date">
+            </div>
+            <div class="modal-field">
+                <label class="modal-label">CE Completed</label>
+                <select class="modal-input" id="profCeDone">
+                    <option value="false">No</option>
+                    <option value="true">Yes</option>
+                </select>
+            </div>
+            <div class="modal-field" style="grid-column:1/-1;">
+                <label class="modal-label">Notes</label>
+                <input class="modal-input" id="profNotes" type="text" placeholder="Optional notes">
+            </div>
+        </div>
+        <div id="profileModalError" style="display:none;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:10px 14px;font-size:13px;color:#dc2626;margin-top:10px;"></div>
+        <div class="modal-actions">
+            <button class="btn-modal-cancel" onclick="closeProfileModal()">Cancel</button>
+            <button class="btn-modal-save" id="btnProfileSave" onclick="saveProfile()">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Add Board Membership modal ── -->
+<div class="modal-overlay" id="boardModal">
+    <div class="modal-box" style="max-width:440px;">
+        <h3 id="boardModalTitle">Add Board Membership</h3>
+        <div class="modal-field">
+            <label class="modal-label">Board / Association *</label>
+            <select class="modal-input" id="boardName" onchange="if(this.value==='__custom')document.getElementById('boardCustom').style.display=''">
+                <option value="MIBOR">MIBOR — Metropolitan Indianapolis Board of Realtors</option>
+                <option value="IAR">IAR — Indiana Association of Realtors</option>
+                <option value="NAR">NAR — National Association of Realtors</option>
+                <option value="__custom">Other (type below)</option>
+            </select>
+            <input class="modal-input" id="boardCustom" type="text" placeholder="Board name" style="display:none;margin-top:6px;">
+        </div>
+        <div class="modal-field">
+            <label class="modal-label">Member ID</label>
+            <input class="modal-input" id="boardMemberId" type="text" placeholder="Membership number">
+        </div>
+        <div class="modal-field">
+            <label class="modal-label">Renewal Date</label>
+            <input class="modal-input" id="boardRenewal" type="date">
+        </div>
+        <div id="boardModalError" style="display:none;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:10px 14px;font-size:13px;color:#dc2626;margin-top:10px;"></div>
+        <div class="modal-actions">
+            <button class="btn-modal-cancel" onclick="closeBoardModal()">Cancel</button>
+            <button class="btn-modal-save" id="btnBoardSave" onclick="saveBoard()">Add Board</button>
+        </div>
+    </div>
+</div>
+
 <script src="yrl-hub.js"></script>
 <script>
 /* ============================================================
@@ -683,7 +927,7 @@ function uid() { return Math.random().toString(36).slice(2,9); }
 const DEFAULT_LINKS = {
     platform: [
         { id:'p1', title:'Cloudways',            desc:'Hosting & server management',        url:'https://my.cloudways.com',                                    icon:'fa-cloud',          color:'dark'  },
-        { id:'p2', title:'Supabase',             desc:'Database & hub content',             url:'https://app.supabase.com/project/khhfkxfxefjgunhrihyx',       icon:'fa-database',       color:'green' },
+        { id:'p2', title:'Supabase',             desc:'Database & hub content',             url:'https://app.supabase.com/project/wdvolamasztetwpitbwg',       icon:'fa-database',       color:'green' },
         { id:'p3', title:'Domain Registrar',     desc:'DNS & domain settings',             url:'https://godaddy.com',                                          icon:'fa-globe',          color:'blue'  },
         { id:'p4', title:'WordPress',            desc:'yrlagent.com site admin',            url:'https://wordpress.com/home/yrlagent.com',                      icon:'fa-brands fa-wordpress', color:'blue', colorHex:'#21759b' },
         { id:'p5', title:'Dropbox File Requests',desc:'Agent headshot uploads',            url:'https://www.dropbox.com/requests',                             icon:'fa-brands fa-dropbox',   color:'blue', colorHex:'#0061ff' },
@@ -1020,10 +1264,664 @@ function loadAll() {
     initAdminLinks();
     initSops();
     initPersonalTiles();
+    loadAuthorizedAgents();
+    loadAgentProfiles();
     loadSubmissions();
     loadAgentProgress();
     loadMktgRequests();
     loadVohEvents();
+    loadClosingRequests();
+    loadMovingProgress();
+    loadAllContacts();
+    loadAllListings();
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   HUB ACCESS CONTROL — manage who can sign in to the agent hub
+   ════════════════════════════════════════════════════════════════════ */
+const ACCESS_SB_URL = 'https://wdvolamasztetwpitbwg.supabase.co';
+const ACCESS_SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indkdm9sYW1hc3p0ZXR3cGl0YndnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3Nzc2MTYsImV4cCI6MjA5MTM1MzYxNn0.uiGIaZwr88ZNtAobfSV-axlpXB3sos2Rcw3FiFm6JO8';
+let _accessAgents = [];
+
+async function loadAuthorizedAgents() {
+    const wrap = document.getElementById('accessListWrap');
+    if (!wrap) return;
+    wrap.innerHTML = '<div class="no-subs">Loading…</div>';
+    try {
+        const client = await _awaitYrlClient(); if (!client) throw new Error('Not signed in');
+        const { data: sess } = await client.auth.getSession();
+        if (!sess.session) throw new Error('Session expired');
+        const token = sess.session.access_token;
+        const res = await fetch(`${ACCESS_SB_URL}/rest/v1/hub_authorized_agents?select=*&order=created_at.asc`, {
+            headers: { apikey: ACCESS_SB_KEY, Authorization: 'Bearer ' + token }
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        _accessAgents = await res.json();
+        renderAccessList();
+    } catch (e) {
+        wrap.innerHTML = '<div class="no-subs">Could not load access list: ' + esc(e.message) + '</div>';
+    }
+}
+
+function renderAccessList() {
+    const wrap = document.getElementById('accessListWrap');
+    if (!_accessAgents.length) { wrap.innerHTML = '<div class="no-subs">No agents in the access list.</div>'; return; }
+    const active  = _accessAgents.filter(a => a.status === 'active').length;
+    const revoked = _accessAgents.filter(a => a.status === 'revoked').length;
+    const rows = _accessAgents.map(a => {
+        const isActive = a.status === 'active';
+        const added = a.created_at ? new Date(a.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+        const statusBadge = isActive
+            ? '<span style="display:inline-block;background:rgba(22,163,74,0.12);color:#16a34a;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;text-transform:uppercase;">Active</span>'
+            : '<span style="display:inline-block;background:rgba(239,68,68,0.1);color:#ef4444;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;text-transform:uppercase;">Revoked</span>';
+        const toggleBtn = isActive
+            ? `<button onclick="toggleAgentAccess('${a.id}','revoked')" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;color:#ef4444;white-space:nowrap;" title="Revoke this agent's access"><i class="fa-solid fa-ban"></i> Revoke</button>`
+            : `<button onclick="toggleAgentAccess('${a.id}','active')" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;color:var(--green);white-space:nowrap;" title="Restore this agent's access"><i class="fa-solid fa-circle-check"></i> Restore</button>`;
+        const editBtn = `<button onclick="openAccessModal('${a.id}')" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;color:var(--text-sec);white-space:nowrap;" title="Edit agent details"><i class="fa-solid fa-pen"></i> Edit</button>`;
+        const delBtn = `<button onclick="deleteAgentAccess('${a.id}','${esc(a.email)}')" class="btn-mktg-del" title="Remove permanently"><i class="fa-solid fa-trash"></i></button>`;
+        const pinDisplay = a.login_pin
+            ? `<code style="background:var(--surface-3);padding:2px 8px;border-radius:4px;font-size:13px;letter-spacing:2px;font-weight:700;">${esc(a.login_pin)}</code>`
+            : `<span style="color:var(--text-muted);font-size:11px;">not set</span>`;
+        return `<tr style="${isActive ? '' : 'opacity:0.55;'}">
+            <td style="padding:8px 12px;border-top:1px solid var(--border);font-weight:600;">${esc(a.name || '—')}</td>
+            <td style="padding:8px 12px;border-top:1px solid var(--border);">${esc(a.email)}</td>
+            <td style="padding:8px 12px;border-top:1px solid var(--border);text-align:center;">${pinDisplay}</td>
+            <td style="padding:8px 12px;border-top:1px solid var(--border);">${statusBadge}</td>
+            <td style="padding:8px 12px;border-top:1px solid var(--border);white-space:nowrap;">${esc(added)}</td>
+            <td style="padding:8px 12px;border-top:1px solid var(--border);white-space:nowrap;">${esc(a.added_by || '—')}</td>
+            <td style="padding:8px 12px;border-top:1px solid var(--border);white-space:nowrap;"><div style="display:flex;gap:6px;">${editBtn}${toggleBtn}${delBtn}</div></td>
+        </tr>`;
+    }).join('');
+    wrap.innerHTML = `<div style="font-size:11.5px;color:var(--text-muted);margin-bottom:8px;">${active} active · ${revoked} revoked</div>
+    <div style="overflow-x:auto;background:var(--surface);border:1px solid var(--border);border-radius:12px;">
+        <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
+            <thead><tr style="background:var(--surface-3);text-align:left;">
+                <th style="padding:9px 12px;">Name</th>
+                <th style="padding:9px 12px;">Email</th>
+                <th style="padding:9px 12px;text-align:center;">PIN</th>
+                <th style="padding:9px 12px;">Status</th>
+                <th style="padding:9px 12px;">Added</th>
+                <th style="padding:9px 12px;">Added By</th>
+                <th style="padding:9px 12px;">Actions</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+        </table>
+    </div>`;
+}
+
+function derivePin() {
+    const digits = document.getElementById('accessPhone').value.replace(/\D/g, '');
+    const el = document.getElementById('derivedPin');
+    el.textContent = digits.length >= 4 ? digits.slice(-4) : '—';
+}
+
+let _editingAgentId = null;
+
+function openAccessModal(agentId) {
+    const emailEl = document.getElementById('accessEmail');
+    const nameEl  = document.getElementById('accessName');
+    const phoneEl = document.getElementById('accessPhone');
+    const titleEl = document.querySelector('#accessModal .modal-box h3');
+    const btnEl   = document.getElementById('btnAccessSave');
+
+    emailEl.value = '';
+    nameEl.value = '';
+    phoneEl.value = '';
+    document.getElementById('derivedPin').textContent = '—';
+    document.getElementById('accessModalError').style.display = 'none';
+    emailEl.style.borderColor = '';
+    phoneEl.style.borderColor = '';
+
+    if (agentId) {
+        const agent = _accessAgents.find(a => a.id === agentId);
+        if (!agent) return;
+        _editingAgentId = agentId;
+        titleEl.textContent = 'Edit Agent Access';
+        btnEl.textContent = 'Save Changes';
+        emailEl.value = agent.email || '';
+        nameEl.value = agent.name || '';
+        if (agent.login_pin) {
+            phoneEl.value = agent.login_pin;
+            document.getElementById('derivedPin').textContent = agent.login_pin;
+        }
+        emailEl.focus();
+    } else {
+        _editingAgentId = null;
+        titleEl.textContent = 'Grant Hub Access';
+        btnEl.textContent = 'Grant Access';
+        emailEl.focus();
+    }
+
+    document.getElementById('accessModal').classList.add('show');
+}
+function closeAccessModal() {
+    _editingAgentId = null;
+    document.getElementById('accessModal').classList.remove('show');
+}
+
+async function saveAccess() {
+    const emailEl = document.getElementById('accessEmail');
+    const nameEl  = document.getElementById('accessName');
+    const phoneEl = document.getElementById('accessPhone');
+    const errEl   = document.getElementById('accessModalError');
+    const btn     = document.getElementById('btnAccessSave');
+    const email   = emailEl.value.trim().toLowerCase();
+    const name    = nameEl.value.trim();
+    const phoneDigits = phoneEl.value.replace(/\D/g, '');
+
+    errEl.style.display = 'none';
+    emailEl.style.borderColor = '';
+    phoneEl.style.borderColor = '';
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        emailEl.style.borderColor = '#ef4444';
+        errEl.textContent = 'Enter a valid email address.';
+        errEl.style.display = 'block';
+        return;
+    }
+
+    if (phoneDigits.length < 4) {
+        phoneEl.style.borderColor = '#ef4444';
+        errEl.textContent = 'Enter a cell phone number (at least 4 digits for the PIN).';
+        errEl.style.display = 'block';
+        return;
+    }
+
+    const loginPin = phoneDigits.slice(-4);
+
+    if (!_editingAgentId && _accessAgents.find(a => a.email.toLowerCase() === email)) {
+        errEl.textContent = 'This email is already in the access list.';
+        errEl.style.display = 'block';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    try {
+        const client = await _awaitYrlClient(); if (!client) throw new Error('Not signed in');
+        const { data: sess } = await client.auth.getSession();
+        if (!sess.session) throw new Error('Session expired');
+        const token = sess.session.access_token;
+
+        if (_editingAgentId) {
+            const res = await fetch(`${ACCESS_SB_URL}/rest/v1/hub_authorized_agents?id=eq.${_editingAgentId}`, {
+                method: 'PATCH',
+                headers: {
+                    apikey: ACCESS_SB_KEY,
+                    Authorization: 'Bearer ' + token,
+                    'Content-Type': 'application/json',
+                    Prefer: 'return=representation'
+                },
+                body: JSON.stringify({ email, name: name || null, login_pin: loginPin, updated_at: new Date().toISOString() })
+            });
+            if (!res.ok) {
+                const body = await res.json().catch(() => ({}));
+                throw new Error(body.message || 'HTTP ' + res.status);
+            }
+        } else {
+            const addedBy = sess.session.user.email || 'admin';
+            const res = await fetch(`${ACCESS_SB_URL}/rest/v1/hub_authorized_agents`, {
+                method: 'POST',
+                headers: {
+                    apikey: ACCESS_SB_KEY,
+                    Authorization: 'Bearer ' + token,
+                    'Content-Type': 'application/json',
+                    Prefer: 'return=representation'
+                },
+                body: JSON.stringify({ email, name: name || null, added_by: addedBy, login_pin: loginPin })
+            });
+            if (!res.ok) {
+                const body = await res.json().catch(() => ({}));
+                throw new Error(body.message || 'HTTP ' + res.status);
+            }
+            /* Auto-create a profile if one doesn't exist yet */
+            const profCheck = await fetch(`${ACCESS_SB_URL}/rest/v1/agent_profiles?email=eq.${encodeURIComponent(email)}&select=id`, {
+                headers: { apikey: ACCESS_SB_KEY, Authorization: 'Bearer ' + token }
+            });
+            const existing = await profCheck.json().catch(() => []);
+            if (!existing.length) {
+                await fetch(`${ACCESS_SB_URL}/rest/v1/agent_profiles`, {
+                    method: 'POST',
+                    headers: { apikey: ACCESS_SB_KEY, Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, name: name || email.split('@')[0] })
+                });
+            }
+        }
+
+        closeAccessModal();
+        showSaveFlash();
+        loadAuthorizedAgents();
+        loadAgentProfiles();
+    } catch (e) {
+        errEl.textContent = (_editingAgentId ? 'Could not update agent: ' : 'Could not add agent: ') + e.message;
+        errEl.style.display = 'block';
+    } finally {
+        btn.disabled = false;
+        btn.textContent = _editingAgentId ? 'Save Changes' : 'Grant Access';
+    }
+}
+
+async function toggleAgentAccess(id, newStatus) {
+    const agent = _accessAgents.find(a => a.id === id);
+    if (!agent) return;
+    const action = newStatus === 'revoked' ? 'revoke access for' : 'restore access for';
+    if (!confirm(`Are you sure you want to ${action} ${agent.email}?`)) return;
+    try {
+        const client = await _awaitYrlClient(); if (!client) throw new Error('Not signed in');
+        const { data: sess } = await client.auth.getSession();
+        if (!sess.session) throw new Error('Session expired');
+        const token = sess.session.access_token;
+        const res = await fetch(`${ACCESS_SB_URL}/rest/v1/hub_authorized_agents?id=eq.${id}`, {
+            method: 'PATCH',
+            headers: {
+                apikey: ACCESS_SB_KEY,
+                Authorization: 'Bearer ' + token,
+                'Content-Type': 'application/json',
+                Prefer: 'return=representation'
+            },
+            body: JSON.stringify({ status: newStatus, updated_at: new Date().toISOString() })
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        showSaveFlash();
+        loadAuthorizedAgents();
+    } catch (e) {
+        alert('Could not update access: ' + e.message);
+    }
+}
+
+async function deleteAgentAccess(id, email) {
+    if (!confirm(`Permanently remove ${email} from the access list? This cannot be undone.`)) return;
+    try {
+        const client = await _awaitYrlClient(); if (!client) throw new Error('Not signed in');
+        const { data: sess } = await client.auth.getSession();
+        if (!sess.session) throw new Error('Session expired');
+        const token = sess.session.access_token;
+        const res = await fetch(`${ACCESS_SB_URL}/rest/v1/hub_authorized_agents?id=eq.${id}`, {
+            method: 'DELETE',
+            headers: {
+                apikey: ACCESS_SB_KEY,
+                Authorization: 'Bearer ' + token
+            }
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        showSaveFlash();
+        loadAuthorizedAgents();
+    } catch (e) {
+        alert('Could not delete: ' + e.message);
+    }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   AGENT PROFILES & LICENSING
+   ════════════════════════════════════════════════════════════════════ */
+let _agentProfiles = [];
+let _profileExpanded = new Set();
+let _editingProfileId = null;
+let _boardModalProfileId = null;
+
+async function _profileFetch(path, opts) {
+    const client = await _awaitYrlClient(); if (!client) throw new Error('Not signed in');
+    const { data: sess } = await client.auth.getSession();
+    if (!sess.session) throw new Error('Session expired');
+    const base = 'https://wdvolamasztetwpitbwg.supabase.co/rest/v1/agent_profiles';
+    const url = base + (path || '');
+    const headers = {
+        apikey: ACCESS_SB_KEY,
+        Authorization: 'Bearer ' + sess.session.access_token,
+        ...((opts && opts.headers) || {})
+    };
+    return fetch(url, { ...opts, headers });
+}
+
+async function loadAgentProfiles() {
+    const wrap = document.getElementById('profileListWrap');
+    if (!wrap) return;
+    wrap.innerHTML = '<div class="no-subs">Loading…</div>';
+    try {
+        const res = await _profileFetch('?select=*&order=name.asc');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        _agentProfiles = await res.json();
+        renderProfileAlerts();
+        renderProfileList();
+    } catch (e) {
+        wrap.innerHTML = '<div class="no-subs">Could not load profiles: ' + esc(e.message) + '</div>';
+    }
+}
+
+function _daysUntil(dateStr) {
+    if (!dateStr) return null;
+    const d = new Date(dateStr + 'T00:00:00');
+    const now = new Date(); now.setHours(0,0,0,0);
+    return Math.ceil((d - now) / 86400000);
+}
+
+function _expBadge(dateStr, label) {
+    const days = _daysUntil(dateStr);
+    if (days === null) return '<span style="color:var(--text-muted);font-size:11px;">Not set</span>';
+    if (days < 0) return `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(239,68,68,0.1);color:#ef4444;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;"><i class="fa-solid fa-circle-exclamation"></i> Expired ${Math.abs(days)}d ago</span>`;
+    if (days <= 60) return `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(234,88,12,0.1);color:#ea580c;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;"><i class="fa-solid fa-triangle-exclamation"></i> ${days}d left</span>`;
+    return `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(22,163,74,0.1);color:#16a34a;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;"><i class="fa-solid fa-circle-check"></i> ${dateStr}</span>`;
+}
+
+function renderProfileAlerts() {
+    const el = document.getElementById('profileAlerts');
+    if (!el) return;
+    const now = new Date(); now.setHours(0,0,0,0);
+    const alerts = [];
+    _agentProfiles.forEach(p => {
+        const licDays = _daysUntil(p.license_expiration);
+        if (licDays !== null && licDays <= 60) {
+            alerts.push({ name: p.name, type: 'License', days: licDays, date: p.license_expiration });
+        }
+        const ceDays = _daysUntil(p.ce_due_date);
+        if (ceDays !== null && ceDays <= 60 && !p.ce_completed) {
+            alerts.push({ name: p.name, type: 'CE Credits', days: ceDays, date: p.ce_due_date });
+        }
+        (p.boards || []).forEach(b => {
+            const bDays = _daysUntil(b.renewal_date);
+            if (bDays !== null && bDays <= 60 && !b.paid) {
+                alerts.push({ name: p.name, type: b.name + ' Renewal', days: bDays, date: b.renewal_date });
+            }
+        });
+    });
+    if (!alerts.length) { el.innerHTML = ''; return; }
+    alerts.sort((a,b) => a.days - b.days);
+    el.innerHTML = `<div style="background:rgba(234,88,12,0.06);border:1.5px solid rgba(234,88,12,0.25);border-radius:12px;padding:14px 18px;margin-bottom:14px;">
+        <div style="font-size:12px;font-weight:700;color:#ea580c;margin-bottom:8px;display:flex;align-items:center;gap:6px;"><i class="fa-solid fa-bell"></i> Upcoming Renewals &amp; Expirations</div>
+        ${alerts.map(a => {
+            const color = a.days < 0 ? '#ef4444' : '#ea580c';
+            const label = a.days < 0 ? `expired ${Math.abs(a.days)}d ago` : `${a.days}d left`;
+            return `<div style="font-size:12.5px;color:var(--text);padding:3px 0;"><strong>${esc(a.name)}</strong> — ${esc(a.type)} <span style="color:${color};font-weight:700;">(${label} · ${esc(a.date)})</span></div>`;
+        }).join('')}
+    </div>`;
+}
+
+function renderProfileList() {
+    const wrap = document.getElementById('profileListWrap');
+    if (!_agentProfiles.length) { wrap.innerHTML = '<div class="no-subs">No agent profiles yet. Click "Add Agent" to create one.</div>'; return; }
+    wrap.innerHTML = _agentProfiles.map(p => {
+        const isOpen = _profileExpanded.has(p.id);
+        const boards = p.boards || [];
+        const boardSummary = boards.length ? boards.map(b => {
+            const paid = b.paid ? '✓' : '✗';
+            return esc(b.name);
+        }).join(', ') : '<span style="color:var(--text-muted);">None</span>';
+        const licDate = p.license_expiration || '';
+        const licBadge = _expBadge(p.license_expiration, 'License');
+        const statusColors = { active:'var(--green)', pending:'#ea580c', inactive:'var(--text-muted)', expired:'#ef4444' };
+        const licStatus = p.license_status || 'active';
+        return `<div class="voh-card" style="margin-bottom:10px;">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+                <div>
+                    <div style="font-size:15px;font-weight:700;color:var(--text);">${esc(p.name)}</div>
+                    <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${esc(p.email)}${p.phone ? ' · '+esc(p.phone) : ''}</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+                    <button class="voh-expand-btn" onclick="toggleProfileExpand('${p.id}')">${isOpen ? 'Collapse' : 'Manage'}</button>
+                    <button onclick="openProfileModal('${p.id}')" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;color:var(--text-sec);" title="Edit profile"><i class="fa-solid fa-pen"></i></button>
+                    <button onclick="deleteProfile('${p.id}','${esc(p.name)}')" class="btn-mktg-del" title="Delete profile"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px 16px;font-size:12.5px;color:var(--text-sec);margin-top:10px;">
+                <div><strong style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-muted);margin-bottom:2px;">License #</strong>${esc(p.license_number || '—')} <span style="color:var(--text-muted);">(${esc(p.license_state || 'IN')})</span></div>
+                <div><strong style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-muted);margin-bottom:2px;">Type</strong><span style="font-weight:600;text-transform:capitalize;">${esc((p.license_type || 'active').replace('_',' '))}</span></div>
+                <div><strong style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-muted);margin-bottom:2px;">License Exp</strong>${licBadge}</div>
+                <div><strong style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-muted);margin-bottom:2px;">Status</strong><span style="color:${statusColors[licStatus] || 'var(--text)'};font-weight:600;text-transform:capitalize;">${esc(licStatus)}</span></div>
+                <div><strong style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-muted);margin-bottom:2px;">Boards</strong>${boardSummary}</div>
+            </div>
+            ${isOpen ? renderProfileDetail(p) : ''}
+        </div>`;
+    }).join('');
+}
+
+function renderProfileDetail(p) {
+    const boards = p.boards || [];
+    const ceBadge = p.ce_due_date
+        ? (p.ce_completed
+            ? '<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(22,163,74,0.1);color:#16a34a;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;"><i class="fa-solid fa-circle-check"></i> Completed</span>'
+            : _expBadge(p.ce_due_date, 'CE'))
+        : '<span style="color:var(--text-muted);font-size:11px;">Not set</span>';
+    const ceToggle = p.ce_due_date
+        ? `<button onclick="toggleCeCompleted('${p.id}',${!p.ce_completed})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:10.5px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;color:${p.ce_completed?'var(--green)':'var(--text-sec)'};">${p.ce_completed?'✓ Done':'Mark done'}</button>`
+        : '';
+    return `<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+            <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-muted);">CE Credits Due</span>
+            ${ceBadge} ${ceToggle}
+        </div>
+        ${p.notes ? `<div style="font-size:12px;color:var(--text-sec);margin-bottom:12px;padding:8px 12px;background:var(--surface-2);border-radius:8px;border:1px solid var(--border);"><strong style="color:var(--text);">Notes:</strong> ${esc(p.notes)}</div>` : ''}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <span style="font-size:13px;font-weight:700;color:var(--text);">Board Memberships</span>
+            <button onclick="openBoardModal('${p.id}')" style="display:inline-flex;align-items:center;gap:5px;background:rgba(192,57,38,0.08);color:var(--red);border:1px dashed var(--red);border-radius:7px;padding:4px 10px;font-size:11.5px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;"><i class="fa-solid fa-plus"></i> Add Board</button>
+        </div>
+        ${boards.length === 0
+            ? '<div style="font-size:12.5px;color:var(--text-muted);font-style:italic;padding:10px 0;">No board memberships tracked yet.</div>'
+            : boards.map((b, i) => `<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:${b.paid?'rgba(22,163,74,0.04)':'var(--surface-2)'};border:1px solid ${b.paid?'rgba(22,163,74,0.25)':'var(--border)'};border-radius:9px;margin-bottom:6px;">
+                <div style="flex:1;">
+                    <div style="font-size:13px;font-weight:700;color:var(--text);">${esc(b.name)}</div>
+                    <div style="font-size:11.5px;color:var(--text-muted);margin-top:2px;">
+                        ${b.member_id ? 'ID: '+esc(b.member_id)+' · ' : ''}Renewal: ${b.renewal_date ? esc(b.renewal_date) : 'Not set'}
+                    </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    ${_expBadge(b.renewal_date, b.name)}
+                    <button onclick="toggleBoardPaid('${p.id}',${i},${!b.paid})" style="background:${b.paid?'var(--green)':'var(--surface)'};color:${b.paid?'#fff':'var(--text-sec)'};border:1px solid ${b.paid?'var(--green)':'var(--border)'};border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;white-space:nowrap;">${b.paid?'✓ Paid':'Mark Paid'}</button>
+                    <button onclick="removeBoard('${p.id}',${i})" class="btn-mktg-del" title="Remove board"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>`).join('')
+        }
+    </div>`;
+}
+
+function toggleProfileExpand(id) {
+    if (_profileExpanded.has(id)) _profileExpanded.delete(id); else _profileExpanded.add(id);
+    renderProfileList();
+}
+
+/* ── Profile Modal ── */
+function openProfileModal(editId) {
+    _editingProfileId = editId || null;
+    const p = editId ? _agentProfiles.find(a => a.id === editId) : null;
+    document.getElementById('profileModalTitle').textContent = p ? 'Edit Agent Profile' : 'Add Agent Profile';
+    document.getElementById('profName').value      = p ? p.name : '';
+    document.getElementById('profEmail').value     = p ? p.email : '';
+    document.getElementById('profPhone').value     = p ? (p.phone || '') : '';
+    document.getElementById('profLicense').value   = p ? (p.license_number || '') : '';
+    document.getElementById('profLicState').value  = p ? (p.license_state || 'IN') : 'IN';
+    document.getElementById('profLicExp').value    = p ? (p.license_expiration || '') : '';
+    document.getElementById('profLicType').value   = p ? (p.license_type || 'active') : 'active';
+    document.getElementById('profLicStatus').value = p ? (p.license_status || 'active') : 'active';
+    document.getElementById('profCeDue').value     = p ? (p.ce_due_date || '') : '';
+    document.getElementById('profCeDone').value    = p ? String(!!p.ce_completed) : 'false';
+    document.getElementById('profNotes').value     = p ? (p.notes || '') : '';
+    document.getElementById('profileModalError').style.display = 'none';
+    document.getElementById('btnProfileSave').textContent = p ? 'Save Changes' : 'Create Profile';
+    document.getElementById('profileModal').classList.add('show');
+    document.getElementById(p ? 'profLicense' : 'profName').focus();
+}
+function closeProfileModal() { document.getElementById('profileModal').classList.remove('show'); _editingProfileId = null; }
+
+async function saveProfile() {
+    const nameEl = document.getElementById('profName');
+    const emailEl = document.getElementById('profEmail');
+    const errEl = document.getElementById('profileModalError');
+    const btn = document.getElementById('btnProfileSave');
+    errEl.style.display = 'none';
+
+    const name = nameEl.value.trim();
+    const email = emailEl.value.trim().toLowerCase();
+    if (!name) { nameEl.style.borderColor = '#ef4444'; errEl.textContent = 'Name is required.'; errEl.style.display = 'block'; return; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { emailEl.style.borderColor = '#ef4444'; errEl.textContent = 'Valid email is required.'; errEl.style.display = 'block'; return; }
+    nameEl.style.borderColor = ''; emailEl.style.borderColor = '';
+
+    const payload = {
+        name, email,
+        phone: document.getElementById('profPhone').value.trim() || null,
+        license_number: document.getElementById('profLicense').value.trim() || null,
+        license_state: document.getElementById('profLicState').value.trim() || 'IN',
+        license_expiration: document.getElementById('profLicExp').value || null,
+        license_type: document.getElementById('profLicType').value,
+        license_status: document.getElementById('profLicStatus').value,
+        ce_due_date: document.getElementById('profCeDue').value || null,
+        ce_completed: document.getElementById('profCeDone').value === 'true',
+        notes: document.getElementById('profNotes').value.trim() || null,
+        updated_at: new Date().toISOString()
+    };
+
+    btn.disabled = true; btn.textContent = 'Saving…';
+    try {
+        let res;
+        if (_editingProfileId) {
+            res = await _profileFetch('?id=eq.' + _editingProfileId, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', Prefer: 'return=representation' },
+                body: JSON.stringify(payload)
+            });
+        } else {
+            res = await _profileFetch('', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Prefer: 'return=representation' },
+                body: JSON.stringify(payload)
+            });
+        }
+        if (!res.ok) {
+            const body = await res.json().catch(() => ({}));
+            throw new Error(body.message || 'HTTP ' + res.status);
+        }
+        /* Auto-grant hub access if this is a new profile and email isn't in the access list */
+        if (!_editingProfileId) {
+            const client = await _awaitYrlClient();
+            const { data: sess2 } = await client.auth.getSession();
+            const token2 = sess2.session.access_token;
+            const accCheck = await fetch(`${ACCESS_SB_URL}/rest/v1/hub_authorized_agents?email=eq.${encodeURIComponent(email)}&select=id`, {
+                headers: { apikey: ACCESS_SB_KEY, Authorization: 'Bearer ' + token2 }
+            });
+            const accExisting = await accCheck.json().catch(() => []);
+            if (!accExisting.length) {
+                await fetch(`${ACCESS_SB_URL}/rest/v1/hub_authorized_agents`, {
+                    method: 'POST',
+                    headers: { apikey: ACCESS_SB_KEY, Authorization: 'Bearer ' + token2, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, name: name || null, added_by: sess2.session.user.email || 'admin' })
+                });
+            }
+        }
+
+        closeProfileModal();
+        showSaveFlash();
+        loadAgentProfiles();
+        loadAuthorizedAgents();
+    } catch (e) {
+        errEl.textContent = 'Could not save: ' + e.message;
+        errEl.style.display = 'block';
+    } finally {
+        btn.disabled = false;
+        btn.textContent = _editingProfileId ? 'Save Changes' : 'Create Profile';
+    }
+}
+
+async function deleteProfile(id, name) {
+    if (!confirm('Permanently delete the profile for ' + name + '?')) return;
+    try {
+        const res = await _profileFetch('?id=eq.' + id, { method: 'DELETE' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        showSaveFlash();
+        loadAgentProfiles();
+    } catch (e) { alert('Could not delete: ' + e.message); }
+}
+
+/* ── Board Memberships ── */
+function openBoardModal(profileId) {
+    _boardModalProfileId = profileId;
+    document.getElementById('boardModalTitle').textContent = 'Add Board Membership';
+    document.getElementById('boardName').value = 'MIBOR';
+    document.getElementById('boardCustom').value = '';
+    document.getElementById('boardCustom').style.display = 'none';
+    document.getElementById('boardMemberId').value = '';
+    document.getElementById('boardRenewal').value = '';
+    document.getElementById('boardModalError').style.display = 'none';
+    document.getElementById('boardModal').classList.add('show');
+}
+function closeBoardModal() { document.getElementById('boardModal').classList.remove('show'); _boardModalProfileId = null; }
+
+async function saveBoard() {
+    const errEl = document.getElementById('boardModalError');
+    errEl.style.display = 'none';
+    let boardName = document.getElementById('boardName').value;
+    if (boardName === '__custom') {
+        boardName = document.getElementById('boardCustom').value.trim();
+        if (!boardName) { errEl.textContent = 'Enter a board name.'; errEl.style.display = 'block'; return; }
+    }
+    const newBoard = {
+        name: boardName,
+        member_id: document.getElementById('boardMemberId').value.trim() || null,
+        renewal_date: document.getElementById('boardRenewal').value || null,
+        paid: false,
+        status: 'active'
+    };
+    const profile = _agentProfiles.find(p => p.id === _boardModalProfileId);
+    if (!profile) return;
+    const boards = [...(profile.boards || []), newBoard];
+    try {
+        const res = await _profileFetch('?id=eq.' + _boardModalProfileId, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', Prefer: 'return=representation' },
+            body: JSON.stringify({ boards, updated_at: new Date().toISOString() })
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        closeBoardModal();
+        showSaveFlash();
+        loadAgentProfiles();
+    } catch (e) {
+        errEl.textContent = 'Could not add board: ' + e.message;
+        errEl.style.display = 'block';
+    }
+}
+
+async function toggleBoardPaid(profileId, idx, newPaid) {
+    const profile = _agentProfiles.find(p => p.id === profileId);
+    if (!profile) return;
+    const boards = [...(profile.boards || [])];
+    if (!boards[idx]) return;
+    boards[idx] = { ...boards[idx], paid: newPaid };
+    try {
+        const res = await _profileFetch('?id=eq.' + profileId, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', Prefer: 'return=representation' },
+            body: JSON.stringify({ boards, updated_at: new Date().toISOString() })
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        loadAgentProfiles();
+    } catch (e) { alert('Could not update: ' + e.message); }
+}
+
+async function removeBoard(profileId, idx) {
+    if (!confirm('Remove this board membership?')) return;
+    const profile = _agentProfiles.find(p => p.id === profileId);
+    if (!profile) return;
+    const boards = [...(profile.boards || [])];
+    boards.splice(idx, 1);
+    try {
+        const res = await _profileFetch('?id=eq.' + profileId, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', Prefer: 'return=representation' },
+            body: JSON.stringify({ boards, updated_at: new Date().toISOString() })
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        showSaveFlash();
+        loadAgentProfiles();
+    } catch (e) { alert('Could not remove: ' + e.message); }
+}
+
+async function toggleCeCompleted(profileId, newVal) {
+    try {
+        const res = await _profileFetch('?id=eq.' + profileId, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', Prefer: 'return=representation' },
+            body: JSON.stringify({ ce_completed: newVal, updated_at: new Date().toISOString() })
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        loadAgentProfiles();
+    } catch (e) { alert('Could not update: ' + e.message); }
 }
 
 /* ── Agent Progress ── */
@@ -1069,6 +1967,418 @@ async function loadAgentProgress() {
     } catch(e) {
         wrap.innerHTML = '<div class="no-agents">Could not load progress data.</div>';
     }
+}
+
+/* ── Moving-to-YRL Checklist Progress ── */
+const MOVING_KEY = 'yrl-moving-checklist';
+const MOVING_TOTAL = 19;
+const MOVING_ITEMS = [
+    'Current Listings & Pendings', 'License Transfer Form', 'Contacts List',
+    'Business Cards', 'Signs & Print Materials', 'License Transfer — State & MIBOR',
+    'Dotloop & Email Setup', 'Email Signature Block', 'Office Door Code',
+    'Office Printer', 'YRL Agent Talk (Facebook)', 'Office WiFi',
+    'Office Workspace', 'Refrigerator Policy', 'Agent Bio & Website',
+    'Update Your Memberships & Profiles', 'New Agent — MIBOR Class Requirement',
+    'Shared Office Laptop', 'Writing Contracts — Always Ask First'
+];
+let _movingExpanded = new Set();
+
+async function loadMovingProgress() {
+    const wrap = document.getElementById('movingProgressWrap');
+    wrap.innerHTML = '<div class="no-agents">Loading…</div>';
+    try {
+        const map = (await loadHubContent(MOVING_KEY)) || {};
+        const agents = Object.entries(map).filter(([, d]) => d && typeof d === 'object');
+        if (!agents.length) {
+            wrap.innerHTML = '<div class="no-agents">No agents have started the transfer checklist yet.</div>';
+            return;
+        }
+        agents.sort((a,b) => ((b[1].updated_at||'') > (a[1].updated_at||'')) ? 1 : -1);
+
+        wrap.innerHTML = `<div class="agent-table">${
+            agents.map(([uid, d]) => {
+                const items     = d.items || {};
+                const completed = Object.values(items).filter(Boolean).length;
+                const pct       = Math.round((completed/MOVING_TOTAL)*100);
+                const barColor  = pct===100 ? 'var(--green)' : pct>50 ? 'var(--orange)' : 'var(--red)';
+                const last      = d.updated_at
+                    ? new Date(d.updated_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})
+                    : '—';
+                const isOpen = _movingExpanded.has(uid);
+                const name   = d.name || d.email || '(unknown agent)';
+                const detail = isOpen ? `<div style="grid-column:1/-1;background:var(--surface-2);border-top:1px solid var(--border);padding:14px 18px;">
+                    <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.6px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;">
+                        <i class="fa-solid fa-pen-to-square" style="color:var(--red);"></i> Click any item to toggle it for this agent
+                    </div>
+                    <div style="display:grid;gap:6px;">
+                        ${MOVING_ITEMS.map((title,i)=>{
+                            const n = i+1, done = !!items[n];
+                            return `<div onclick="adminToggleMovingItem('${esc(uid)}',${n})"
+                                style="display:flex;align-items:center;gap:12px;padding:9px 12px;background:${done?'#f0fdf4':'var(--surface)'};border:1px solid ${done?'rgba(22,163,74,0.35)':'var(--border)'};border-radius:9px;cursor:pointer;transition:all 0.15s;"
+                                onmouseover="this.style.borderColor='${done?'var(--green)':'var(--red)'}'"
+                                onmouseout="this.style.borderColor='${done?'rgba(22,163,74,0.35)':'var(--border)'}'">
+                                <div style="width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:${done?'var(--green)':'var(--surface-3)'};color:${done?'#fff':'var(--text-sec)'};border:1.5px solid ${done?'var(--green)':'var(--border)'};font-size:11px;font-weight:700;flex-shrink:0;">${done?'<i class="fa-solid fa-check"></i>':n}</div>
+                                <div style="flex:1;font-size:13px;font-weight:600;color:${done?'var(--text-muted)':'var(--text)'};${done?'text-decoration:line-through;':''}">${esc(title)}</div>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                </div>` : '';
+                return `<div class="agent-table-row" style="display:grid;grid-template-columns:1.4fr 2fr 1.3fr 1.1fr auto;gap:10px;align-items:center;border-bottom:1px solid var(--border);padding:10px 14px;flex-wrap:nowrap;">
+                    <div class="agent-name" style="font-weight:700;font-size:13px;">${esc(name)}<div style="font-size:11px;color:var(--text-muted);font-weight:500;margin-top:2px;">${esc(d.email||'')}</div></div>
+                    <div class="agent-bar-wrap"><div class="agent-bar-track"><div class="agent-bar-fill" style="width:${pct}%;background:${barColor};"></div></div></div>
+                    <div class="agent-stats">${completed}/${MOVING_TOTAL} &nbsp;·&nbsp; ${pct}%</div>
+                    <div class="agent-lastseen">Updated ${last}</div>
+                    <button class="btn-add-personal" onclick="toggleMovingDetail('${esc(uid)}')" title="${isOpen?'Hide':'Show'} items"><i class="fa-solid fa-${isOpen?'chevron-up':'list'}"></i> ${isOpen?'Hide':'Items'}</button>
+                    ${detail}
+                </div>`;
+            }).join('')
+        }</div>`;
+    } catch(e) {
+        wrap.innerHTML = '<div class="no-agents">Could not load moving checklist progress: ' + esc(e.message) + '</div>';
+    }
+}
+function toggleMovingDetail(uid) {
+    if (_movingExpanded.has(uid)) _movingExpanded.delete(uid); else _movingExpanded.add(uid);
+    loadMovingProgress();
+}
+
+/* Toggle a single checklist item for an agent on the agent's behalf.
+   Re-fetches the latest map, merges, writes back — so we don't stomp
+   concurrent edits from the agent themself. */
+async function adminToggleMovingItem(uid, n) {
+    try {
+        const latest = (await loadHubContent(MOVING_KEY)) || {};
+        const slice = latest[uid] || { items: {} };
+        slice.items = slice.items || {};
+        slice.items[n] = !slice.items[n];
+        slice.updated_at = new Date().toISOString();
+        latest[uid] = slice;
+        const ok = await saveHubContent(MOVING_KEY, latest);
+        if (!ok) throw new Error('Save returned false');
+        loadMovingProgress();   // re-render with new state
+    } catch(e) {
+        alert('Could not update item: ' + e.message);
+    }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   ALL AGENT CONTACTS (admin view — RLS gives broker full read access)
+   ════════════════════════════════════════════════════════════════════ */
+let _allContacts = [];
+
+async function loadAllContacts() {
+    const wrap = document.getElementById('contactsAdminWrap');
+    if (!wrap) return;
+    wrap.innerHTML = '<div class="no-subs">Loading…</div>';
+    try {
+        const client = await _awaitYrlClient(); if (!client) throw new Error('Not signed in');
+        const { data: sess } = await client.auth.getSession();
+        if (!sess.session) throw new Error('Session expired');
+        const token = sess.session.access_token;
+        const res = await fetch(`${CLOSING_SB_URL}/rest/v1/agent_contacts?select=*&order=agent_name.asc,name.asc`, {
+            headers: { apikey: CLOSING_SB_KEY, Authorization: 'Bearer ' + token }
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        _allContacts = await res.json();
+        const agents = Array.from(new Set(_allContacts.map(c => c.agent_name || c.agent_email).filter(Boolean))).sort();
+        const sel = document.getElementById('contactsAgentFilter');
+        const cur = sel.value;
+        sel.innerHTML = '<option value="">All agents</option>' + agents.map(a => `<option value="${esc(a)}"${a===cur?' selected':''}>${esc(a)}</option>`).join('');
+        renderAllContacts();
+    } catch (e) {
+        wrap.innerHTML = '<div class="no-subs">Could not load contacts: ' + esc(e.message) + '</div>';
+    }
+}
+
+function _filteredContacts() {
+    const a = document.getElementById('contactsAgentFilter').value;
+    const t = document.getElementById('contactsTypeFilter').value;
+    const q = (document.getElementById('contactsSearch').value || '').toLowerCase().trim();
+    return _allContacts.filter(c => {
+        if (a && (c.agent_name || c.agent_email) !== a) return false;
+        if (t && c.type !== t) return false;
+        if (q) {
+            const hay = [c.name, c.email, c.phone, c.notes, c.source, c.tags, c.agent_name, c.street, c.city, c.state, c.zip].join(' ').toLowerCase();
+            if (!hay.includes(q)) return false;
+        }
+        return true;
+    });
+}
+
+/* Look up a contact in the admin's full pool */
+function _contactById(id) { return _allContacts.find(x => x.id === id); }
+const REL_LABEL_ADMIN = {
+    spouse:'Spouse', partner:'Partner', co_buyer:'Co-buyer',
+    sibling:'Sibling', parent:'Parent', child:'Child',
+    business_partner:'Business partner', other:'Other'
+};
+
+function renderAllContacts() {
+    const wrap = document.getElementById('contactsAdminWrap');
+    const list = _filteredContacts();
+    if (!list.length) { wrap.innerHTML = `<div class="no-subs">No contacts match the current filters. (${_allContacts.length} total in the database.)</div>`; return; }
+    const rows = list.map(c => {
+        const lastDate = c.last_contact ? new Date(c.last_contact+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+        const addrParts = [c.street, [c.city, c.state].filter(Boolean).join(', '), c.zip].filter(Boolean);
+        const addrLine  = addrParts.join(' · ') || '—';
+        const partner   = c.linked_contact_id ? _contactById(c.linked_contact_id) : null;
+        const relLabel  = c.relationship ? (REL_LABEL_ADMIN[c.relationship] || c.relationship) : '';
+        const linkedCell = partner
+            ? `<span style="display:inline-flex;align-items:center;gap:4px;background:#ecfeff;color:#0e7490;border:1px solid #a5f3fc;border-radius:14px;padding:2px 8px;font-size:11px;font-weight:700;"><i class="fa-solid fa-link" style="font-size:9px;"></i>${esc(partner.name||'(?)')}</span><div style="font-size:10.5px;color:var(--text-muted);margin-top:2px;">${esc(relLabel)}</div>`
+            : '<span style="color:var(--text-muted);font-size:11px;">—</span>';
+        return `<tr>
+            <td style="padding:8px 12px;border-top:1px solid var(--border);white-space:nowrap;font-weight:600;vertical-align:top;">${esc(c.agent_name || c.agent_email || '—')}</td>
+            <td style="padding:8px 12px;border-top:1px solid var(--border);font-weight:600;vertical-align:top;">${esc(c.name)}</td>
+            <td style="padding:8px 12px;border-top:1px solid var(--border);vertical-align:top;">${esc((c.type||'other').replace('_',' '))}</td>
+            <td style="padding:8px 12px;border-top:1px solid var(--border);vertical-align:top;">${esc(c.email || '')}</td>
+            <td style="padding:8px 12px;border-top:1px solid var(--border);white-space:nowrap;vertical-align:top;">${esc(c.phone || '')}</td>
+            <td style="padding:8px 12px;border-top:1px solid var(--border);font-size:11.5px;color:var(--text-sec);vertical-align:top;">${esc(addrLine)}</td>
+            <td style="padding:8px 12px;border-top:1px solid var(--border);vertical-align:top;">${linkedCell}</td>
+            <td style="padding:8px 12px;border-top:1px solid var(--border);vertical-align:top;">${esc(lastDate)}</td>
+            <td style="padding:8px 12px;border-top:1px solid var(--border);vertical-align:top;">${esc((c.status||'active').replace(/_/g,' '))}</td>
+            <td style="padding:8px 12px;border-top:1px solid var(--border);font-size:11.5px;color:var(--text-muted);vertical-align:top;">${esc((c.notes||'').slice(0,80))}${(c.notes||'').length>80?'…':''}</td>
+        </tr>`;
+    }).join('');
+    wrap.innerHTML = `<div style="font-size:11.5px;color:var(--text-muted);margin-bottom:8px;">${list.length} of ${_allContacts.length} contacts</div>
+    <div style="overflow-x:auto;background:var(--surface);border:1px solid var(--border);border-radius:12px;">
+        <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
+            <thead><tr style="background:var(--surface-3);text-align:left;">
+                <th style="padding:9px 12px;">Agent</th>
+                <th style="padding:9px 12px;">Name</th>
+                <th style="padding:9px 12px;">Type</th>
+                <th style="padding:9px 12px;">Email</th>
+                <th style="padding:9px 12px;">Phone</th>
+                <th style="padding:9px 12px;">Address</th>
+                <th style="padding:9px 12px;">Linked</th>
+                <th style="padding:9px 12px;">Last contact</th>
+                <th style="padding:9px 12px;">Status</th>
+                <th style="padding:9px 12px;">Notes</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+        </table>
+    </div>`;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   ALL LISTINGS & PENDINGS TRANSITION (admin view)
+   ════════════════════════════════════════════════════════════════════ */
+let _allListings = [];
+const LIST_STATUS_LABEL = {
+    needs_release:        'Needs Release',
+    release_signed:       'Release Signed',
+    yrl_agreement_signed: 'YRL Signed',
+    transferred:          'Transferred',
+    closed:               'Closed'
+};
+
+async function loadAllListings() {
+    const wrap = document.getElementById('listingsAdminWrap');
+    if (!wrap) return;
+    wrap.innerHTML = '<div class="no-subs">Loading…</div>';
+    try {
+        const client = await _awaitYrlClient(); if (!client) throw new Error('Not signed in');
+        const { data: sess } = await client.auth.getSession();
+        if (!sess.session) throw new Error('Session expired');
+        const token = sess.session.access_token;
+        const res = await fetch(`${CLOSING_SB_URL}/rest/v1/agent_listings_transition?select=*&order=agent_name.asc,updated_at.desc`, {
+            headers: { apikey: CLOSING_SB_KEY, Authorization: 'Bearer ' + token }
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        _allListings = await res.json();
+        const agents = Array.from(new Set(_allListings.map(l => l.agent_name || l.agent_email).filter(Boolean))).sort();
+        const sel = document.getElementById('listingsAgentFilter');
+        const cur = sel.value;
+        sel.innerHTML = '<option value="">All agents</option>' + agents.map(a => `<option value="${esc(a)}"${a===cur?' selected':''}>${esc(a)}</option>`).join('');
+        renderAllListings();
+    } catch (e) {
+        wrap.innerHTML = '<div class="no-subs">Could not load listings: ' + esc(e.message) + '</div>';
+    }
+}
+
+function _filteredListings() {
+    const a = document.getElementById('listingsAgentFilter').value;
+    const s = document.getElementById('listingsStatusFilter').value;
+    return _allListings.filter(l => {
+        if (a && (l.agent_name || l.agent_email) !== a) return false;
+        if (s && l.transfer_status !== s) return false;
+        return true;
+    });
+}
+
+function renderAllListings() {
+    const wrap = document.getElementById('listingsAdminWrap');
+    const list = _filteredListings();
+    if (!list.length) { wrap.innerHTML = `<div class="no-subs">No records match the current filters. (${_allListings.length} total in the database.)</div>`; return; }
+    const money = v => v == null || v === '' ? '—' : '$' + Number(v).toLocaleString('en-US', { minimumFractionDigits:0, maximumFractionDigits:0 });
+    const rows = list.map(l => {
+        const close = l.expected_close_date ? new Date(l.expected_close_date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+        const docs = [];
+        if (l.mutual_release_url) docs.push(`<a href="${esc(l.mutual_release_url)}" target="_blank" rel="noopener" style="color:var(--red);font-weight:600;font-size:11px;text-decoration:underline;">Release</a>`);
+        if (l.yrl_agreement_url)  docs.push(`<a href="${esc(l.yrl_agreement_url)}"  target="_blank" rel="noopener" style="color:var(--red);font-weight:600;font-size:11px;text-decoration:underline;">YRL Agmt</a>`);
+        return `<tr>
+            <td style="padding:8px 12px;border-top:1px solid var(--border);vertical-align:top;white-space:nowrap;font-weight:600;">${esc(l.agent_name || l.agent_email || '—')}</td>
+            <td style="padding:8px 12px;border-top:1px solid var(--border);vertical-align:top;font-weight:600;">${esc(l.property_address)}<br><span style="font-size:10.5px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.3px;">${esc((l.deal_type==='pending_sale'?'Pending':'Active') + ' · ' + (l.side||'—') + (l.mls_number?' · MLS '+l.mls_number:''))}</span></td>
+            <td style="padding:8px 12px;border-top:1px solid var(--border);vertical-align:top;">${esc(l.client_name || '—')}</td>
+            <td style="padding:8px 12px;border-top:1px solid var(--border);vertical-align:top;white-space:nowrap;">${money(l.deal_type==='pending_sale' ? l.sale_price : l.list_price)}</td>
+            <td style="padding:8px 12px;border-top:1px solid var(--border);vertical-align:top;white-space:nowrap;">${money(l.commission_expected)}</td>
+            <td style="padding:8px 12px;border-top:1px solid var(--border);vertical-align:top;white-space:nowrap;">${esc(close)}</td>
+            <td style="padding:8px 12px;border-top:1px solid var(--border);vertical-align:top;"><span style="background:var(--surface-3);border:1px solid var(--border);border-radius:14px;padding:3px 9px;font-size:11px;font-weight:700;white-space:nowrap;">${esc(LIST_STATUS_LABEL[l.transfer_status] || l.transfer_status || '—')}</span></td>
+            <td style="padding:8px 12px;border-top:1px solid var(--border);vertical-align:top;white-space:nowrap;">${docs.join(' · ') || '<span style="color:var(--text-muted);font-size:11px;">none</span>'}</td>
+        </tr>`;
+    }).join('');
+    wrap.innerHTML = `<div style="font-size:11.5px;color:var(--text-muted);margin-bottom:8px;">${list.length} of ${_allListings.length} records</div>
+    <div style="overflow-x:auto;background:var(--surface);border:1px solid var(--border);border-radius:12px;">
+        <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
+            <thead><tr style="background:var(--surface-3);text-align:left;">
+                <th style="padding:9px 12px;">Agent</th>
+                <th style="padding:9px 12px;">Property</th>
+                <th style="padding:9px 12px;">Client</th>
+                <th style="padding:9px 12px;">Price</th>
+                <th style="padding:9px 12px;">Commission</th>
+                <th style="padding:9px 12px;">Close</th>
+                <th style="padding:9px 12px;">Status</th>
+                <th style="padding:9px 12px;">Docs</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+        </table>
+    </div>`;
+}
+
+/* ── Export helpers (CSV + PDF) ───────────────────────────────────── */
+function _csvDownload(filename, rows) {
+    const csv = '﻿' + rows.map(r => r.map(c => {
+        const s = String(c == null ? '' : c);
+        return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
+    }).join(',')).join('\n');
+    const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+function exportContactsCsv() {
+    const list = _filteredContacts();
+    if (!list.length) { alert('Nothing to export — the current filter has no contacts.'); return; }
+    const cols = ['agent_name','agent_email','name','type','email','phone','street','city','state','zip','linked_to','relationship','last_contact','source','tags','status','notes','created_at','updated_at'];
+    const header = cols;
+    const rows = [header].concat(list.map(c => cols.map(k => {
+        if (k === 'linked_to') {
+            const p = c.linked_contact_id ? _contactById(c.linked_contact_id) : null;
+            return p ? (p.name || '') : '';
+        }
+        if (k === 'relationship') return c.relationship ? (REL_LABEL_ADMIN[c.relationship] || c.relationship) : '';
+        return c[k] == null ? '' : c[k];
+    })));
+    _csvDownload('agent-contacts-' + new Date().toISOString().slice(0,10) + '.csv', rows);
+}
+function exportListingsCsv() {
+    const list = _filteredListings();
+    if (!list.length) { alert('Nothing to export — the current filter has no records.'); return; }
+    const cols = ['agent_name','agent_email','property_address','mls_number','side','deal_type','current_brokerage','client_name','client_email','client_phone','list_price','sale_price','expected_close_date','commission_expected','transfer_status','mutual_release_url','yrl_agreement_url','notes','created_at','updated_at'];
+    const rows = [cols].concat(list.map(l => cols.map(k => l[k] == null ? '' : l[k])));
+    _csvDownload('listings-transition-' + new Date().toISOString().slice(0,10) + '.csv', rows);
+}
+
+function _pdfTable(title, cols, rows, opts) {
+    const JsPDF = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+    if (!JsPDF) { alert('PDF engine not loaded — try CSV instead.'); return; }
+    const landscape = !!(opts && opts.landscape);
+    const doc = new JsPDF({ unit:'in', format:'letter', orientation: landscape ? 'landscape' : 'portrait' });
+    const PW = landscape ? 11 : 8.5;
+    const PH = landscape ? 8.5 : 11;
+    const M  = 0.4, R = PW - M, CW = PW - M*2;
+    let y = M + 0.1;
+    doc.setFont('helvetica','bold'); doc.setFontSize(14); doc.setTextColor(192,57,38);
+    doc.text(title, M, y); y += 0.25;
+    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(120,120,120);
+    doc.text(`${rows.length} record${rows.length===1?'':'s'} — generated ${new Date().toLocaleString('en-US')}`, M, y);
+    y += 0.25;
+    const totW = cols.reduce((s,c) => s + (c.w||1), 0);
+    const widths = cols.map(c => (c.w||1) / totW * CW);
+    doc.setFillColor(238,240,243); doc.rect(M, y, CW, 0.28, 'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(40,40,40);
+    let x = M;
+    cols.forEach((c,i) => { doc.text(c.label, x + 0.06, y + 0.18); x += widths[i]; });
+    y += 0.32;
+    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(20,20,20);
+    const lineH = 0.16;
+    for (const r of rows) {
+        const cellLines = cols.map((c,i) => doc.splitTextToSize(String(r[c.key] == null ? '' : r[c.key]).replace(/\s+/g,' '), widths[i] - 0.12));
+        const maxLines = Math.max(1, ...cellLines.map(ls => ls.length));
+        const rowH = maxLines * lineH + 0.08;
+        if (y + rowH > PH - M) { doc.addPage(); y = M + 0.1; }
+        x = M;
+        cellLines.forEach((lines,i) => {
+            lines.forEach((ln,li) => doc.text(ln, x + 0.06, y + 0.13 + li*lineH));
+            x += widths[i];
+        });
+        doc.setDrawColor(230,232,236); doc.setLineWidth(0.005);
+        doc.line(M, y + rowH, R, y + rowH);
+        y += rowH;
+    }
+    doc.save(title.replace(/[^a-z0-9]+/gi,'-').toLowerCase() + '-' + new Date().toISOString().slice(0,10) + '.pdf');
+}
+
+function exportContactsPdf() {
+    const list = _filteredContacts();
+    if (!list.length) { alert('Nothing to export.'); return; }
+    const cols = [
+        { key:'agent_name',  label:'Agent',        w:1.1 },
+        { key:'name',        label:'Name',         w:1.2 },
+        { key:'type',        label:'Type',         w:0.7 },
+        { key:'email',       label:'Email',        w:1.4 },
+        { key:'phone',       label:'Phone',        w:1.0 },
+        { key:'address',     label:'Address',      w:1.7 },
+        { key:'linked',      label:'Linked',       w:1.1 },
+        { key:'last_contact',label:'Last',         w:0.8 },
+        { key:'status',      label:'Status',       w:0.8 },
+        { key:'notes',       label:'Notes',        w:1.7 }
+    ];
+    const rows = list.map(c => {
+        const p = c.linked_contact_id ? _contactById(c.linked_contact_id) : null;
+        const addrParts = [c.street, [c.city, c.state].filter(Boolean).join(', '), c.zip].filter(Boolean);
+        return {
+            agent_name: c.agent_name || c.agent_email || '',
+            name: c.name || '',
+            type: (c.type||'').replace('_',' '),
+            email: c.email || '',
+            phone: c.phone || '',
+            address: addrParts.join(', '),
+            linked: p ? ((REL_LABEL_ADMIN[c.relationship] || c.relationship || 'Linked') + ': ' + (p.name||'')) : '',
+            last_contact: c.last_contact || '',
+            status: (c.status||'').replace(/_/g,' '),
+            notes: c.notes || ''
+        };
+    });
+    _pdfTable('Agent Contacts', cols, rows, { landscape:true });
+}
+
+function exportListingsPdf() {
+    const list = _filteredListings();
+    if (!list.length) { alert('Nothing to export.'); return; }
+    const cols = [
+        { key:'agent_name',         label:'Agent',     w:1.1 },
+        { key:'property_address',   label:'Property',  w:2.0 },
+        { key:'client_name',        label:'Client',    w:1.1 },
+        { key:'price',              label:'Price',     w:0.9 },
+        { key:'commission_expected',label:'Comm',      w:0.8 },
+        { key:'expected_close_date',label:'Close',     w:0.9 },
+        { key:'transfer_status',    label:'Status',    w:1.0 },
+        { key:'notes',              label:'Notes',     w:2.0 }
+    ];
+    const money = v => v == null || v === '' ? '' : '$' + Number(v).toLocaleString('en-US', { minimumFractionDigits:0, maximumFractionDigits:0 });
+    const rows = list.map(l => ({
+        agent_name: l.agent_name || l.agent_email || '',
+        property_address: l.property_address || '',
+        client_name: l.client_name || '',
+        price: money(l.deal_type === 'pending_sale' ? l.sale_price : l.list_price),
+        commission_expected: money(l.commission_expected),
+        expected_close_date: l.expected_close_date || '',
+        transfer_status: LIST_STATUS_LABEL[l.transfer_status] || l.transfer_status || '',
+        notes: l.notes || ''
+    }));
+    _pdfTable('Listings & Pendings Transition', cols, rows, { landscape:true });
 }
 
 /* ── Submissions ── */
@@ -1217,8 +2527,8 @@ async function deleteMktgRequest(id) {
 }
 
 /* ── Virtual Open House ── */
-const VOH_SB_URL = 'https://khhfkxfxefjgunhrihyx.supabase.co';
-const VOH_SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtoaGZreGZ4ZWZqZ3VuaHJpaHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3NzYwMjcsImV4cCI6MjA5MTM1MjAyN30.bYW68xMDUEXBRC1bxOLdj77xCcjXb3wIuHbPAPFdSGo';
+const VOH_SB_URL = 'https://wdvolamasztetwpitbwg.supabase.co';
+const VOH_SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indkdm9sYW1hc3p0ZXR3cGl0YndnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3Nzc2MTYsImV4cCI6MjA5MTM1MzYxNn0.uiGIaZwr88ZNtAobfSV-axlpXB3sos2Rcw3FiFm6JO8';
 
 const EMAILJS_PUBLIC_KEY    = 'p_Faa-dt1o_ljx_Yt';
 const EMAILJS_SERVICE_ID    = 'service_uv12biu';
@@ -1501,7 +2811,7 @@ function sendVohReadyEmail(e) {
             zoom_link:        e.zoom_join_link     || '',
             zoom_meeting_id:  e.zoom_meeting_id    || '',
             zoom_passcode:    e.zoom_passcode      || '',
-            interest_form_url: e.interest_form_url || `https://yrlagent.com/yrl-voh-interest.html?event=${e.id}`,
+            interest_form_url: e.interest_form_url || `https://yrl.nomadsystems.co/yrl-voh-interest.html?event=${e.id}`,
         }, EMAILJS_PUBLIC_KEY);
     } catch(err) { console.warn('EmailJS ready email error:', err); }
 }
@@ -1527,6 +2837,446 @@ async function deleteVohEvent(id) {
 /* ── Utilities ── */
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function fmt(ts) { return ts ? new Date(ts).toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}) : ''; }
+
+/* ════════════════════════════════════════════════════════════
+   CLOSING REQUESTS  →  Commission Disbursement Authorization (CDA)
+   Reads/writes public.closing_requests as the LOGGED-IN ADMIN
+   (RLS grants full access to the broker allowlist). PDFs go to the
+   public 'closing-cdas' storage bucket (admin-only upload).
+   ════════════════════════════════════════════════════════════ */
+const CLOSING_SB_URL = 'https://wdvolamasztetwpitbwg.supabase.co';
+const CLOSING_SB_KEY = VOH_SB_KEY; // same anon apikey
+const CDA_BUCKET     = 'closing-cdas';
+const CLOSING_STATUS_LABEL = { submitted:'New', in_review:'In Review', completed:'Completed' };
+
+let closingRequests = [];
+let closingFilter    = 'all';
+let closingExpanded  = new Set();
+const _sigPads = {};   // id -> {canvas, ctx, drawing, dirty}
+
+async function _awaitYrlClient(timeout = 7000) {
+    const start = Date.now();
+    while (!window.yrlClient) {
+        if (Date.now() - start > timeout) return null;
+        await new Promise(r => setTimeout(r, 150));
+    }
+    return window.yrlClient;
+}
+async function _closingToken() {
+    const client = await _awaitYrlClient();
+    if (!client) throw new Error('Not signed in — refresh the page and log in.');
+    const { data } = await client.auth.getSession();
+    if (!data.session) throw new Error('Session expired — log in again.');
+    return data.session.access_token;
+}
+function _closingHeaders(token, extra) {
+    return Object.assign({ 'apikey': CLOSING_SB_KEY, 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, extra || {});
+}
+
+async function loadClosingRequests() {
+    const el = document.getElementById('closingList');
+    el.innerHTML = '<div class="no-subs">Loading…</div>';
+    try {
+        const token = await _closingToken();
+        const res = await fetch(`${CLOSING_SB_URL}/rest/v1/closing_requests?select=*&order=created_at.desc`, {
+            headers: _closingHeaders(token)
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        closingRequests = await res.json();
+        renderClosingList();
+    } catch(e) {
+        el.innerHTML = '<div class="no-subs">Could not load closings: ' + esc(e.message) + '</div>';
+    }
+}
+
+function filterClosing(f, btn) {
+    closingFilter = f;
+    btn.parentElement.querySelectorAll('.sub-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderClosingList();
+}
+
+function renderClosingList() {
+    const el = document.getElementById('closingList');
+    const list = closingFilter === 'all' ? closingRequests : closingRequests.filter(c => c.status === closingFilter);
+    if (!list.length) {
+        el.innerHTML = `<div class="no-subs">No closings ${closingFilter==='all'?'yet':'with status "'+CLOSING_STATUS_LABEL[closingFilter]+'"'}.</div>`;
+        return;
+    }
+    el.innerHTML = list.map(renderClosingCard).join('');
+    // (re)attach signature canvases for any expanded completed/editing rows
+    list.forEach(c => { if (closingExpanded.has(c.id) && c.status !== 'completed') setupSignaturePad(c.id); });
+}
+
+function money(v) {
+    if (v == null || v === '') return '—';
+    const n = Number(v);
+    if (isNaN(n)) return esc(String(v));
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function renderClosingCard(c) {
+    const status = c.status || 'submitted';
+    const isOpen = closingExpanded.has(c.id);
+    const date = c.closing_date ? new Date(c.closing_date+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'}) : 'No date';
+    return `<div class="voh-card" id="closing-${c.id}">
+        <div class="voh-card-header">
+            <div>
+                <div class="voh-card-title">${esc(c.property_address || 'Property')}${c.property_zip?(' '+esc(c.property_zip)):''}</div>
+                <div class="voh-card-sub">${esc(c.agent_name||'')}${c.agent_email?' · '+esc(c.agent_email):''} · Closing ${esc(date)} · BLC ${esc(c.blc_number||'—')}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+                <span class="voh-status ${esc(status)}">${esc(CLOSING_STATUS_LABEL[status]||status)}</span>
+                <button class="voh-expand-btn" onclick="toggleClosingExpand('${c.id}')">${isOpen?'Collapse':(status==='completed'?'View':'Prepare CDA')}</button>
+            </div>
+        </div>
+        <div class="voh-grid">
+            <div><strong>Side</strong>${esc((c.side||'—'))}</div>
+            <div><strong>Sales Price</strong>${money(c.sales_price)}</div>
+            <div><strong>Commission to YRL</strong>${money(c.total_commission)}</div>
+            <div><strong>Earnest (YRL holds)</strong>${c.earnest_amount?money(c.earnest_amount):'—'}</div>
+            <div><strong>Client</strong>${esc(c.client_name||'—')}</div>
+            <div><strong>Title Co.</strong>${esc(c.title_company||'—')}</div>
+        </div>
+        <div class="voh-detail ${isOpen?'show':''}">${isOpen?renderClosingEditor(c):''}</div>
+    </div>`;
+}
+
+function toggleClosingExpand(id) {
+    if (closingExpanded.has(id)) closingExpanded.delete(id); else closingExpanded.add(id);
+    renderClosingList();
+}
+
+function renderClosingEditor(c) {
+    const v = (k) => esc(c[k]||'');
+    if (c.status === 'completed') {
+        return `
+        <div class="voh-section-title">Completed Disbursement Form</div>
+        <div class="voh-grid" style="margin-bottom:12px;">
+            <div><strong>Pay to Agent</strong>${esc(c.pay_to_agent_name||'—')} — ${money(c.pay_to_agent_amount)}</div>
+            <div><strong>Pay to YRL</strong>${money(c.pay_to_yrl_amount)}</div>
+            <div><strong>Completed</strong>${esc(fmt(c.completed_at))}</div>
+            <div><strong>By</strong>${esc(c.completed_by||'—')}</div>
+        </div>
+        ${c.cda_pdf_url ? `<a href="${esc(c.cda_pdf_url)}" target="_blank" class="voh-btn"><i class="fa-solid fa-file-pdf"></i> View / Download CDA</a>` : ''}
+        <button class="voh-btn secondary" style="margin-left:8px;" onclick="reopenClosing('${c.id}')"><i class="fa-solid fa-rotate-left"></i> Re-open &amp; Edit</button>
+        `;
+    }
+    // submitted / in_review → CDA builder (ALL fields editable by broker)
+    const agentName = c.pay_to_agent_name || c.agent_name || '';
+    const sideOpt = (o, label) => `<option value="${o}"${c.side===o?' selected':''}>${label}</option>`;
+    return `
+    <div class="voh-section-title">Closing Details
+        <span style="font-weight:400;font-size:11px;color:var(--text-muted);text-transform:none;letter-spacing:0;">— editable; correct anything the agent entered wrong</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+        <div style="grid-column:1/-1;"><label class="voh-field-label">Property Address</label><input class="voh-input" id="cf-${c.id}-property_address" value="${v('property_address')}"></div>
+        <div><label class="voh-field-label">Zip</label><input class="voh-input" id="cf-${c.id}-property_zip" value="${v('property_zip')}"></div>
+        <div><label class="voh-field-label">BLC #</label><input class="voh-input" id="cf-${c.id}-blc_number" value="${v('blc_number')}"></div>
+        <div><label class="voh-field-label">Closing Date</label><input class="voh-input" type="date" id="cf-${c.id}-closing_date" value="${v('closing_date')}"></div>
+        <div><label class="voh-field-label">Side</label><select class="voh-input" id="cf-${c.id}-side">${sideOpt('listing','Listing side')}${sideOpt('buyer','Buyer side')}${sideOpt('both','Both sides')}</select></div>
+        <div><label class="voh-field-label">Sales Price ($)</label><input class="voh-input" type="number" step="0.01" min="0" id="cf-${c.id}-sales_price" value="${c.sales_price??''}"></div>
+        <div><label class="voh-field-label">Total Commission to YRL ($)</label><input class="voh-input" type="number" step="0.01" min="0" id="cf-${c.id}-total_commission" value="${c.total_commission??''}"></div>
+        <div><label class="voh-field-label">Earnest — only if YRL holds ($)</label><input class="voh-input" type="number" step="0.01" min="0" id="cf-${c.id}-earnest_amount" value="${c.earnest_amount??''}" placeholder="leave blank if N/A"></div>
+        <div><label class="voh-field-label">Client Name (buyer/seller)</label><input class="voh-input" id="cf-${c.id}-client_name" value="${v('client_name')}"></div>
+        <div><label class="voh-field-label">Client Email</label><input class="voh-input" id="cf-${c.id}-client_email" value="${v('client_email')}"></div>
+        <div><label class="voh-field-label">Title Company / Closer</label><input class="voh-input" id="cf-${c.id}-title_company" value="${v('title_company')}"></div>
+        <div><label class="voh-field-label">Title Company Email</label><input class="voh-input" id="cf-${c.id}-title_company_email" value="${v('title_company_email')}"></div>
+        <div style="grid-column:1/-1;"><label class="voh-field-label">Notes</label><textarea class="voh-input" id="cf-${c.id}-notes" rows="2" style="resize:vertical;">${v('notes')}</textarea></div>
+    </div>
+
+    <div class="voh-section-title">Disbursement Authorization</div>
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:10px;margin-bottom:10px;">
+        <div><label class="voh-field-label">PAY TO Agent (name)</label><input class="voh-input" id="cf-${c.id}-pay_to_agent_name" value="${esc(agentName)}"></div>
+        <div><label class="voh-field-label">Amount to Agent ($)</label><input class="voh-input" id="cf-${c.id}-pay_to_agent_amount" type="number" step="0.01" min="0" value="${c.pay_to_agent_amount??''}" placeholder="0.00"></div>
+        <div style="grid-column:1/-1;"><label class="voh-field-label">PAY TO Your Realty Link — adjusted for earnest held by YRL ($)</label><input class="voh-input" id="cf-${c.id}-pay_to_yrl_amount" type="number" step="0.01" min="0" value="${c.pay_to_yrl_amount??''}" placeholder="0.00"></div>
+    </div>
+
+    <div class="voh-section-title">Broker Signature</div>
+    <div style="font-size:11.5px;color:var(--text-muted);margin-bottom:6px;">Sign below with mouse or trackpad — required to generate the form.</div>
+    <div style="border:1.5px dashed var(--border);border-radius:10px;background:#fff;display:inline-block;">
+        <canvas id="sig-${c.id}" width="460" height="130" style="display:block;touch-action:none;cursor:crosshair;max-width:100%;"></canvas>
+    </div>
+    <div style="margin:8px 0 14px;">
+        <button class="voh-btn secondary" onclick="clearSignaturePad('${c.id}')"><i class="fa-solid fa-eraser"></i> Clear signature</button>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="voh-btn secondary" onclick="saveClosingDraft('${c.id}')"><i class="fa-solid fa-floppy-disk"></i> Save Draft</button>
+        <button class="voh-btn" id="cda-go-${c.id}" onclick="generateAndCompleteCDA('${c.id}')"><i class="fa-solid fa-file-circle-check"></i> Generate &amp; Complete CDA</button>
+    </div>
+    <div id="cda-msg-${c.id}" style="font-size:12px;margin-top:10px;"></div>
+    `;
+}
+
+/* ── Signature pad ── */
+function setupSignaturePad(id) {
+    const canvas = document.getElementById('sig-' + id);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.strokeStyle = '#1a1d22';
+    const pad = { canvas, ctx, drawing:false, dirty:false };
+    _sigPads[id] = pad;
+    const pos = (e) => {
+        const r = canvas.getBoundingClientRect();
+        const t = e.touches ? e.touches[0] : e;
+        return { x: (t.clientX - r.left) * (canvas.width / r.width), y: (t.clientY - r.top) * (canvas.height / r.height) };
+    };
+    const start = (e) => { e.preventDefault(); pad.drawing = true; pad.dirty = true; const p = pos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); };
+    const move  = (e) => { if (!pad.drawing) return; e.preventDefault(); const p = pos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); };
+    const end   = () => { pad.drawing = false; };
+    canvas.addEventListener('mousedown', start); canvas.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', end);
+    canvas.addEventListener('touchstart', start, {passive:false}); canvas.addEventListener('touchmove', move, {passive:false});
+    canvas.addEventListener('touchend', end);
+}
+function clearSignaturePad(id) {
+    const pad = _sigPads[id]; if (!pad) return;
+    pad.ctx.clearRect(0, 0, pad.canvas.width, pad.canvas.height); pad.dirty = false;
+}
+
+/* ── Save draft (amounts only, status → in_review) ── */
+async function saveClosingDraft(id) {
+    const msg = document.getElementById('cda-msg-' + id);
+    try {
+        const body = collectClosing(id);
+        body.status = 'in_review';
+        const token = await _closingToken();
+        const res = await fetch(`${CLOSING_SB_URL}/rest/v1/closing_requests?id=eq.${id}`, {
+            method:'PATCH', headers: _closingHeaders(token, {'Prefer':'return=minimal'}), body: JSON.stringify(body)
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        msg.style.color = 'var(--green)'; msg.textContent = 'Draft saved (all edits stored).';
+        const row = closingRequests.find(r => r.id === id); if (row) Object.assign(row, body);
+    } catch(e) { msg.style.color = '#dc2626'; msg.textContent = 'Save failed: ' + e.message; }
+}
+
+function collectClosing(id) {
+    const g = (f) => { const el = document.getElementById(`cf-${id}-${f}`); return el ? el.value.trim() : ''; };
+    const numOrNull = (s) => s === '' ? null : Number(s);
+    return {
+        property_address:    g('property_address') || null,
+        property_zip:        g('property_zip') || null,
+        blc_number:          g('blc_number') || null,
+        closing_date:        g('closing_date') || null,
+        side:                g('side') || null,
+        sales_price:         numOrNull(g('sales_price')),
+        total_commission:    numOrNull(g('total_commission')),
+        earnest_amount:      numOrNull(g('earnest_amount')),
+        client_name:         g('client_name') || null,
+        client_email:        g('client_email') || null,
+        title_company:       g('title_company') || null,
+        title_company_email: g('title_company_email') || null,
+        notes:               g('notes') || null,
+        pay_to_agent_name:   g('pay_to_agent_name') || null,
+        pay_to_agent_amount: numOrNull(g('pay_to_agent_amount')),
+        pay_to_yrl_amount:   numOrNull(g('pay_to_yrl_amount'))
+    };
+}
+
+async function reopenClosing(id) {
+    const token = await _closingToken();
+    await fetch(`${CLOSING_SB_URL}/rest/v1/closing_requests?id=eq.${id}`, {
+        method:'PATCH', headers: _closingHeaders(token, {'Prefer':'return=minimal'}), body: JSON.stringify({ status:'in_review' })
+    });
+    const row = closingRequests.find(r => r.id === id); if (row) row.status = 'in_review';
+    renderClosingList();
+}
+
+/* ── Generate CDA PDF, upload, complete ── */
+async function generateAndCompleteCDA(id) {
+    const msg = document.getElementById('cda-msg-' + id);
+    const btn = document.getElementById('cda-go-' + id);
+    const c = closingRequests.find(r => r.id === id);
+    if (!c) return;
+    const fields = collectClosing(id);
+    const merged = Object.assign({}, c, fields);   // broker edits win
+    const pad = _sigPads[id];
+
+    if (!fields.pay_to_agent_name || fields.pay_to_agent_amount == null || fields.pay_to_yrl_amount == null) {
+        msg.style.color = '#dc2626'; msg.textContent = 'Enter agent name + both PAY-TO amounts before generating.'; return;
+    }
+    if (!pad || !pad.dirty) { msg.style.color = '#dc2626'; msg.textContent = 'Please sign before generating the form.'; return; }
+
+    btn.disabled = true; const orig = btn.innerHTML; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating…';
+    msg.style.color = 'var(--text-muted)'; msg.textContent = 'Building PDF…';
+
+    try {
+        const sigDataUrl = pad.canvas.toDataURL('image/png');
+        const blob = await buildCdaPdf(merged, sigDataUrl);
+
+        // Upload to storage via REST using a FRESH authenticated token
+        // (same token path as the table calls — avoids the supabase-js client's
+        //  internal token going stale and falling back to anon → RLS denial).
+        msg.textContent = 'Uploading…';
+        const token = await _closingToken();   // user token for the table write below
+        // Upload via the SAME proven path your guides/SOPs use (uploadHubFile → hub-files
+        // bucket, anon key). CDAs live under a closing-cdas/<id>/ folder inside hub-files.
+        const safeAddr = (c.property_address||'cda').replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40).toLowerCase();
+        let pubUrl;
+        try {
+            const file = new File([blob], `${safeAddr || 'cda'}.pdf`, { type: 'application/pdf' });
+            pubUrl = await uploadHubFile(file, `closing-cdas/${id}`);
+        } catch (upe) {
+            throw new Error('Upload: ' + (upe.message || upe));
+        }
+
+        // Update the row → completed (persist every broker edit too)
+        msg.textContent = 'Saving…';
+        const body = Object.assign({}, fields, {
+            status: 'completed', cda_pdf_url: pubUrl,
+            completed_at: new Date().toISOString(),
+            completed_by: (window.yrlUser && window.yrlUser.email) || 'admin'
+        });
+        const res = await fetch(`${CLOSING_SB_URL}/rest/v1/closing_requests?id=eq.${id}`, {
+            method:'PATCH', headers: _closingHeaders(token, {'Prefer':'return=minimal'}), body: JSON.stringify(body)
+        });
+        if (!res.ok) throw new Error('Save HTTP ' + res.status);
+
+        Object.assign(c, body);
+        msg.style.color = 'var(--green)';
+        msg.innerHTML = 'Done! CDA generated. <a href="'+esc(pubUrl)+'" target="_blank" style="color:var(--red);font-weight:700;">Open PDF</a> — (auto-email to agent + title company comes in Phase 3.)';
+        // collapse->reopen to show completed view
+        setTimeout(() => { renderClosingList(); }, 1200);
+    } catch(e) {
+        msg.style.color = '#dc2626'; msg.textContent = 'Failed: ' + e.message;
+        btn.disabled = false; btn.innerHTML = orig;
+    }
+}
+
+/* Load an image URL into a {dataUrl,w,h} for embedding in jsPDF. null on failure. */
+function _loadImageDataUrl(url) {
+    return new Promise((resolve) => {
+        let done = false;
+        const finish = (v) => { if (!done) { done = true; resolve(v); } };
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+            try {
+                const cv = document.createElement('canvas');
+                cv.width = img.naturalWidth; cv.height = img.naturalHeight;
+                cv.getContext('2d').drawImage(img, 0, 0);
+                finish({ dataUrl: cv.toDataURL('image/png'), w: img.naturalWidth, h: img.naturalHeight });
+            } catch(_) { finish(null); }
+        };
+        img.onerror = () => finish(null);
+        img.src = url;
+        setTimeout(() => finish(null), 2500);
+    });
+}
+
+/* Build the Commission Disbursement Authorization PDF natively with jsPDF.
+   Coordinate-based (no html2canvas) — reliable layout, text-selectable, small file. */
+async function buildCdaPdf(c, sigDataUrl) {
+    const JsPDF = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+    if (!JsPDF) throw new Error('PDF engine not loaded');
+    const doc = new JsPDF({ unit:'in', format:'letter', orientation:'portrait' });
+    const RED = [192,57,38];
+    const M = 0.65, R = 7.85, CW = R - M, COL2 = M + CW/2 + 0.15;
+    let y = 0.6;
+
+    // Header: logo + title
+    const logo = await _loadImageDataUrl('https://wdvolamasztetwpitbwg.supabase.co/storage/v1/object/public/hub-files/brand/yrl-logo-color.png');
+    let titleX = M;
+    if (logo) {
+        const h = 0.5, w = Math.min(1.4, h * (logo.w / logo.h));
+        try { doc.addImage(logo.dataUrl, 'PNG', M, y, w, h); titleX = M + w + 0.18; } catch(_) {}
+    }
+    doc.setFont('times','bold'); doc.setTextColor(RED[0],RED[1],RED[2]); doc.setFontSize(15);
+    doc.text('DISBURSEMENT AUTHORIZATION FORM', titleX, y + 0.22);
+    doc.setFont('times','italic'); doc.setTextColor(90,90,90); doc.setFontSize(9);
+    doc.text('(Pays Agent Directly at Closing — Must be signed by Broker NOT Agent)', titleX, y + 0.41);
+    y += 0.64;
+    doc.setDrawColor(RED[0],RED[1],RED[2]); doc.setLineWidth(0.022); doc.line(M, y, R, y);
+    y += 0.18;
+    doc.setFont('times','normal'); doc.setTextColor(60,60,60); doc.setFontSize(9);
+    doc.text('Your Realty Link, LLC     2302 E Southport Rd     Indianapolis, IN 46227     317-997-7404     Janet Giles, Broker/Owner', M, y);
+    y += 0.5;
+
+    // Field helper: bold label + value on an underline
+    function field(x, label, value, endX) {
+        doc.setFont('times','bold'); doc.setTextColor(20,20,20); doc.setFontSize(10.5);
+        doc.text(label, x, y);
+        const lw = doc.getTextWidth(label) + 0.07;
+        doc.setFont('times','normal');
+        doc.text(String(value == null ? '' : value), x + lw, y);
+        doc.setDrawColor(150,150,150); doc.setLineWidth(0.007);
+        doc.line(x + lw, y + 0.05, endX, y + 0.05);
+    }
+
+    const closing = c.closing_date ? new Date(c.closing_date+'T12:00:00').toLocaleDateString('en-US',{month:'numeric',day:'numeric',year:'numeric'}) : '';
+    const sideL = (c.side==='listing'||c.side==='both') ? 'X' : '  ';
+    const sideB = (c.side==='buyer'||c.side==='both') ? 'X' : '  ';
+
+    field(M, 'BLC #:', c.blc_number, COL2 - 0.35);
+    field(COL2, 'Closing Date:', closing, R);
+    y += 0.5;
+    doc.setFont('times','bold'); doc.setTextColor(20,20,20); doc.setFontSize(10.5);
+    doc.text(`Listing  [ ${sideL} ]        OR        Buyer Side  [ ${sideB} ]`, M, y);
+    y += 0.5;
+    field(M, 'Property Address (incl. Zip):', (c.property_address||'') + (c.property_zip?(', '+c.property_zip):''), R);
+    y += 0.5;
+    field(M, 'Buyer/Seller YRL Represents:', (c.client_name||'') + (c.client_email?('   ('+c.client_email+')'):''), R);
+    y += 0.5;
+    field(M, 'Sales Price:', money(c.sales_price), COL2 - 0.35);
+    field(COL2, 'Total Commission to YRL:', money(c.total_commission), R);
+    y += 0.5;
+    field(M, 'Earnest $ (if YRL holds):', c.earnest_amount?money(c.earnest_amount):'N/A', COL2 - 0.35);
+    field(COL2, 'Title Company / Closer:', c.title_company, R);
+    y += 0.6;
+
+    // Legal paragraph
+    doc.setFont('times','normal'); doc.setTextColor(35,35,35); doc.setFontSize(11);
+    const legal = "When signed below by Broker, YRL authorizes the payment to Agent and/or YRL — see below. If YRL holds earnest money the amount can be deducted from YRL's proceeds, or if the earnest exceeds the amount paid to YRL then agent should make arrangements to either get a check for earnest payable to Title Company or after closing YRL will pay any difference to agent. AGENT MUST OBTAIN NEW APPROVAL if there is a discrepancy on this form. Agents are not allowed to modify this Disbursement Form.";
+    let lines = doc.splitTextToSize(legal, CW);
+    doc.text(lines, M, y); y += lines.length * 0.18 + 0.4;
+
+    // PAY TO lines
+    function payLine(label, amount) {
+        doc.setFont('times','bold'); doc.setTextColor(10,10,10); doc.setFontSize(11.5);
+        doc.text(label, M, y);
+        doc.text(money(amount), R, y, { align:'right' });
+        doc.setDrawColor(60,60,60); doc.setLineWidth(0.009);
+        doc.line(M, y + 0.08, R, y + 0.08);
+        y += 0.5;
+    }
+    payLine('PAY TO Agent:  ' + (c.pay_to_agent_name || ''), c.pay_to_agent_amount);
+    payLine('PAY TO Your Realty Link (adjusted for earnest held by YRL)', c.pay_to_yrl_amount);
+    y += 0.32;
+
+    // Title-company instructions
+    doc.setFont('times','normal'); doc.setTextColor(45,45,45); doc.setFontSize(10);
+    const instr = "TITLE COMPANY & AGENT PLEASE READ — Please make a paper copy of ALL disbursement docs. Disbursement is for YRL agent and YRL only. Any remaining commission (such as a referral fee to another company) shall be included in the proceeds to Your Realty Link LLC & agent shall provide instructions along with the closed paper file as to who gets any portion of the YRL check. TITLE SHOULD NOT give agent a check if agent does not have a complete copy of closing docs to include in paper file to the office. YRL check should be given to agent to return to office and agent needs to have file completed, post ALL closing docs in active Dotloop file and drop off the paper file within one business day of closing. Listings must be marked in BLC within 2 business days of closing OR agent will be responsible for any fine by MIBOR. Do not mark SOLD in Dotloop — admin does that.";
+    lines = doc.splitTextToSize(instr, CW);
+    doc.text(lines, M, y); y += lines.length * 0.16 + 0.6;
+
+    // Signature (right-aligned)
+    const sigW = 2.0, sigH = 0.7;
+    try { if (sigDataUrl) doc.addImage(sigDataUrl, 'PNG', R - sigW, y, sigW, sigH); } catch(_) {}
+    y += sigH + 0.04;
+    doc.setDrawColor(20,20,20); doc.setLineWidth(0.008); doc.line(R - 2.7, y, R, y);
+    y += 0.17;
+    doc.setFont('times','normal'); doc.setTextColor(20,20,20); doc.setFontSize(10);
+    doc.text('Janet Giles, Prin. Broker    ·    ' + new Date().toLocaleDateString('en-US'), R, y, { align:'right' });
+    y += 0.34;
+
+    // Footer
+    doc.setDrawColor(200,200,200); doc.setLineWidth(0.006); doc.line(M, y, R, y); y += 0.14;
+    doc.setFont('times','normal'); doc.setTextColor(90,90,90); doc.setFontSize(8);
+    const footer = "Attn: Title Office — Your Realty Link, 2302 E Southport Rd, Indianapolis, IN 46227. Office 317-567-1410, text 317-997-7404. Email: Janet Giles — janet@yourrealtylink.com";
+    lines = doc.splitTextToSize(footer, CW);
+    doc.text(lines, M, y);
+
+    return doc.output('blob');
+}
+
+/* When Supabase auth finishes initializing, (re)load the closing queue
+   if the admin panel is already unlocked — covers the race where loadAll()
+   ran before window.yrlClient existed. */
+document.addEventListener('yrl-auth-ready', () => {
+    const panel = document.getElementById('adminContent');
+    if (panel && panel.classList.contains('show')) loadClosingRequests();
+});
 
 /* ── Init ── */
 document.addEventListener('DOMContentLoaded', () => {

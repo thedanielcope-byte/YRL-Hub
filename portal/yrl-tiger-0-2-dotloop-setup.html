@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Tiger 0.2 · Setting Up Dotloop — Your Realty Link</title>
+<script src="portal-auth.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="tiger-shell.css?v=20260927b">
+<link rel="stylesheet" href="tiger-module.css">
+</head>
+<body class="tiger-shell" data-tiger-module="0.2" data-tiger-title="Setting Up Dotloop">
+
+<button class="tiger-menu-btn" id="tigerMenuBtn" aria-label="Modules"><i class="fa-solid fa-bars"></i></button>
+<aside class="tiger-side" id="tigerSide"></aside>
+<div class="tiger-backdrop" id="tigerBackdrop"></div>
+
+<main class="tiger-main">
+
+<div class="reader-topbar">
+  <div class="prog">
+    <div class="track"><i id="tigerProgressBar"></i></div>
+    <div class="prog-lbl" id="tigerProgressLabel">0% complete</div>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn btn-ghost" data-tiger-action="pdf"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
+  <button class="btn btn-primary" data-tiger-action="save"><i class="fa-solid fa-floppy-disk"></i> <span>Save</span></button>
+</div>
+
+<header class="reader-head">
+  <p class="reader-eyebrow">Phase 0 · Module 0.2 <span class="chip">Checklist</span></p>
+  <h1 class="reader-title">Setting Up Dotloop</h1>
+  <p class="reader-lede">Dotloop is Your Realty Link's document and transaction management system. This module gets you set up so you can prepare and sign listing and purchase documents online.</p>
+  <p class="reader-who">Worksheet for <b data-tiger-name>Agent</b> · <span data-tiger-date></span> · saves automatically as you type</p>
+</header>
+
+<div class="print-only" style="text-align:center;margin:0 0 6px">
+  <strong>YOUR REALTY LINK · TIGER TRAINING</strong> — Module 0.2: Setting Up Dotloop
+</div>
+
+<div class="reader-body">
+<section class="card"><h2><span class="n">01</span>What Dotloop is</h2><p class="teach">Dotloop is where every transaction lives — you prepare documents, get clients to sign electronically, and store the complete file. Your Realty Link pays for your Dotloop, but you need a few things in place first.</p></section>
+<section class="card"><h2><span class="n">02</span>Get set up</h2><div class="check"><input type="checkbox" id="dl_license" data-tiger-check="dl_license"><label for="dl_license">Have my state license number (required to log in)</label></div><div class="check"><input type="checkbox" id="dl_mibor" data-tiger-check="dl_mibor"><label for="dl_mibor">Be an actual MIBOR member so YRL admin can create my Dotloop page</label></div><div class="check"><input type="checkbox" id="dl_admin" data-tiger-check="dl_admin"><label for="dl_admin">Ask YRL admin to set up my Dotloop account</label></div><div class="check"><input type="checkbox" id="dl_learn" data-tiger-check="dl_learn"><label for="dl_learn">Explore the templates and practice preparing a document</label></div><div class="callout confirm">YRL pays for your Dotloop, but you must have your license number and MIBOR membership before admin can set you up. While you wait, another agent can share their login so you can start learning — confirm with Janet.</div></section>
+<section class="card"><h2><span class="n">03</span>Learn the basics</h2><p class="teach">Once you're in, get comfortable creating a file (titled by property address), pulling documents from templates, and sending them for signature. You'll use this on every listing and every offer — the workflow modules (4.4, 3.3) walk through the documents themselves.</p><div class="field"><label class="field-label" for="action">My next step this week…</label><textarea id="action" data-tiger="action" placeholder="e.g. Ask admin to set up my account, or shadow an agent&#x27;s Dotloop file."></textarea></div><div class="grid2"><div class="field"><label class="field-label" for="sign">Signed</label><input class="tiger-input" id="sign" data-tiger="sign" inputmode="text" placeholder="Your name"></div><div class="field"><label class="field-label" for="signdate">Date</label><input class="tiger-input" id="signdate" data-tiger="signdate" inputmode="text" placeholder="MM/DD/YYYY"></div></div></section>
+</div>
+
+<div class="actions"><div class="actions-in">
+  <span class="note"><i class="fa-solid fa-cloud"></i> Your answers save automatically to your account — pick up on any device.</span>
+  <button class="btn btn-ghost" data-tiger-action="txt"><i class="fa-solid fa-list"></i> Download list</button>
+  <button class="btn btn-ghost" data-tiger-action="pdf"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
+  <button class="btn btn-ghost" data-tiger-action="reset"><i class="fa-solid fa-eraser"></i> Clear</button>
+  <button class="btn btn-primary" data-tiger-action="complete"><i class="fa-solid fa-check"></i> Mark complete</button>
+</div></div>
+
+</main>
+
+<script src="hub-data.js"></script>
+<script src="tiger-nav.js"></script>
+<script src="yrl-tiger.js"></script>
+
+</body>
+</html>

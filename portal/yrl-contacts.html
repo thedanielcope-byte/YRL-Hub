@@ -1,0 +1,2322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Contacts — Your Realty Link</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="portal-auth.js"></script>
+    <script src="embed-mode.js?v=20260927b"></script>
+    <script src="help-box.js?v=20260916" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --red:#c03926; --red-light:#d94a35; --red-dark:#9e2e1e;
+            --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f7f8fa;
+            --surface-3:#eef0f3; --border:#e2e5ea;
+            --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+            --green:#16a34a; --green-light:#dcfce7;
+            --orange:#ea580c; --blue:#1d4ed8;
+            --radius:12px; --radius-lg:20px;
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;}
+        a{text-decoration:none;color:inherit;}
+
+        /* Header */
+        .sub-header{background:linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);padding:26px 20px 22px;color:#fff;position:relative;overflow:hidden;}
+        .sub-header::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.07) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;}
+        .sub-header-inner{max-width:980px;margin:0 auto;position:relative;z-index:1;}
+        .back-btn{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:rgba(255,255,255,0.85);background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:7px 14px;margin-bottom:14px;cursor:pointer;}
+        .back-btn:hover{background:rgba(255,255,255,0.2);color:#fff;}
+        .header-row{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;}
+        .header-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1.6px;line-height:1.05;}
+        .header-sub{font-size:13px;opacity:0.85;margin-top:5px;max-width:560px;}
+
+        .main{max-width:980px;margin:0 auto;padding:20px 16px 80px;}
+
+        /* Toolbar */
+        .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;}
+        .toolbar .search{flex:1;min-width:200px;position:relative;}
+        .toolbar .search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:12px;}
+        .toolbar .search input{width:100%;background:var(--surface-3);border:1.5px solid var(--border);border-radius:8px;padding:8px 12px 8px 32px;font-size:13px;font-family:'Inter',sans-serif;color:var(--text);outline:none;}
+        .toolbar .search input:focus{border-color:var(--red);background:var(--surface);}
+        .toolbar select{background:var(--surface-3);border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:13px;font-family:'Inter',sans-serif;color:var(--text);outline:none;cursor:pointer;}
+        .toolbar select:focus{border-color:var(--red);}
+        .btn{display:inline-flex;align-items:center;gap:7px;border:none;border-radius:8px;padding:8px 14px;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:700;cursor:pointer;transition:all 0.15s;text-decoration:none;}
+        .btn-primary{background:var(--red);color:#fff;}
+        .btn-primary:hover{background:var(--red-light);transform:translateY(-1px);}
+        .btn-ghost{background:var(--surface-3);color:var(--text);border:1px solid var(--border);}
+        .btn-ghost:hover{border-color:var(--red);color:var(--red);}
+
+        .count-row{font-size:12px;color:var(--text-muted);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
+
+        /* Contact card */
+        .contact-list{display:flex;flex-direction:column;gap:8px;}
+        .contact{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;cursor:pointer;transition:all 0.15s;}
+        .contact:hover{border-color:rgba(192,57,38,0.3);box-shadow:0 4px 14px rgba(0,0,0,0.05);}
+        .contact-avatar{width:38px;height:38px;border-radius:50%;background:rgba(192,57,38,0.08);color:var(--red);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;}
+        .contact-info{min-width:0;}
+        .contact-name{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+        .contact-meta{font-size:12px;color:var(--text-muted);margin-top:3px;}
+        .contact-actions{display:flex;gap:4px;}
+        .icon-btn{background:none;border:none;color:var(--text-muted);cursor:pointer;padding:6px 8px;border-radius:6px;font-size:12px;}
+        .icon-btn:hover{background:var(--surface-3);color:var(--red);}
+        .pill{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;}
+        .pill-buyer{background:#dbeafe;color:#1e40af;}
+        .pill-seller{background:#fef3c7;color:#92400e;}
+        .pill-prospect{background:#fce7f3;color:#9d174d;}
+        .pill-lead{background:#e0e7ff;color:#3730a3;}
+        .pill-past_client{background:var(--green-light);color:#065f46;}
+        .pill-vendor{background:#f3e8ff;color:#7e22ce;}
+        .pill-other{background:var(--surface-3);color:var(--text-sec);}
+        .status-dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:6px;}
+        .status-active{background:var(--green);}
+        .status-cold{background:var(--text-muted);}
+        .status-closed{background:var(--blue);}
+        .status-do_not_contact{background:#dc2626;}
+
+        .contact-expand{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:12.5px;color:var(--text-sec);display:none;}
+        .contact.open .contact-expand{display:block;}
+        .contact-expand strong{color:var(--text);}
+        .contact-detail-row{margin-bottom:4px;}
+        .contact.open{grid-template-columns:auto 1fr auto;}
+
+        .empty{text-align:center;padding:50px 20px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);}
+        .empty i{font-size:38px;opacity:0.3;margin-bottom:10px;display:block;}
+        .empty h3{font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px;}
+        .empty p{font-size:13px;max-width:380px;margin:0 auto 16px;}
+        .loading{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:13px;}
+
+        /* Modal */
+        .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;align-items:center;justify-content:center;padding:20px;}
+        .modal-overlay.open{display:flex;}
+        .modal{background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:540px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.35);}
+        .modal-head{padding:20px 24px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+        .modal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1.3px;}
+        .modal-close{background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-muted);line-height:1;}
+        .modal-close:hover{color:var(--red);}
+        .modal-body{padding:18px 24px;}
+        .modal-foot{padding:14px 24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+        .field{margin-bottom:12px;}
+        .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+        @media(max-width:520px){.field-row{grid-template-columns:1fr;}}
+        .field label{display:block;font-size:10.5px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;}
+        .field input,.field select,.field textarea{width:100%;background:var(--surface-3);border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13.5px;font-family:'Inter',sans-serif;color:var(--text);outline:none;}
+        .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--red);background:var(--surface);}
+        .field textarea{resize:vertical;min-height:65px;}
+        .field-hint{font-size:11px;color:var(--text-muted);margin-top:3px;line-height:1.4;}
+
+        /* Section divider inside the modal */
+        .section-head{
+            display:flex;align-items:center;gap:8px;
+            font-size:10.5px;font-weight:800;color:var(--red);
+            text-transform:uppercase;letter-spacing:0.8px;
+            margin:18px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);
+        }
+        .section-head i{font-size:11px;}
+        .section-head:first-of-type{margin-top:4px;}
+
+        /* Address row: Street full, then City | State | Zip */
+        .addr-row{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;margin-bottom:12px;}
+        @media(max-width:520px){.addr-row{grid-template-columns:1fr 1fr;}}
+
+        /* Linked-contact pill on a card */
+        .pill-linked{
+            display:inline-flex;align-items:center;gap:4px;
+            background:#ecfeff;color:#0e7490;border:1px solid #a5f3fc;
+            border-radius:20px;padding:2px 8px;font-size:10.5px;font-weight:700;
+            text-transform:uppercase;letter-spacing:0.4px;
+        }
+        .pill-linked i{font-size:9px;}
+
+        /* Linked panel inside modal */
+        .link-current{
+            background:var(--surface-3);border:1px solid var(--border);border-radius:8px;
+            padding:9px 12px;font-size:12.5px;color:var(--text);
+            display:flex;justify-content:space-between;align-items:center;gap:8px;
+        }
+        .link-current b{font-weight:700;}
+        .btn-unlink{
+            background:none;border:1px solid var(--border);color:#dc2626;
+            border-radius:6px;padding:4px 9px;font-size:11px;font-weight:700;
+            cursor:pointer;font-family:'Inter',sans-serif;
+        }
+        .btn-unlink:hover{border-color:#dc2626;background:#fef2f2;}
+
+        .import-preview{margin-top:10px;background:var(--surface-3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text-sec);max-height:200px;overflow:auto;}
+        .import-preview table{width:100%;border-collapse:collapse;font-size:11px;}
+        .import-preview th,.import-preview td{padding:4px 8px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+        .import-preview th{color:var(--red);font-weight:700;}
+
+        #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--text);color:#fff;padding:11px 22px;border-radius:10px;font-size:12.5px;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,0.25);z-index:9999;transition:transform 0.3s;max-width:90vw;text-align:center;}
+        #toast.show{transform:translateX(-50%) translateY(0);}
+        #toast.error{background:#dc2626;}
+        #toast.success{background:var(--green);}
+
+        /* View tabs */
+        .view-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
+        .bday-row{display:flex;gap:6px;}
+        .bday-row select,.bday-row input{min-width:0;}
+        .bday-row select:first-child{flex:1.4;}
+        .bday-row select:nth-child(2){flex:.8;}
+        .bday-row input{flex:1;}
+        .agent-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin-bottom:12px;}
+        .agent-bar label{font-size:12.5px;font-weight:700;color:var(--text-sec);display:flex;align-items:center;gap:7px;}
+        .agent-bar label i{color:var(--red);}
+        .agent-bar select{font-family:inherit;font-size:14px;font-weight:700;padding:8px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--surface);color:var(--text);min-width:200px;}
+        .agent-bar-note{font-size:12px;color:var(--text-muted);}
+        .agent-chip{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;color:#1d4ed8;background:rgba(37,99,235,.09);border-radius:5px;padding:1px 7px;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;}
+        .agent-owner-note{font-size:12.5px;font-weight:600;color:#1d4ed8;background:rgba(37,99,235,.07);border-radius:8px;padding:8px 12px;margin-bottom:12px;}
+        .view-tab{padding:8px 15px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface);font-family:'Inter',sans-serif;font-weight:700;font-size:12.5px;cursor:pointer;color:var(--text-sec);display:inline-flex;gap:7px;align-items:center;}
+        .view-tab:hover{border-color:var(--red);color:var(--red);}
+        .view-tab.active{background:var(--red);color:#fff;border-color:var(--red);}
+        .fu-badge{background:#fff;color:var(--red);border-radius:20px;font-size:10px;font-weight:800;padding:1px 6px;line-height:1.4;}
+
+        .pill-pipe{background:var(--surface-3);color:var(--text-sec);}
+        .muted-note{font-size:12px;color:var(--text-muted);}
+
+        /* Pipeline board */
+        .board-block{margin-bottom:26px;}
+        .board-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin:2px 2px 10px;}
+        .board-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;}
+        .board-stats{font-size:12px;color:var(--text-sec);}
+        .board-wrap{overflow-x:auto;padding-bottom:6px;}
+        .board{display:flex;gap:10px;min-width:min-content;}
+        .col{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;width:210px;flex-shrink:0;display:flex;flex-direction:column;max-height:66vh;}
+        /* stacked pipeline — stages stack vertically, cards flow in a grid (no sideways scroll) */
+        .board.stack{flex-direction:column;min-width:0;gap:12px;}
+        .board.stack .col{width:100%;flex-shrink:1;max-height:none;}
+        .board.stack .col-body{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;overflow:visible;}
+        .pipe-toolbar{display:flex;justify-content:flex-end;margin:0 2px 12px;}
+        .pl-list{display:flex;flex-direction:column;gap:6px;}
+        .pl-row{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 12px;cursor:pointer;}
+        .pl-row:hover{border-color:var(--red);}
+        .pl-nm{flex:1;min-width:0;font-weight:600;font-size:13px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+        .pl-val{font-size:12px;font-weight:700;color:var(--text-sec);white-space:nowrap;}
+        .pl-row .deal-move{flex:0 0 auto;width:auto;max-width:180px;margin-top:0;}
+        .col-head{padding:9px 11px;border-bottom:1px solid var(--border);font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.4px;display:flex;justify-content:space-between;gap:6px;align-items:center;}
+        .col-count{color:var(--text-muted);font-weight:700;}
+        .col-body{padding:8px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;min-height:44px;}
+        .col-empty{color:var(--text-muted);font-size:12px;text-align:center;padding:10px 0;}
+        .deal-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px;cursor:pointer;transition:border-color .15s;}
+        .deal-card:hover{border-color:var(--red);}
+        .deal-name{font-weight:700;font-size:13px;}
+        .deal-val{font-size:12px;color:var(--green);font-weight:700;margin-top:2px;}
+        .deal-close{font-size:11px;color:var(--text-muted);margin-top:2px;}
+        .deal-move{margin-top:8px;width:100%;font-size:11px;padding:5px;border-radius:6px;border:1px solid var(--border);background:var(--surface-3);color:var(--text);font-family:'Inter',sans-serif;cursor:pointer;}
+
+        /* Follow-ups */
+        .fu-group{margin-bottom:18px;}
+        .fu-h{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin-bottom:8px;}
+        .fu-item{display:flex;align-items:flex-start;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:6px;}
+        .fu-item.overdue{border-color:#fecaca;background:#fef2f2;}
+        .fu-check{width:17px;height:17px;margin-top:1px;cursor:pointer;accent-color:var(--red);flex-shrink:0;}
+        .fu-title{font-weight:600;font-size:13px;}
+        .fu-meta{font-size:11px;color:var(--text-muted);margin-top:2px;}
+        .fu-meta a{color:var(--red);font-weight:600;}
+
+        /* Detail modal */
+        .deal-summary{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 10px;align-items:center;}
+        .chip{background:var(--surface-3);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--text-sec);}
+        .chip a{color:var(--red);}
+        .chip b{color:var(--text);}
+        .mini-add{background:none;border:1px solid var(--border);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer;font-family:'Inter',sans-serif;margin-left:auto;}
+        .mini-add:hover{border-color:var(--red);}
+        .act-add{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
+        .act-add select{flex:0 0 auto;background:var(--surface-3);border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12.5px;font-family:'Inter',sans-serif;color:var(--text);}
+        .act-add input{flex:1;min-width:150px;background:var(--surface-3);border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12.5px;font-family:'Inter',sans-serif;color:var(--text);}
+        .act-add input:focus,.act-add select:focus{border-color:var(--red);background:var(--surface);outline:none;}
+        .tl{display:flex;flex-direction:column;}
+        .tl-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+        .tl-item:last-child{border-bottom:none;}
+        .tl-ic{width:26px;height:26px;border-radius:50%;background:var(--surface-3);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+        .tl-body{flex:1;font-size:12.5px;color:var(--text);}
+        .tl-time{font-size:11px;color:var(--text-muted);margin-top:2px;}
+
+        /* Wider, 2-column contact detail */
+        .modal.modal-lg{max-width:920px;}
+        .detail-cols{display:grid;grid-template-columns:1fr 1fr;gap:26px;}
+        @media(max-width:680px){.detail-cols{grid-template-columns:1fr;gap:16px;}}
+        .detail-col{min-width:0;}
+        /* ── Split view (list + record) ── */
+        .crm-split{display:grid;grid-template-columns:290px 1fr;gap:16px;align-items:start;transition:grid-template-columns .18s ease;}
+        .crm-listcol{border:1px solid var(--border);border-radius:14px;background:var(--surface);overflow:hidden;position:relative;}
+        .crm-scroll{max-height:calc(100vh - 300px);overflow-y:auto;padding:8px;}
+        /* collapse the list to a slim avatar rail when a record is open, so the card gets bigger */
+        .crm-listtoggle{display:none;position:absolute;top:6px;right:6px;z-index:3;width:26px;height:26px;border:1px solid var(--border);background:var(--surface);border-radius:7px;color:var(--text-sec);cursor:pointer;font-size:11px;align-items:center;justify-content:center;}
+        .crm-listtoggle:hover{border-color:var(--red);color:var(--red);}
+        .crm-split.has-record .crm-listtoggle{display:flex;}
+        .crm-split.has-record .crm-scroll{padding-top:36px;}
+        .crm-split.list-narrow{grid-template-columns:58px 1fr;}
+        .crm-split.list-narrow .crm-scroll{padding:36px 3px 6px;}
+        .crm-split.list-narrow .crow{justify-content:center;padding:6px 2px;gap:0;}
+        .crm-split.list-narrow .crow > div[style]{display:none;}
+        .crm-split.list-narrow .crow .cdot{display:none;}
+        .crm-recordcol{border:1px solid var(--border);border-radius:14px;background:var(--surface);padding:20px 22px;min-width:0;min-height:340px;}
+        .crow{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:10px;cursor:pointer;}
+        .crow:hover{background:var(--surface-2);}
+        .crow.sel{background:rgba(192,57,38,0.08);}
+        .crow .cav{width:32px;height:32px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;background:rgba(192,57,38,0.08);color:var(--red);}
+        .crow.sel .cav{background:var(--red);color:#fff;}
+        .crow .cnm{font-weight:600;font-size:13px;color:var(--text);line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+        .crow .cty{font-size:11px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+        .crow .cdot{width:9px;height:9px;border-radius:50%;margin-left:auto;flex:none;}
+        .rec-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text-muted);text-align:center;padding:70px 20px;font-size:13px;}
+        .rec-back{display:none;align-items:center;gap:7px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:7px 12px;font-size:12.5px;font-weight:600;color:var(--text-sec);cursor:pointer;font-family:inherit;margin-bottom:14px;}
+        .rec-hero{display:flex;gap:14px;align-items:flex-start;padding-bottom:16px;border-bottom:1px solid var(--border);}
+        .rec-hav{width:54px;height:54px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;background:var(--red);color:#fff;}
+        .rec-hname{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;color:var(--text);line-height:1;}
+        .rec-hsub{font-size:12.5px;color:var(--text-sec);margin-top:6px;}
+        .rec-qa{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0;}
+        .rec-qbtn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);background:var(--surface);border-radius:8px;padding:7px 11px;font-size:12px;font-weight:600;color:var(--text);cursor:pointer;text-decoration:none;}
+        .rec-qbtn:hover{border-color:var(--red);color:var(--red);}
+        .rec-qbtn.go{background:var(--red);border-color:var(--red);color:#fff;}
+        .rec-qbtn.go:hover{color:#fff;}
+        .rec-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
+        .rec-stat{background:var(--surface-2);border-radius:9px;padding:9px 11px;}
+        .rec-stat .sl{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;}
+        .rec-stat .sv{font-size:13.5px;font-weight:700;color:var(--text);margin-top:2px;}
+        .rec-stat .sv.over{color:#dc2626;}
+        .crm-table-wrap{border:1px solid var(--border);border-radius:12px;overflow-x:auto;background:var(--surface);}
+        table.crm-table{width:100%;border-collapse:collapse;font-size:13px;min-width:820px;}
+        .crm-table th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);background:var(--surface-2);padding:10px 12px;border-bottom:1px solid var(--border);cursor:pointer;white-space:nowrap;}
+        .crm-table th:hover{color:var(--red);}
+        .crm-table td{padding:10px 12px;border-bottom:1px solid var(--border);white-space:nowrap;color:var(--text-sec);}
+        .crm-table tbody tr{cursor:pointer;}
+        .crm-table tbody tr:hover td{background:var(--surface-2);}
+        .crm-table .tnm{font-weight:700;color:var(--text);}
+        .crm-table .tsub{font-size:11px;color:var(--red);font-weight:600;}
+        .vm-toggle{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+        .vm-toggle button{border:none;background:var(--surface);padding:7px 12px;font-size:12px;font-weight:600;color:var(--text-sec);cursor:pointer;font-family:inherit;}
+        .vm-toggle button.on{background:var(--red);color:#fff;}
+        /* record: key-date chips + transactions card */
+        .rec-kd{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 14px;}
+        .kd-chip{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600;color:var(--text-sec);background:var(--surface-2);border:1px solid var(--border);border-radius:100px;padding:4px 11px;}
+        .kd-chip.soon{color:#b45309;background:#fffbeb;border-color:#fde68a;}
+        .rec-card{border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:14px;background:var(--surface);}
+        .txn-lrow{display:flex;align-items:stretch;gap:6px;margin-bottom:7px;}
+        .txn-lmain{flex:1;min-width:0;display:flex;align-items:center;gap:11px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:9px 12px;transition:border-color .15s;}
+        .txn-lmain:hover{border-color:rgba(192,57,38,0.35);}
+        .txn-lty{font-size:11px;font-weight:700;white-space:nowrap;color:var(--text-sec);}
+        .txn-lname{font-weight:600;font-size:13px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+        .txn-lmeta{font-size:11px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+        .txn-lx{flex:none;width:32px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text-muted);font-size:17px;cursor:pointer;line-height:1;}
+        .txn-lx:hover{border-color:#dc2626;color:#dc2626;}
+        .txn-pick{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:7px;cursor:pointer;font-family:inherit;}
+        .txn-pick:hover{border-color:var(--red);background:var(--surface-2);}
+        .txn-pick .sug{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--red);background:rgba(192,57,38,.1);padding:2px 7px;border-radius:5px;white-space:nowrap;}
+        @media(max-width:820px){
+            .crm-split, .crm-split.list-narrow{grid-template-columns:1fr;}
+            .crm-listtoggle{display:none!important;}
+            .crm-split.list-narrow .crow{justify-content:flex-start;padding:9px 10px;gap:9px;}
+            .crm-split.list-narrow .crow > div[style], .crm-split.list-narrow .crow .cdot{display:block;}
+            .crm-split.list-narrow .crm-scroll{padding:8px;}
+            .crm-split > .crm-recordcol{display:none;}
+            .crm-split.has-record > .crm-listcol{display:none;}
+            .crm-split.has-record > .crm-recordcol{display:block;}
+            .crm-split.has-record .rec-back{display:inline-flex;}
+            .crm-scroll{max-height:none;}
+            .rec-stats{grid-template-columns:repeat(2,1fr);}
+        }
+        #detailBody .section-head:first-child{margin-top:0;}
+
+        /* Tag filter chips */
+        .tag-filters{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:12px;}
+        .tf-label{font-size:11px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;display:inline-flex;gap:5px;align-items:center;}
+        .tag-chip{padding:5px 12px;border-radius:100px;border:1.5px solid var(--border);background:var(--surface);font-size:12px;font-weight:700;cursor:pointer;color:var(--text-sec);font-family:'Inter',sans-serif;}
+        .tag-chip:hover{border-color:var(--red);color:var(--red);}
+        .tag-chip.active{background:var(--red);border-color:var(--red);color:#fff;}
+        .saved-flash{opacity:0;font-size:12px;font-weight:700;color:var(--green);background:var(--green-light);border-radius:6px;padding:2px 8px;transition:opacity .2s;white-space:nowrap;}
+        .saved-flash.show{opacity:1;}
+        #detailBody .field label{color:var(--text-sec);}
+    </style>
+<link rel="stylesheet" href="hub-theme.css?v=20260903b"><script src="hub-brand.js" defer></script></head>
+<body>
+
+<header class="sub-header">
+    <div class="sub-header-inner">
+        <a href="hub.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Hub</a>
+        <div class="header-row">
+            <div>
+                <div class="header-title">MY CONTACTS</div>
+                <div class="header-sub">Your private contact database — buyers, sellers, leads, vendors, past clients. Only you and the office admins see this list.</div>
+            </div>
+            <button class="btn btn-primary" onclick="openContactModal()"><i class="fa-solid fa-plus"></i> Add Contact</button>
+        </div>
+    </div>
+</header>
+
+<main class="main">
+    <div id="helpTop"></div>
+    <script>document.addEventListener('DOMContentLoaded',function(){ window.HelpBox && HelpBox.mount({container:'#helpTop',key:'yrl-contacts',label:'My Contacts'}); });</script>
+    <div id="crmBanner" style="display:none;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:10px;padding:10px 14px;font-size:12.5px;margin-bottom:12px;line-height:1.5;">
+        <b>Pipeline &amp; follow-ups aren't switched on yet.</b> Your contact list works normally. To turn on the Buyer/Seller pipeline, deal tracking, follow-up tasks, and activity log, the CRM upgrade migration still needs to be run on the database.
+    </div>
+    <div class="agent-bar" id="agentBar" style="display:none;">
+        <label for="agentFilter"><i class="fa-solid fa-user-tie"></i> Whose contacts</label>
+        <select id="agentFilter" onchange="setAgentFilter(this.value)"></select>
+        <span class="agent-bar-note" id="agentBarNote"></span>
+    </div>
+    <div class="view-tabs">
+        <button class="view-tab active" data-view="list" onclick="setView('list')"><i class="fa-solid fa-address-book"></i> Contacts <span id="dueBadge" class="fu-badge" style="display:none;"></span></button>
+        <button class="view-tab" data-view="pipeline" onclick="setView('pipeline')"><i class="fa-solid fa-diagram-project"></i> Pipeline</button>
+        <button class="view-tab" data-view="followups" onclick="setView('followups')"><i class="fa-solid fa-bell"></i> Follow-ups <span id="fuBadge" class="fu-badge" style="display:none;"></span></button>
+    </div>
+    <div class="toolbar" id="listToolbar">
+        <div class="search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="searchInput" type="search" placeholder="Search name, email, phone…" oninput="renderContacts()">
+        </div>
+        <select id="typeFilter" onchange="renderContacts()">
+            <option value="">All types</option>
+            <option value="buyer">Buyer</option>
+            <option value="seller">Seller</option>
+            <option value="prospect">Prospect</option>
+            <option value="lead">Lead</option>
+            <option value="past_client">Past client</option>
+            <option value="vendor">Vendor</option>
+            <option value="other">Other</option>
+        </select>
+        <select id="connFilter" onchange="renderContacts()" title="Filter by relationship">
+            <option value="">All relationships</option>
+        </select>
+        <select id="archFilter" onchange="renderContacts()" title="Show active or archived contacts">
+            <option value="active">Active</option>
+            <option value="archived">Archived</option>
+            <option value="all">All</option>
+        </select>
+        <button class="btn btn-ghost" id="dueToggle" onclick="toggleDue()" title="Show only contacts due for a follow-up (next touch today or overdue)"><i class="fa-regular fa-clock"></i> Due for follow-up</button>
+        <span class="vm-toggle"><button id="vmList" onclick="setListMode('split')"><i class="fa-solid fa-address-card"></i> List</button><button id="vmTable" onclick="setListMode('table')"><i class="fa-solid fa-table-list"></i> Table</button></span>
+        <button class="btn btn-ghost" onclick="openImportModal()" title="Import contacts from CSV"><i class="fa-solid fa-file-arrow-up"></i> Import CSV</button>
+        <button class="btn btn-ghost" onclick="exportCsv()" title="Download my contacts as CSV"><i class="fa-solid fa-file-arrow-down"></i> Export CSV</button>
+    </div>
+
+    <div id="tagFilters" class="tag-filters" style="display:none;"></div>
+
+    <div class="count-row">
+        <span id="countLine">—</span>
+        <span style="font-size:11px;">Click a contact to open the full card</span>
+    </div>
+
+    <div id="listWrap">
+        <div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading your contacts…</div>
+    </div>
+</main>
+
+<!-- Add/Edit modal -->
+<div class="modal-overlay" id="contactModal" onclick="if(event.target===this)closeContactModal()">
+    <div class="modal">
+        <div class="modal-head">
+            <div class="modal-title" id="contactModalTitle">Add Contact</div>
+            <button class="modal-close" onclick="closeContactModal()">&times;</button>
+        </div>
+        <form class="modal-body" id="contactForm" onsubmit="saveContact(event)">
+            <div class="field-row">
+                <div class="field">
+                    <label>Name *</label>
+                    <input type="text" id="c-name" required placeholder="Jane Doe">
+                </div>
+                <div class="field">
+                    <label>Type</label>
+                    <select id="c-type">
+                        <option value="prospect">Prospect</option>
+                        <option value="buyer">Buyer</option>
+                        <option value="seller">Seller</option>
+                        <option value="lead">Lead</option>
+                        <option value="past_client">Past client</option>
+                        <option value="vendor">Vendor</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label>Relationship <span style="font-weight:500;color:var(--text-muted);text-transform:none;letter-spacing:0;">— how you know them</span></label>
+                    <select id="c-connection">
+                        <option value="">—</option>
+                        <option value="friend">Friend</option>
+                        <option value="family">Family</option>
+                        <option value="neighbor">Neighbor</option>
+                        <option value="coworker">Coworker</option>
+                        <option value="sphere">Sphere of influence</option>
+                        <option value="past_client">Past client</option>
+                        <option value="acquaintance">Acquaintance</option>
+                        <option value="referral">Referral source</option>
+                        <option value="realtor">Realtor</option>
+                        <option value="lender">Lender</option>
+                        <option value="title">Title / closing</option>
+                        <option value="inspector">Inspector</option>
+                        <option value="appraiser">Appraiser</option>
+                        <option value="contractor">Contractor</option>
+                        <option value="attorney">Attorney</option>
+                        <option value="insurance">Insurance</option>
+                        <option value="other_pro">Other pro / vendor</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="field"></div>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label>Email</label>
+                    <input type="email" id="c-email" placeholder="jane@email.com">
+                </div>
+                <div class="field">
+                    <label>Phone</label>
+                    <input type="tel" id="c-phone" placeholder="317-555-1234">
+                </div>
+            </div>
+
+            <div class="section-head" id="dealSectionHead"><i class="fa-solid fa-diagram-project"></i> Deal / Pipeline</div>
+            <div id="dealSection">
+                <div class="field-row">
+                    <div class="field" style="margin:0;">
+                        <label>Pipeline</label>
+                        <select id="c-side" onchange="onSideChange()">
+                            <option value="">Not in a pipeline</option>
+                            <option value="buyer">Buyer</option>
+                            <option value="seller">Seller</option>
+                        </select>
+                    </div>
+                    <div class="field" style="margin:0;">
+                        <label>Stage</label>
+                        <select id="c-stage" disabled><option value="">—</option></select>
+                    </div>
+                </div>
+                <div class="field-row" style="margin-top:12px;">
+                    <div class="field" style="margin:0;">
+                        <label>Deal Value ($)</label>
+                        <input type="number" id="c-deal_value" placeholder="300000" min="0" step="1000" oninput="autoCommission()">
+                    </div>
+                    <div class="field" style="margin:0;">
+                        <label>Est. Commission ($)</label>
+                        <input type="number" id="c-est_commission" placeholder="9000" min="0" step="100">
+                        <div class="field-hint">Auto-fills at 3% of deal value — edit if your split differs.</div>
+                    </div>
+                </div>
+                <div class="field" style="margin-top:12px;">
+                    <label>Expected Close</label>
+                    <input type="date" id="c-expected_close" style="max-width:220px;">
+                </div>
+            </div>
+
+            <div class="field-row">
+                <div class="field">
+                    <label>Last Contact</label>
+                    <input type="date" id="c-last_contact">
+                </div>
+                <div class="field">
+                    <label>Status</label>
+                    <select id="c-status">
+                        <option value="active">Active</option>
+                        <option value="cold">Cold</option>
+                        <option value="closed">Closed</option>
+                        <option value="do_not_contact">Do Not Contact</option>
+                    </select>
+                </div>
+            </div>
+            <div class="field">
+                <label>Next Touch <span style="font-weight:400;text-transform:none;color:var(--text-muted);">— when to reach out next (drives your reminders)</span></label>
+                <input type="date" id="c-next_touch" style="max-width:220px;">
+                <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">
+                    <button type="button" class="btn btn-ghost btn-sm" onclick="ntQuick(7)">+1 wk</button>
+                    <button type="button" class="btn btn-ghost btn-sm" onclick="ntQuick(30)">+1 mo</button>
+                    <button type="button" class="btn btn-ghost btn-sm" onclick="ntQuick(90)">+3 mo</button>
+                    <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('c-next_touch').value='';">Clear</button>
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label>Birthday <span style="font-weight:400;text-transform:none;color:var(--text-muted);">🎂</span></label>
+                    <div class="bday-row" id="c-bday"></div>
+                </div>
+                <div class="field">
+                    <label>Home Anniversary <span style="font-weight:400;text-transform:none;color:var(--text-muted);">🏡 closing date</span></label>
+                    <input type="date" id="c-home_anniversary">
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label>Source</label>
+                    <input type="text" id="c-source" placeholder="Zillow lead, referral, open house…">
+                </div>
+                <div class="field">
+                    <label>Tags</label>
+                    <input type="text" id="c-tags" placeholder="comma, separated, tags">
+                </div>
+            </div>
+            <div class="field">
+                <label>Notes</label>
+                <textarea id="c-notes" placeholder="Anything you want to remember…"></textarea>
+            </div>
+
+            <div class="section-head"><i class="fa-solid fa-location-dot"></i> Address</div>
+            <div class="field">
+                <label>Street</label>
+                <input type="text" id="c-street" placeholder="123 Main St" autocomplete="off">
+            </div>
+            <div class="addr-row">
+                <div class="field" style="margin:0;">
+                    <label>City</label>
+                    <input type="text" id="c-city" placeholder="Indianapolis" autocomplete="off">
+                </div>
+                <div class="field" style="margin:0;">
+                    <label>State</label>
+                    <input type="text" id="c-state" placeholder="IN" maxlength="2" style="text-transform:uppercase;" autocomplete="off">
+                </div>
+                <div class="field" style="margin:0;">
+                    <label>Zip</label>
+                    <input type="text" id="c-zip" placeholder="46227" autocomplete="off">
+                </div>
+            </div>
+
+            <div class="section-head"><i class="fa-solid fa-link"></i> Linked Contact</div>
+            <div id="link-current-wrap" style="display:none;margin-bottom:12px;">
+                <div class="link-current">
+                    <div>Currently linked to <b id="link-current-name">—</b> <span id="link-current-rel" style="color:var(--text-muted);"></span></div>
+                    <button type="button" class="btn-unlink" onclick="clearLink()"><i class="fa-solid fa-link-slash"></i> Unlink</button>
+                </div>
+            </div>
+            <div class="field-row" id="link-pickers">
+                <div class="field" style="margin:0;">
+                    <label>Link to another contact</label>
+                    <select id="c-linked_contact_id" onchange="onLinkPickerChange()">
+                        <option value="">— None —</option>
+                    </select>
+                    <div class="field-hint">Spouses, partners, co-buyers, business partners. The other contact is automatically linked back to this one.</div>
+                </div>
+                <div class="field" style="margin:0;">
+                    <label>Relationship</label>
+                    <select id="c-relationship">
+                        <option value="">—</option>
+                        <option value="spouse">Spouse</option>
+                        <option value="partner">Partner</option>
+                        <option value="co_buyer">Co-buyer</option>
+                        <option value="sibling">Sibling</option>
+                        <option value="parent">Parent (of linked)</option>
+                        <option value="child">Child (of linked)</option>
+                        <option value="business_partner">Business partner</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <input type="hidden" id="c-id">
+            <input type="hidden" id="c-prev-linked">
+            <input type="hidden" id="c-prev-relationship">
+        </form>
+        <div class="modal-foot">
+            <button type="button" class="btn btn-ghost" id="deleteBtn" onclick="archiveFromForm()" style="display:none;color:#b45309;border-color:#fde68a;"><i class="fa-solid fa-box-archive"></i> Archive</button>
+            <div style="margin-left:auto;display:flex;gap:8px;">
+                <button type="button" class="btn btn-ghost" onclick="closeContactModal()">Cancel</button>
+                <button type="submit" form="contactForm" class="btn btn-primary" id="saveBtn"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CSV Import modal -->
+<div class="modal-overlay" id="importModal" onclick="if(event.target===this)closeImportModal()">
+    <div class="modal">
+        <div class="modal-head">
+            <div class="modal-title">Import Contacts</div>
+            <button class="modal-close" onclick="closeImportModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p style="font-size:13px;color:var(--text-sec);margin-bottom:10px;">Drop a CSV exported from Gmail, Outlook, your old CRM, or anywhere else. We match common column names automatically (name, email, phone, type, notes, etc.).</p>
+            <input type="file" id="csvFile" accept=".csv,text/csv" onchange="handleCsvFile(this)" style="font-size:13px;">
+            <div id="importStatus" style="font-size:12px;color:var(--text-muted);margin-top:8px;"></div>
+            <div id="importPreview"></div>
+        </div>
+        <div class="modal-foot" style="justify-content:flex-end;">
+            <button type="button" class="btn btn-ghost" onclick="closeImportModal()">Cancel</button>
+            <button type="button" class="btn btn-primary" id="importBtn" onclick="confirmImport()" disabled><i class="fa-solid fa-cloud-arrow-up"></i> <span id="importBtnLabel">Import</span></button>
+        </div>
+    </div>
+</div>
+
+<!-- Contact Detail modal -->
+<div class="modal-overlay" id="detailModal" onclick="if(event.target===this)closeDetail()">
+    <div class="modal modal-lg">
+        <div class="modal-head">
+            <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+                <div class="modal-title" id="detailTitle">Contact</div>
+                <span id="detailSaved" class="saved-flash"><i class="fa-solid fa-check"></i> Saved</span>
+            </div>
+            <button class="modal-close" onclick="closeDetail()">&times;</button>
+        </div>
+        <div class="modal-body" id="detailBody"></div>
+        <div class="modal-foot">
+            <button type="button" class="btn btn-ghost" id="detailArchiveBtn" onclick="archiveCurrentDetail()" style="color:#b45309;border-color:#fde68a;"><i class="fa-solid fa-box-archive"></i> Archive</button>
+            <button type="button" class="btn btn-ghost" style="margin-left:auto;" onclick="closeDetail()">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Link transaction modal -->
+<div class="modal-overlay" id="txnLinkModal" onclick="if(event.target===this)closeTxnLink()">
+    <div class="modal" style="max-width:480px;">
+        <div class="modal-head">
+            <div>
+                <div class="modal-title">Link a transaction</div>
+                <div id="txnLinkSub" style="font-size:12px;color:var(--text-muted);margin-top:2px;"></div>
+            </div>
+            <button class="modal-close" onclick="closeTxnLink()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="field" style="margin-bottom:12px;">
+                <input type="text" id="txnPickSearch" placeholder="Search by property or client…" oninput="renderTxnPicker(this.value)">
+            </div>
+            <div id="txnPickBody"></div>
+        </div>
+        <div class="modal-foot" style="justify-content:flex-end;">
+            <button type="button" class="btn btn-ghost" onclick="closeTxnLink()">Done</button>
+        </div>
+    </div>
+</div>
+
+<!-- Start a transaction file from this contact -->
+<div class="modal-overlay" id="startTxnModal" onclick="if(event.target===this)closeStartTxn()">
+    <div class="modal" style="max-width:480px;">
+        <div class="modal-head">
+            <div>
+                <div class="modal-title" id="stTitle">Open a transaction file</div>
+                <div id="stSub" style="font-size:12px;color:var(--text-muted);margin-top:2px;"></div>
+            </div>
+            <button class="modal-close" onclick="closeStartTxn()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="field" style="margin-bottom:12px;">
+                <label for="stType">File type</label>
+                <select id="stType" onchange="syncStartTxn()">
+                    <option value="buyer">Buyer</option><option value="seller">Seller / Listing</option>
+                    <option value="investor">Investor</option><option value="other">Other</option>
+                </select>
+            </div>
+            <div class="field" style="margin-bottom:12px;">
+                <label for="stAddr">Property address</label>
+                <input type="text" id="stAddr" placeholder="123 Main St, Indianapolis">
+                <div id="stAddrHint" style="font-size:11.5px;color:var(--text-muted);margin-top:4px;"></div>
+            </div>
+            <label id="stInviteRow" style="display:flex;align-items:flex-start;gap:8px;font-size:13px;cursor:pointer;">
+                <input type="checkbox" id="stInvite" style="margin-top:3px;">
+                <span>Invite the client to their transaction portal <span id="stInviteEmail" style="color:var(--text-muted);"></span></span>
+            </label>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:12px;">Your transaction checklist and key dates load automatically, and the file is linked to this contact.</div>
+        </div>
+        <div class="modal-foot" style="justify-content:flex-end;gap:8px;">
+            <button type="button" class="btn btn-ghost" onclick="closeStartTxn()" id="stSkip">Cancel</button>
+            <button type="button" class="btn btn-primary" id="stGo" onclick="submitStartTxn()"><i class="fa-solid fa-folder-plus"></i> Open file</button>
+        </div>
+    </div>
+</div>
+
+<!-- Follow-up task modal -->
+<div class="modal-overlay" id="taskModal" onclick="if(event.target===this)closeTaskModal()">
+    <div class="modal" style="max-width:440px;">
+        <div class="modal-head">
+            <div class="modal-title">Add Follow-up</div>
+            <button class="modal-close" onclick="closeTaskModal()">&times;</button>
+        </div>
+        <form class="modal-body" id="taskForm" onsubmit="saveTask(event)">
+            <div class="field">
+                <label>Task *</label>
+                <input type="text" id="t-title" required placeholder="Call to schedule showing">
+            </div>
+            <div class="field">
+                <label>Contact</label>
+                <select id="t-contact"><option value="">— General (no contact) —</option></select>
+            </div>
+            <div class="field-row">
+                <div class="field" style="margin:0;">
+                    <label>Due Date</label>
+                    <input type="date" id="t-due">
+                </div>
+                <div class="field" style="margin:0;">
+                    <label>Time <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted);">(optional)</span></label>
+                    <input type="time" id="t-time">
+                </div>
+            </div>
+            <input type="hidden" id="t-id">
+        </form>
+        <div class="modal-foot" style="justify-content:flex-end;">
+            <button type="button" class="btn btn-ghost" onclick="closeTaskModal()">Cancel</button>
+            <button type="submit" form="taskForm" class="btn btn-primary" id="taskSaveBtn"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════════
+   My Contacts — RLS-backed CRM (table: public.agent_contacts)
+   ════════════════════════════════════════════════════════════════════ */
+const SB_URL = 'https://wdvolamasztetwpitbwg.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indkdm9sYW1hc3p0ZXR3cGl0YndnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3Nzc2MTYsImV4cCI6MjA5MTM1MzYxNn0.uiGIaZwr88ZNtAobfSV-axlpXB3sos2Rcw3FiFm6JO8';
+
+let currentUser = null;
+let contacts = [];        // what every view shows (after the agent filter)
+let allContacts = [];     // everything this login can see (owners/brokers see every agent's)
+let agentFilter = (function(){ try { return localStorage.getItem('crm-agent-filter') || 'mine'; } catch(e){ return 'mine'; } })();
+let agentNames = {};      // agent key → display name
+let agentRoster = [];     // every active agent on the brokerage roster (owners can read it; agents get none)
+function agentKey(c){ return c.agent_id || ('e:' + String(c.agent_email||'').toLowerCase()); }
+function myKey(){ return currentUser ? currentUser.id : ''; }
+function isMine(c){ return agentKey(c) === myKey() || (!c.agent_id && currentUser && String(c.agent_email||'').toLowerCase() === String(currentUser.email||'').toLowerCase()); }
+/* chip naming the agent — only when this view can include other agents' contacts */
+function agentChip(c){ return (agentFilter !== 'mine' && !isMine(c)) ? `<span class="agent-chip"><i class="fa-solid fa-user-tie"></i> ${esc(agentNames[agentKey(c)] || 'Agent')}</span>` : ''; }
+function applyAgentFilter(){
+    agentNames = {};
+    const counts = {};
+    allContacts.forEach(c => {
+        const k = agentKey(c);
+        counts[k] = (counts[k] || 0) + (c.archived ? 0 : 1);
+        const nm = String(c.agent_name || '').trim();
+        if (nm && (!agentNames[k] || nm.length > agentNames[k].length)) agentNames[k] = nm;   // prefer the fuller name ("Janet Giles" over "janet")
+        if (!agentNames[k]) agentNames[k] = String(c.agent_email || 'Agent').split('@')[0];
+    });
+    // add every roster agent — even ones with no contacts yet — so the broker can pick anyone
+    const myEmail = String((currentUser && currentUser.email) || '').toLowerCase();
+    agentRoster.forEach(r => {
+        const em = String(r.email || '').toLowerCase(); if (!em || em === myEmail) return;
+        const hit = allContacts.find(c => String(c.agent_email || '').toLowerCase() === em);
+        const k = hit ? agentKey(hit) : 'e:' + em;
+        if (!(k in counts)) counts[k] = 0;
+        if (r.name && String(r.name).trim()) agentNames[k] = String(r.name).trim();   // roster name wins
+        else if (!agentNames[k]) agentNames[k] = em.split('@')[0];
+    });
+    const others = Object.keys(counts).filter(k => k !== myKey() && !(allContacts.find(c => agentKey(c) === k && isMine(c))));
+    const bar = document.getElementById('agentBar');
+    if (!others.length){ agentFilter = 'mine'; if (bar) bar.style.display = 'none'; contacts = allContacts.slice(); return; }
+    if (agentFilter !== 'mine' && agentFilter !== 'all' && !others.includes(agentFilter)) agentFilter = 'mine';
+    const mineN = allContacts.filter(c => isMine(c) && !c.archived).length;
+    const allN = allContacts.filter(c => !c.archived).length;
+    const sel = document.getElementById('agentFilter');
+    if (sel){
+        sel.innerHTML = `<option value="mine">My contacts (${mineN})</option><option value="all">All agents (${allN})</option>` +
+            others.sort((a, b) => (agentNames[a] || '').localeCompare(agentNames[b] || '')).map(k => `<option value="${esc(k)}">${esc(agentNames[k])} (${counts[k]})</option>`).join('');
+        sel.value = agentFilter;
+    }
+    if (bar) bar.style.display = '';
+    const note = document.getElementById('agentBarNote');
+    if (note) note.textContent = agentFilter === 'mine' ? 'Only contacts you added.' : 'Other agents’ contacts are marked with their name.';
+    contacts = agentFilter === 'mine' ? allContacts.filter(isMine)
+             : agentFilter === 'all' ? allContacts.slice()
+             : allContacts.filter(c => agentKey(c) === agentFilter);
+}
+window.setAgentFilter = function(v){
+    agentFilter = v || 'mine';
+    try { localStorage.setItem('crm-agent-filter', agentFilter); } catch(e){}
+    applyAgentFilter();
+    if (detailId && !contacts.some(c => c.id === detailId)) detailId = null;
+    renderCurrent();
+};
+let tasks = [];
+let activities = [];
+let txns = [];        // my hub_transactions (property/deal files)
+let txnDates = {};    // transaction_id -> [{label,date_value}]
+let txnLinks = [];    // agent_contact_transactions rows (contact_id ↔ transaction_id)
+let editingId = null;
+let detailId = null;
+let recordSurface = 'pane';   // 'pane' (split) | 'modal' (table)
+let listMode = (function(){ try { return localStorage.getItem('crm-listmode') || 'split'; } catch(e){ return 'split'; } })();
+let tSort = { col: null, dir: 1 };
+function relTime(d){
+    const then = new Date(d + 'T12:00:00'), now = new Date();
+    const days = Math.round((now - then) / 86400000);
+    if (days <= 0) return 'today'; if (days === 1) return 'yesterday';
+    if (days < 30) return days + ' days ago';
+    const mo = Math.round(days/30); if (mo < 12) return mo + ' month' + (mo>1?'s':'') + ' ago';
+    const yr = Math.round(days/365); return yr + ' year' + (yr>1?'s':'') + ' ago';
+}
+function setListMode(m){
+    listMode = m; try { localStorage.setItem('crm-listmode', m); } catch(e){}
+    renderContacts();
+}
+function selectContact(id){
+    detailId = id; recordSurface = 'pane';
+    const p = document.getElementById('recordPane'); if (p) p.innerHTML = recordHtml(id);
+    const s = document.getElementById('crmSplit'); if (s) { s.classList.add('has-record'); s.classList.toggle('list-narrow', listNarrow); }
+    document.querySelectorAll('#listPane .crow').forEach(r => r.classList.toggle('sel', r.dataset.id === id));
+}
+function backToList(){ const s = document.getElementById('crmSplit'); if (s) s.classList.remove('has-record','list-narrow'); }
+/* Collapse/expand the list rail so the record card gets bigger (desktop) */
+window.__crmToggleList = function(){
+    listNarrow = !listNarrow;
+    try { localStorage.setItem('crm-list-narrow', listNarrow ? '1' : '0'); } catch(e) {}
+    const s = document.getElementById('crmSplit');
+    if (s) s.classList.toggle('list-narrow', listNarrow && s.classList.contains('has-record'));
+    const t = document.querySelector('.crm-listtoggle i'); if (t) t.className = 'fa-solid ' + (listNarrow ? 'fa-angles-right' : 'fa-angles-left');
+};
+function sortTable(col){ if (tSort.col === col) tSort.dir = -tSort.dir; else { tSort.col = col; tSort.dir = 1; } renderContacts(); }
+async function archiveById(id){
+    const c = contacts.find(x => x.id === id); if (!c) return;
+    try {
+        const token = await getToken();
+        const r = await fetch(SB_URL+'/rest/v1/agent_contacts?id=eq.'+encodeURIComponent(id), { method:'PATCH', headers: sbHeaders(token,{'Prefer':'return=minimal'}), body: JSON.stringify({ archived: !c.archived }) });
+        if (!r.ok && r.status !== 204) throw new Error('HTTP '+r.status);
+        await loadContacts(); renderCurrent();
+        toast(c.archived ? 'Unarchived' : 'Archived', 'success');
+    } catch(err){ toast('Failed: '+err.message, 'error'); }
+}
+function crowHtml(c){
+    const initials = (c.name||'?').split(/\s+/).map(w=>w[0]).filter(Boolean).slice(0,2).join('').toUpperCase();
+    const _t = todayStr();
+    const dc = c.next_touch ? (c.next_touch<_t?'#dc2626':c.next_touch===_t?'#d97706':'var(--border)') : 'var(--border)';
+    const sub = (c.type||'other').replace(/_/g,' ') + (c.connection?' · '+connLabel(c.connection):'') + (c.pipeline_side?' · '+(c.stage||''):'');
+    return `<div class="crow ${c.id===detailId?'sel':''}" data-id="${esc(c.id)}" title="${esc(c.name||'(unnamed)')}" onclick="selectContact('${esc(c.id)}')">
+        <div class="cav">${esc(initials||'?')}</div>
+        <div style="min-width:0;flex:1;"><div class="cnm">${esc(c.name||'(unnamed)')}</div><div class="cty">${esc(sub)}</div>${agentChip(c)}</div>
+        <span class="cdot" style="background:${dc};" title="${c.next_touch?'Next touch '+esc(fmtDate(c.next_touch)):'No next touch'}"></span>
+    </div>`;
+}
+function tableHtml(list){
+    const _t = todayStr();
+    const th = (col,label)=>`<th onclick="sortTable('${col}')">${label}${tSort.col===col?(tSort.dir>0?' ▲':' ▼'):''}</th>`;
+    const rows = list.map(c=>{
+        const nt = c.next_touch ? `<span style="color:${c.next_touch<=_t?'#dc2626':'inherit'};font-weight:${c.next_touch<=_t?'700':'400'};">${esc(fmtDate(c.next_touch))}</span>` : '<span style="color:var(--text-muted);">—</span>';
+        const tags = (c.tags||'').split(',').map(s=>s.trim()).filter(Boolean).slice(0,3).map(t=>`<span class="pill" style="font-size:10px;">${esc(t)}</span>`).join(' ');
+        return `<tr onclick="openDetail('${esc(c.id)}')">
+            <td><div class="tnm">${esc(c.name||'(unnamed)')}</div>${c.type?`<div class="tsub">${esc((c.type||'').replace(/_/g,' '))}</div>`:''}${agentChip(c)}</td>
+            <td>${c.connection?esc(connLabel(c.connection)):'—'}</td>
+            <td>${esc(c.email||'—')}</td><td>${esc(c.phone||'—')}</td>
+            <td>${c.pipeline_side?esc((c.pipeline_side==='buyer'?'🔑 ':'🏠 ')+(c.stage||'')):'—'}</td>
+            <td>${nt}</td><td>${c.last_contact?esc(fmtDate(c.last_contact)):'—'}</td>
+            <td>${c.deal_value?esc(money(c.deal_value)):'—'}</td><td>${tags||'—'}</td>
+        </tr>`;
+    }).join('');
+    return `<div class="crm-table-wrap"><table class="crm-table"><thead><tr>${th('name','Name')}${th('connection','Relationship')}${th('email','Email')}${th('phone','Phone')}${th('stage','Stage')}${th('next_touch','Next touch')}${th('last_contact','Last contact')}${th('deal_value','Deal $')}<th>Tags</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+/* ── Birthday: month + day, year optional ──────────────────────────
+   The column is a DATE, so a birthday with no known year is stored as 1904-MM-DD
+   (1904 is a leap year → Feb 29 works). 1904 is treated as "no year" and never shown. */
+const BDAY_NOYEAR = '1904';
+const BDAY_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+function bdayFieldsHtml(prefix, val, onchange){
+    const [y, m, d] = String(val || '').split('-');
+    const yr = (y && y !== BDAY_NOYEAR) ? y : '';
+    const oc = onchange ? ` onchange="${onchange}"` : '';
+    return `<select id="${prefix}-bm" aria-label="Birthday month"${oc}><option value="">Month</option>${BDAY_MONTHS.map((n,i)=>`<option value="${String(i+1).padStart(2,'0')}"${m===String(i+1).padStart(2,'0')?' selected':''}>${n}</option>`).join('')}</select>` +
+           `<select id="${prefix}-bd" aria-label="Birthday day"${oc}><option value="">Day</option>${Array.from({length:31},(_,i)=>String(i+1).padStart(2,'0')).map(v=>`<option value="${v}"${d===v?' selected':''}>${+v}</option>`).join('')}</select>` +
+           `<input id="${prefix}-by" inputmode="numeric" maxlength="4" placeholder="Year (optional)" value="${esc(yr)}"${oc}>`;
+}
+function bdayValue(prefix){
+    const m = (document.getElementById(prefix+'-bm')||{}).value, d = (document.getElementById(prefix+'-bd')||{}).value;
+    if (!m || !d) return null;
+    let y = ((document.getElementById(prefix+'-by')||{}).value || '').trim();
+    if (!/^(19|20)\d\d$/.test(y)) y = BDAY_NOYEAR;
+    const ok = dt => { const x = new Date(+dt.slice(0,4), +dt.slice(5,7)-1, +dt.slice(8,10)); return x.getMonth() === +dt.slice(5,7)-1; };
+    let v = y + '-' + m + '-' + d;
+    if (!ok(v)) v = BDAY_NOYEAR + '-' + m + '-' + d;          // e.g. Feb 29 with a non-leap year
+    return ok(v) ? v : null;                                    // e.g. Feb 31 → not saved
+}
+function fmtBday(v){ if (!v) return ''; const [y,m,d] = String(v).split('-'); const md = BDAY_MONTHS[+m-1] + ' ' + (+d); return (y && y !== BDAY_NOYEAR) ? md + ', ' + y : md; }
+
+/* ── Key dates (birthday / home anniversary) ─────────────────────── */
+const KD_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function nextOccurrence(iso){
+    if (!iso) return null;
+    const parts = String(iso).split('-'); if (parts.length < 3) return null;
+    let m = +parts[1], d = +parts[2]; if (!m || !d) return null;
+    if (m === 2 && d === 29) d = 28;
+    const now = new Date(); now.setHours(0,0,0,0);
+    let occ = new Date(now.getFullYear(), m-1, d);
+    if (occ < now) occ = new Date(now.getFullYear()+1, m-1, d);
+    return { days: Math.round((occ - now)/86400000), md: KD_MONTHS[m-1] + ' ' + d };
+}
+function keyDateChips(c){
+    return [['birthday','🎂'],['home_anniversary','🏡']].map(([k,icon])=>{
+        const occ = nextOccurrence(c[k]); if (!occ) return '';
+        const soon = occ.days <= 14;
+        const when = occ.days===0?'today':occ.days===1?'tomorrow':'in '+occ.days+' days';
+        return `<span class="kd-chip ${soon?'soon':''}">${icon} ${esc(occ.md)}${soon?' · '+when:''}</span>`;
+    }).filter(Boolean).join('');
+}
+/* ── Contact ↔ transaction linkage ───────────────────────────────── */
+function txnTypeLabel(t){ return t==='buyer'?'🔑 Buyer':t==='seller'?'🏠 Seller':'📄 Deal'; }
+function txnClosingDate(t){ const d = (txnDates[t.id]||[]).find(x => /clos/i.test(x.label) && x.date_value); return d ? d.date_value : null; }
+function contactTxnCard(id){
+    const c = contacts.find(x => x.id === id);
+    const linked = txnLinks.filter(l => l.contact_id === id)
+        .map(l => ({ link:l, t: txns.find(x => x.id === l.transaction_id) })).filter(x => x.t);
+    const rows = linked.map(({link,t}) => {
+        const cl = txnClosingDate(t);
+        const meta = [t.current_stage||null, t.status==='closed'?'Closed':null, cl?('Closing '+fmtDate(cl)):null, t.client_name||null].filter(Boolean).join(' · ');
+        return `<div class="txn-lrow">
+            <a class="txn-lmain" href="yrl-transactions.html?txn=${esc(t.id)}">
+                <span class="txn-lty">${txnTypeLabel(t.type)}</span>
+                <span style="min-width:0;flex:1;"><span class="txn-lname" style="display:block;">${esc(t.title||'Untitled')}</span><span class="txn-lmeta" style="display:block;">${esc(meta)}</span></span>
+                <i class="fa-solid fa-arrow-up-right-from-square" style="color:var(--text-muted);font-size:11px;"></i>
+            </a>
+            <button class="txn-lx" title="Unlink" onclick="unlinkTxn('${esc(link.id)}')">&times;</button>
+        </div>`;
+    }).join('');
+    return `<div class="section-head" style="margin-top:0;"><i class="fa-solid fa-file-signature"></i> Transactions <button class="mini-add" onclick="openStartTxn('${esc(id)}')">+ Start file</button> <button class="mini-add" onclick="openTxnLink('${esc(id)}')">+ Link</button></div>`
+        + (linked.length ? rows
+            : `<div class="muted-note">No linked deals yet. <a href="#" style="color:var(--red);font-weight:600;" onclick="event.preventDefault();openStartTxn('${esc(id)}')"><i class="fa-solid fa-folder-plus"></i> Start a transaction file</a> or <a href="#" style="color:var(--red);font-weight:600;" onclick="event.preventDefault();openTxnLink('${esc(id)}')"><i class="fa-solid fa-link"></i> link an existing one…</a></div>`);
+}
+function hasActiveLinkedFile(contactId){
+    return txnLinks.some(l => l.contact_id === contactId && txns.some(t => t.id === l.transaction_id && t.status !== 'closed' && t.status !== 'archived'));
+}
+/* ── Start a transaction file from a contact (also offered at "Under Contract") ── */
+let _startTxnContact = null;
+function openStartTxn(contactId, underContract){
+    const c = contacts.find(x => x.id === contactId); if (!c) return;
+    _startTxnContact = contactId;
+    closeTxnLink();
+    document.getElementById('stTitle').textContent = underContract ? (c.name || 'This client') + ' is under contract' : 'Open a transaction file';
+    document.getElementById('stSub').textContent = underContract ? 'Open their transaction file now?' : 'for ' + (c.name || 'this contact');
+    document.getElementById('stSkip').textContent = underContract ? 'Not now' : 'Cancel';
+    document.getElementById('stType').value = c.pipeline_side === 'seller' ? 'seller' : 'buyer';
+    const own = [c.street, c.city].filter(Boolean).join(', ');
+    document.getElementById('stAddr').value = c.pipeline_side === 'seller' ? own : '';
+    const inv = document.getElementById('stInvite');
+    inv.checked = !!c.email; inv.disabled = !c.email;
+    document.getElementById('stInviteEmail').textContent = c.email ? '(' + c.email + ')' : '— add an email to this contact first';
+    syncStartTxn();
+    document.getElementById('startTxnModal').classList.add('open');
+    setTimeout(() => { const a = document.getElementById('stAddr'); if (a && !a.value) a.focus(); }, 60);
+}
+function closeStartTxn(){ document.getElementById('startTxnModal').classList.remove('open'); _startTxnContact = null; }
+function syncStartTxn(){
+    const buyer = document.getElementById('stType').value === 'buyer';
+    document.getElementById('stAddr').placeholder = buyer ? 'Property address (leave blank if still searching)' : '123 Main St, Indianapolis';
+    document.getElementById('stAddrHint').textContent = buyer ? 'No property yet? Leave it blank — the file opens under the client’s name and you can rename it later.' : '';
+}
+async function submitStartTxn(){
+    const id = _startTxnContact; if (!id) return;
+    const c = contacts.find(x => x.id === id);
+    const type = document.getElementById('stType').value;
+    const addr = document.getElementById('stAddr').value.trim();
+    const invite = document.getElementById('stInvite').checked && !!(c && c.email);
+    if (!addr && type !== 'buyer') { toast('Add the property address.', 'error'); document.getElementById('stAddr').focus(); return; }
+    const btn = document.getElementById('stGo'); btn.disabled = true;
+    try {
+        if (!window.yrlClient) throw new Error('Not signed in — refresh the page.');
+        const { data, error } = await window.yrlClient.rpc('start_transaction_from_contact', { p_contact_id: id, p_title: addr || null, p_type: type, p_invite: invite });
+        if (error) throw error;
+        const txn = Array.isArray(data) ? data[0] : data;
+        if (invite) { try { await window.yrlClient.functions.invoke('portal-invite', { body: { email: c.email, portal_url: location.origin } }); } catch(_){} }
+        closeStartTxn();
+        await Promise.all([loadTxns(), loadTxnLinks()]);
+        renderCurrent(); if (detailId === id) renderDetail(id);
+        toast('Transaction file opened' + (txn && txn.current_stage ? ' — checklist loaded' : '') + (invite ? ' · client invited' : ''), 'success');
+    } catch(err){ toast('Couldn’t open the file: ' + (err.message || err), 'error'); }
+    finally { btn.disabled = false; }
+}
+/* Moving a contact to "Under Contract" offers to open their file (once per move). */
+function offerTxnAtUnderContract(id, stage){
+    if (stage !== 'Under Contract' || hasActiveLinkedFile(id)) return;
+    setTimeout(() => openStartTxn(id, true), 250);
+}
+let _txnLinkContact = null;
+function openTxnLink(contactId){
+    _txnLinkContact = contactId;
+    const c = contacts.find(x => x.id === contactId);
+    document.getElementById('txnLinkSub').textContent = c ? ('for ' + (c.name||'this contact')) : '';
+    renderTxnPicker('');
+    document.getElementById('txnLinkModal').classList.add('open');
+    setTimeout(() => { const s = document.getElementById('txnPickSearch'); if (s){ s.value=''; s.focus(); } }, 60);
+}
+function closeTxnLink(){ document.getElementById('txnLinkModal').classList.remove('open'); _txnLinkContact = null; }
+function renderTxnPicker(q){
+    const id = _txnLinkContact; const body = document.getElementById('txnPickBody');
+    const c = contacts.find(x => x.id === id);
+    const already = new Set(txnLinks.filter(l => l.contact_id === id).map(l => l.transaction_id));
+    const needle = (q||'').toLowerCase();
+    let list = txns.filter(t => !already.has(t.id));
+    if (needle) list = list.filter(t => ((t.title||'')+' '+(t.client_name||'')).toLowerCase().includes(needle));
+    if (!txns.length){ body.innerHTML = `<div class="muted-note">You have no transaction files yet. <a href="#" style="color:var(--red);font-weight:600;" onclick="event.preventDefault();openStartTxn('${esc(id)}')"><i class="fa-solid fa-folder-plus"></i> Create a file for this contact</a></div>`; return; }
+    if (!list.length){ body.innerHTML = '<div class="muted-note">No matching transactions.</div>'; return; }
+    const cname = (c && c.name || '').toLowerCase();
+    body.innerHTML = list.map(t => {
+        const suggest = cname && (t.client_name||'').toLowerCase().includes(cname);
+        const cl = txnClosingDate(t);
+        const meta = [t.current_stage||null, cl?('Closing '+fmtDate(cl)):null, t.client_name||null].filter(Boolean).join(' · ');
+        return `<button class="txn-pick" onclick="linkTxn('${esc(t.id)}')">
+            <span class="txn-lty">${txnTypeLabel(t.type)}</span>
+            <span style="min-width:0;flex:1;"><span class="txn-lname" style="display:block;">${esc(t.title||'Untitled')}</span><span class="txn-lmeta" style="display:block;">${esc(meta)}</span></span>
+            ${suggest?'<span class="sug">match</span>':''}
+        </button>`;
+    }).join('');
+}
+async function linkTxn(txnId){
+    const id = _txnLinkContact; if (!id) return;
+    const t = txns.find(x => x.id === txnId);
+    const role = t ? (t.type||null) : null;
+    try {
+        const token = await getToken();
+        const r = await fetch(SB_URL+'/rest/v1/agent_contact_transactions', { method:'POST', headers: sbHeaders(token,{'Prefer':'return=minimal'}), body: JSON.stringify({ contact_id:id, transaction_id:txnId, role }) });
+        if (!r.ok && r.status !== 201 && r.status !== 204) { const e = await r.json().catch(()=>({})); throw new Error(e.message||('HTTP '+r.status)); }
+        await loadTxnLinks();
+        closeTxnLink();
+        if (detailId === id) renderDetail(id);
+        toast('Transaction linked', 'success');
+    } catch(err){ toast('Couldn\'t link: '+err.message, 'error'); }
+}
+async function unlinkTxn(linkId){
+    try {
+        const token = await getToken();
+        const r = await fetch(SB_URL+'/rest/v1/agent_contact_transactions?id=eq.'+encodeURIComponent(linkId), { method:'DELETE', headers: sbHeaders(token) });
+        if (!r.ok && r.status !== 204) throw new Error('HTTP '+r.status);
+        const removed = txnLinks.find(l => l.id === linkId);
+        await loadTxnLinks();
+        if (removed && detailId === removed.contact_id) renderDetail(removed.contact_id);
+        else if (detailId) renderDetail(detailId);
+        toast('Unlinked', 'success');
+    } catch(err){ toast('Couldn\'t unlink: '+err.message, 'error'); }
+}
+
+let currentView = 'list';       // list | pipeline | followups
+let crmReady = true;            // false until the pipeline/tasks migration is run
+let listNarrow = true;          // desktop: collapse the list to a rail when a record is open (bigger card)
+try { listNarrow = localStorage.getItem('crm-list-narrow') !== '0'; } catch(e) {}
+let pipeView = 'stack';         // pipeline layout: stack (vertical, no h-scroll) | board (columns) | list
+try { pipeView = localStorage.getItem('crm-pipe-view') || 'stack'; } catch(e) {}
+let parsedCsvRows = null;       // for the import flow
+let activeTags = new Set();     // tag filter chips currently selected
+let showDueOnly = false;        // "Due for follow-up" toggle (next_touch <= today)
+function toggleDue(){ showDueOnly = !showDueOnly; const b = document.getElementById('dueToggle'); if (b) b.classList.toggle('active', showDueOnly); renderContacts(); }
+let _tagList = [];              // index→tag for the chip onclick handlers
+
+/* Split Buyer / Seller pipelines */
+const BUYER_STAGES  = ['Lead','Pre-Approved','Showing','Under Contract','Closed','Lost'];
+const SELLER_STAGES = ['Lead','Listing Appt','Listed','Under Contract','Closed','Lost'];
+const DEFAULT_COMMISSION_PCT = 0.03;
+function stagesFor(side){ return side === 'seller' ? SELLER_STAGES : BUYER_STAGES; }
+const TYPE_LABEL   = { prospect:'Prospect', buyer:'Buyer', seller:'Seller', lead:'Lead', past_client:'Past client', vendor:'Vendor', other:'Other' };
+/* Relationship = how the agent knows them (column `connection`; `relationship` is the spouse/co-buyer link) */
+const CONN_LABEL   = { friend:'Friend', family:'Family', neighbor:'Neighbor', coworker:'Coworker', sphere:'Sphere of influence', past_client:'Past client', acquaintance:'Acquaintance', referral:'Referral source',
+                       realtor:'Realtor', lender:'Lender', title:'Title / closing', inspector:'Inspector', appraiser:'Appraiser', contractor:'Contractor',
+                       attorney:'Attorney', insurance:'Insurance', other_pro:'Other pro / vendor', other:'Other' };
+function connLabel(v){ return v ? (CONN_LABEL[v] || v) : ''; }
+/* map free text (CSV import) onto a preset key when it matches a label, else keep the text */
+function connFromText(t){
+    t = String(t || '').trim(); if (!t) return null;
+    const low = t.toLowerCase();
+    for (const k in CONN_LABEL){ if (k === low || CONN_LABEL[k].toLowerCase() === low || CONN_LABEL[k].toLowerCase().split(' / ')[0] === low) return k; }
+    if (/^(realtor|agent|broker)s?$/.test(low)) return 'realtor';
+    if (/^(lender|loan officer|mortgage)/.test(low)) return 'lender';
+    if (/^(friend)s?$/.test(low)) return 'friend';
+    if (/^(soi|sphere)$/.test(low)) return 'sphere';
+    if (/^past ?clients?$/.test(low)) return 'past_client';
+    return t;
+}
+const STATUS_LABEL = { active:'Active', cold:'Cold', closed:'Closed', do_not_contact:'Do Not Contact' };
+function optsFrom(map, sel){ return Object.keys(map).map(k => `<option value="${k}"${k===sel?' selected':''}>${esc(map[k])}</option>`).join(''); }
+
+/* formatting helpers */
+function money(n){ n = Number(n); return (n && !isNaN(n)) ? '$' + n.toLocaleString('en-US') : ''; }
+function moneyShort(n){ n = Number(n); if (!n || isNaN(n)) return ''; return n >= 1000 ? '$' + Math.round(n/1000) + 'k' : '$' + n; }
+function fmtDate(d){ return d ? new Date(d + 'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : ''; }
+function addDaysISO(days){ const d = new Date(); d.setDate(d.getDate()+days); return new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10); }
+function ntQuick(days){ const el = document.getElementById('c-next_touch'); if (el) el.value = addDaysISO(days); }
+async function logTouch(id, evt){
+    if (evt) evt.stopPropagation();
+    const c = contacts.find(x => x.id === id); if (!c) return;
+    try {
+        const token = await getToken();
+        const next = addDaysISO(30);
+        await fetch(SB_URL+'/rest/v1/agent_contact_activities', { method:'POST', headers: sbHeaders(token,{'Prefer':'return=minimal'}), body: JSON.stringify({ contact_id:id, kind:'note', body:'Reached out' }) }).catch(()=>{});
+        const patch = { last_contact: todayStr(), next_touch: next };
+        if (contactTags(c).includes('new-lead')) patch.tags = contactTags(c).filter(t => t !== 'new-lead').join(', ') || null;
+        const r = await fetch(SB_URL+'/rest/v1/agent_contacts?id=eq.'+encodeURIComponent(id), { method:'PATCH', headers: sbHeaders(token,{'Prefer':'return=minimal'}), body: JSON.stringify(patch) });
+        if (!r.ok && r.status !== 204) throw new Error('HTTP '+r.status);
+        await loadContacts();
+        if (detailId === id) { await loadActivities(); renderDetail(id); }
+        renderCurrent();
+        toast('Logged — next touch in 30 days', 'success');
+    } catch(err){ toast('Update failed: '+err.message, 'error'); }
+}
+function fmtTime(t){ if (!t) return ''; const p = t.split(':'); let h = parseInt(p[0],10); const m = p[1]||'00'; const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12; return h + ':' + m + ' ' + ap; }
+function fmtDateTime(d, t){ return [fmtDate(d), fmtTime(t)].filter(Boolean).join(' · '); }
+function todayStr(){ const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+
+/* Bidirectional relationship mirror — when A is X to B, B is MIRROR[X] to A */
+const REL_MIRROR = {
+    spouse: 'spouse',
+    partner: 'partner',
+    co_buyer: 'co_buyer',
+    sibling: 'sibling',
+    parent: 'child',
+    child: 'parent',
+    business_partner: 'business_partner',
+    other: 'other'
+};
+const REL_LABEL = {
+    spouse: 'Spouse',
+    partner: 'Partner',
+    co_buyer: 'Co-buyer',
+    sibling: 'Sibling',
+    parent: 'Parent',
+    child: 'Child',
+    business_partner: 'Business partner',
+    other: 'Other'
+};
+
+document.addEventListener('yrl-auth-ready', async ({ detail }) => {
+    currentUser = detail.user; init();
+});
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(async () => {
+        if (currentUser) return;
+        if (!window.yrlClient) return;
+        const { data } = await window.yrlClient.auth.getSession();
+        if (data.session) { currentUser = data.session.user; init(); }
+    }, 700);
+});
+
+async function getToken(){
+    if (!window.yrlClient) throw new Error('Not signed in');
+    const { data } = await window.yrlClient.auth.getSession();
+    if (!data.session) throw new Error('Session expired');
+    return data.session.access_token;
+}
+function sbHeaders(token, extra){ return Object.assign({apikey:SB_KEY, Authorization:'Bearer '+token, 'Content-Type':'application/json'}, extra||{}); }
+function agentDisplayName(u){ return u.user_metadata?.full_name || u.user_metadata?.name || (u.email||'').split('@')[0] || 'Agent'; }
+
+async function init(){
+    await probeBackend();
+    renderBanner();
+    const ok = await loadContacts();
+    if (!ok) return;
+    if (crmReady) { await loadTasks(); await loadActivities(); }
+    await Promise.all([loadTxns(), loadTxnLinks()]);
+    renderCurrent();
+    // deep link: yrl-contacts.html?contact=<id> opens that contact (e.g. from a transaction file)
+    const want = new URLSearchParams(location.search).get('contact');
+    if (want && !contacts.some(c => c.id === want) && allContacts.some(c => c.id === want)) { agentFilter = 'all'; applyAgentFilter(); renderCurrent(); }   // another agent's contact (e.g. from their transaction file)
+    if (want && contacts.some(c => c.id === want)) openDetail(want);
+    // hub sidebar 3rd level: Contacts / Pipeline / Follow-ups
+    if (window.__yrlRegisterTabs) window.__yrlRegisterTabs(function(v){ if (['list','pipeline','followups'].indexOf(v) > -1) setView(v); });
+    if (window.__yrlTabChanged) window.__yrlTabChanged(currentView);
+}
+
+/* Detect whether the pipeline/tasks/activities migration has been run. */
+async function probeBackend(){
+    try {
+        const token = await getToken();
+        const [c, t, a] = await Promise.all([
+            fetch(SB_URL+'/rest/v1/agent_contacts?select=stage&limit=1', { headers: sbHeaders(token) }),
+            fetch(SB_URL+'/rest/v1/agent_contact_tasks?select=id&limit=1', { headers: sbHeaders(token) }),
+            fetch(SB_URL+'/rest/v1/agent_contact_activities?select=id&limit=1', { headers: sbHeaders(token) })
+        ]);
+        crmReady = c.ok && t.ok && a.ok;
+    } catch(_){ crmReady = false; }
+}
+function renderBanner(){
+    document.getElementById('crmBanner').style.display = crmReady ? 'none' : '';
+}
+
+async function loadContacts(){
+    const wrap = document.getElementById('listWrap');
+    if (!contacts.length) wrap.innerHTML = '<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading your contacts…</div>';
+    try {
+        const token = await getToken();
+        const res = await fetch(SB_URL+'/rest/v1/agent_contacts?select=*&order=name.asc', { headers: sbHeaders(token) });
+        if (!res.ok) throw new Error('HTTP '+res.status);
+        allContacts = await res.json();
+        if (!loadContacts._roster) {   // once per page load; RLS returns nothing for regular agents
+            loadContacts._roster = true;
+            try {
+                const rr = await fetch(SB_URL+'/rest/v1/hub_authorized_agents?select=name,email&status=eq.active&order=name.asc', { headers: sbHeaders(token) });
+                agentRoster = rr.ok ? await rr.json() : [];
+            } catch(_){ agentRoster = []; }
+        }
+        applyAgentFilter();
+        return true;
+    } catch(e) {
+        wrap.innerHTML = '<div class="empty"><i class="fa-solid fa-triangle-exclamation"></i><h3>Couldn\'t load contacts</h3><p>'+esc(e.message)+'</p><button class="btn btn-primary" onclick="init()">Try again</button></div>';
+        return false;
+    }
+}
+async function loadTasks(){
+    try {
+        const token = await getToken();
+        const res = await fetch(SB_URL+'/rest/v1/agent_contact_tasks?select=*&order=due_date.asc.nullslast', { headers: sbHeaders(token) });
+        tasks = res.ok ? await res.json() : [];
+    } catch(_){ tasks = []; }
+}
+async function loadActivities(){
+    try {
+        const token = await getToken();
+        const res = await fetch(SB_URL+'/rest/v1/agent_contact_activities?select=*&order=created_at.desc', { headers: sbHeaders(token) });
+        activities = res.ok ? await res.json() : [];
+    } catch(_){ activities = []; }
+}
+/* My hub transactions (property/deal files) + their key dates — for CRM linkage. */
+async function loadTxns(){
+    try {
+        const token = await getToken();
+        const res = await fetch(SB_URL+'/rest/v1/hub_transactions?select=id,type,title,client_name,current_stage,status,closed_at&order=updated_at.desc', { headers: sbHeaders(token) });
+        txns = res.ok ? await res.json() : [];
+        const res2 = await fetch(SB_URL+'/rest/v1/hub_txn_dates?select=transaction_id,label,date_value&order=sort_order.asc', { headers: sbHeaders(token) });
+        const dates = res2.ok ? await res2.json() : [];
+        txnDates = {};
+        dates.forEach(d => { (txnDates[d.transaction_id] = txnDates[d.transaction_id] || []).push(d); });
+    } catch(_){ txns = []; txnDates = {}; }
+}
+async function loadTxnLinks(){
+    try {
+        const token = await getToken();
+        const res = await fetch(SB_URL+'/rest/v1/agent_contact_transactions?select=*', { headers: sbHeaders(token) });
+        txnLinks = res.ok ? await res.json() : [];
+    } catch(_){ txnLinks = []; }
+}
+/* Reload everything after a mutation, then re-render whatever is on screen. */
+async function refresh(){
+    await loadContacts();
+    if (crmReady) { await loadTasks(); await loadActivities(); }
+    await Promise.all([loadTxns(), loadTxnLinks()]);
+    renderCurrent();
+    if (detailId) renderDetail(detailId);
+}
+
+/* ── View switching ────────────────────────────────────────────── */
+function setView(v){ currentView = v; renderCurrent(); if (window.__yrlTabChanged) window.__yrlTabChanged(v); }
+
+function renderCurrent(){
+    document.querySelectorAll('.view-tab').forEach(b => b.classList.toggle('active', b.dataset.view === currentView));
+    document.getElementById('listToolbar').style.display = currentView === 'list' ? '' : 'none';
+    // Follow-up badge = overdue + due today (tasks)
+    const dueCount = tasks.filter(t => !t.done && t.due_date && t.due_date <= todayStr()).length;
+    const badge = document.getElementById('fuBadge');
+    if (badge) { badge.style.display = dueCount ? '' : 'none'; badge.textContent = dueCount; }
+    // Contacts due for a touch (next_touch today or overdue)
+    const _t = todayStr();
+    const dueTouch = contacts.filter(c => !c.archived && c.next_touch && c.next_touch <= _t).length;
+    const db = document.getElementById('dueBadge');
+    if (db) { db.style.display = dueTouch ? '' : 'none'; db.textContent = dueTouch; }
+
+    renderTagFilters();
+    if (currentView === 'pipeline') return renderPipeline();
+    if (currentView === 'followups') return renderFollowups();
+    renderContacts();
+}
+
+/* ── Tag filter chips (list view) ──────────────────────────────── */
+function contactTags(c){ return (c.tags||'').split(',').map(s => s.trim()).filter(Boolean); }
+function allTags(){
+    const set = new Set();
+    contacts.forEach(c => contactTags(c).forEach(t => set.add(t)));
+    return [...set].sort((a,b) => a.localeCompare(b));
+}
+function renderTagFilters(){
+    const wrap = document.getElementById('tagFilters');
+    const tags = allTags();
+    if (currentView !== 'list' || !tags.length){ wrap.style.display = 'none'; wrap.innerHTML = ''; return; }
+    // drop any active tag that no longer exists
+    [...activeTags].forEach(t => { if (!tags.includes(t)) activeTags.delete(t); });
+    _tagList = tags;
+    wrap.style.display = '';
+    wrap.innerHTML = '<span class="tf-label"><i class="fa-solid fa-tag"></i> Tags</span>'
+        + tags.map((t,i) => `<button class="tag-chip ${activeTags.has(t)?'active':''}" onclick="toggleTag(${i})">${esc(t)}</button>`).join('')
+        + (activeTags.size ? `<button class="tag-chip" style="border-style:dashed;" onclick="clearTags()"><i class="fa-solid fa-xmark"></i> Clear</button>` : '');
+}
+function toggleTag(i){
+    const t = _tagList[i]; if (t == null) return;
+    if (activeTags.has(t)) activeTags.delete(t); else activeTags.add(t);
+    renderTagFilters(); renderContacts();
+}
+function clearTags(){ activeTags.clear(); renderTagFilters(); renderContacts(); }
+
+function notReadyHtml(feature){
+    return '<div class="empty"><i class="fa-solid fa-database"></i><h3>'+feature+' needs a quick setup</h3><p>The CRM upgrade migration hasn\'t been run on the database yet. Once it is, your Buyer/Seller pipeline, deal tracking, follow-ups, and activity log turn on automatically.</p></div>';
+}
+
+/* ── List view ─────────────────────────────────────────────────── */
+function renderContacts(){
+    const wrap = document.getElementById('listWrap');
+    const q = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+    const t = document.getElementById('typeFilter').value;
+    const archMode = (document.getElementById('archFilter') || {}).value || 'active';
+    let list = contacts.slice().sort((a,b) => (a.name||'').localeCompare(b.name||''));
+    if (archMode === 'active') list = list.filter(c => !c.archived);
+    else if (archMode === 'archived') list = list.filter(c => c.archived);
+    if (t) list = list.filter(c => c.type === t);
+    const connSel = document.getElementById('connFilter');
+    if (connSel){   // options = presets + any custom values in use
+        const used = [...new Set(contacts.map(c => c.connection).filter(Boolean))];
+        const keys = Object.keys(CONN_LABEL).concat(used.filter(v => !CONN_LABEL[v]));
+        const cur = connSel.value;
+        const html = '<option value="">All relationships</option>' + keys.map(k => `<option value="${esc(k)}">${esc(connLabel(k))}</option>`).join('') + '<option value="__none">No relationship set</option>';
+        if (connSel.dataset.h !== html){ connSel.innerHTML = html; connSel.dataset.h = html; connSel.value = cur; }
+        const cv = connSel.value;
+        if (cv === '__none') list = list.filter(c => !c.connection);
+        else if (cv) list = list.filter(c => c.connection === cv);
+    }
+    if (activeTags.size) list = list.filter(c => { const ct = contactTags(c); return [...activeTags].some(tag => ct.includes(tag)); });
+    if (q) list = list.filter(c => [c.name, c.email, c.phone, c.notes, c.source, c.tags, c.stage, connLabel(c.connection)].some(v => (v||'').toString().toLowerCase().includes(q)));
+    if (showDueOnly) {
+        const _t = todayStr();
+        list = list.filter(c => c.next_touch && c.next_touch <= _t)
+                   .sort((a,b) => (a.next_touch||'').localeCompare(b.next_touch||''));
+    }
+    if (listMode === 'table' && tSort.col) {
+        const col = tSort.col, dir = tSort.dir;
+        list = list.slice().sort((a,b)=>{
+            if (col === 'deal_value') return ((Number(a[col])||0) - (Number(b[col])||0)) * dir;
+            const va=(a[col]||'').toString().toLowerCase(), vb=(b[col]||'').toString().toLowerCase();
+            return va<vb?-dir:va>vb?dir:0;
+        });
+    }
+    const _lb=document.getElementById('vmList'), _tb=document.getElementById('vmTable');
+    if(_lb) _lb.classList.toggle('on', listMode==='split'); if(_tb) _tb.classList.toggle('on', listMode==='table');
+    document.getElementById('countLine').textContent = list.length + ' of ' + contacts.length + ' contact' + (contacts.length===1?'':'s');
+    if (!list.length) {
+        if (!contacts.length) {
+            wrap.innerHTML = '<div class="empty"><i class="fa-solid fa-address-book"></i><h3>No contacts yet</h3><p>Click <b>Add Contact</b> to enter one by hand, or use <b>Import CSV</b> to bring in your contacts from your old CRM/email.</p><button class="btn btn-primary" onclick="openContactModal()"><i class="fa-solid fa-plus"></i> Add your first contact</button></div>';
+        } else {
+            wrap.innerHTML = '<div class="empty"><i class="fa-solid fa-magnifying-glass"></i><h3>No matches</h3><p>Nothing matches your search/filter.</p></div>';
+        }
+        return;
+    }
+    const newLeads = contacts.filter(c => !c.archived && contactTags(c).includes('new-lead')).length;
+    const banner = newLeads
+        ? `<div onclick="filterNewLeads()" style="cursor:pointer;display:flex;align-items:center;gap:11px;background:linear-gradient(135deg,#fff1f2,#fff);border:1px solid #fecaca;border-left:4px solid #dc2626;border-radius:10px;padding:11px 14px;margin-bottom:12px;">
+             <span style="font-size:18px;">🔥</span>
+             <div style="flex:1;font-size:13px;color:#7f1d1d;"><b>${newLeads} new lead${newLeads===1?'':'s'} routed to you</b> — reach out while they're hot. <span style="color:#dc2626;font-weight:700;white-space:nowrap;">Show them →</span></div>
+           </div>`
+        : '';
+    if (listMode === 'table') {
+        wrap.innerHTML = banner + tableHtml(list);
+    } else {
+        if (detailId && !list.some(c => c.id === detailId) && !contacts.some(c => c.id === detailId)) detailId = null;
+        const rows = list.map(crowHtml).join('');
+        const rec = detailId
+            ? recordHtml(detailId)
+            : '<div class="rec-empty"><i class="fa-solid fa-hand-pointer" style="font-size:26px;opacity:.35;margin-bottom:12px;"></i>Select a contact to see their full record.</div>';
+        const narrow = detailId && listNarrow;
+        wrap.innerHTML = banner + `<div class="crm-split ${detailId?'has-record':''} ${narrow?'list-narrow':''}" id="crmSplit">
+            <div class="crm-listcol">
+                <button class="crm-listtoggle" onclick="__crmToggleList()" title="Show/hide the contact list">
+                    <i class="fa-solid ${listNarrow?'fa-angles-right':'fa-angles-left'}"></i></button>
+                <div class="crm-scroll" id="listPane">${rows}</div>
+            </div>
+            <div class="crm-recordcol" id="recordPane">${rec}</div>
+        </div>`;
+    }
+}
+function filterNewLeads(){
+    activeTags = new Set(['new-lead']);
+    renderTagFilters();
+    renderContacts();
+}
+
+function renderContact(c){
+    const initials = (c.name||'?').split(/\s+/).map(w=>w[0]).filter(Boolean).slice(0,2).join('').toUpperCase();
+    const lastDate = c.last_contact ? fmtDate(c.last_contact) : null;
+    const meta = [c.email, c.phone, lastDate ? ('Last: '+lastDate) : null].filter(Boolean).join('  ·  ');
+
+    const partner = c.linked_contact_id ? contacts.find(x => x.id === c.linked_contact_id) : null;
+    const relLabel = c.relationship ? (REL_LABEL[c.relationship] || c.relationship) : '';
+    const linkedPill = partner
+        ? `<span class="pill-linked" title="Linked to ${esc(partner.name||'')}"><i class="fa-solid fa-link"></i>${esc(relLabel || 'Linked')}</span>`
+        : '';
+    const pipePill = c.pipeline_side
+        ? `<span class="pill pill-pipe">${c.pipeline_side==='buyer'?'🔑':'🏠'} ${esc(c.stage||'')}${c.deal_value ? ' · '+moneyShort(c.deal_value) : ''}</span>`
+        : '';
+    const _t = todayStr();
+    let ntPill = '';
+    if (c.next_touch) {
+        const over = c.next_touch < _t, today = c.next_touch === _t;
+        const style = over ? 'background:#fee2e2;color:#b91c1c;' : today ? 'background:#fef3c7;color:#92400e;' : 'background:var(--surface-3);color:var(--text-sec);';
+        const label = over ? 'Follow up — overdue' : today ? 'Follow up — today' : 'Next: '+fmtDate(c.next_touch);
+        ntPill = `<span class="pill" style="${style}" title="Next touch ${esc(fmtDate(c.next_touch))}"><i class="fa-regular fa-clock"></i> ${label}</span>`;
+    }
+
+    return `<div class="contact" onclick="openDetail('${esc(c.id)}')">
+        <div class="contact-avatar">${esc(initials || '?')}</div>
+        <div class="contact-info">
+            <div class="contact-name">
+                ${esc(c.name)}
+                ${contactTags(c).includes('new-lead') ? '<span class="pill" style="background:#fee2e2;color:#b91c1c;">🔥 New Lead</span>' : ''}
+                <span class="pill pill-${esc(c.type || 'other')}">${esc((c.type||'other').replace('_',' '))}</span>
+                ${pipePill}
+                ${ntPill}
+                ${linkedPill}
+                ${c.archived ? '<span class="pill" style="background:#fef3c7;color:#92400e;">Archived</span>' : ''}
+                <span style="font-size:11px;color:var(--text-muted);"><span class="status-dot status-${esc(c.status || 'active')}"></span>${esc((c.status||'active').replace(/_/g,' '))}</span>
+            </div>
+            <div class="contact-meta">${esc(meta) || '<em style="color:var(--text-muted);">No contact info yet</em>'}</div>
+        </div>
+        <div class="contact-actions">
+            <button class="icon-btn" title="Log a touch — stamps today &amp; sets next follow-up in 30 days" onclick="logTouch('${esc(c.id)}',event)" style="color:var(--green,#0d9488);"><i class="fa-solid fa-check"></i></button>
+            <button class="icon-btn" title="Edit" onclick="event.stopPropagation();openContactModal('${esc(c.id)}')"><i class="fa-solid fa-pen"></i></button>
+        </div>
+    </div>`;
+}
+
+/* ── Pipeline view (Buyer + Seller boards) ─────────────────────── */
+function renderPipeline(){
+    const wrap = document.getElementById('listWrap');
+    document.getElementById('countLine').textContent = 'Pipeline';
+    if (!crmReady) { wrap.innerHTML = notReadyHtml('The pipeline'); return; }
+    const toggle = `<div class="pipe-toolbar"><div class="vm-toggle">
+        <button class="${pipeView==='stack'?'on':''}" onclick="setPipeView('stack')"><i class="fa-solid fa-layer-group"></i> Stacked</button>
+        <button class="${pipeView==='board'?'on':''}" onclick="setPipeView('board')"><i class="fa-solid fa-table-columns"></i> Board</button>
+        <button class="${pipeView==='list'?'on':''}" onclick="setPipeView('list')"><i class="fa-solid fa-list"></i> List</button>
+    </div></div>`;
+    const body = pipeView === 'list'
+        ? renderPipelineList('buyer','🔑 Buyer Pipeline') + renderPipelineList('seller','🏠 Seller Pipeline')
+        : renderBoard('buyer','Buyer Pipeline') + renderBoard('seller','Seller Pipeline');
+    wrap.innerHTML = toggle + body;
+}
+window.setPipeView = function(v){ pipeView = v; try { localStorage.setItem('crm-pipe-view', v); } catch(e) {} renderPipeline(); };
+function renderPipelineList(side, label){
+    const stages = stagesFor(side);
+    const list = contacts.filter(c => c.pipeline_side === side && !c.archived)
+        .sort((a,b) => stages.indexOf(a.stage||stages[0]) - stages.indexOf(b.stage||stages[0]));
+    const rows = list.length ? list.map(c => {
+        const opts = stages.map(s => `<option value="${esc(s)}"${(c.stage||stages[0])===s?' selected':''}>${esc(s)}</option>`).join('');
+        return `<div class="pl-row" onclick="openDetail('${esc(c.id)}')">
+            <div class="pl-nm">${esc(c.name||'(unnamed)')} ${agentChip(c)}</div>
+            ${c.deal_value ? `<div class="pl-val">${money(c.deal_value)}</div>` : ''}
+            <select class="deal-move" onclick="event.stopPropagation()" onchange="moveStage(event,'${esc(c.id)}',this.value)">${opts}</select>
+        </div>`;
+    }).join('') : '<div class="col-empty">No one in this pipeline yet.</div>';
+    return `<div class="board-block"><div class="board-head"><div class="board-title">${esc(label)}</div></div><div class="pl-list">${rows}</div></div>`;
+}
+function renderBoard(side, label){
+    const stages = stagesFor(side);
+    const list = contacts.filter(c => c.pipeline_side === side && !c.archived);
+    const totalVal  = list.reduce((s,c) => s + (Number(c.deal_value)||0), 0);
+    const totalComm = list.reduce((s,c) => s + (Number(c.est_commission)||0), 0);
+    const cols = stages.map(st => {
+        const items = list.filter(c => (c.stage || stages[0]) === st);
+        const colVal = items.reduce((s,c) => s + (Number(c.deal_value)||0), 0);
+        const cards = items.length ? items.map(c => renderDealCard(c, stages)).join('') : '<div class="col-empty">—</div>';
+        return `<div class="col">
+            <div class="col-head"><span>${esc(st)}</span><span class="col-count">${items.length}${colVal ? ' · '+moneyShort(colVal) : ''}</span></div>
+            <div class="col-body">${cards}</div>
+        </div>`;
+    }).join('');
+    const stats = [
+        list.length + ' active',
+        totalVal ? money(totalVal) + ' volume' : '',
+        totalComm ? money(totalComm) + ' est. commission' : ''
+    ].filter(Boolean).join(' · ');
+    return `<div class="board-block">
+        <div class="board-head">
+            <div class="board-title">${side==='buyer'?'🔑 ':'🏠 '}${esc(label)}</div>
+            <div class="board-stats">${esc(stats)}</div>
+        </div>
+        <div class="board-wrap"><div class="board ${pipeView==='stack'?'stack':''}">${cols}</div></div>
+    </div>`;
+}
+function renderDealCard(c, stages){
+    const opts = stages.map(s => `<option value="${esc(s)}"${(c.stage||stages[0])===s ? ' selected' : ''}>${esc(s)}</option>`).join('');
+    return `<div class="deal-card" onclick="openDetail('${esc(c.id)}')">
+        <div class="deal-name">${esc(c.name||'(unnamed)')}</div>${agentChip(c)}
+        ${c.deal_value ? `<div class="deal-val">${money(c.deal_value)}${c.est_commission ? ' · '+money(c.est_commission)+' comm' : ''}</div>` : ''}
+        ${c.expected_close ? `<div class="deal-close">Close ${esc(fmtDate(c.expected_close))}</div>` : ''}
+        <select class="deal-move" onclick="event.stopPropagation()" onchange="moveStage(event,'${esc(c.id)}',this.value)">${opts}</select>
+    </div>`;
+}
+async function moveStage(e, id, stage){
+    e.stopPropagation();
+    try {
+        const token = await getToken();
+        const r = await fetch(SB_URL+'/rest/v1/agent_contacts?id=eq.'+encodeURIComponent(id), { method:'PATCH', headers: sbHeaders(token,{'Prefer':'return=minimal'}), body: JSON.stringify({ stage }) });
+        if (!r.ok && r.status !== 204) throw new Error('HTTP '+r.status);
+        const c = contacts.find(x => x.id === id); if (c) c.stage = stage;
+        renderCurrent(); if (detailId) renderDetail(detailId);
+        toast('Moved to '+stage, 'success');
+        offerTxnAtUnderContract(id, stage);
+    } catch(err){ toast('Move failed: '+err.message, 'error'); }
+}
+
+/* ── Follow-ups view ───────────────────────────────────────────── */
+function renderFollowups(){
+    const wrap = document.getElementById('listWrap');
+    document.getElementById('countLine').textContent = 'Follow-ups';
+    if (!crmReady) { wrap.innerHTML = notReadyHtml('Follow-ups'); return; }
+    const today = todayStr();
+    const open = tasks.filter(t => !t.done);
+    const groups = { overdue:[], today:[], upcoming:[], none:[] };
+    open.forEach(t => {
+        if (!t.due_date) groups.none.push(t);
+        else if (t.due_date < today) groups.overdue.push(t);
+        else if (t.due_date === today) groups.today.push(t);
+        else groups.upcoming.push(t);
+    });
+    Object.values(groups).forEach(g => g.sort((a,b) => ((a.due_date||'9999')+'T'+(a.due_time||'99')).localeCompare((b.due_date||'9999')+'T'+(b.due_time||'99'))));
+    const section = (title, arr, cls) => arr.length ? `<div class="fu-group"><div class="fu-h">${title} (${arr.length})</div>${arr.map(t => renderFuItem(t, cls)).join('')}</div>` : '';
+    const bar = `<div style="margin-bottom:14px;"><button class="btn btn-primary" onclick="openTaskModal()"><i class="fa-solid fa-plus"></i> Add follow-up</button></div>`;
+    const body = section('Overdue', groups.overdue, 'overdue')
+               + section('Today', groups.today, '')
+               + section('Upcoming', groups.upcoming, '')
+               + section('No date', groups.none, '');
+    wrap.innerHTML = bar + (body || '<div class="empty"><i class="fa-solid fa-circle-check"></i><h3>All caught up</h3><p>No open follow-ups. Add one above, or set one from a contact.</p></div>');
+}
+function renderFuItem(t, cls){
+    const c = contacts.find(x => x.id === t.contact_id);
+    const due = t.due_date ? fmtDateTime(t.due_date, t.due_time) : 'No date';
+    return `<div class="fu-item ${cls}">
+        <input type="checkbox" class="fu-check" onchange="toggleTask('${esc(t.id)}',this.checked)">
+        <div style="flex:1;min-width:0;">
+            <div class="fu-title">${esc(t.title)}</div>
+            <div class="fu-meta">${esc(due)}${c ? ` · <a href="#" onclick="event.preventDefault();openDetail('${esc(c.id)}')">${esc(c.name)}</a>` : ''}</div>
+        </div>
+    </div>`;
+}
+
+/* ── Contact detail modal ──────────────────────────────────────── */
+function openDetail(id){ detailId = id; recordSurface = 'modal'; renderDetail(id); document.getElementById('detailModal').classList.add('open'); }
+function closeDetail(){ recordSurface = 'pane'; document.getElementById('detailModal').classList.remove('open'); }
+function recordHtml(id){
+    const c = contacts.find(x => x.id === id);
+    if (!c) return '';
+
+    const info = [
+        c.email && `<div class="chip"><i class="fa-solid fa-envelope"></i> <a href="mailto:${esc(c.email)}">${esc(c.email)}</a></div>`,
+        c.phone && `<div class="chip"><i class="fa-solid fa-phone"></i> <a href="tel:${esc(c.phone)}">${esc(c.phone)}</a></div>`
+    ].filter(Boolean).join('');
+    const addr = [c.street, [c.city, c.state].filter(Boolean).join(', '), c.zip].filter(Boolean).join(' · ');
+    const partner = c.linked_contact_id ? contacts.find(x => x.id === c.linked_contact_id) : null;
+    const relLabel = c.relationship ? (REL_LABEL[c.relationship] || c.relationship) : 'Linked';
+
+    const dealHtml = (crmReady && c.pipeline_side) ? `<div class="section-head"><i class="fa-solid fa-diagram-project"></i> Deal</div>
+        <div class="deal-summary">
+            <div class="chip"><b>${c.pipeline_side==='buyer'?'Buyer':'Seller'}</b></div>
+            <div class="chip">Stage: <b>${esc(c.stage||'—')}</b></div>
+            ${c.deal_value ? `<div class="chip">Value: <b>${money(c.deal_value)}</b></div>` : ''}
+            ${c.est_commission ? `<div class="chip">Est. comm: <b>${money(c.est_commission)}</b></div>` : ''}
+            ${c.expected_close ? `<div class="chip">Close: <b>${esc(fmtDate(c.expected_close))}</b></div>` : ''}
+        </div>` : '';
+
+    let tasksHtml = '';
+    let tlHtml = '';
+    if (crmReady) {
+        const myTasks = tasks.filter(t => t.contact_id === id)
+            .sort((a,b) => (a.done - b.done) || (a.due_date||'9999').localeCompare(b.due_date||'9999'));
+        tasksHtml = `<div class="section-head"><i class="fa-solid fa-bell"></i> Follow-ups <button class="mini-add" onclick="openTaskModal('${esc(id)}')">+ Add</button></div>`
+            + (myTasks.length ? myTasks.map(t => `<div class="fu-item ${!t.done && t.due_date && t.due_date < todayStr() ? 'overdue' : ''}" style="margin-bottom:6px;">
+                    <input type="checkbox" class="fu-check" ${t.done?'checked':''} onchange="toggleTask('${esc(t.id)}',this.checked)">
+                    <div style="flex:1;min-width:0;">
+                        <div class="fu-title" style="${t.done?'text-decoration:line-through;color:var(--text-muted);':''}">${esc(t.title)}</div>
+                        <div class="fu-meta">${t.due_date ? esc(fmtDateTime(t.due_date, t.due_time)) : 'No date'}</div>
+                    </div>
+                </div>`).join('') : '<div class="muted-note">No follow-ups yet.</div>');
+
+        const ACT_ICON = { call:'📞', text:'💬', email:'✉️', note:'📝', meeting:'🤝' };
+        const acts = activities.filter(a => a.contact_id === id);
+        tlHtml = `<div class="section-head"><i class="fa-solid fa-clock-rotate-left"></i> Activity</div>
+            <div class="act-add">
+                <select id="act-kind">
+                    <option value="note">Note</option><option value="call">Call</option>
+                    <option value="text">Text</option><option value="email">Email</option>
+                    <option value="meeting">Meeting</option>
+                </select>
+                <input id="act-body" placeholder="Log a call, note, or update…" onkeydown="if(event.key==='Enter'){event.preventDefault();addActivity();}">
+                <button class="btn btn-primary" onclick="addActivity()">Log</button>
+            </div>`
+            + (acts.length ? `<div class="tl">` + acts.map(a => `<div class="tl-item">
+                    <div class="tl-ic">${ACT_ICON[a.kind]||'📝'}</div>
+                    <div class="tl-body">${esc(a.body||a.kind)}<div class="tl-time">${esc(new Date(a.created_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}))}</div></div>
+                </div>`).join('') + `</div>` : '<div class="muted-note">No activity logged yet.</div>');
+    }
+
+    const dealForm = crmReady ? `
+        <div class="section-head"><i class="fa-solid fa-diagram-project"></i> Deal / Pipeline</div>
+        <div class="field-row">
+            <div class="field" style="margin:0;"><label>Pipeline</label>
+                <select id="d-side" onchange="saveSide(this.value)">
+                    <option value=""${!c.pipeline_side?' selected':''}>Not in a pipeline</option>
+                    <option value="buyer"${c.pipeline_side==='buyer'?' selected':''}>Buyer</option>
+                    <option value="seller"${c.pipeline_side==='seller'?' selected':''}>Seller</option>
+                </select></div>
+            <div class="field" style="margin:0;"><label>Stage</label>
+                <select id="d-stage" ${c.pipeline_side?'':'disabled'} onchange="saveField('stage', this.value||null)">
+                    ${c.pipeline_side ? stagesFor(c.pipeline_side).map(s=>`<option value="${esc(s)}"${(c.stage||stagesFor(c.pipeline_side)[0])===s?' selected':''}>${esc(s)}</option>`).join('') : '<option value="">—</option>'}
+                </select></div>
+        </div>
+        <div class="field-row" style="margin-top:12px;">
+            <div class="field" style="margin:0;"><label>Deal Value ($)</label>
+                <input type="number" id="d-deal_value" min="0" step="1000" value="${c.deal_value==null?'':c.deal_value}" onchange="saveDealValue(this.value)"></div>
+            <div class="field" style="margin:0;"><label>Est. Commission ($)</label>
+                <input type="number" id="d-est_commission" min="0" step="100" value="${c.est_commission==null?'':c.est_commission}" onchange="saveField('est_commission', this.value===''?null:Number(this.value))"></div>
+        </div>
+        <div class="field" style="margin-top:12px;"><label>Expected Close</label>
+            <input type="date" id="d-expected_close" value="${c.expected_close||''}" style="max-width:220px;" onchange="saveField('expected_close', this.value||null)"></div>
+    ` : '';
+
+    const linkedRow = partner
+        ? `<div class="muted-note" style="margin-top:10px;"><i class="fa-solid fa-link"></i> ${esc(relLabel)}: <b>${esc(partner.name||'')}</b> · <a href="#" style="color:var(--red);font-weight:600;" onclick="event.preventDefault();closeDetail();openContactModal('${esc(id)}')">change</a></div>`
+        : `<div class="muted-note" style="margin-top:10px;"><a href="#" style="color:var(--red);font-weight:600;" onclick="event.preventDefault();closeDetail();openContactModal('${esc(id)}')"><i class="fa-solid fa-link"></i> Link a spouse / co-buyer…</a></div>`;
+
+    const leftCol = `<div class="detail-col">
+        ${isMine(c) ? '' : `<div class="agent-owner-note"><i class="fa-solid fa-user-tie"></i> ${esc(agentNames[agentKey(c)] || 'Another agent')}'s contact — edits you make here change their record.</div>`}
+        <div class="field"><label>Name</label>
+            <input id="d-name" value="${esc(c.name||'')}" onchange="saveField('name', this.value.trim()||null)"></div>
+        <div class="field-row">
+            <div class="field" style="margin:0;"><label>Type</label>
+                <select id="d-type" onchange="saveField('type', this.value)">${optsFrom(TYPE_LABEL, c.type||'prospect')}</select></div>
+            <div class="field" style="margin:0;"><label>Status</label>
+                <select id="d-status" onchange="saveField('status', this.value)">${optsFrom(STATUS_LABEL, c.status||'active')}</select></div>
+        </div>
+        <div class="field"><label>Relationship</label>
+            <select id="d-connection" onchange="saveField('connection', this.value||null)"><option value="">—</option>${Object.keys(CONN_LABEL).concat(c.connection && !CONN_LABEL[c.connection] ? [c.connection] : []).map(k => `<option value="${esc(k)}"${k===c.connection?' selected':''}>${esc(connLabel(k))}</option>`).join('')}</select></div>
+        <div class="field-row">
+            <div class="field" style="margin:0;"><label>Email</label>
+                <input id="d-email" type="email" value="${esc(c.email||'')}" onchange="saveField('email', this.value.trim()||null)"></div>
+            <div class="field" style="margin:0;"><label>Phone</label>
+                <input id="d-phone" type="tel" value="${esc(c.phone||'')}" onchange="saveField('phone', this.value.trim()||null)"></div>
+        </div>
+        ${dealForm}
+        <div class="section-head"><i class="fa-solid fa-circle-info"></i> Details</div>
+        <div class="field-row">
+            <div class="field" style="margin:0;"><label>Source</label>
+                <input id="d-source" value="${esc(c.source||'')}" onchange="saveField('source', this.value.trim()||null)"></div>
+            <div class="field" style="margin:0;"><label>Tags</label>
+                <input id="d-tags" value="${esc(c.tags||'')}" placeholder="comma, separated" onchange="saveField('tags', this.value.trim()||null)"></div>
+        </div>
+        <div class="field"><label>Last Contact</label>
+            <input id="d-last_contact" type="date" value="${c.last_contact||''}" style="max-width:220px;" onchange="saveField('last_contact', this.value||null)"></div>
+        <div class="field-row">
+            <div class="field" style="margin:0;"><label>🎂 Birthday</label>
+                <div class="bday-row">${bdayFieldsHtml('d', c.birthday, "saveBday()")}</div></div>
+            <div class="field" style="margin:0;"><label>🏡 Home Anniversary</label>
+                <input id="d-home_anniversary" type="date" value="${c.home_anniversary||''}" onchange="saveField('home_anniversary', this.value||null)"></div>
+        </div>
+        <div class="field"><label>Street</label>
+            <input id="d-street" value="${esc(c.street||'')}" onchange="saveField('street', this.value.trim()||null)"></div>
+        <div class="addr-row">
+            <div class="field" style="margin:0;"><label>City</label>
+                <input id="d-city" value="${esc(c.city||'')}" onchange="saveField('city', this.value.trim()||null)"></div>
+            <div class="field" style="margin:0;"><label>State</label>
+                <input id="d-state" maxlength="2" style="text-transform:uppercase;" value="${esc(c.state||'')}" onchange="saveField('state', this.value.trim().toUpperCase()||null)"></div>
+            <div class="field" style="margin:0;"><label>Zip</label>
+                <input id="d-zip" value="${esc(c.zip||'')}" onchange="saveField('zip', this.value.trim()||null)"></div>
+        </div>
+        <div class="field"><label>Notes</label>
+            <textarea id="d-notes" onchange="saveField('notes', this.value.trim()||null)">${esc(c.notes||'')}</textarea></div>
+        ${linkedRow}
+    </div>`;
+    const rightCol = crmReady ? `<div class="detail-col">${tasksHtml}${tlHtml}</div>` : '';
+    const bodyCols = crmReady ? `<div class="detail-cols">${leftCol}${rightCol}</div>` : leftCol;
+
+    const initials = (c.name||'?').split(/\s+/).map(w=>w[0]).filter(Boolean).slice(0,2).join('').toUpperCase();
+    const lastTouch = c.last_contact ? relTime(c.last_contact) : 'no contact logged';
+    const hero = `<button class="rec-back" onclick="backToList()"><i class="fa-solid fa-arrow-left"></i> Back</button>
+      <div class="rec-hero"><div class="rec-hav">${esc(initials||'?')}</div><div style="flex:1;min-width:0;">
+        <div class="rec-hname">${esc(c.name||'(unnamed)')}</div>
+        <div style="margin-top:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><span class="pill pill-${esc(c.type||'other')}">${esc((c.type||'other').replace(/_/g,' '))}</span>${c.archived?'<span class="pill" style="background:#fef3c7;color:#92400e;">Archived</span>':''}<span style="font-size:11px;color:var(--text-muted);"><span class="status-dot status-${esc(c.status||'active')}"></span>${esc((c.status||'active').replace(/_/g,' '))}</span></div>
+        <div class="rec-hsub">${[addr||null, 'last touch '+lastTouch].filter(Boolean).map(esc).join(' · ')}</div></div></div>`;
+    const qa = `<div class="rec-qa">${c.phone?`<a class="rec-qbtn" href="tel:${esc(c.phone)}"><i class="fa-solid fa-phone"></i> Call</a><a class="rec-qbtn" href="sms:${esc(c.phone)}"><i class="fa-solid fa-comment-sms"></i> Text</a>`:''}${c.email?`<a class="rec-qbtn" href="mailto:${esc(c.email)}"><i class="fa-solid fa-envelope"></i> Email</a>`:''}<button class="rec-qbtn go" onclick="logTouch('${esc(id)}',event)"><i class="fa-solid fa-check"></i> Log a touch</button><button class="rec-qbtn" onclick="openTaskModal('${esc(id)}')"><i class="fa-solid fa-plus"></i> Follow-up</button><button class="rec-qbtn" onclick="openContactModal('${esc(id)}')"><i class="fa-solid fa-pen"></i> Edit</button><button class="rec-qbtn" onclick="archiveById('${esc(id)}')"><i class="fa-solid fa-box-archive"></i> ${c.archived?'Unarchive':'Archive'}</button></div>`;
+    const _t = todayStr();
+    const ntVal = c.next_touch ? (c.next_touch<_t?'<span class="sv over">Overdue</span>':c.next_touch===_t?'<span class="sv over">Today</span>':'<span class="sv">'+esc(fmtDate(c.next_touch))+'</span>') : '<span class="sv" style="color:var(--text-muted);">—</span>';
+    const stats = `<div class="rec-stats">
+        <div class="rec-stat"><div class="sl">Next touch</div>${ntVal}</div>
+        <div class="rec-stat"><div class="sl">Last contact</div><div class="sv">${c.last_contact?esc(fmtDate(c.last_contact)):'—'}</div></div>
+        <div class="rec-stat"><div class="sl">${c.pipeline_side?'Stage':'Source'}</div><div class="sv" style="font-size:12.5px;">${esc(c.pipeline_side?(c.stage||'—'):(c.source||'—'))}</div></div>
+        <div class="rec-stat"><div class="sl">${c.deal_value?'Deal value':'Type'}</div><div class="sv" style="font-size:12.5px;">${c.deal_value?esc(money(c.deal_value)):esc((c.type||'other').replace(/_/g,' '))}</div></div>
+    </div>`;
+    const kd = keyDateChips(c);
+    const kdRow = kd ? `<div class="rec-kd">${kd}</div>` : '';
+    const txnBlock = `<div class="rec-card">${contactTxnCard(id)}</div>`;
+    return hero + qa + stats + kdRow + txnBlock + bodyCols;
+}
+function renderDetail(id){
+    const html = recordHtml(id);
+    const c = contacts.find(x => x.id === id);
+    if (recordSurface === 'modal') {
+        const b = document.getElementById('detailBody'); if (b) b.innerHTML = html;
+        const t = document.getElementById('detailTitle'); if (t) t.textContent = (c && c.name) || 'Contact';
+    }
+    else { const p = document.getElementById('recordPane'); if (p) p.innerHTML = html; }
+    const archBtn = document.getElementById('detailArchiveBtn');
+    if (archBtn && c) archBtn.innerHTML = c.archived ? '<i class="fa-solid fa-box-open"></i> Unarchive' : '<i class="fa-solid fa-box-archive"></i> Archive';
+}
+
+async function addActivity(){
+    const id = detailId; if (!id) return;
+    const kind = document.getElementById('act-kind').value;
+    const body = document.getElementById('act-body').value.trim();
+    if (!body){ toast('Type something to log', 'error'); return; }
+    try {
+        const token = await getToken();
+        const r = await fetch(SB_URL+'/rest/v1/agent_contact_activities', { method:'POST', headers: sbHeaders(token,{'Prefer':'return=minimal'}), body: JSON.stringify({ contact_id:id, kind, body }) });
+        if (!r.ok) throw new Error('HTTP '+r.status);
+        // Bump Last Contact, and clear the "new-lead" flag once they've reached out
+        const _c = contacts.find(x => x.id === id);
+        const _patch = { last_contact: todayStr() };
+        if (_c && contactTags(_c).includes('new-lead')) _patch.tags = contactTags(_c).filter(t => t !== 'new-lead').join(', ') || null;
+        await fetch(SB_URL+'/rest/v1/agent_contacts?id=eq.'+encodeURIComponent(id), { method:'PATCH', headers: sbHeaders(token,{'Prefer':'return=minimal'}), body: JSON.stringify(_patch) }).catch(()=>{});
+        await loadActivities(); await loadContacts();
+        renderDetail(id); if (currentView !== 'followups') renderCurrent();
+        toast('Logged', 'success');
+    } catch(err){ toast('Log failed: '+err.message, 'error'); }
+}
+
+/* ── Inline field editing (autosave from the detail card) ──────── */
+let _savedT;
+function flashSaved(){ const el = document.getElementById('detailSaved'); if (!el) return; el.classList.add('show'); clearTimeout(_savedT); _savedT = setTimeout(() => el.classList.remove('show'), 1200); }
+async function saveFields(patch){
+    const id = detailId; if (!id) return;
+    try {
+        const token = await getToken();
+        const r = await fetch(SB_URL+'/rest/v1/agent_contacts?id=eq.'+encodeURIComponent(id), { method:'PATCH', headers: sbHeaders(token,{'Prefer':'return=minimal'}), body: JSON.stringify(patch) });
+        if (!r.ok && r.status !== 204) throw new Error('HTTP '+r.status);
+        const c = contacts.find(x => x.id === id); if (c) Object.assign(c, patch);
+        if ('name' in patch) document.getElementById('detailTitle').textContent = patch.name || '(unnamed)';
+        renderCurrent();   // refresh the list/pipeline behind the card (card DOM untouched → no focus loss)
+        flashSaved();
+        if ('stage' in patch) offerTxnAtUnderContract(id, patch.stage);
+    } catch(err){ toast('Save failed: '+err.message, 'error'); }
+}
+function saveField(key, value){ const p = {}; p[key] = value; return saveFields(p); }
+async function saveSide(v){
+    const c = contacts.find(x => x.id === detailId);
+    const side = v || null;
+    let stage = null;
+    if (side){ const st = stagesFor(side); stage = (c && st.includes(c.stage)) ? c.stage : st[0]; }
+    await saveFields({ pipeline_side: side, stage });
+    const sel = document.getElementById('d-stage');
+    if (sel){
+        if (!side){ sel.innerHTML = '<option value="">—</option>'; sel.disabled = true; }
+        else { sel.disabled = false; sel.innerHTML = stagesFor(side).map(s => `<option value="${esc(s)}"${s===stage?' selected':''}>${esc(s)}</option>`).join(''); }
+    }
+}
+async function saveDealValue(v){
+    const val = v === '' ? null : Number(v);
+    const patch = { deal_value: val };
+    const commInput = document.getElementById('d-est_commission');
+    const c = contacts.find(x => x.id === detailId);
+    if (val != null && commInput && !commInput.value && (c == null || c.est_commission == null)){
+        const comm = Math.round(val * DEFAULT_COMMISSION_PCT);
+        patch.est_commission = comm; commInput.value = comm;
+    }
+    await saveFields(patch);
+}
+async function archiveCurrentDetail(){
+    const id = detailId; if (!id) return;
+    const c = contacts.find(x => x.id === id);
+    const next = !(c && c.archived);
+    if (next && !confirm('Archive this contact? They stay in your database under the “Archived” filter — nothing is deleted.')) return;
+    await saveFields({ archived: next });
+    toast(next ? 'Archived' : 'Unarchived', 'success');
+    if (next) closeDetail(); else renderDetail(id);
+}
+
+/* ── Follow-up task modal ──────────────────────────────────────── */
+function openTaskModal(contactId){
+    document.getElementById('t-id').value = '';
+    document.getElementById('t-title').value = '';
+    document.getElementById('t-due').value = '';
+    document.getElementById('t-time').value = '';
+    const sel = document.getElementById('t-contact');
+    sel.innerHTML = '<option value="">— General (no contact) —</option>' +
+        contacts.slice().sort((a,b) => (a.name||'').localeCompare(b.name||''))
+            .map(c => `<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');
+    sel.value = contactId || '';
+    document.getElementById('taskModal').classList.add('open');
+    setTimeout(() => document.getElementById('t-title').focus(), 60);
+}
+function closeTaskModal(){ document.getElementById('taskModal').classList.remove('open'); }
+async function saveTask(e){
+    e.preventDefault();
+    const btn = document.getElementById('taskSaveBtn'); btn.disabled = true; const o = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    try {
+        const payload = {
+            contact_id: document.getElementById('t-contact').value || null,
+            title:      document.getElementById('t-title').value.trim(),
+            due_date:   document.getElementById('t-due').value || null,
+            due_time:   document.getElementById('t-time').value || null
+        };
+        if (!payload.title) throw new Error('Enter a task');
+        const token = await getToken();
+        const r = await fetch(SB_URL+'/rest/v1/agent_contact_tasks', { method:'POST', headers: sbHeaders(token,{'Prefer':'return=minimal'}), body: JSON.stringify(payload) });
+        if (!r.ok) throw new Error('HTTP '+r.status);
+        toast('Follow-up added', 'success');
+        closeTaskModal();
+        await loadTasks(); renderCurrent(); if (detailId) renderDetail(detailId);
+    } catch(err){ toast('Save failed: '+err.message, 'error'); }
+    finally { btn.disabled = false; btn.innerHTML = o; }
+}
+async function toggleTask(id, done){
+    try {
+        const token = await getToken();
+        const r = await fetch(SB_URL+'/rest/v1/agent_contact_tasks?id=eq.'+encodeURIComponent(id), { method:'PATCH', headers: sbHeaders(token,{'Prefer':'return=minimal'}), body: JSON.stringify({ done }) });
+        if (!r.ok && r.status !== 204) throw new Error('HTTP '+r.status);
+        const t = tasks.find(x => x.id === id); if (t) t.done = done;
+        renderCurrent(); if (detailId) renderDetail(detailId);
+    } catch(err){ toast('Update failed: '+err.message, 'error'); }
+}
+
+/* ── Add / Edit modal ──────────────────────────────────────────── */
+window.saveBday = function(){
+    const m = document.getElementById('d-bm').value, d = document.getElementById('d-bd').value;
+    if (!!m !== !!d) return;   // wait until both month and day are picked (or both cleared)
+    const v = bdayValue('d');
+    if (m && d && !v) { toast('That date doesn\'t exist — check the day.', 'error'); return; }
+    saveField('birthday', v);
+};
+function openContactModal(id){
+    editingId = id || null;
+    document.getElementById('contactModalTitle').textContent = id ? 'Edit Contact' : 'Add Contact';
+    document.getElementById('deleteBtn').style.display = id ? '' : 'none';
+    document.getElementById('contactForm').reset();
+    document.getElementById('c-bday').innerHTML = bdayFieldsHtml('c', '');
+    document.getElementById('c-id').value = id || '';
+    document.getElementById('c-prev-linked').value = '';
+    document.getElementById('c-prev-relationship').value = '';
+    populateLinkPicker(id || null);
+    // Deal / pipeline section
+    document.getElementById('dealSection').style.display = crmReady ? '' : 'none';
+    document.getElementById('dealSectionHead').style.display = crmReady ? '' : 'none';
+    document.getElementById('c-side').value = '';
+    populateStageSelect('', '');
+    document.getElementById('c-deal_value').value = '';
+    document.getElementById('c-est_commission').value = '';
+    document.getElementById('c-expected_close').value = '';
+    if (id) {
+        const c = contacts.find(x => x.id === id);
+        if (c) {
+            document.getElementById('c-name').value         = c.name || '';
+            document.getElementById('c-type').value         = c.type || 'prospect';
+            (function(){ const cs = document.getElementById('c-connection'); if (c.connection && !CONN_LABEL[c.connection] && ![...cs.options].some(o => o.value === c.connection)) cs.add(new Option(c.connection, c.connection)); cs.value = c.connection || ''; })();
+            document.getElementById('c-email').value        = c.email || '';
+            document.getElementById('c-phone').value        = c.phone || '';
+            document.getElementById('c-last_contact').value = c.last_contact || '';
+            document.getElementById('c-next_touch').value   = c.next_touch || '';
+            document.getElementById('c-bday').innerHTML        = bdayFieldsHtml('c', c.birthday);
+            document.getElementById('c-home_anniversary').value = c.home_anniversary || '';
+            document.getElementById('c-status').value       = c.status || 'active';
+            document.getElementById('c-source').value       = c.source || '';
+            document.getElementById('c-tags').value         = c.tags || '';
+            document.getElementById('c-notes').value        = c.notes || '';
+            document.getElementById('c-street').value       = c.street || '';
+            document.getElementById('c-city').value         = c.city || '';
+            document.getElementById('c-state').value        = c.state || 'IN';
+            document.getElementById('c-zip').value          = c.zip || '';
+            document.getElementById('c-linked_contact_id').value = c.linked_contact_id || '';
+            document.getElementById('c-relationship').value      = c.relationship || '';
+            document.getElementById('c-prev-linked').value        = c.linked_contact_id || '';
+            document.getElementById('c-prev-relationship').value  = c.relationship || '';
+            if (crmReady) {
+                document.getElementById('c-side').value = c.pipeline_side || '';
+                populateStageSelect(c.pipeline_side || '', c.stage || '');
+                document.getElementById('c-deal_value').value     = c.deal_value == null ? '' : c.deal_value;
+                document.getElementById('c-est_commission').value = c.est_commission == null ? '' : c.est_commission;
+                document.getElementById('c-expected_close').value = c.expected_close || '';
+            }
+            document.getElementById('deleteBtn').innerHTML = c.archived ? '<i class="fa-solid fa-box-open"></i> Unarchive' : '<i class="fa-solid fa-box-archive"></i> Archive';
+        }
+    } else {
+        // Default state on new contact
+        document.getElementById('c-state').value = 'IN';
+    }
+    renderLinkCurrent();
+    document.getElementById('contactModal').classList.add('open');
+    setTimeout(() => document.getElementById('c-name').focus(), 60);
+}
+function closeContactModal(){ document.getElementById('contactModal').classList.remove('open'); editingId = null; }
+
+/* Deal / pipeline field helpers */
+function onSideChange(){
+    const side = document.getElementById('c-side').value;
+    populateStageSelect(side, document.getElementById('c-stage').value);
+}
+function populateStageSelect(side, selected){
+    const sel = document.getElementById('c-stage');
+    if (!side){ sel.innerHTML = '<option value="">—</option>'; sel.disabled = true; return; }
+    sel.disabled = false;
+    const opts = stagesFor(side);
+    sel.innerHTML = opts.map(s => `<option value="${esc(s)}"${s===selected ? ' selected' : ''}>${esc(s)}</option>`).join('');
+    if (!opts.includes(selected)) sel.value = opts[0];
+}
+function autoCommission(){
+    const v = parseFloat(document.getElementById('c-deal_value').value);
+    const comm = document.getElementById('c-est_commission');
+    if (!isNaN(v) && !comm.value) comm.value = Math.round(v * DEFAULT_COMMISSION_PCT);
+}
+
+/* Build the <select> of other contacts to link to */
+function populateLinkPicker(excludeId){
+    const sel = document.getElementById('c-linked_contact_id');
+    const options = contacts
+        .filter(c => c.id !== excludeId)
+        .slice()
+        .sort((a,b) => (a.name||'').localeCompare(b.name||''))
+        .map(c => {
+            const sub = c.email || c.phone || '';
+            return `<option value="${esc(c.id)}">${esc(c.name)}${sub ? ' — '+esc(sub) : ''}</option>`;
+        }).join('');
+    sel.innerHTML = '<option value="">— None —</option>' + options;
+}
+
+function onLinkPickerChange(){
+    const id = document.getElementById('c-linked_contact_id').value;
+    const rel = document.getElementById('c-relationship').value;
+    if (id && !rel) document.getElementById('c-relationship').value = 'spouse';
+    renderLinkCurrent();
+}
+
+function clearLink(){
+    document.getElementById('c-linked_contact_id').value = '';
+    document.getElementById('c-relationship').value = '';
+    renderLinkCurrent();
+}
+
+function renderLinkCurrent(){
+    const id = document.getElementById('c-linked_contact_id').value;
+    const rel = document.getElementById('c-relationship').value;
+    const wrap = document.getElementById('link-current-wrap');
+    if (!id) { wrap.style.display = 'none'; return; }
+    const partner = contacts.find(c => c.id === id);
+    if (!partner) { wrap.style.display = 'none'; return; }
+    document.getElementById('link-current-name').textContent = partner.name || '(unnamed)';
+    document.getElementById('link-current-rel').textContent  = rel ? ('· ' + (REL_LABEL[rel] || rel)) : '';
+    wrap.style.display = '';
+}
+
+async function saveContact(e){
+    e.preventDefault();
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true;
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…';
+    try {
+        const id = document.getElementById('c-id').value || null;
+        const linkedId = document.getElementById('c-linked_contact_id').value || null;
+        const relationship = (document.getElementById('c-relationship').value || '').trim() || null;
+        const prevLinked = document.getElementById('c-prev-linked').value || null;
+
+        // Guardrails
+        if (linkedId && id && linkedId === id) {
+            throw new Error("A contact can't be linked to itself.");
+        }
+        if (linkedId && !relationship) {
+            throw new Error('Pick a relationship type for the linked contact.');
+        }
+
+        const payload = {
+            name:              document.getElementById('c-name').value.trim(),
+            type:              document.getElementById('c-type').value || null,
+            connection:        document.getElementById('c-connection').value || null,
+            email:             document.getElementById('c-email').value.trim() || null,
+            phone:             document.getElementById('c-phone').value.trim() || null,
+            last_contact:      document.getElementById('c-last_contact').value || null,
+            next_touch:        document.getElementById('c-next_touch').value || null,
+            birthday:          bdayValue('c'),
+            home_anniversary:  document.getElementById('c-home_anniversary').value || null,
+            source:            document.getElementById('c-source').value.trim() || null,
+            tags:              document.getElementById('c-tags').value.trim() || null,
+            notes:             document.getElementById('c-notes').value.trim() || null,
+            status:            document.getElementById('c-status').value || 'active',
+            street:            document.getElementById('c-street').value.trim() || null,
+            city:              document.getElementById('c-city').value.trim() || null,
+            state:            (document.getElementById('c-state').value.trim().toUpperCase()) || null,
+            zip:               document.getElementById('c-zip').value.trim() || null,
+            linked_contact_id: linkedId,
+            relationship:      linkedId ? relationship : null,
+            agent_name:        agentDisplayName(currentUser),
+            agent_email:       currentUser.email || null
+        };
+        if (crmReady) {
+            const side  = document.getElementById('c-side').value || null;
+            const stage = side ? (document.getElementById('c-stage').value || stagesFor(side)[0]) : null;
+            const dv = document.getElementById('c-deal_value').value;
+            const ec = document.getElementById('c-est_commission').value;
+            const xc = document.getElementById('c-expected_close').value;
+            payload.pipeline_side  = side;
+            payload.stage          = stage;
+            payload.deal_value     = dv === '' ? null : Number(dv);
+            payload.est_commission = ec === '' ? null : Number(ec);
+            payload.expected_close = xc || null;
+        }
+        if (id) { const orig = allContacts.find(x => x.id === id); if (orig && !isMine(orig)) { delete payload.agent_name; delete payload.agent_email; } }   // an owner editing an agent's contact keeps it the agent's
+        const token = await getToken();
+        const url = id ? (SB_URL+'/rest/v1/agent_contacts?id=eq.'+encodeURIComponent(id)) : (SB_URL+'/rest/v1/agent_contacts');
+        const method = id ? 'PATCH' : 'POST';
+        const res = await fetch(url, { method, headers: sbHeaders(token, {'Prefer':'return=representation'}), body: JSON.stringify(payload) });
+        if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(err.message || ('HTTP '+res.status)); }
+        const saved = await res.json();
+        const savedRow = Array.isArray(saved) ? saved[0] : saved;
+        const myId = savedRow?.id || id;
+
+        // ── Bidirectional mirror sync ─────────────────────────────────
+        // 1. If we used to link to X and now don't (or link to someone else), unlink X if X was pointing back to us.
+        if (prevLinked && prevLinked !== linkedId) {
+            await unlinkIfPointingTo(token, prevLinked, myId);
+        }
+        // 2. If we now link to Y, set Y's link back to us with the mirrored relationship.
+        if (linkedId && myId) {
+            const mirroredRel = REL_MIRROR[relationship] || 'other';
+            await setMirrorLink(token, linkedId, myId, mirroredRel);
+        }
+
+        toast(id ? 'Updated' : 'Added', 'success');
+        closeContactModal();
+        await refresh();
+    } catch(err) {
+        toast('Save failed: '+err.message, 'error');
+    } finally {
+        btn.disabled = false; btn.innerHTML = orig;
+    }
+}
+
+/* Mirror helpers */
+async function setMirrorLink(token, partnerId, myId, mirroredRel){
+    try {
+        await fetch(SB_URL+'/rest/v1/agent_contacts?id=eq.'+encodeURIComponent(partnerId), {
+            method:'PATCH',
+            headers: sbHeaders(token, {'Prefer':'return=minimal'}),
+            body: JSON.stringify({ linked_contact_id: myId, relationship: mirroredRel })
+        });
+    } catch(_){ /* silent — primary save already succeeded */ }
+}
+async function unlinkIfPointingTo(token, partnerId, myId){
+    try {
+        // Only unlink if that contact's linked_contact_id is currently ME
+        const r = await fetch(SB_URL+'/rest/v1/agent_contacts?id=eq.'+encodeURIComponent(partnerId)+'&select=linked_contact_id', { headers: sbHeaders(token) });
+        if (!r.ok) return;
+        const rows = await r.json();
+        if (!rows.length || rows[0].linked_contact_id !== myId) return;
+        await fetch(SB_URL+'/rest/v1/agent_contacts?id=eq.'+encodeURIComponent(partnerId), {
+            method:'PATCH',
+            headers: sbHeaders(token, {'Prefer':'return=minimal'}),
+            body: JSON.stringify({ linked_contact_id: null, relationship: null })
+        });
+    } catch(_){ /* silent */ }
+}
+
+async function archiveFromForm(){
+    const id = document.getElementById('c-id').value; if (!id) return;
+    const c = contacts.find(x => x.id === id);
+    const next = !(c && c.archived);
+    if (next && !confirm('Archive this contact? They stay in your database under the “Archived” filter — nothing is deleted.')) return;
+    try {
+        const token = await getToken();
+        const r = await fetch(SB_URL+'/rest/v1/agent_contacts?id=eq.'+encodeURIComponent(id), { method:'PATCH', headers: sbHeaders(token,{'Prefer':'return=minimal'}), body: JSON.stringify({ archived: next }) });
+        if (!r.ok && r.status !== 204) throw new Error('HTTP '+r.status);
+        toast(next ? 'Archived' : 'Unarchived', 'success');
+        closeContactModal();
+        await refresh();
+    } catch(err){ toast('Failed: '+err.message, 'error'); }
+}
+
+async function deleteCurrent(){
+    const id = document.getElementById('c-id').value;
+    if (!id) return;
+    if (!confirm('Delete this contact? This cannot be undone.')) return;
+    try {
+        const token = await getToken();
+        // If this contact had a linked partner, clear their link first
+        const linkedTo = document.getElementById('c-prev-linked').value || null;
+        if (linkedTo) await unlinkIfPointingTo(token, linkedTo, id);
+        const res = await fetch(SB_URL+'/rest/v1/agent_contacts?id=eq.'+encodeURIComponent(id), { method:'DELETE', headers: sbHeaders(token) });
+        if (!res.ok && res.status !== 204) throw new Error('HTTP '+res.status);
+        toast('Deleted', 'success');
+        closeContactModal();
+        await refresh();
+    } catch(err){ toast('Delete failed: '+err.message, 'error'); }
+}
+
+/* ── CSV import ────────────────────────────────────────────────── */
+function openImportModal(){
+    document.getElementById('importModal').classList.add('open');
+    document.getElementById('importPreview').innerHTML = '';
+    document.getElementById('importStatus').textContent = '';
+    document.getElementById('csvFile').value = '';
+    document.getElementById('importBtn').disabled = true;
+    document.getElementById('importBtnLabel').textContent = 'Import';
+    parsedCsvRows = null;
+}
+function closeImportModal(){ document.getElementById('importModal').classList.remove('open'); parsedCsvRows = null; }
+
+async function handleCsvFile(input){
+    const file = input.files && input.files[0];
+    if (!file) return;
+    document.getElementById('importStatus').textContent = 'Reading…';
+    document.getElementById('importPreview').innerHTML = '';
+    try {
+        const text = await file.text();
+        const rows = parseCsv(text);
+        if (!rows.length) throw new Error('Empty file');
+        const headers = rows[0].map(h => (h||'').trim());
+        const mapping = mapHeaders(headers);
+        const data = rows.slice(1).filter(r => r.some(c => c && c.trim()));
+        if (!data.length) throw new Error('No data rows found');
+        const mapped = data.map(r => buildContactFromRow(r, mapping)).filter(c => c.name && c.name.trim());
+        if (!mapped.length) throw new Error('Could not find a name column in your CSV. Common headers: "Name", "Full Name", "First Name"+"Last Name".');
+        parsedCsvRows = mapped;
+        // Preview
+        const preview = mapped.slice(0,5);
+        const headRow = '<th>Name</th><th>Type</th><th>Email</th><th>Phone</th>';
+        const bodyRows = preview.map(c => `<tr><td>${esc(c.name)}</td><td>${esc(c.type||'prospect')}</td><td>${esc(c.email||'')}</td><td>${esc(c.phone||'')}</td></tr>`).join('');
+        document.getElementById('importPreview').innerHTML = `<div class="import-preview"><div style="margin-bottom:6px;color:var(--text);font-weight:600;">Preview — first ${preview.length} of ${mapped.length}</div><table><tr>${headRow}</tr>${bodyRows}</table></div>`;
+        document.getElementById('importStatus').textContent = `${mapped.length} contacts ready to import`;
+        document.getElementById('importStatus').style.color = 'var(--green)';
+        document.getElementById('importBtn').disabled = false;
+        document.getElementById('importBtnLabel').textContent = 'Import '+mapped.length+' contacts';
+    } catch(err) {
+        document.getElementById('importStatus').textContent = err.message;
+        document.getElementById('importStatus').style.color = '#dc2626';
+        document.getElementById('importBtn').disabled = true;
+        parsedCsvRows = null;
+    }
+}
+
+async function confirmImport(){
+    if (!parsedCsvRows || !parsedCsvRows.length) return;
+    const btn = document.getElementById('importBtn');
+    btn.disabled = true;
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Importing…';
+    try {
+        const token = await getToken();
+        // Add agent_name + agent_email to each row
+        const enriched = parsedCsvRows.map(r => Object.assign({}, r, {
+            agent_name: agentDisplayName(currentUser),
+            agent_email: currentUser.email || null
+        }));
+        // Send in chunks to avoid huge requests
+        const chunkSize = 200;
+        for (let i = 0; i < enriched.length; i += chunkSize) {
+            const chunk = enriched.slice(i, i + chunkSize);
+            const res = await fetch(SB_URL+'/rest/v1/agent_contacts', { method:'POST', headers: sbHeaders(token, {'Prefer':'return=minimal'}), body: JSON.stringify(chunk) });
+            if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(err.message || ('HTTP '+res.status)); }
+        }
+        toast('Imported '+enriched.length+' contacts', 'success');
+        closeImportModal();
+        await refresh();
+    } catch(err) {
+        toast('Import failed: '+err.message, 'error');
+        btn.disabled = false; btn.innerHTML = orig;
+    }
+}
+
+/* Minimal CSV parser — handles quoted values, escaped quotes, \\r\\n */
+function parseCsv(text){
+    const rows = []; let row = [], cell = '', inQuote = false;
+    for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        if (inQuote) {
+            if (c === '"' && text[i+1] === '"') { cell += '"'; i++; }
+            else if (c === '"') inQuote = false;
+            else cell += c;
+        } else {
+            if (c === '"') inQuote = true;
+            else if (c === ',') { row.push(cell); cell = ''; }
+            else if (c === '\n') { row.push(cell); rows.push(row); row = []; cell = ''; }
+            else if (c === '\r') { /* skip */ }
+            else cell += c;
+        }
+    }
+    if (cell.length || row.length) { row.push(cell); rows.push(row); }
+    return rows;
+}
+
+/* Map common column headers → our field names */
+function mapHeaders(headers){
+    const m = {};
+    headers.forEach((h, i) => {
+        const key = (h||'').toLowerCase().trim().replace(/[^a-z0-9 ]+/g,'');
+        if (!key) return;
+        if (/^(name|full ?name|contact ?name)$/.test(key))            m.name_full  = i;
+        else if (/^(first|first ?name|firstname|given ?name)$/.test(key)) m.first_name = i;
+        else if (/^(last|last ?name|lastname|surname|family ?name)$/.test(key)) m.last_name = i;
+        else if (/^(e ?mail|email ?address)$/.test(key))                 m.email      = i;
+        else if (/^(phone|cell|mobile|phone ?number|tel|telephone)$/.test(key)) m.phone = i;
+        else if (/^(type|category|contact ?type)$/.test(key))            m.type       = i;
+        else if (/^(connection|how ?(i|we) ?know ?(them|him|her)?|how ?known|relationship ?how ?known)$/.test(key)) m.connection_exact = i;
+        else if (/^(relationship|relation)$/.test(key))                   m.connection_loose = i;   // a plain "Relationship" column (e.g. from another CRM)
+        else if (/^(last ?contact|last ?contacted|last ?contact ?date)$/.test(key)) m.last_contact = i;
+        else if (/^(source|lead ?source|where ?from)$/.test(key))        m.source     = i;
+        else if (/^(tags|labels|categories)$/.test(key))                 m.tags       = i;
+        else if (/^(notes|description|remarks|comments|note)$/.test(key)) m.notes     = i;
+        else if (/^(status)$/.test(key))                                  m.status    = i;
+        else if (/^(street|address|street ?address|address ?1|address ?line ?1|mailing ?address)$/.test(key)) m.street = i;
+        else if (/^(city|town)$/.test(key))                               m.city      = i;
+        else if (/^(state|st|province|region)$/.test(key))                m.state     = i;
+        else if (/^(zip|zipcode|zip ?code|postal|postal ?code)$/.test(key)) m.zip     = i;
+    });
+    // our own export has both "relationship" (spouse/co-buyer link) and "relationship (how known)" — the exact one wins
+    m.connection = m.connection_exact != null ? m.connection_exact : m.connection_loose;
+    return m;
+}
+function buildContactFromRow(r, m){
+    const get = i => (i==null ? '' : (r[i]||'').toString().trim());
+    let name = get(m.name_full);
+    if (!name) {
+        const f = get(m.first_name), l = get(m.last_name);
+        name = [f,l].filter(Boolean).join(' ').trim();
+    }
+    let type = (get(m.type) || 'prospect').toLowerCase().replace(/\s+/g,'_');
+    if (!['buyer','seller','prospect','lead','past_client','vendor','other'].includes(type)) type = 'other';
+    let status = (get(m.status) || 'active').toLowerCase().replace(/\s+/g,'_');
+    if (!['active','cold','closed','do_not_contact'].includes(status)) status = 'active';
+    let lastContact = get(m.last_contact) || null;
+    // Coerce common date formats; if invalid, drop it
+    if (lastContact) {
+        const d = new Date(lastContact);
+        lastContact = isNaN(+d) ? null : d.toISOString().slice(0,10);
+    }
+    const stateRaw = get(m.state);
+    return {
+        name,
+        type,
+        connection:   connFromText(get(m.connection)),
+        email:        get(m.email)  || null,
+        phone:        get(m.phone)  || null,
+        last_contact: lastContact,
+        source:       get(m.source) || null,
+        tags:         get(m.tags)   || null,
+        notes:        get(m.notes)  || null,
+        status,
+        street:       get(m.street) || null,
+        city:         get(m.city)   || null,
+        state:        stateRaw ? stateRaw.toUpperCase() : null,
+        zip:          get(m.zip)    || null
+        // linked_contact_id + relationship intentionally not set on import — link manually after
+    };
+}
+
+/* ── CSV export ────────────────────────────────────────────────── */
+function exportCsv(){
+    const cols = ['name','type','connection','pipeline_side','stage','deal_value','est_commission','expected_close','email','phone','street','city','state','zip','linked_to','relationship','last_contact','status','source','tags','notes','archived'];
+    const head = cols.map(c => csvQ(c === 'connection' ? 'relationship (how known)' : c)).join(',');
+    const body = contacts.map(c => {
+        const partner = c.linked_contact_id ? contacts.find(x => x.id === c.linked_contact_id) : null;
+        const row = Object.assign({}, c, {
+            linked_to:    partner ? (partner.name || '') : '',
+            relationship: c.relationship ? (REL_LABEL[c.relationship] || c.relationship) : '',
+            connection:   connLabel(c.connection)
+        });
+        return cols.map(k => csvQ(row[k]==null?'':row[k])).join(',');
+    }).join('\n');
+    const csv  = '﻿' + head + '\n' + body;
+    const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url;
+    a.download = 'my-contacts-' + new Date().toISOString().slice(0,10) + '.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast('Exported ' + contacts.length + ' contacts');
+}
+function csvQ(v){ const s = String(v); return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; }
+
+/* ── utils ────────────────────────────────────────────────────── */
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+let _toastT;
+function toast(msg, type){
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.className = ''; if (type) t.classList.add(type);
+    void t.offsetWidth; t.classList.add('show');
+    clearTimeout(_toastT); _toastT = setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+<script src="back-link.js?v=20260917"></script>
+<script src="mobile-tabs.js?v=20260927a" defer></script>
+</body>
+</html>

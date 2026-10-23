@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Tools — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --red:          #c03926;
+            --red-light:    #d94a35;
+            --red-dark:     #9e2e1e;
+            --gray:         #6e6e70;
+            --gray-light:   #9a9a9c;
+            --bg:           #f2f4f7;
+            --surface:      #ffffff;
+            --surface-2:    #f7f8fa;
+            --surface-3:    #eef0f3;
+            --border:       #e2e5ea;
+            --border-light: #d0d4da;
+            --text:         #1a1d22;
+            --text-sec:     #5a6270;
+            --text-muted:   #9ca3af;
+            --radius:       12px;
+            --radius-lg:    20px;
+            --shadow:       0 4px 20px rgba(0,0,0,0.08);
+            --shadow-red:   0 6px 28px rgba(192,57,38,0.22);
+        }
+
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        a { text-decoration: none; color: inherit; }
+        img { display: block; max-width: 100%; }
+
+        /* ── SUB HEADER ── */
+        .sub-header {
+            background: linear-gradient(150deg, #a82f1e 0%, #c03926 45%, #9e2e1e 100%);
+            padding: 28px 20px;
+            border-bottom: 4px solid rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        .sub-header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
+            background-size: 28px 28px;
+            pointer-events: none;
+        }
+        .sub-header-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+        .sub-header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .sub-header-logo {
+            max-width: 120px;
+            background: #fff;
+            border-radius: 10px;
+            padding: 10px 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        }
+        .sub-header-text h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(28px, 5vw, 42px);
+            letter-spacing: 2px;
+            color: #fff;
+            line-height: 1;
+        }
+        .sub-header-text p {
+            color: rgba(255,255,255,0.7);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(255,255,255,0.18);
+            border: 1px solid rgba(255,255,255,0.35);
+            color: #fff;
+            padding: 9px 18px;
+            border-radius: 100px;
+            font-size: 12.5px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-1px);
+        }
+
+        /* ── MAIN ── */
+        .main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 52px 20px 90px;
+        }
+
+        /* ── SECTION ── */
+        .section { margin-bottom: 64px; }
+        .sec-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+        .sec-icon {
+            width: 46px;
+            height: 46px;
+            background: rgba(192,57,38,0.08);
+            border: 1px solid rgba(192,57,38,0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--red);
+        }
+        .sec-header h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px;
+            letter-spacing: 1.5px;
+            color: var(--text);
+        }
+        .sec-header p {
+            color: var(--text-sec);
+            font-size: 13px;
+        }
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin-bottom: 52px;
+        }
+
+        /* ── CARD GRID ── */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 18px;
+        }
+        .card {
+            display: flex;
+            flex-direction: column;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px 22px 18px;
+            transition: all 0.22s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        .card:hover {
+            border-color: var(--red);
+            box-shadow: var(--shadow);
+            transform: translateY(-2px);
+        }
+        .card.disabled {
+            opacity: 0.55;
+            pointer-events: none;
+        }
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(192,57,38,0.08);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--red);
+            margin-bottom: 14px;
+        }
+        .card h3 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text);
+        }
+        .card p {
+            font-size: 13px;
+            color: var(--text-sec);
+            line-height: 1.5;
+            flex: 1;
+        }
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+        .pill {
+            display: inline-block;
+            background: var(--surface-3);
+            color: var(--text-sec);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 100px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .pill.interactive {
+            background: rgba(192,57,38,0.08);
+            color: var(--red);
+        }
+        .card-footer i {
+            color: var(--text-muted);
+            font-size: 13px;
+            transition: transform 0.2s ease;
+        }
+        .card:hover .card-footer i {
+            transform: translateX(3px);
+            color: var(--red);
+        }
+        .coming-soon {
+            display: inline-block;
+            background: rgba(192,57,38,0.08);
+            color: var(--red);
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 100px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        /* ── FEATURED CARD ── */
+        .card.featured {
+            border: 2px solid var(--red);
+            background: linear-gradient(135deg, #fff 0%, #fef7f6 100%);
+        }
+        .card.featured .card-icon {
+            background: var(--red);
+            color: #fff;
+        }
+        .card.featured::after {
+            content: 'FEATURED';
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--red);
+            color: #fff;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 100px;
+            letter-spacing: 1px;
+        }
+
+        /* ── FOOTER ── */
+        .footer {
+            text-align: center;
+            padding: 40px 20px 32px;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+        .footer-logo {
+            max-width: 130px;
+            margin: 0 auto 14px;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 600px) {
+            .sub-header-inner { flex-direction: column; gap: 16px; text-align: center; }
+            .sub-header-left { flex-direction: column; }
+            .card-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="sub-header">
+    <div class="sub-header-inner">
+        <div class="sub-header-left">
+            <img src="https://wdvolamasztetwpitbwg.supabase.co/storage/v1/object/public/hub-files/brand/yrl-logo-color.png"
+                 alt="Your Realty Link" class="sub-header-logo">
+            <div class="sub-header-text">
+                <h1>Seller Tools</h1>
+                <p>Presentations, scripts, and resources for listing appointments</p>
+            </div>
+        </div>
+        <a href="hub.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Hub</a>
+    </div>
+</header>
+
+<main class="main">
+
+    <!-- ─── PRESENTATIONS ─── -->
+    <section class="section">
+        <div class="sec-header">
+            <div class="sec-icon"><i class="fa-solid fa-presentation-screen"></i></div>
+            <div>
+                <h2>Presentations</h2>
+                <p>Interactive client-facing presentations you can personalize and present on any device</p>
+            </div>
+        </div>
+
+        <div class="card-grid">
+            <a href="yrl-listing-presentation.html" class="card featured" data-card-id="listing-presentation">
+                <div class="card-icon"><i class="fa-solid fa-house-chimney-user"></i></div>
+                <h3>Listing Presentation</h3>
+                <p>Full seller consultation presentation. Enter the client's name, address, and suggested price &mdash; then present it on your iPad, phone, or laptop right at the kitchen table. Download as PDF to send to clients.</p>
+                <div class="card-footer">
+                    <span class="pill interactive">Interactive</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a class="card disabled" data-card-id="cma-presentation">
+                <div class="card-icon"><i class="fa-solid fa-chart-column"></i></div>
+                <h3>Pricing Presentation <span class="coming-soon">Coming Soon</span></h3>
+                <p>A focused pricing strategy presentation with comparable sales data. Great for price reduction conversations or when the full listing presentation isn't needed.</p>
+                <div class="card-footer">
+                    <span class="pill interactive">Interactive</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ─── SCRIPTS ─── -->
+    <section class="section">
+        <div class="sec-header">
+            <div class="sec-icon"><i class="fa-solid fa-comments"></i></div>
+            <div>
+                <h2>Scripts &amp; Dialogues</h2>
+                <p>Proven scripts for every stage of the seller relationship</p>
+            </div>
+        </div>
+
+        <div class="card-grid">
+            <a href="yrl-seller-prequalifying.html" class="card" data-card-id="seller-prequal">
+                <div class="card-icon"><i class="fa-solid fa-phone"></i></div>
+                <h3>Pre-Qualifying Call</h3>
+                <p>19 questions to ask sellers before the listing appointment. Confirms motivation, timeline, price expectations, and decision makers.</p>
+                <div class="card-footer">
+                    <span class="pill">Script</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="yrl-seller-objections.html" class="card" data-card-id="seller-objections">
+                <div class="card-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                <h3>Objection Handlers</h3>
+                <p>Responses to the most common listing objections: other agents, lower commission, "think it over," "they said more money," and pricing pushback.</p>
+                <div class="card-footer">
+                    <span class="pill">Script</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="yrl-seller-closing-scripts.html" class="card" data-card-id="seller-closing">
+                <div class="card-icon"><i class="fa-solid fa-handshake"></i></div>
+                <h3>Closing Scripts</h3>
+                <p>9 closing approaches to get the listing agreement signed &mdash; from the confidence close to the team advantage close.</p>
+                <div class="card-footer">
+                    <span class="pill">Script</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a class="card disabled" data-card-id="seller-prospecting">
+                <div class="card-icon"><i class="fa-solid fa-bullseye"></i></div>
+                <h3>Prospecting Scripts <span class="coming-soon">Coming Soon</span></h3>
+                <p>Cold call, door knock, circle prospecting, and sphere of influence scripts for generating seller leads.</p>
+                <div class="card-footer">
+                    <span class="pill">Script</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a class="card disabled" data-card-id="seller-expired">
+                <div class="card-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                <h3>Expired Listing Scripts <span class="coming-soon">Coming Soon</span></h3>
+                <p>Scripts for contacting expired and withdrawn listing owners. Empathetic approach that positions YRL as the solution.</p>
+                <div class="card-footer">
+                    <span class="pill">Script</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a class="card disabled" data-card-id="seller-pricing-phrases">
+                <div class="card-icon"><i class="fa-solid fa-quote-left"></i></div>
+                <h3>Pricing Phrases <span class="coming-soon">Coming Soon</span></h3>
+                <p>Quick-reference phrases for price reduction conversations. Analogies and responses that help sellers understand market reality.</p>
+                <div class="card-footer">
+                    <span class="pill">Reference</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ─── CHECKLISTS & TEMPLATES ─── -->
+    <section class="section">
+        <div class="sec-header">
+            <div class="sec-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+            <div>
+                <h2>Checklists &amp; Templates</h2>
+                <p>Step-by-step guides and ready-to-use templates for the listing process</p>
+            </div>
+        </div>
+
+        <div class="card-grid">
+            <a class="card disabled" data-card-id="pre-listing-package">
+                <div class="card-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
+                <h3>Pre-Listing Package <span class="coming-soon">Coming Soon</span></h3>
+                <p>What to include in the package you send before the listing appointment &mdash; cover letter template, seller homework sheet, and preparation checklist.</p>
+                <div class="card-footer">
+                    <span class="pill">Template</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a class="card disabled" data-card-id="listing-checklist">
+                <div class="card-icon"><i class="fa-solid fa-list-check"></i></div>
+                <h3>Listing Appointment Checklist <span class="coming-soon">Coming Soon</span></h3>
+                <p>Everything to prepare before, during, and after the listing appointment. Never miss a step.</p>
+                <div class="card-footer">
+                    <span class="pill">Checklist</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a class="card disabled" data-card-id="just-listed-template">
+                <div class="card-icon"><i class="fa-solid fa-bullhorn"></i></div>
+                <h3>Just Listed <span class="coming-soon">Coming Soon</span></h3>
+                <p>Social media and print templates for announcing new listings. Postcards, Facebook posts, and email templates.</p>
+                <div class="card-footer">
+                    <span class="pill">Marketing</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a class="card disabled" data-card-id="just-sold-template">
+                <div class="card-icon"><i class="fa-solid fa-circle-check"></i></div>
+                <h3>Just Sold <span class="coming-soon">Coming Soon</span></h3>
+                <p>Templates for announcing closed deals. Social media graphics, postcards, and circle prospecting scripts for the neighborhood.</p>
+                <div class="card-footer">
+                    <span class="pill">Marketing</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a class="card disabled" data-card-id="pending-template">
+                <div class="card-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+                <h3>Under Contract <span class="coming-soon">Coming Soon</span></h3>
+                <p>Templates for pending/under contract announcements and client communication during the escrow period.</p>
+                <div class="card-footer">
+                    <span class="pill">Marketing</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a class="card disabled" data-card-id="price-reduction-template">
+                <div class="card-icon"><i class="fa-solid fa-tags"></i></div>
+                <h3>Price Adjustment <span class="coming-soon">Coming Soon</span></h3>
+                <p>Scripts and templates for price reduction conversations. Includes market data talking points and follow-up communication.</p>
+                <div class="card-footer">
+                    <span class="pill">Template</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+        </div>
+    </section>
+
+</main>
+
+<footer class="footer">
+    <img src="https://wdvolamasztetwpitbwg.supabase.co/storage/v1/object/public/hub-files/brand/yrl-logo-color.png"
+         alt="Your Realty Link" class="footer-logo"
+         onerror="this.style.display='none'">
+    <p>&copy; 2026 Your Realty Link &nbsp;&middot;&nbsp; All Rights Reserved</p>
+</footer>
+
+</body>
+</html>

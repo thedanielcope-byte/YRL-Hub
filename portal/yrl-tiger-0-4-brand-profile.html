@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Tiger 0.4 · Your Brand &amp; Agent Profile — Your Realty Link</title>
+<script src="portal-auth.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="tiger-shell.css?v=20260927b">
+<link rel="stylesheet" href="tiger-module.css">
+</head>
+<body class="tiger-shell" data-tiger-module="0.4" data-tiger-title="Your Brand & Agent Profile">
+
+<button class="tiger-menu-btn" id="tigerMenuBtn" aria-label="Modules"><i class="fa-solid fa-bars"></i></button>
+<aside class="tiger-side" id="tigerSide"></aside>
+<div class="tiger-backdrop" id="tigerBackdrop"></div>
+
+<main class="tiger-main">
+
+<div class="reader-topbar">
+  <div class="prog">
+    <div class="track"><i id="tigerProgressBar"></i></div>
+    <div class="prog-lbl" id="tigerProgressLabel">0% complete</div>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn btn-ghost" data-tiger-action="pdf"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
+  <button class="btn btn-primary" data-tiger-action="save"><i class="fa-solid fa-floppy-disk"></i> <span>Save</span></button>
+</div>
+
+<header class="reader-head">
+  <p class="reader-eyebrow">Phase 0 · Module 0.4 <span class="chip">Worksheet</span></p>
+  <h1 class="reader-title">Your Brand & Agent Profile</h1>
+  <p class="reader-lede">People hire people. This module gets your professional identity in place — headshot, bio, contact info, and signature — so you look established from day one under the Your Realty Link brand.</p>
+  <p class="reader-who">Worksheet for <b data-tiger-name>Agent</b> · <span data-tiger-date></span> · saves automatically as you type</p>
+</header>
+
+<div class="print-only" style="text-align:center;margin:0 0 6px">
+  <strong>YOUR REALTY LINK · TIGER TRAINING</strong> — Module 0.4: Your Brand &amp; Agent Profile
+</div>
+
+<div class="reader-body">
+<section class="card"><h2><span class="n">01</span>Look the part from day one</h2><p class="teach">You don't need years of experience to look professional. A good headshot, a warm bio, and consistent contact info tell people you're the real deal and easy to reach.</p></section>
+<section class="card"><h2><span class="n">02</span>Build your profile</h2><div class="check"><input type="checkbox" id="br_headshot" data-tiger-check="br_headshot"><label for="br_headshot">Professional headshot taken</label></div><div class="check"><input type="checkbox" id="br_bio" data-tiger-check="br_bio"><label for="br_bio">Short bio written (who you are, who you help, why you)</label></div><div class="check"><input type="checkbox" id="br_cards" data-tiger-check="br_cards"><label for="br_cards">Business cards ordered</label></div><div class="check"><input type="checkbox" id="br_signature" data-tiger-check="br_signature"><label for="br_signature">Email signature set up with name, YRL, phone, and links</label></div><div class="check"><input type="checkbox" id="br_profiles" data-tiger-check="br_profiles"><label for="br_profiles">Profile added to yourrealtylink.com and my social accounts</label></div></section>
+<section class="card"><h2><span class="n">03</span>Your bio</h2><p class="sub">Write a first draft here. Keep it warm and specific.</p><div class="field"><label class="field-label" for="br_bio_draft">My bio <span class="field-hint">2–4 sentences</span></label><textarea id="br_bio_draft" data-tiger="br_bio_draft" placeholder="I&#x27;m a Central Indiana REALTOR with Your Realty Link helping buyers and sellers across the Indy metro. I grew up in… and I love helping people…"></textarea></div><div class="grid2"><div class="field"><label class="field-label" for="br_phone">My business phone</label><input class="tiger-input" id="br_phone" data-tiger="br_phone" inputmode="text" placeholder="317-…"></div><div class="field"><label class="field-label" for="br_email">My business email</label><input class="tiger-input" id="br_email" data-tiger="br_email" inputmode="text" placeholder="you@…"></div></div><div class="field"><label class="field-label" for="action">My next step this week…</label><textarea id="action" data-tiger="action" placeholder="e.g. Book my headshot and finish my bio."></textarea></div><div class="grid2"><div class="field"><label class="field-label" for="sign">Signed</label><input class="tiger-input" id="sign" data-tiger="sign" inputmode="text" placeholder="Your name"></div><div class="field"><label class="field-label" for="signdate">Date</label><input class="tiger-input" id="signdate" data-tiger="signdate" inputmode="text" placeholder="MM/DD/YYYY"></div></div></section>
+</div>
+
+<div class="actions"><div class="actions-in">
+  <span class="note"><i class="fa-solid fa-cloud"></i> Your answers save automatically to your account — pick up on any device.</span>
+  <button class="btn btn-ghost" data-tiger-action="txt"><i class="fa-solid fa-list"></i> Download list</button>
+  <button class="btn btn-ghost" data-tiger-action="pdf"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
+  <button class="btn btn-ghost" data-tiger-action="reset"><i class="fa-solid fa-eraser"></i> Clear</button>
+  <button class="btn btn-primary" data-tiger-action="complete"><i class="fa-solid fa-check"></i> Mark complete</button>
+</div></div>
+
+</main>
+
+<script src="hub-data.js"></script>
+<script src="tiger-nav.js"></script>
+<script src="yrl-tiger.js"></script>
+
+</body>
+</html>

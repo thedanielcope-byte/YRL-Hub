@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar — Your Realty Link</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="portal-auth.js"></script>
+    <script src="embed-mode.js?v=20260927b"></script>
+    <script src="help-box.js?v=20260916" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root{
+            --red:#c03926; --red-light:#d94a35; --red-dark:#9e2e1e;
+            --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f7f8fa; --surface-3:#eef0f3;
+            --border:#e2e5ea; --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+            --green:#16a34a; --radius:12px;
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;}
+        a{text-decoration:none;color:inherit;}
+
+        .page-header{background:linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);padding:24px 20px;}
+        .header-inner{max-width:1160px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+        .header-left{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+        .back-btn{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:9px 16px;border-radius:100px;font-size:13px;font-weight:600;white-space:nowrap;}
+        .back-btn:hover{background:rgba(255,255,255,0.26);}
+        .header-title h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(26px,4vw,36px);letter-spacing:1.5px;color:#fff;line-height:1.05;}
+        .header-title p{font-size:12.5px;color:rgba(255,255,255,0.85);}
+        .btn{display:inline-flex;align-items:center;gap:7px;border:none;border-radius:9px;padding:9px 16px;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;}
+        .btn-primary{background:#fff;color:var(--red);}
+        .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,0,0,0.18);}
+        .btn-ghost{background:var(--surface-3);color:var(--text);border:1px solid var(--border);}
+        .btn-ghost:hover{border-color:var(--red);color:var(--red);}
+        .btn-red{background:var(--red);color:#fff;}
+        .btn-red:hover{background:var(--red-light);}
+
+        .wrap{max-width:1160px;margin:0 auto;padding:22px 18px 90px;}
+        /* Embedded (iframe) mode — drop the masthead so it sits cleanly in a frame */
+        .embed .page-header{display:none;}
+        .embed .wrap{padding:14px 16px 30px;}
+
+        /* Toolbar */
+        .cal-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+        .nav-group{display:flex;align-items:center;gap:8px;}
+        .nav-btn{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text-sec);cursor:pointer;font-size:14px;display:inline-flex;align-items:center;justify-content:center;}
+        .nav-btn:hover{border-color:var(--red);color:var(--red);}
+        .period-label{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;min-width:180px;text-align:center;}
+        .view-toggle{display:inline-flex;gap:4px;background:var(--surface-3);border-radius:100px;padding:3px;}
+        .vt{display:inline-flex;align-items:center;gap:6px;border:none;background:transparent;color:var(--text-sec);font-size:12.5px;font-weight:700;padding:7px 14px;border-radius:100px;cursor:pointer;font-family:'Inter',sans-serif;}
+        .vt.active{background:var(--surface);color:var(--red);box-shadow:0 1px 4px rgba(0,0,0,0.08);}
+
+        /* Legend */
+        .legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-bottom:16px;}
+        .legend span{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:var(--text-sec);}
+        .legend .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+
+        /* Month grid */
+        .cal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.05);}
+        .dow{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));background:var(--surface-2);border-bottom:1px solid var(--border);}
+        .dow div{padding:9px 6px;text-align:center;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);}
+        .grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));}
+        .cell{min-height:104px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px;display:flex;flex-direction:column;gap:3px;}
+        .cell:nth-child(7n){border-right:none;}
+        .cell.other{background:var(--surface-2);}
+        .cell .dnum{font-size:12px;font-weight:700;color:var(--text-sec);align-self:flex-start;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;}
+        .cell.today .dnum{background:var(--red);color:#fff;}
+        .cell.other .dnum{color:var(--text-muted);}
+        .chip{display:flex;align-items:flex-start;gap:5px;font-size:11px;font-weight:600;padding:3px 6px;border-radius:5px;cursor:pointer;background:var(--surface-3);}
+        .chip .cdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+        .chip .ctxt{min-width:0;overflow-wrap:anywhere;line-height:1.3;}
+        .chip:hover{filter:brightness(0.96);}
+        .more{font-size:10.5px;font-weight:700;color:var(--text-muted);cursor:pointer;padding:1px 6px;}
+        .more:hover{color:var(--red);}
+        @media(max-width:640px){
+            .cell{min-height:72px;}
+            .chip span.ctxt{display:none;}
+            .chip{width:auto;padding:3px;}
+        }
+
+        /* Year view */
+        .year-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;}
+        .mini{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;box-shadow:0 2px 10px rgba(0,0,0,0.04);}
+        .mini h4{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:.8px;margin-bottom:8px;cursor:pointer;}
+        .mini h4:hover{color:var(--red);}
+        .mini .mg{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+        .mini .md{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:10.5px;color:var(--text-sec);border-radius:5px;position:relative;cursor:default;}
+        .mini .md.dim{color:var(--text-muted);opacity:.5;}
+        .mini .md.today{background:var(--red);color:#fff;font-weight:700;}
+        .mini .md.has{cursor:pointer;font-weight:700;color:var(--text);}
+        .mini .md .mdot{position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;}
+        .mini .md.multi .mdot{width:12px;border-radius:3px;}
+
+        /* Agenda */
+        .agenda-month{margin-bottom:22px;}
+        .agenda-month h3{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.8px;margin-bottom:10px;color:var(--text-sec);}
+        .ag-item{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;margin-bottom:7px;cursor:pointer;}
+        .ag-item:hover{border-color:rgba(192,57,38,0.35);}
+        .ag-date{flex-shrink:0;text-align:center;width:46px;}
+        .ag-date .d{font-family:'Bebas Neue',sans-serif;font-size:22px;line-height:1;}
+        .ag-date .m{font-size:10px;font-weight:800;text-transform:uppercase;color:var(--text-muted);}
+        .ag-body{flex:1;min-width:0;}
+        .ag-title{font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:7px;}
+        .ag-sub{font-size:12px;color:var(--text-muted);margin-top:2px;}
+        .ag-cat{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;padding:2px 7px;border-radius:20px;color:#fff;}
+
+        .empty{text-align:center;padding:48px 20px;color:var(--text-muted);font-size:13.5px;}
+        .loading{text-align:center;padding:40px;color:var(--text-muted);}
+
+        /* Modal */
+        .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;align-items:center;justify-content:center;padding:18px;}
+        .overlay.open{display:flex;}
+        .modal{background:var(--surface);border-radius:16px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.35);}
+        .modal-head{padding:18px 22px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px;}
+        .modal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;}
+        .modal-close{background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-muted);line-height:1;}
+        .modal-body{padding:18px 22px;}
+        .modal-foot{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+        .field{margin-bottom:12px;}
+        .field label{display:block;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;color:var(--text-sec);}
+        .field input,.field select,.field textarea{width:100%;background:var(--surface-3);border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13.5px;font-family:'Inter',sans-serif;color:var(--text);outline:none;}
+        .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--red);background:var(--surface);}
+        .field textarea{resize:vertical;min-height:64px;}
+        .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+        @media(max-width:480px){.row2{grid-template-columns:1fr;}}
+        .ev-img{width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin-bottom:12px;}
+        .ev-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+        .ev-badge{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#fff;padding:3px 10px;border-radius:20px;}
+        .ev-when{font-size:13px;color:var(--text-sec);font-weight:600;}
+        .ev-desc{font-size:13.5px;color:var(--text);white-space:pre-wrap;margin-bottom:14px;}
+        .ev-src{font-size:11px;color:var(--text-muted);margin-top:6px;}
+        #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--text);color:#fff;padding:11px 22px;border-radius:10px;font-size:12.5px;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,0.25);z-index:9999;transition:transform .3s;}
+        #toast.show{transform:translateX(-50%) translateY(0);}
+        #toast.error{background:#dc2626;} #toast.success{background:var(--green);}
+    </style>
+<link rel="stylesheet" href="hub-theme.css?v=20260903b"><script src="hub-brand.js" defer></script></head>
+<body>
+<script>if(location.search.indexOf('embed')>-1)document.documentElement.className+=' embed';</script>
+
+<header class="page-header">
+    <div class="header-inner">
+        <div class="header-left">
+            <a href="hub.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Hub</a>
+            <div class="header-title">
+                <h1><i class="fa-solid fa-calendar-days" style="font-size:.8em;opacity:.9;"></i> Calendar</h1>
+                <p>Closings, license & CE renewals, MIBOR dates, meetings &amp; events</p>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="wrap">
+    <div id="helpTop"></div>
+    <script>document.addEventListener('DOMContentLoaded',function(){
+        if (/[?&]dash(=|&|$)/.test(location.search)){ var h=document.getElementById('helpTop'); if(h) h.style.display='none'; return; }  /* Dashboard reflection: no help box */
+        window.HelpBox && HelpBox.mount({container:'#helpTop',key:'yrl-calendar',label:'the Calendar'});
+    });</script>
+    <div class="cal-bar">
+        <div class="nav-group">
+            <button class="nav-btn" onclick="step(-1)" title="Previous"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="nav-btn" onclick="goToday()" title="Today"><i class="fa-solid fa-circle-dot"></i></button>
+            <button class="nav-btn" onclick="step(1)" title="Next"><i class="fa-solid fa-chevron-right"></i></button>
+            <div class="period-label" id="periodLabel">—</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <div class="view-toggle">
+                <button class="vt active" data-v="month" onclick="setView('month')"><i class="fa-solid fa-calendar"></i> Month</button>
+                <button class="vt" data-v="year" onclick="setView('year')"><i class="fa-solid fa-table-cells"></i> Year</button>
+                <button class="vt" data-v="agenda" onclick="setView('agenda')"><i class="fa-solid fa-list"></i> Agenda</button>
+            </div>
+            <button id="addBtn" class="btn btn-primary" style="display:none;" onclick="openEditor()"><i class="fa-solid fa-plus"></i> Add Event</button>
+        </div>
+    </div>
+
+    <div class="legend" id="legend"></div>
+    <div id="view"><div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading calendar…</div></div>
+</div>
+
+<!-- Event detail -->
+<div class="overlay" id="evModal" onclick="if(event.target===this)closeEv()">
+    <div class="modal">
+        <div class="modal-head"><div class="modal-title" id="evTitle">Event</div><button class="modal-close" onclick="closeEv()">&times;</button></div>
+        <div class="modal-body" id="evBody"></div>
+        <div class="modal-foot" id="evFoot"></div>
+    </div>
+</div>
+
+<!-- Day list -->
+<div class="overlay" id="dayModal" onclick="if(event.target===this)closeDay()">
+    <div class="modal">
+        <div class="modal-head"><div class="modal-title" id="dayTitle">Day</div><button class="modal-close" onclick="closeDay()">&times;</button></div>
+        <div class="modal-body" id="dayBody"></div>
+    </div>
+</div>
+
+<!-- Editor (owner/admin) -->
+<div class="overlay" id="edModal" onclick="if(event.target===this)closeEditor()">
+    <div class="modal">
+        <div class="modal-head"><div class="modal-title" id="edTitle">Add Event</div><button class="modal-close" onclick="closeEditor()">&times;</button></div>
+        <form class="modal-body" id="edForm" onsubmit="saveEvent(event)">
+            <div class="field"><label>Title *</label><input id="e-title" required placeholder="MIBOR dues, Monthly sales meeting…"></div>
+            <div class="row2">
+                <div class="field"><label>Category</label>
+                    <select id="e-category">
+                        <option value="meeting">Meeting</option>
+                        <option value="mibor">MIBOR</option>
+                        <option value="fee">Fee Due</option>
+                        <option value="deadline">Deadline</option>
+                        <option value="training">Training</option>
+                        <option value="holiday">Holiday / Office Closed</option>
+                        <option value="other">Other</option>
+                    </select></div>
+                <div class="field"><label>Repeats</label>
+                    <select id="e-recurrence">
+                        <option value="none">Does not repeat</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="quarterly">Quarterly</option>
+                        <option value="yearly">Yearly</option>
+                        <option value="2year">Every 2 years</option>
+                        <option value="3year">Every 3 years</option>
+                    </select></div>
+            </div>
+            <div class="field"><label>Who sees this?</label>
+                <select id="e-visibility" onchange="visNote()">
+                    <option value="office">Everyone (office-wide)</option>
+                    <option value="owners">Owners only</option>
+                    <option value="personal">Just me</option>
+                </select>
+                <div id="e-vis-note" style="font-size:11px;color:var(--text-muted);margin-top:4px;"></div>
+            </div>
+            <div class="row2">
+                <div class="field"><label>Date *</label><input id="e-start" type="date" required></div>
+                <div class="field"><label>End date <span style="font-weight:400;text-transform:none;color:var(--text-muted);">(optional)</span></label><input id="e-end" type="date"></div>
+            </div>
+            <div class="row2">
+                <div class="field" style="display:flex;align-items:center;gap:8px;margin-top:22px;">
+                    <input type="checkbox" id="e-allday" checked onchange="document.getElementById('e-time').disabled=this.checked" style="width:auto;">
+                    <label style="margin:0;text-transform:none;letter-spacing:0;font-size:13px;">All-day</label>
+                </div>
+                <div class="field"><label>Time</label><input id="e-time" type="time" disabled></div>
+            </div>
+            <div class="field"><label>Description</label><textarea id="e-desc" placeholder="Details agents should know…"></textarea></div>
+            <div class="field"><label>Link <span style="font-weight:400;text-transform:none;color:var(--text-muted);">(opens in new tab)</span></label><input id="e-link" type="url" placeholder="https://…"></div>
+            <div class="field"><label>Image</label>
+                <input id="e-imgfile" type="file" accept="image/*" onchange="uploadImg(this)" style="font-size:12px;">
+                <input id="e-image" type="url" placeholder="…or paste an image URL" style="margin-top:6px;">
+                <div id="e-imgstatus" style="font-size:11px;color:var(--text-muted);margin-top:4px;"></div>
+            </div>
+            <input type="hidden" id="e-id">
+        </form>
+        <div class="modal-foot">
+            <button type="button" class="btn btn-ghost" id="e-delete" onclick="deleteEvent()" style="display:none;color:#dc2626;border-color:#fecaca;"><i class="fa-solid fa-trash"></i> Delete</button>
+            <div style="margin-left:auto;display:flex;gap:8px;">
+                <button type="button" class="btn btn-ghost" onclick="closeEditor()">Cancel</button>
+                <button type="submit" form="edForm" class="btn btn-red" id="e-save"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="hub-data.js"></script>
+<script>
+const $=(id)=>document.getElementById(id);
+const esc=(s)=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
+let SB=null, ME=null, ROLE='agent', CANEDIT=false;
+let EVENTS=[], BYDATE={};
+let VIEWMODE='month';
+const _t=new Date();
+let curY=_t.getFullYear(), curM=_t.getMonth();   // month view cursor
+
+const CAT={
+    closing :{c:'#c03926', label:'Closing'},
+    deadline:{c:'#d97706', label:'Deadline'},
+    license :{c:'#7c3aed', label:'License Renewal'},
+    ce      :{c:'#0891b2', label:'CE Due'},
+    voh     :{c:'#db2777', label:'Open House'},
+    mibor   :{c:'#2563eb', label:'MIBOR'},
+    meeting :{c:'#0d9488', label:'Meeting'},
+    fee     :{c:'#b45309', label:'Fee Due'},
+    training:{c:'#16a34a', label:'Training'},
+    holiday :{c:'#65a30d', label:'Holiday'},
+    task    :{c:'#4f46e5', label:'My Task'},
+    deal    :{c:'#9e2e1e', label:'Deal Close'},
+    birthday:{c:'#db2777', label:'Birthday'},
+    anniversary:{c:'#0d9488', label:'Home Anniversary'},
+    other   :{c:'#6b7280', label:'Event'}
+};
+const catColor=(k)=>(CAT[k]||CAT.other).c;
+const catLabel=(k)=>(CAT[k]||CAT.other).label;
+const RECUR={monthly:'monthly', quarterly:'quarterly', yearly:'yearly', '2year':'every 2 years', '3year':'every 3 years'};
+const recurLabel=(r)=>RECUR[r]||r;
+
+/* date helpers (local, no TZ drift) */
+const pad=(n)=>String(n).padStart(2,'0');
+const ymd=(d)=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+function parseYMD(s){ const p=String(s).slice(0,10).split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
+function addMonths(d,n){ const x=new Date(d.getFullYear(), d.getMonth()+n, 1); const day=Math.min(d.getDate(), new Date(x.getFullYear(), x.getMonth()+1, 0).getDate()); x.setDate(day); return x; }
+function addDays(d,n){ const x=new Date(d); x.setDate(x.getDate()+n); return x; }
+const TODAY=ymd(_t);
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MON3=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function humanDate(s){ const d=parseYMD(s); return MON3[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear(); }
+function fmtTime(t){ if(!t) return ''; const p=String(t).split(':'); let h=+p[0]; const m=p[1]||'00'; const ap=h>=12?'PM':'AM'; h=h%12||12; return h+':'+m+' '+ap; }
+
+document.addEventListener('yrl-auth-ready', init);
+if (window.yrlMember) init();
+
+async function init(){
+    if (SB) return;
+    SB=window.yrlClient; ME=window.yrlMember; ROLE=ME.role;
+    if (ROLE==='txn_client'){ location.replace('my-transaction.html'); return; }
+    CANEDIT = (ROLE==='owner' || ROLE==='nomad_admin');
+    $('addBtn').style.display='';   /* everyone can add — agents get personal-only events */
+    await loadAll();
+    // hub sidebar 3rd level: Month / Year / Agenda
+    if (window.__yrlRegisterTabs) window.__yrlRegisterTabs(function(v){ if (['month','year','agenda'].indexOf(v) > -1) setView(v); });
+    if (window.__yrlTabChanged) window.__yrlTabChanged(VIEWMODE);
+}
+
+async function loadAll(){
+    EVENTS=[];
+    // License/CE renewal dates are statewide (same for every Indiana broker), so they
+    // live as brokerage-wide hub_events — no per-agent sync needed.
+    await Promise.all([loadHubEvents(), loadTxns(), loadVoh(), loadTasks(), loadDeals(), loadContactDates()]);
+    indexEvents();
+    renderLegend();
+    render();
+}
+
+/* ── data sources ─────────────────────────────────────────────── */
+function push(ev){ EVENTS.push(ev); }
+
+async function loadHubEvents(){
+    try{
+        const { data, error } = await SB.from('hub_events').select('*');
+        if (error) throw error;
+        const winStart=new Date(_t.getFullYear()-2,0,1), winEnd=new Date(_t.getFullYear()+6,11,31);
+        const STEP={monthly:1, quarterly:3, yearly:12, '2year':24, '3year':36};
+        (data||[]).forEach(e=>{
+            const base=parseYMD(e.start_date);
+            const span = e.end_date ? Math.max(0, Math.round((parseYMD(e.end_date)-base)/86400000)) : 0;
+            const occ=[];
+            if (e.recurrence && e.recurrence!=='none'){
+                const step = STEP[e.recurrence]||12;
+                let n=0, d=base;
+                while (d<=winEnd && n<400){ if(d>=winStart) occ.push(d); n++; d=addMonths(base, n*step); }
+            } else { occ.push(base); }
+            occ.forEach(d=>{
+                const mine = !!e.owner_email && !!(ME&&ME.email) && String(e.owner_email).toLowerCase()===String(ME.email).toLowerCase();
+                push({ date:ymd(d), endDate: span? ymd(addDays(d,span)) : null, title:e.title, category:e.category||'other',
+                       source:'event', desc:e.description, link:e.link, image:e.image_url, time:e.all_day?null:e.start_time,
+                       recurrence:e.recurrence, id:e.id, visibility:e.visibility||'office', owner:e.owner_email||'',
+                       editable: CANEDIT || mine });
+            });
+        });
+    }catch(err){ console.warn('hub_events', err.message); }
+}
+
+/* Your own Tasks Manager to-dos with a due date (per-agent, RLS-scoped) — so the
+   calendar shows everything: company events + your closings/renewals + your tasks. */
+async function loadTasks(){
+    try{
+        const { data, error } = await SB.from('agent_contact_tasks').select('id,title,due_date,due_time,done').eq('done', false);
+        if (error) throw error;
+        (data||[]).forEach(t=>{
+            if (!t.due_date) return;
+            push({ date:String(t.due_date).slice(0,10), title:(t.title||'Task'), category:'task', source:'task',
+                   time:t.due_time||null, link:'yrl-tasks.html', id:'task-'+t.id, editable:false });
+        });
+    }catch(err){ console.warn('tasks', err.message); }
+}
+
+async function loadTxns(){
+    try{
+        const { data:txns } = await SB.from('hub_transactions').select('id,title,client_name,type,closed_at,status');
+        const map={}; (txns||[]).forEach(t=>map[t.id]=t);
+        (txns||[]).forEach(t=>{
+            if (t.closed_at){ const d=String(t.closed_at).slice(0,10);
+                push({ date:d, title:'Closed — '+(t.title||t.client_name||'File'), category:'closing', source:'closing',
+                       desc:(t.client_name?('Client: '+t.client_name):'' ), link:'yrl-transactions.html?txn='+t.id }); }
+        });
+        const { data:dates } = await SB.from('hub_txn_dates').select('transaction_id,label,date_value');
+        (dates||[]).forEach(row=>{
+            if (!row.date_value) return;
+            const t=map[row.transaction_id]; if(!t) return;
+            const isClose=/clos/i.test(row.label||'');
+            push({ date:String(row.date_value).slice(0,10),
+                   title:(row.label||'Key date')+' — '+(t.title||t.client_name||'File'),
+                   category:isClose?'closing':'deadline', source:'keydate',
+                   desc:(t.client_name?('Client: '+t.client_name):''), link:'yrl-transactions.html?txn='+t.transaction_id });
+        });
+    }catch(err){ console.warn('txns', err.message); }
+}
+
+/* Your logged deals — close dates (per-agent, RLS). */
+async function loadDeals(){
+    try{
+        const { data, error } = await SB.from('agent_deals').select('client_name,property_address,side,close_date,status');
+        if (error) throw error;
+        (data||[]).forEach(d=>{
+            if(!d.close_date) return;
+            const closed=(d.status==='closed');
+            push({ date:String(d.close_date).slice(0,10),
+                   title:(closed?'Closed: ':'Closing: ')+(d.client_name||d.property_address||d.side||'deal'),
+                   category:'deal', source:'deal', desc:(d.property_address||''), editable:false });
+        });
+    }catch(err){ console.warn('deals', err.message); }
+}
+/* Contact key dates — birthdays + home anniversaries (recur yearly) and estimated
+   closings (per-agent, RLS). */
+async function loadContactDates(){
+    try{
+        // only YOUR contacts — owners/brokers can read every agent's (RLS), which would mix in other agents' birthdays
+        let q = SB.from('agent_contacts').select('name,birthday,home_anniversary,expected_close').eq('archived',false);
+        if (window.yrlUser && window.yrlUser.id) q = q.eq('agent_id', window.yrlUser.id);
+        const { data, error } = await q;
+        if (error) throw error;
+        const y0=_t.getFullYear()-1, yrs=[]; for(let y=y0;y<=y0+7;y++) yrs.push(y);
+        (data||[]).forEach(c=>{
+            const nm=c.name||'Contact';
+            if (c.birthday){ const md=String(c.birthday).slice(5,10); yrs.forEach(y=>push({ date:y+'-'+md, title:nm+' — birthday', category:'birthday', source:'contact', link:'yrl-contacts.html', editable:false })); }
+            if (c.home_anniversary){ const md=String(c.home_anniversary).slice(5,10), by=+String(c.home_anniversary).slice(0,4); yrs.forEach(y=>push({ date:y+'-'+md, title:nm+' — home anniversary'+(by?(' ('+(y-by)+' yr)'):''), category:'anniversary', source:'contact', link:'yrl-contacts.html', editable:false })); }
+            if (c.expected_close){ push({ date:String(c.expected_close).slice(0,10), title:'Est. close: '+nm, category:'closing', source:'contact', link:'yrl-contacts.html', editable:false }); }
+        });
+    }catch(err){ console.warn('contacts', err.message); }
+}
+async function loadLicenses(){
+    try{
+        const { data } = await SB.from('agent_profiles').select('name,email,license_expiration,license_status,ce_due_date,ce_completed');
+        (data||[]).forEach(a=>{
+            const who=a.name||a.email||'Agent';
+            if (a.license_expiration){
+                push({ date:String(a.license_expiration).slice(0,10), title:'License renewal — '+who, category:'license', source:'license',
+                       desc:'Real estate license expires. Renew before this date.'+(a.license_status?(' Status: '+a.license_status):'') });
+            }
+            if (a.ce_due_date && !a.ce_completed){
+                push({ date:String(a.ce_due_date).slice(0,10), title:'CE due — '+who, category:'ce', source:'ce',
+                       desc:'Continuing education due.', link:'yrl-ce-licensing.html' });
+            }
+        });
+    }catch(err){ console.warn('licenses', err.message); }
+}
+
+async function loadVoh(){
+    try{
+        const { data } = await SB.from('voh_events').select('property_address,event_date,event_time,zoom_join_link,headshot_url,status');
+        (data||[]).forEach(v=>{
+            if (!v.event_date) return;
+            push({ date:String(v.event_date).slice(0,10), title:'Open House — '+(v.property_address||'Listing'),
+                   category:'voh', source:'voh', time:v.event_time||null, link:v.zoom_join_link, image:v.headshot_url,
+                   desc:'Virtual open house event.' });
+        });
+    }catch(err){ console.warn('voh', err.message); }
+}
+
+function indexEvents(){
+    BYDATE={};
+    EVENTS.forEach(ev=>{
+        // multi-day → add to each covered date
+        if (ev.endDate && ev.endDate>ev.date){
+            let d=parseYMD(ev.date), end=parseYMD(ev.endDate), guard=0;
+            while (d<=end && guard<400){ const k=ymd(d); (BYDATE[k]=BYDATE[k]||[]).push(ev); d=addDays(d,1); guard++; }
+        } else {
+            (BYDATE[ev.date]=BYDATE[ev.date]||[]).push(ev);
+        }
+    });
+    Object.values(BYDATE).forEach(arr=>arr.sort((a,b)=>(a.time||'').localeCompare(b.time||'')));
+}
+function eventsOn(k){ return BYDATE[k]||[]; }
+
+/* ── legend ───────────────────────────────────────────────────── */
+function renderLegend(){
+    const present={}; EVENTS.forEach(e=>present[e.category]=1);
+    const order=['deal','closing','deadline','task','license','ce','voh','mibor','meeting','fee','training','holiday','birthday','anniversary','other'];
+    $('legend').innerHTML = order.filter(k=>present[k]).map(k=>
+        `<span><span class="dot" style="background:${CAT[k].c}"></span>${CAT[k].label}</span>`).join('')
+        || '<span style="color:var(--text-muted)">No events yet — add one, or they’ll appear as closings and renewals are set.</span>';
+}
+
+/* ── view switching ───────────────────────────────────────────── */
+function setView(v){ VIEWMODE=v; document.querySelectorAll('.vt').forEach(b=>b.classList.toggle('active',b.dataset.v===v)); render(); if (window.__yrlTabChanged) window.__yrlTabChanged(v); }
+function step(dir){ if(VIEWMODE==='year'){ curY+=dir; } else { const d=addMonths(new Date(curY,curM,1),dir); curY=d.getFullYear(); curM=d.getMonth(); } render(); }
+function goToday(){ curY=_t.getFullYear(); curM=_t.getMonth(); render(); }
+
+function render(){
+    if (VIEWMODE==='year'){ $('periodLabel').textContent=curY; renderYear(); }
+    else if (VIEWMODE==='agenda'){ $('periodLabel').textContent='Upcoming'; renderAgenda(); }
+    else { $('periodLabel').textContent=MONTHS[curM]+' '+curY; renderMonth(); }
+}
+
+/* ── month view ───────────────────────────────────────────────── */
+function renderMonth(){
+    const first=new Date(curY,curM,1);
+    const startDow=first.getDay();
+    const gridStart=addDays(first,-startDow);
+    let cells='';
+    for (let i=0;i<42;i++){
+        const d=addDays(gridStart,i);
+        const k=ymd(d), inMonth=d.getMonth()===curM;
+        const evs=eventsOn(k);
+        const shown=evs.slice(0,3), extra=evs.length-shown.length;
+        cells+=`<div class="cell ${inMonth?'':'other'} ${k===TODAY?'today':''}">
+            <div class="dnum">${d.getDate()}</div>
+            ${shown.map(ev=>chip(ev)).join('')}
+            ${extra>0?`<div class="more" onclick="openDay('${k}')">+${extra} more</div>`:''}
+        </div>`;
+    }
+    $('view').innerHTML = `<div class="cal">
+        <div class="dow"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div>
+        <div class="grid">${cells}</div></div>`;
+}
+function chip(ev){
+    const i=EVENTS.indexOf(ev);
+    const mark = ev.visibility==='personal' ? ' <i class="fa-solid fa-lock" style="font-size:8px;opacity:.65;"></i>'
+               : ev.visibility==='owners' ? ' <i class="fa-solid fa-user-shield" style="font-size:8px;opacity:.65;"></i>' : '';
+    return `<div class="chip" style="background:${hexA(catColor(ev.category),0.12)};color:${catColor(ev.category)}" onclick="openEv(${i})">
+        <span class="cdot" style="background:${catColor(ev.category)}"></span><span class="ctxt">${esc(ev.title)}${mark}</span></div>`;
+}
+function hexA(hex,a){ const n=parseInt(hex.slice(1),16); return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`; }
+
+/* ── year view ────────────────────────────────────────────────── */
+function renderYear(){
+    let html='<div class="year-grid">';
+    for (let m=0;m<12;m++){
+        const first=new Date(curY,m,1), startDow=first.getDay(), gridStart=addDays(first,-startDow);
+        let days='';
+        for (let i=0;i<42;i++){
+            const d=addDays(gridStart,i); const k=ymd(d); const inMonth=d.getMonth()===m;
+            const evs=eventsOn(k);
+            const cls=[inMonth?'':'dim', k===TODAY?'today':'', evs.length?'has':''].join(' ');
+            const dot=evs.length?`<span class="mdot ${evs.length>1?'':''}" style="background:${catColor(evs[0].category)}"></span>`:'';
+            days+=`<div class="md ${cls} ${evs.length>1?'multi':''}" ${evs.length?`onclick="openDay('${k}')"`:''}>${d.getDate()}${dot}</div>`;
+        }
+        html+=`<div class="mini"><h4 onclick="curM=${m};setView('month')">${MONTHS[m]}</h4><div class="mg">${days}</div></div>`;
+    }
+    html+='</div>';
+    $('view').innerHTML=html;
+}
+
+/* ── agenda view ──────────────────────────────────────────────── */
+function renderAgenda(){
+    const up=EVENTS.filter(e=>e.date>=TODAY).sort((a,b)=>a.date.localeCompare(b.date)||((a.time||'').localeCompare(b.time||'')));
+    if (!up.length){ $('view').innerHTML='<div class="empty"><i class="fa-solid fa-calendar-check" style="font-size:34px;opacity:.3;display:block;margin-bottom:10px;"></i>No upcoming events.</div>'; return; }
+    const groups={};
+    up.forEach(e=>{ const d=parseYMD(e.date); const key=d.getFullYear()+'-'+pad(d.getMonth()); (groups[key]=groups[key]||[]).push(e); });
+    let html='';
+    Object.keys(groups).sort().forEach(key=>{
+        const [y,m]=key.split('-');
+        html+=`<div class="agenda-month"><h3>${MONTHS[+m]} ${y}</h3>`+
+            groups[key].map(ev=>{ const i=EVENTS.indexOf(ev); const d=parseYMD(ev.date);
+                return `<div class="ag-item" onclick="openEv(${i})">
+                    <div class="ag-date"><div class="d">${d.getDate()}</div><div class="m">${MON3[d.getMonth()]}</div></div>
+                    <div class="ag-body">
+                        <div class="ag-title"><span class="ag-cat" style="background:${catColor(ev.category)}">${catLabel(ev.category)}</span> ${esc(ev.title)}</div>
+                        <div class="ag-sub">${ev.time?fmtTime(ev.time)+' · ':''}${esc((ev.desc||'').slice(0,90))}${ev.recurrence&&ev.recurrence!=='none'?' · repeats '+recurLabel(ev.recurrence):''}</div>
+                    </div></div>`;
+            }).join('')+`</div>`;
+    });
+    $('view').innerHTML=html;
+}
+
+/* ── day list modal ───────────────────────────────────────────── */
+function openDay(k){
+    const evs=eventsOn(k); if(!evs.length) return;
+    $('dayTitle').textContent=humanDate(k);
+    $('dayBody').innerHTML = evs.map(ev=>{ const i=EVENTS.indexOf(ev);
+        return `<div class="ag-item" onclick="closeDay();openEv(${i})" style="margin-bottom:8px;">
+            <div class="ag-body"><div class="ag-title"><span class="ag-cat" style="background:${catColor(ev.category)}">${catLabel(ev.category)}</span> ${esc(ev.title)}</div>
+            ${ev.time?`<div class="ag-sub">${fmtTime(ev.time)}</div>`:''}</div></div>`; }).join('');
+    $('dayModal').classList.add('open');
+}
+function closeDay(){ $('dayModal').classList.remove('open'); }
+
+/* ── event detail modal ───────────────────────────────────────── */
+function openEv(i){
+    const ev=EVENTS[i]; if(!ev) return;
+    $('evTitle').textContent=ev.title;
+    const when = humanDate(ev.date) + (ev.endDate&&ev.endDate>ev.date?(' – '+humanDate(ev.endDate)):'') + (ev.time?(' · '+fmtTime(ev.time)):'') + (ev.recurrence&&ev.recurrence!=='none'?(' · repeats '+recurLabel(ev.recurrence)):'');
+    const srcLabel={event:'Brokerage event',closing:'From transactions',keydate:'From transactions',license:'From agent licensing',ce:'From agent licensing',voh:'Virtual open house'}[ev.source]||'';
+    $('evBody').innerHTML =
+        (ev.image?`<img class="ev-img" src="${esc(ev.image)}" onerror="this.remove()">`:'') +
+        `<div class="ev-meta"><span class="ev-badge" style="background:${catColor(ev.category)}">${catLabel(ev.category)}</span><span class="ev-when">${esc(when)}</span></div>` +
+        (ev.desc?`<div class="ev-desc">${esc(ev.desc)}</div>`:'') +
+        (ev.visibility==='personal'?`<div class="ev-src"><i class="fa-solid fa-lock"></i> Personal${ev.owner&&CANEDIT?' · '+esc(ev.owner):''}</div>`
+          :ev.visibility==='owners'?`<div class="ev-src"><i class="fa-solid fa-user-shield"></i> Owners only</div>`:'') +
+        (srcLabel?`<div class="ev-src"><i class="fa-solid fa-arrows-rotate"></i> ${srcLabel}</div>`:'');
+    let foot='';
+    if (ev.link) foot+=`<a href="${esc(ev.link)}" ${/^https?:/.test(ev.link)?'target="_blank" rel="noopener"':''} class="btn btn-red"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open link</a>`;
+    if (ev.source==='event' && (CANEDIT || ev.editable)) foot+=`<button class="btn btn-ghost" onclick="closeEv();openEditor('${ev.id}')"><i class="fa-solid fa-pen"></i> Edit</button>`;
+    foot+=`<button class="btn btn-ghost" style="margin-left:auto;" onclick="closeEv()">Close</button>`;
+    $('evFoot').innerHTML=foot;
+    $('evModal').classList.add('open');
+}
+function closeEv(){ $('evModal').classList.remove('open'); }
+
+/* ── editor (owner/admin) ─────────────────────────────────────── */
+function openEditor(id){
+    if (!CANEDIT && id && !EVENTS.some(e=>e.id===id && e.editable)) return;   /* agents: add, or edit their own */
+    $('edForm').reset();
+    $('e-id').value=''; $('e-image').value=''; $('e-imgstatus').textContent='';
+    $('e-time').disabled=true;
+    $('e-delete').style.display='none';
+    $('edTitle').textContent='Add Event';
+    /* audience picker by role — agents can only create personal events */
+    const visSel=$('e-visibility');
+    if (CANEDIT){ visSel.disabled=false; visSel.innerHTML='<option value="office">Everyone (office-wide)</option><option value="owners">Owners only</option><option value="personal">Just me</option>'; visSel.value='office'; }
+    else { visSel.innerHTML='<option value="personal">Just me</option>'; visSel.value='personal'; visSel.disabled=true; }
+    if (id){
+        const src=EVENTS.find(e=>e.id===id && e.source==='event');
+        // pull the raw row fields we stored on the normalized event
+        if (src){
+            $('edTitle').textContent='Edit Event';
+            $('e-id').value=src.id;
+            $('e-title').value=src.title;
+            $('e-category').value=src.category||'meeting';
+            $('e-recurrence').value=src.recurrence||'none';
+            $('e-start').value=src.date;
+            $('e-end').value=src.endDate||'';
+            $('e-desc').value=src.desc||'';
+            $('e-link').value=src.link||'';
+            $('e-image').value=src.image||'';
+            if (CANEDIT) $('e-visibility').value=src.visibility||'office';
+            const allday=!src.time; $('e-allday').checked=allday; $('e-time').disabled=allday; $('e-time').value=src.time?String(src.time).slice(0,5):'';
+            $('e-delete').style.display='';
+        }
+    } else {
+        $('e-start').value=ymd(new Date(curY,curM, Math.min(_t.getDate(), new Date(curY,curM+1,0).getDate())));
+    }
+    visNote();
+    $('edModal').classList.add('open');
+    setTimeout(()=>$('e-title').focus(),50);
+}
+function closeEditor(){ $('edModal').classList.remove('open'); }
+function visNote(){
+    const v=$('e-visibility') && $('e-visibility').value;
+    const map={ office:'Everyone in the office sees this on their calendar.', owners:'Only owners and admin see this — agents will not.', personal:'Private to you. Your broker and admin can also see it.' };
+    const n=$('e-vis-note'); if (n) n.textContent = map[v]||'';
+}
+
+async function uploadImg(input){
+    const f=input.files&&input.files[0]; if(!f) return;
+    $('e-imgstatus').textContent='Uploading…';
+    try{
+        if (typeof uploadHubFile!=='function') throw new Error('Uploader unavailable — paste a URL instead');
+        const url=await uploadHubFile(f,'events');
+        $('e-image').value=url; $('e-imgstatus').textContent='Image attached ✓'; $('e-imgstatus').style.color='var(--green)';
+    }catch(err){ $('e-imgstatus').textContent=err.message; $('e-imgstatus').style.color='#dc2626'; }
+}
+
+async function saveEvent(e){
+    e.preventDefault();
+    const btn=$('e-save'); btn.disabled=true; const o=btn.innerHTML; btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i>';
+    try{
+        const allday=$('e-allday').checked;
+        const row={
+            client_id: ME.client_id,
+            title: $('e-title').value.trim(),
+            category: $('e-category').value,
+            start_date: $('e-start').value,
+            end_date: $('e-end').value||null,
+            all_day: allday,
+            start_time: allday?null:($('e-time').value||null),
+            description: $('e-desc').value.trim()||null,
+            link: $('e-link').value.trim()||null,
+            image_url: $('e-image').value.trim()||null,
+            recurrence: $('e-recurrence').value,
+            visibility: CANEDIT ? ($('e-visibility').value||'office') : 'personal'
+        };
+        if (!row.title || !row.start_date) throw new Error('Title and date are required');
+        const id=$('e-id').value;
+        let res;
+        if (id) res=await SB.from('hub_events').update(row).eq('id',id);
+        else { row.owner_email = (ME&&ME.email)||null; res=await SB.from('hub_events').insert(row); }
+        if (res.error) throw res.error;
+        toast(id?'Event updated':'Event added','success');
+        closeEditor();
+        await loadAll();
+    }catch(err){ toast('Save failed: '+err.message,'error'); }
+    finally{ btn.disabled=false; btn.innerHTML=o; }
+}
+
+async function deleteEvent(){
+    const id=$('e-id').value; if(!id) return;
+    if (!confirm('Delete this event? If it repeats, all occurrences are removed.')) return;
+    try{
+        const { error }=await SB.from('hub_events').delete().eq('id',id);
+        if (error) throw error;
+        toast('Deleted','success'); closeEditor(); await loadAll();
+    }catch(err){ toast('Delete failed: '+err.message,'error'); }
+}
+
+let _toastT;
+function toast(msg,type){ const t=$('toast'); t.textContent=msg; t.className=''; if(type)t.classList.add(type); void t.offsetWidth; t.classList.add('show'); clearTimeout(_toastT); _toastT=setTimeout(()=>t.classList.remove('show'),2600); }
+</script>
+<script src="back-link.js?v=20260917"></script>
+<script src="mobile-tabs.js?v=20260927a" defer></script>
+</body>
+</html>

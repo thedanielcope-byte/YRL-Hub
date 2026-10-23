@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Recruiting · Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="portal-auth.js"></script>
+    <script src="embed-mode.js?v=20260927b"></script>
+    <style>
+        :root {
+            --red:#c03926; --red-light:#d94a35; --red-dark:#9e2e1e;
+            --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f7f8fa; --surface-3:#eef0f3;
+            --border:#e2e5ea; --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+            --radius:12px; --shadow:0 4px 20px rgba(0,0,0,0.08); --green:#16a34a; --blue:#2563eb; --amber:#d97706;
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
+        a{text-decoration:none;color:inherit;}
+        .page-header{background:linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);padding:28px 24px 24px;}
+        .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+        .header-left{display:flex;align-items:center;gap:18px;}
+        .back-btn{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:9px 18px;border-radius:100px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+        .back-btn:hover{background:rgba(255,255,255,0.26);}
+        .header-title h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(26px,4vw,38px);letter-spacing:1.5px;color:#fff;line-height:1.1;}
+        .header-title p{font-size:13px;color:rgba(255,255,255,0.85);}
+        .btn-new{display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;background:#fff;color:var(--red);padding:10px 20px;border-radius:100px;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:700;}
+        .btn-new:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,0.18);}
+        .lock-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.3);color:#fff;font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;padding:4px 12px;border-radius:100px;margin-top:6px;}
+
+        .wrap{max-width:1100px;margin:0 auto;padding:26px 24px 80px;}
+        .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;margin-bottom:22px;}
+        .sec-title{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:1.2px;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+        .sec-title i{color:var(--red);font-size:14px;}
+        .sec-sub{font-size:12.5px;color:var(--text-muted);margin-bottom:14px;}
+        .head-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+
+        .btn{display:inline-flex;align-items:center;gap:7px;border:none;cursor:pointer;border-radius:9px;padding:9px 16px;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;}
+        .btn-red{background:var(--red);color:#fff;}
+        .btn-red:hover{background:var(--red-light);}
+        .btn-ghost{background:var(--surface-2);color:var(--text-sec);border:1.5px solid var(--border);}
+        .btn-ghost:hover{border-color:var(--red);color:var(--red);}
+        .btn-sm{padding:6px 12px;font-size:12px;}
+
+        /* stats */
+        .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:18px;}
+        .stat{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;}
+        .stat .n{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;line-height:1;}
+        .stat .l{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin-top:3px;}
+
+        /* filters */
+        .filters{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+        .chip{padding:7px 15px;border-radius:100px;border:1.5px solid var(--border);background:var(--surface);font-size:12.5px;font-weight:700;cursor:pointer;color:var(--text-sec);font-family:'Inter',sans-serif;}
+        .chip.active{background:var(--red);border-color:var(--red);color:#fff;}
+
+        /* table */
+        table{width:100%;border-collapse:collapse;font-size:13.5px;}
+        th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);padding:8px 10px;border-bottom:1.5px solid var(--border);white-space:nowrap;}
+        td{padding:11px 10px;border-bottom:1px solid var(--border);vertical-align:top;}
+        tr.row{cursor:pointer;}
+        tr.row:hover{background:var(--surface-2);}
+        .nm{font-weight:700;}
+        .muted{color:var(--text-muted);font-size:12.5px;}
+        .contact-line{font-size:12.5px;color:var(--text-sec);}
+        .contact-line a:hover{color:var(--red);text-decoration:underline;}
+        .pill{display:inline-block;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:4px 10px;border-radius:100px;white-space:nowrap;}
+        .s-prospect{background:var(--surface-3);color:var(--text-sec);}
+        .s-contacted{background:rgba(37,99,235,.12);color:var(--blue);}
+        .s-meeting{background:rgba(217,119,6,.14);color:var(--amber);}
+        .s-interviewing{background:rgba(217,119,6,.14);color:var(--amber);}
+        .s-offer{background:rgba(192,57,38,.12);color:var(--red);}
+        .s-joined{background:rgba(22,163,74,.14);color:var(--green);}
+        .s-passed{background:var(--surface-3);color:var(--text-muted);}
+        .due{color:var(--red);font-weight:700;}
+        .empty{padding:34px;text-align:center;color:var(--text-muted);font-size:14px;}
+
+        /* docs */
+        .doc-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed var(--border);font-size:13.5px;}
+        .doc-row:last-child{border-bottom:none;}
+        .doc-ico{width:32px;height:32px;border-radius:8px;background:rgba(37,99,235,.10);color:var(--blue);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .doc-main{flex:1;min-width:0;}
+        .doc-name{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+        .doc-name a:hover{color:var(--red);text-decoration:underline;}
+        .doc-acts{display:flex;gap:10px;color:var(--text-muted);font-size:12.5px;}
+        .doc-acts span{cursor:pointer;}
+        .doc-acts span:hover{color:var(--red);}
+
+        .drop{border:2px dashed var(--border);border-radius:10px;padding:16px;text-align:center;font-size:12.5px;color:var(--text-muted);cursor:pointer;transition:all .15s;}
+        .drop:hover,.drop.over{border-color:var(--red);color:var(--red);background:rgba(192,57,38,.04);}
+
+        /* modal */
+        .overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:center;justify-content:center;z-index:60;padding:20px;}
+        .overlay.open{display:flex;}
+        .modal{background:#fff;border-radius:16px;max-width:560px;width:100%;padding:26px;max-height:90vh;overflow:auto;}
+        .modal h3{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;margin-bottom:14px;}
+        .modal label{display:block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text-sec);margin:12px 0 5px;}
+        .modal input,.modal select,.modal textarea{width:100%;background:var(--surface-2);border:1.5px solid var(--border);border-radius:9px;padding:10px 12px;font-size:14px;font-family:'Inter',sans-serif;outline:none;}
+        .modal textarea{min-height:80px;resize:vertical;}
+        .modal input:focus,.modal textarea:focus,.modal select:focus{border-color:var(--red);}
+        .mrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+        @media(max-width:520px){.mrow{grid-template-columns:1fr;}}
+        .modal-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:20px;}
+        #toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:#1a1d22;color:#fff;font-size:13.5px;font-weight:600;padding:12px 22px;border-radius:100px;z-index:70;opacity:0;transition:opacity .25s;pointer-events:none;}
+        #toast.show{opacity:1;}
+        #gate{max-width:520px;margin:80px auto;text-align:center;padding:0 24px;}
+        @media(max-width:760px){
+            th.hide-sm,td.hide-sm{display:none;}
+        }
+    </style>
+<link rel="stylesheet" href="hub-theme.css?v=20260903b"><script src="hub-brand.js" defer></script></head>
+<body>
+
+<header class="page-header">
+    <div class="header-inner">
+        <div class="header-left">
+            <a href="hub.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Hub</a>
+            <div class="header-title">
+                <h1>Agent Recruiting</h1>
+                <p>Pipeline, contacts &amp; recruiting packet</p>
+                <span class="lock-pill"><i class="fa-solid fa-lock"></i> Broker only</span>
+            </div>
+        </div>
+        <div id="headActions" style="display:none;gap:10px;flex-wrap:wrap;">
+            <button class="btn-new" onclick="openRecruit()"><i class="fa-solid fa-user-plus"></i> Add Prospect</button>
+        </div>
+    </div>
+</header>
+
+<div id="gate" style="display:none;">
+    <i class="fa-solid fa-lock" style="font-size:34px;color:var(--text-muted);"></i>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;margin:14px 0 8px;">Broker access only</h2>
+    <p style="color:var(--text-sec);font-size:14px;">Agent recruiting is limited to the managing broker. If you need access, contact your broker.</p>
+    <a href="hub.html" class="btn btn-ghost" style="margin-top:18px;"><i class="fa-solid fa-arrow-left"></i> Back to Hub</a>
+</div>
+
+<div class="wrap" id="app" style="display:none;">
+
+    <!-- PIPELINE -->
+    <div class="panel">
+        <div class="head-row">
+            <div>
+                <div class="sec-title"><i class="fa-solid fa-users-viewfinder"></i> Recruiting Pipeline</div>
+                <div class="sec-sub">Everyone you're talking to. Click a row to update notes, status and follow-up.</div>
+            </div>
+        </div>
+
+        <div class="stats" id="stats"></div>
+
+        <div class="filters" id="filters">
+            <button class="chip active" data-f="open" onclick="setFilter('open')">Open</button>
+            <button class="chip" data-f="prospect" onclick="setFilter('prospect')">Prospect</button>
+            <button class="chip" data-f="contacted" onclick="setFilter('contacted')">Contacted</button>
+            <button class="chip" data-f="meeting" onclick="setFilter('meeting')">Meeting</button>
+            <button class="chip" data-f="interviewing" onclick="setFilter('interviewing')">Interviewing</button>
+            <button class="chip" data-f="offer" onclick="setFilter('offer')">Offer Out</button>
+            <button class="chip" data-f="joined" onclick="setFilter('joined')">Joined</button>
+            <button class="chip" data-f="passed" onclick="setFilter('passed')">Passed</button>
+            <button class="chip" data-f="all" onclick="setFilter('all')">All</button>
+        </div>
+
+        <div id="list"><div class="empty">Loading…</div></div>
+    </div>
+
+    <!-- RECRUITING PACKET -->
+    <div class="panel">
+        <div class="head-row">
+            <div>
+                <div class="sec-title"><i class="fa-solid fa-folder-open"></i> Recruiting Packet</div>
+                <div class="sec-sub">Documents you hand a potential new agent — commission plan, agent agreement, why-join-us, anything else.</div>
+            </div>
+            <button class="btn btn-red btn-sm" onclick="openDoc()"><i class="fa-solid fa-plus"></i> Add document</button>
+        </div>
+        <div id="docs"></div>
+    </div>
+</div>
+
+<!-- RECRUIT MODAL -->
+<div class="overlay" id="rOverlay">
+    <div class="modal">
+        <h3 id="rTitle">Add Prospect</h3>
+        <div class="mrow">
+            <div><label>Name</label><input id="rName" placeholder="Jane Agent"></div>
+            <div><label>Currently at</label><input id="rBrokerage" placeholder="e.g. Keller Williams"></div>
+        </div>
+        <div class="mrow">
+            <div><label>Phone</label><input id="rPhone" placeholder="(317) 555-0142"></div>
+            <div><label>Email</label><input id="rEmail" placeholder="jane@email.com"></div>
+        </div>
+        <div class="mrow">
+            <div><label>Status</label>
+                <select id="rStatus">
+                    <option value="prospect">Prospect</option>
+                    <option value="contacted">Contacted</option>
+                    <option value="meeting">Meeting Set</option>
+                    <option value="interviewing">Interviewing</option>
+                    <option value="offer">Offer Out</option>
+                    <option value="joined">Joined</option>
+                    <option value="passed">Passed</option>
+                </select>
+            </div>
+            <div><label>Where from</label><input id="rSource" placeholder="Referral, open house, MLS…"></div>
+        </div>
+        <div class="mrow">
+            <div><label>Last contact</label><input id="rLast" type="date"></div>
+            <div><label>Next follow-up</label><input id="rNext" type="date"></div>
+        </div>
+        <label>Notes</label>
+        <textarea id="rNotes" placeholder="What they're looking for, what they said, objections, next step…"></textarea>
+        <div class="modal-actions">
+            <button class="btn btn-ghost" id="rDelete" style="color:var(--red);" onclick="delRecruit()"><i class="fa-solid fa-trash"></i> Delete</button>
+            <span style="display:flex;gap:10px;margin-left:auto;">
+                <button class="btn btn-ghost" onclick="closeRecruit()">Cancel</button>
+                <button class="btn btn-red" id="rSave" onclick="saveRecruit()">Save</button>
+            </span>
+        </div>
+    </div>
+</div>
+
+<!-- DOC MODAL -->
+<div class="overlay" id="dOverlay">
+    <div class="modal" style="max-width:460px;">
+        <h3 id="dTitle">Add Document</h3>
+        <label>Title</label>
+        <input id="dName" placeholder="e.g. Commission Plan Overview">
+
+        <label>Upload a file</label>
+        <input type="file" id="dFile" style="display:none;" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" onchange="uploadPacketFile()">
+        <div class="drop" id="dDrop" onclick="document.getElementById('dFile').click()">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Click to upload a PDF, or drag one here
+        </div>
+        <div id="dFileState" class="sec-sub" style="margin-top:6px;"></div>
+
+        <label>…or paste a link instead</label>
+        <input id="dLink" placeholder="Paste a link (Drive, OneDrive, or a hub document URL)">
+        <div class="sec-sub" style="margin-top:6px;">Uploaded files are stored privately — only you and the broker can open them.</div>
+        <div class="modal-actions">
+            <button class="btn btn-ghost" id="dDelete" style="color:var(--red);" onclick="delDoc()"><i class="fa-solid fa-trash"></i> Delete</button>
+            <span style="display:flex;gap:10px;margin-left:auto;">
+                <button class="btn btn-ghost" onclick="closeDoc()">Cancel</button>
+                <button class="btn btn-red" id="dSave" onclick="saveDoc()">Save</button>
+            </span>
+        </div>
+    </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+let SB=null, ME=null, CID=null, ROWS=[], DOCS=[], FILTER='open', EDIT=null, EDITDOC=null, UPLOADED=null;
+
+const STATUS_LABEL = { prospect:'Prospect', contacted:'Contacted', meeting:'Meeting Set',
+                       interviewing:'Interviewing', offer:'Offer Out', joined:'Joined', passed:'Passed' };
+const OPEN_STATUSES = ['prospect','contacted','meeting','interviewing','offer'];
+
+document.addEventListener('yrl-auth-ready', init);
+if (window.yrlMember) init();
+
+async function init(){
+    if (SB) return;
+    SB = window.yrlClient; ME = window.yrlMember;
+    /* Broker-only. RLS enforces this too — this is just a friendly gate. */
+    if (!(ME.role === 'owner' || ME.role === 'nomad_admin')) { $('gate').style.display = ''; return; }
+    $('app').style.display = '';
+    $('headActions').style.display = 'flex';
+    CID = ME.client_id || null;
+    if (!CID) {
+        /* nomad_admin isn't tied to one brokerage — use the only one they can write to. */
+        const { data } = await SB.from('client_portal_clients').select('id').limit(2);
+        if (data && data.length === 1) CID = data[0].id;
+    }
+    await Promise.all([loadRecruits(), loadDocs()]);
+}
+
+function toast(msg, ms){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'), ms||2600); }
+function fmtDate(d){ if(!d) return '—'; const p=d.split('-'); return new Date(+p[0],+p[1]-1,+p[2]).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+function todayStr(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+
+/* ── pipeline ── */
+async function loadRecruits(){
+    const { data, error } = await SB.from('hub_recruits').select('*').order('updated_at', { ascending:false });
+    if (error) { $('list').innerHTML = `<div class="empty">Could not load: ${esc(error.message)}</div>`; return; }
+    ROWS = data || [];
+    renderStats(); renderList();
+}
+
+function renderStats(){
+    const open = ROWS.filter(r => OPEN_STATUSES.includes(r.status)).length;
+    const joined = ROWS.filter(r => r.status === 'joined').length;
+    const t = todayStr();
+    const due = ROWS.filter(r => r.next_followup && r.next_followup <= t && OPEN_STATUSES.includes(r.status)).length;
+    $('stats').innerHTML = `
+        <div class="stat"><div class="n">${open}</div><div class="l">In pipeline</div></div>
+        <div class="stat"><div class="n" style="color:${due?'var(--red)':'inherit'}">${due}</div><div class="l">Follow up now</div></div>
+        <div class="stat"><div class="n" style="color:var(--green)">${joined}</div><div class="l">Joined</div></div>
+        <div class="stat"><div class="n">${ROWS.length}</div><div class="l">Total tracked</div></div>`;
+}
+
+function setFilter(f){
+    FILTER = f;
+    document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.f === f));
+    renderList();
+}
+
+function renderList(){
+    const rows = ROWS.filter(r => FILTER === 'all' ? true
+                                : FILTER === 'open' ? OPEN_STATUSES.includes(r.status)
+                                : r.status === FILTER);
+    if (!rows.length) {
+        $('list').innerHTML = `<div class="empty">${FILTER==='open'?'Nobody in the pipeline yet — hit “Add Prospect” to start tracking someone.':'Nothing here.'}</div>`;
+        return;
+    }
+    const t = todayStr();
+    $('list').innerHTML = `<table><thead><tr>
+        <th>Name</th><th>Contact</th><th class="hide-sm">Currently at</th><th>Status</th>
+        <th class="hide-sm">Last contact</th><th>Follow-up</th></tr></thead><tbody>${
+        rows.map(r => {
+            const overdue = r.next_followup && r.next_followup <= t && OPEN_STATUSES.includes(r.status);
+            return `<tr class="row" onclick="openRecruit('${r.id}')">
+                <td><div class="nm">${esc(r.name)}</div>${r.source?`<div class="muted">${esc(r.source)}</div>`:''}</td>
+                <td>
+                    ${r.phone?`<div class="contact-line"><a href="tel:${esc((r.phone||'').replace(/[^\d+]/g,''))}" onclick="event.stopPropagation()"><i class="fa-solid fa-phone" style="font-size:10px;color:var(--text-muted);"></i> ${esc(r.phone)}</a></div>`:''}
+                    ${r.email?`<div class="contact-line"><a href="mailto:${esc(r.email)}" onclick="event.stopPropagation()"><i class="fa-solid fa-envelope" style="font-size:10px;color:var(--text-muted);"></i> ${esc(r.email)}</a></div>`:''}
+                    ${(!r.phone && !r.email)?'<span class="muted">—</span>':''}
+                </td>
+                <td class="hide-sm muted">${esc(r.current_brokerage || '—')}</td>
+                <td><span class="pill s-${esc(r.status)}">${esc(STATUS_LABEL[r.status]||r.status)}</span></td>
+                <td class="hide-sm muted">${fmtDate(r.last_contact)}</td>
+                <td class="${overdue?'due':'muted'}">${fmtDate(r.next_followup)}</td>
+            </tr>`;
+        }).join('')
+    }</tbody></table>`;
+}
+
+function openRecruit(id){
+    EDIT = id || null;
+    const r = id ? ROWS.find(x => x.id === id) : null;
+    $('rTitle').textContent = r ? 'Edit Prospect' : 'Add Prospect';
+    $('rName').value = r?.name || '';
+    $('rBrokerage').value = r?.current_brokerage || '';
+    $('rPhone').value = r?.phone || '';
+    $('rEmail').value = r?.email || '';
+    $('rStatus').value = r?.status || 'prospect';
+    $('rSource').value = r?.source || '';
+    $('rLast').value = r?.last_contact || '';
+    $('rNext').value = r?.next_followup || '';
+    $('rNotes').value = r?.notes || '';
+    $('rDelete').style.display = r ? '' : 'none';
+    $('rOverlay').classList.add('open');
+    setTimeout(() => $('rName').focus(), 60);
+}
+function closeRecruit(){ $('rOverlay').classList.remove('open'); EDIT = null; }
+$('rOverlay').addEventListener('click', function(e){ if (e.target === this) closeRecruit(); });
+
+async function saveRecruit(){
+    const name = $('rName').value.trim();
+    if (!name) { toast('Add a name.'); return; }
+    if (!CID) { toast('No brokerage linked to your account.', 5000); return; }
+    const row = {
+        name,
+        current_brokerage: $('rBrokerage').value.trim() || null,
+        phone: $('rPhone').value.trim() || null,
+        email: $('rEmail').value.trim().toLowerCase() || null,
+        status: $('rStatus').value,
+        source: $('rSource').value.trim() || null,
+        last_contact: $('rLast').value || null,
+        next_followup: $('rNext').value || null,
+        notes: $('rNotes').value.trim() || null
+    };
+    $('rSave').disabled = true;
+    let error;
+    if (EDIT) {
+        ({ error } = await SB.from('hub_recruits').update(row).eq('id', EDIT));
+    } else {
+        row.client_id = CID;
+        row.created_by_email = (window.yrlUser && window.yrlUser.email) || null;
+        ({ error } = await SB.from('hub_recruits').insert(row));
+    }
+    $('rSave').disabled = false;
+    if (error) { toast('Save failed: ' + error.message, 5000); return; }
+    closeRecruit(); await loadRecruits();
+    toast('Saved.');
+}
+
+async function delRecruit(){
+    if (!EDIT) return;
+    const r = ROWS.find(x => x.id === EDIT);
+    if (!confirm(`Remove ${r ? r.name : 'this prospect'} from the pipeline? This cannot be undone.`)) return;
+    const { error } = await SB.from('hub_recruits').delete().eq('id', EDIT);
+    if (error) { toast('Delete failed: ' + error.message, 5000); return; }
+    closeRecruit(); await loadRecruits();
+    toast('Removed.');
+}
+
+/* ── recruiting packet ── */
+async function loadDocs(){
+    const { data, error } = await SB.from('hub_recruit_docs').select('*').order('sort_order');
+    if (error) { $('docs').innerHTML = `<div class="empty">Could not load: ${esc(error.message)}</div>`; return; }
+    DOCS = data || [];
+    renderDocs();
+}
+
+function renderDocs(){
+    $('docs').innerHTML = DOCS.map(d => {
+        const secure = (d.link || '').startsWith('secure:');
+        const name = secure
+            ? `<a href="#" onclick="openSecureDoc(event,'${esc(d.link.slice(7))}')">${esc(d.title)}</a>`
+            : (d.link ? `<a href="${esc(d.link)}" target="_blank" rel="noopener">${esc(d.title)}</a>` : esc(d.title));
+        return `<div class="doc-row">
+            <div class="doc-ico"><i class="fa-solid ${secure ? 'fa-file-shield' : 'fa-file-lines'}"></i></div>
+            <div class="doc-main">
+                <div class="doc-name">${name}</div>
+                <div class="muted">${secure ? 'Uploaded — private' : (d.link ? 'Link' : 'No link yet')}</div>
+            </div>
+            <div class="doc-acts"><span onclick="openDoc('${d.id}')" title="Edit"><i class="fa-solid fa-pen"></i></span></div>
+        </div>`;
+    }).join('') || '<div class="empty">No documents yet — add the pieces you send a potential agent.</div>';
+}
+
+/* Uploaded packet files are private; mint a short-lived signed URL to open. */
+async function openSecureDoc(e, path){
+    e.preventDefault();
+    const { data, error } = await SB.storage.from('recruit-docs').createSignedUrl(path, 120);
+    if (error || !data) { toast('Could not open that file.', 4000); return; }
+    window.open(data.signedUrl, '_blank', 'noopener');
+}
+
+async function uploadPacketFile(){
+    const f = $('dFile').files && $('dFile').files[0];
+    if (!f) return;
+    if (!CID) { toast('No brokerage linked to your account.', 5000); return; }
+    if (f.size > 26214400) { toast('That file is over the 25 MB limit.', 5000); $('dFile').value=''; return; }
+    $('dFileState').textContent = 'Uploading ' + f.name + '…';
+    const safe = f.name.replace(/[^\w.\- ]+/g, '_');
+    const path = `${CID}/${Date.now()}-${safe}`;
+    const { error } = await SB.storage.from('recruit-docs')
+        .upload(path, f, { upsert: false, contentType: f.type || undefined });
+    if (error) { $('dFileState').textContent = ''; toast('Upload failed: ' + error.message, 6000); return; }
+    UPLOADED = path;
+    $('dLink').value = '';
+    $('dFileState').innerHTML = `<b>${esc(f.name)}</b> ready — hit Save to add it.`;
+    if (!$('dName').value.trim()) $('dName').value = f.name.replace(/\.[^.]+$/, '');
+}
+
+function openDoc(id){
+    EDITDOC = id || null;
+    UPLOADED = null;
+    const d = id ? DOCS.find(x => x.id === id) : null;
+    const secure = (d?.link || '').startsWith('secure:');
+    $('dTitle').textContent = d ? 'Edit Document' : 'Add Document';
+    $('dName').value = d?.title || '';
+    $('dLink').value = secure ? '' : (d?.link || '');
+    $('dFile').value = '';
+    $('dFileState').innerHTML = secure ? 'Current: <b>uploaded file</b> (upload another to replace it)' : '';
+    $('dDelete').style.display = d ? '' : 'none';
+    $('dOverlay').classList.add('open');
+    setTimeout(() => $('dName').focus(), 60);
+}
+function closeDoc(){ $('dOverlay').classList.remove('open'); EDITDOC = null; UPLOADED = null; }
+$('dOverlay').addEventListener('click', function(e){ if (e.target === this) closeDoc(); });
+
+(function initPacketDrop(){
+    const z = $('dDrop');
+    ['dragenter','dragover'].forEach(e => z.addEventListener(e, ev => { ev.preventDefault(); z.classList.add('over'); }));
+    ['dragleave','drop'].forEach(e => z.addEventListener(e, ev => { ev.preventDefault(); z.classList.remove('over'); }));
+    z.addEventListener('drop', ev => {
+        if (ev.dataTransfer?.files?.length) { $('dFile').files = ev.dataTransfer.files; uploadPacketFile(); }
+    });
+})();
+
+async function saveDoc(){
+    const title = $('dName').value.trim();
+    if (!title) { toast('Add a title.'); return; }
+    if (!CID) { toast('No brokerage linked to your account.', 5000); return; }
+    const existing = EDITDOC ? DOCS.find(x => x.id === EDITDOC) : null;
+    const typed = $('dLink').value.trim();
+    /* A fresh upload wins; then a typed link; else keep what was there. */
+    const link = UPLOADED ? 'secure:' + UPLOADED : (typed || (existing ? existing.link : null));
+    $('dSave').disabled = true;
+    let error;
+    if (EDITDOC) {
+        ({ error } = await SB.from('hub_recruit_docs').update({ title, link }).eq('id', EDITDOC));
+        /* Replaced an uploaded file? Drop the orphan. */
+        if (!error && UPLOADED && existing && (existing.link || '').startsWith('secure:')) {
+            await SB.storage.from('recruit-docs').remove([existing.link.slice(7)]);
+        }
+    } else {
+        ({ error } = await SB.from('hub_recruit_docs')
+            .insert({ client_id: CID, title, link, sort_order: DOCS.length }));
+    }
+    $('dSave').disabled = false;
+    if (error) { toast('Save failed: ' + error.message, 5000); return; }
+    UPLOADED = null;
+    closeDoc(); await loadDocs();
+    toast('Saved.');
+}
+
+async function delDoc(){
+    if (!EDITDOC) return;
+    if (!confirm('Remove this document from the packet?')) return;
+    const d = DOCS.find(x => x.id === EDITDOC);
+    const { error } = await SB.from('hub_recruit_docs').delete().eq('id', EDITDOC);
+    if (error) { toast('Delete failed: ' + error.message, 5000); return; }
+    if (d && (d.link || '').startsWith('secure:')) {
+        await SB.storage.from('recruit-docs').remove([d.link.slice(7)]);
+    }
+    closeDoc(); await loadDocs();
+    toast('Removed.');
+}
+</script>
+<script src="back-link.js?v=20260917"></script>
+</body>
+</html>

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Transaction — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="portal-auth.js"></script>
+    <script src="embed-mode.js?v=20260927b"></script>
+    <style>
+        :root {
+            --red:#c03926; --red-light:#d94a35; --red-dark:#9e2e1e;
+            --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f7f8fa; --surface-3:#eef0f3;
+            --border:#e2e5ea; --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+            --radius:12px; --shadow:0 4px 20px rgba(0,0,0,0.08); --green:#16a34a; --blue:#2563eb; --amber:#d97706;
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
+        a{text-decoration:none;color:inherit;}
+        .page-header{background:#0f172a;padding:26px 24px 22px;}
+        .header-inner{max-width:860px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+        .header-title h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(24px,4vw,34px);letter-spacing:1.5px;color:#fff;line-height:1.1;}
+        .header-title p{font-size:13px;color:rgba(255,255,255,0.75);}
+        .signout{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:8px 16px;border-radius:100px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+        .signout:hover{background:rgba(255,255,255,0.24);}
+
+        .wrap{max-width:860px;margin:0 auto;padding:26px 24px 70px;}
+        .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px;}
+        .empty{padding:38px;text-align:center;color:var(--text-muted);font-size:14px;}
+
+        .picker{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+        .pick{padding:8px 18px;border-radius:100px;border:1.5px solid var(--border);background:var(--surface);font-size:12.5px;font-weight:700;cursor:pointer;color:var(--text-sec);}
+        .pick.active{background:var(--red);border-color:var(--red);color:#fff;}
+
+        .hero{padding:24px 26px 20px;border-bottom:1px solid var(--border);}
+        .hero h2{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:1px;line-height:1.15;}
+        .hero .sub{font-size:13.5px;color:var(--text-sec);}
+        .stage-now{display:inline-flex;align-items:center;gap:8px;background:#fef2f2;color:var(--red);font-size:12.5px;font-weight:800;padding:6px 16px;border-radius:100px;margin-top:10px;}
+        .prog-wrap{padding:0 26px 22px;}
+        .prog-lbl{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--text-sec);margin-bottom:6px;}
+        .bar{height:10px;border-radius:100px;background:var(--surface-3);overflow:hidden;}
+        .fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--green),#22c55e);transition:width .4s;}
+
+        .sec{padding:20px 26px 24px;}
+        .sec-title{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:1.2px;margin-bottom:12px;display:flex;align-items:center;gap:9px;}
+        .sec-title i{color:var(--red);font-size:14px;}
+
+        .stage-block{margin-bottom:16px;}
+        .stage-name{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text-sec);padding:6px 0 4px;display:flex;align-items:center;gap:8px;}
+        .stage-name .now{font-size:9.5px;background:var(--red);color:#fff;padding:2px 8px;border-radius:100px;}
+        .stage-name .done-tag{font-size:9.5px;background:#dcfce7;color:var(--green);padding:2px 8px;border-radius:100px;}
+        .task{display:flex;align-items:center;gap:11px;padding:7px 4px;border-bottom:1px dashed var(--border);font-size:14px;}
+        .task:last-child{border-bottom:none;}
+        .task i{width:18px;text-align:center;flex-shrink:0;}
+        .task.done i{color:var(--green);}
+        .task.todo i{color:var(--border);}
+        .task.done span{color:var(--text-muted);}
+
+        /* Hero sits on the brokerage's accent gradient (from hub-theme.css), so its
+           text must be white — the default dark ink was unreadable on red. */
+        .hero h2{color:#fff;}
+        .hero .sub{color:rgba(255,255,255,0.92) !important;}
+
+        .team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
+        .team-card{border:1px solid var(--border);border-radius:10px;padding:14px 16px;background:var(--surface-2);}
+        .team-card.is-agent{border-color:var(--red);background:#fff;box-shadow:0 2px 10px rgba(0,0,0,0.05);}
+        .team-avatar{width:34px;height:34px;border-radius:50%;background:var(--red);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;margin-bottom:8px;}
+
+        /* calendar */
+        .cal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+        .cal-nav{display:flex;align-items:center;gap:7px;}
+        .cal-nav button{background:var(--surface-2);border:1.5px solid var(--border);border-radius:8px;min-width:32px;height:32px;padding:0 10px;cursor:pointer;color:var(--text-sec);font-size:12.5px;font-weight:700;font-family:'Inter',sans-serif;}
+        .cal-nav button:hover{border-color:var(--red);color:var(--red);}
+        .cal-month{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:1px;min-width:140px;text-align:center;}
+        .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;}
+        .cal-dow{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--text-muted);text-align:center;padding-bottom:4px;}
+        .cal-cell{min-height:62px;border:1px solid var(--border);border-radius:8px;padding:5px 6px;background:var(--surface);font-size:11px;overflow:hidden;}
+        .cal-cell.out{background:var(--surface-2);opacity:.5;}
+        .cal-cell.today{border-color:var(--red);box-shadow:0 0 0 1.5px rgba(192,57,38,.25);}
+        .cal-num{font-weight:700;color:var(--text-sec);}
+        .cal-cell.today .cal-num{color:var(--red);}
+        .cal-ev{margin-top:3px;background:rgba(192,57,38,0.10);color:var(--red-dark,#9e2e1e);border-radius:5px;padding:2px 5px;font-size:10px;font-weight:600;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+        .cal-ev.past{background:var(--surface-3);color:var(--text-muted);}
+        @media(max-width:560px){.cal-cell{min-height:48px;padding:3px 4px;}.cal-ev{font-size:8.5px;padding:1px 3px;}}
+        .team-role{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--red);margin-bottom:3px;}
+        .team-name{font-weight:700;font-size:14px;line-height:1.3;}
+        .team-co{font-size:12.5px;color:var(--text-sec);margin-bottom:7px;}
+        .team-line{font-size:12.5px;color:var(--text-sec);display:flex;align-items:center;gap:7px;padding:2px 0;}
+        .team-line i{color:var(--text-muted);font-size:11px;width:13px;text-align:center;}
+        .team-line a:hover{color:var(--red);text-decoration:underline;}
+        .team-notes{font-size:12px;color:var(--text-muted);margin-top:7px;padding-top:7px;border-top:1px dashed var(--border);white-space:pre-wrap;}
+        .doc-row{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px dashed var(--border);font-size:13.5px;}
+        .doc-row:last-child{border-bottom:none;}
+        .doc-ico{width:34px;height:34px;border-radius:9px;background:rgba(37,99,235,0.10);color:#2563eb;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .doc-main{flex:1;min-width:0;}
+        .doc-name{font-weight:600;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+        .doc-name:hover{color:var(--red);text-decoration:underline;}
+        .doc-meta{font-size:11.5px;color:var(--text-muted);}
+        .date-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px dashed var(--border);font-size:13.5px;}
+        .date-row:last-child{border-bottom:none;}
+        .date-row .dl{font-weight:600;color:var(--text-sec);display:flex;align-items:center;gap:9px;}
+        .date-row .dv{font-weight:800;}
+        .date-row .dv.soon{color:var(--red);}
+        .date-row .dv.tbd{color:var(--text-muted);font-weight:600;}
+
+        .agent-card{display:flex;align-items:center;gap:14px;padding:18px 26px;border-top:1px solid var(--border);background:var(--surface-2);border-radius:0 0 var(--radius) var(--radius);}
+        .agent-avatar{width:46px;height:46px;border-radius:50%;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px;flex-shrink:0;}
+        .agent-card .an{font-weight:800;font-size:14.5px;}
+        .agent-card .ae{font-size:12.5px;color:var(--text-sec);}
+        .footer{text-align:center;font-size:12.5px;color:var(--text-muted);padding:6px 0 30px;}
+        .footer b{color:var(--text-sec);}
+
+        @media (max-width: 560px) {
+            .wrap { padding: 18px 14px 50px; }
+            .hero, .sec { padding-left: 18px; padding-right: 18px; }
+            .prog-wrap { padding-left: 18px; padding-right: 18px; }
+            .agent-card { padding: 16px 18px; }
+            .date-row { flex-wrap: wrap; }
+            .hero h2 { font-size: 25px; }
+        }
+    </style>
+<link rel="stylesheet" href="hub-theme.css?v=20260903b"><script src="hub-brand.js" defer></script></head>
+<body>
+
+<header class="page-header">
+    <div class="header-inner">
+        <div class="header-title">
+            <h1>My Transaction</h1>
+            <p id="hSub">Where things stand, live from your agent</p>
+        </div>
+        <button class="signout" onclick="yrlSignOut()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign out</button>
+    </div>
+</header>
+
+<div class="wrap">
+    <div class="picker" id="picker" style="display:none;"></div>
+    <div id="content"><div class="panel"><div class="empty">Loading your transaction…</div></div></div>
+    <div class="footer" id="brandFooter">Provided by <b>Your Realty Link</b></div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+let SB=null, TXNS=[], CURID=null;
+
+document.addEventListener('yrl-auth-ready', init);
+if (window.yrlMember) init();
+
+async function init(){
+    if (SB) return;
+    SB = window.yrlClient;
+    /* Archived files are off the agent's working list, so clients don't see them either. */
+    const { data, error } = await SB.from('hub_transactions').select('*').neq('status', 'archived').order('created_at', { ascending:false });
+    if (error || !data || !data.length) {
+        $('content').innerHTML = '<div class="panel"><div class="empty">No transaction found for your account yet.<br>If you were expecting one, reach out to your agent.</div></div>';
+        return;
+    }
+    TXNS = data;
+    const active = TXNS.filter(t => t.status === 'active');
+    CURID = (active[0] || TXNS[0]).id;
+    if (TXNS.length > 1) {
+        $('picker').style.display = '';
+        renderPicker();
+    }
+    render();
+}
+
+function renderPicker(){
+    $('picker').innerHTML = TXNS.map(t => `<button class="pick ${t.id === CURID ? 'active' : ''}" onclick="pick('${t.id}')">${esc(t.title)}</button>`).join('');
+}
+function pick(id){ CURID = id; renderPicker(); render(); }
+
+/* Documents are private; open them through a short-lived signed URL. */
+async function openDoc(id){
+    const { data: rows } = await SB.from('hub_txn_docs').select('file_path').eq('id', id).limit(1);
+    if (!rows || !rows.length) return;
+    const { data, error } = await SB.storage.from('txn-docs').createSignedUrl(rows[0].file_path, 120);
+    if (error) { alert('Sorry — that document could not be opened. Please ask your agent.'); return; }
+    window.open(data.signedUrl, '_blank', 'noopener');
+}
+
+async function render(){
+    const T = TXNS.find(t => t.id === CURID);
+    const [tk, dt, dc, cn, ag] = await Promise.all([
+        SB.from('hub_txn_tasks').select('*').eq('transaction_id', T.id).order('sort_order'),
+        SB.from('hub_txn_dates').select('*').eq('transaction_id', T.id).order('sort_order'),
+        /* RLS returns only the documents/contacts the agent chose to share. */
+        SB.from('hub_txn_docs').select('*').eq('transaction_id', T.id).order('created_at', { ascending: false }),
+        SB.from('hub_txn_contacts').select('*').eq('transaction_id', T.id).order('sort_order'),
+        /* Agent's client-safe contact card (name/email/phone only). */
+        SB.rpc('txn_agent_card', { p_txn_id: T.id })
+    ]);
+    const tasks = tk.data || [], dates = dt.data || [], docs = dc.data || [], team = cn.data || [];
+    const agent = (ag.data && ag.data[0]) || { name: T.agent_name, email: T.agent_email, phone: null };
+    const done = tasks.filter(t => t.done).length, total = tasks.length;
+    const pct = total ? Math.round(done / total * 100) : 0;
+
+    /* stages in order */
+    const stages = [];
+    tasks.forEach(t => { if (!stages.includes(t.stage)) stages.push(t.stage); });
+
+    const stagesHtml = stages.map(st => {
+        const items = tasks.filter(t => t.stage === st);
+        const allDone = items.every(t => t.done);
+        const isNow = T.current_stage === st;
+        return `<div class="stage-block">
+            <div class="stage-name">${esc(st || 'General')}
+                ${isNow ? '<span class="now">WE ARE HERE</span>' : allDone ? '<span class="done-tag">✓ DONE</span>' : ''}
+            </div>
+            ${items.map(t => `<div class="task ${t.done ? 'done' : 'todo'}">
+                <i class="fa-solid ${t.done ? 'fa-circle-check' : 'fa-circle'}"></i>
+                <span>${esc(t.label)}</span>
+            </div>`).join('')}
+        </div>`;
+    }).join('');
+
+    const today = new Date(); today.setHours(0,0,0,0);
+    const datesHtml = dates.map(d => {
+        let dv = '<span class="dv tbd">TBD</span>';
+        if (d.date_value) {
+            const dd = new Date(d.date_value + 'T00:00:00');
+            const days = Math.round((dd - today) / 86400000);
+            const str = dd.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' });
+            const soon = days >= 0 && days <= 7;
+            dv = `<span class="dv ${soon ? 'soon' : ''}">${str}${days >= 0 && days <= 14 ? ` · ${days === 0 ? 'today' : 'in ' + days + ' day' + (days === 1 ? '' : 's')}` : ''}</span>`;
+        }
+        return `<div class="date-row"><span class="dl"><i class="fa-regular fa-calendar" style="color:var(--red);"></i>${esc(d.label)}</span>${dv}</div>`;
+    }).join('') || '<div style="font-size:13px;color:var(--text-muted);">No key dates posted yet.</div>';
+
+    const docsHtml = docs.map(d => `<div class="doc-row">
+        <div class="doc-ico"><i class="fa-solid fa-file-lines"></i></div>
+        <div class="doc-main">
+            <div class="doc-name" onclick="openDoc('${d.id}')">${esc(d.label || d.file_name)}</div>
+            <div class="doc-meta">Added ${new Date(d.created_at).toLocaleDateString('en-US')}</div>
+        </div>
+        <i class="fa-solid fa-arrow-down" style="color:var(--text-muted);font-size:12px;"></i>
+    </div>`).join('');
+
+    const initials = (agent.name || agent.email || '?').split(/\s+/).map(w => w[0]).join('').slice(0,2).toUpperCase();
+
+    /* The agent leads the team list, then everyone else the agent shared. */
+    const agentCard = `<div class="team-card is-agent">
+        <div class="team-avatar">${esc(initials)}</div>
+        <div class="team-role">Your Agent</div>
+        <div class="team-name">${esc(agent.name || 'Your agent')}</div>
+        ${agent.phone ? `<div class="team-line"><i class="fa-solid fa-phone"></i><a href="tel:${esc((agent.phone||'').replace(/[^\d+]/g,''))}">${esc(agent.phone)}</a></div>` : ''}
+        ${agent.email ? `<div class="team-line"><i class="fa-solid fa-envelope"></i><a href="mailto:${esc(agent.email)}">${esc(agent.email)}</a></div>` : ''}
+    </div>`;
+    const teamHtml = agentCard + team.map(c => `<div class="team-card">
+        <div class="team-role">${esc(c.party_role || 'Contact')}</div>
+        <div class="team-name">${esc(c.name || c.company || '—')}</div>
+        ${c.name && c.company ? `<div class="team-co">${esc(c.company)}</div>` : ''}
+        ${c.phone ? `<div class="team-line"><i class="fa-solid fa-phone"></i><a href="tel:${esc((c.phone||'').replace(/[^\d+]/g,''))}">${esc(c.phone)}</a></div>` : ''}
+        ${c.email ? `<div class="team-line"><i class="fa-solid fa-envelope"></i><a href="mailto:${esc(c.email)}">${esc(c.email)}</a></div>` : ''}
+        ${c.notes ? `<div class="team-notes">${esc(c.notes)}</div>` : ''}
+    </div>`).join('');
+
+    /* Calendar reads the same key dates; keep it in module state so the month
+       arrows can re-render just the grid without rebuilding the whole page. */
+    CAL_DATES = dates;
+    const _t = new Date(); CALREF = new Date(_t.getFullYear(), _t.getMonth(), 1);
+
+    $('content').innerHTML = `<div class="panel">
+        <div class="hero">
+            <h2>${esc(T.title)}</h2>
+            <div class="sub">${esc(T.type.charAt(0).toUpperCase() + T.type.slice(1))} transaction${T.client_name ? ' · ' + esc(T.client_name) : ''}${T.status !== 'active' ? ' · <b>CLOSED</b>' : ''}</div>
+            ${T.current_stage ? `<div class="stage-now"><i class="fa-solid fa-location-dot"></i> Current stage: ${esc(T.current_stage)}</div>` : ''}
+        </div>
+        <div class="prog-wrap" style="padding-top:18px;">
+            <div class="prog-lbl"><span>Progress</span><span>${done} of ${total} steps · ${pct}%</span></div>
+            <div class="bar"><div class="fill" style="width:${pct}%;"></div></div>
+        </div>
+        <div class="sec">
+            <div class="sec-title"><i class="fa-solid fa-calendar-days"></i> Key dates</div>
+            ${datesHtml}
+        </div>
+        <div class="sec" style="padding-top:0;">
+            <div class="cal-head">
+                <div class="sec-title" style="margin-bottom:0;"><i class="fa-solid fa-calendar-days"></i> Calendar</div>
+                <div class="cal-nav">
+                    <button onclick="calShift(-1)" title="Previous month"><i class="fa-solid fa-chevron-left"></i></button>
+                    <div class="cal-month" id="calMonth"></div>
+                    <button onclick="calShift(1)" title="Next month"><i class="fa-solid fa-chevron-right"></i></button>
+                    <button onclick="calToday()">Today</button>
+                </div>
+            </div>
+            <div class="cal-grid" id="calGrid"></div>
+        </div>
+        <div class="sec" style="padding-top:0;">
+            <div class="sec-title"><i class="fa-solid fa-list-check"></i> The process</div>
+            ${stagesHtml || '<div style="font-size:13px;color:var(--text-muted);">Checklist coming soon.</div>'}
+        </div>
+        ${docs.length ? `<div class="sec" style="padding-top:0;">
+            <div class="sec-title"><i class="fa-solid fa-folder-open"></i> Your documents</div>
+            ${docsHtml}
+        </div>` : ''}
+        <div class="sec" style="padding-top:0;">
+            <div class="sec-title"><i class="fa-solid fa-address-book"></i> Who's on your transaction</div>
+            <div class="team-grid">${teamHtml}</div>
+        </div>
+    </div>`;
+
+    renderCal();
+}
+
+/* ── calendar (read-only) ── */
+let CAL_DATES = [], CALREF = null;
+function calShift(n){ if (CALREF){ CALREF.setMonth(CALREF.getMonth() + n); renderCal(); } }
+function calToday(){ const t = new Date(); CALREF = new Date(t.getFullYear(), t.getMonth(), 1); renderCal(); }
+function _ymd(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+function renderCal(){
+    if (!CALREF || !document.getElementById('calGrid')) return;
+    const y = CALREF.getFullYear(), m = CALREF.getMonth();
+    document.getElementById('calMonth').textContent = CALREF.toLocaleDateString('en-US', { month:'long', year:'numeric' });
+    const byDay = {};
+    CAL_DATES.forEach(d => { if (d.date_value){ (byDay[d.date_value] = byDay[d.date_value] || []).push(d.label); } });
+    const first = new Date(y, m, 1);
+    const start = new Date(y, m, 1 - first.getDay());
+    const todayStr = _ymd(new Date());
+    let html = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => `<div class="cal-dow">${d}</div>`).join('');
+    for (let i = 0; i < 42; i++){
+        const cell = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+        const key = _ymd(cell);
+        const evs = byDay[key] || [];
+        html += `<div class="cal-cell ${cell.getMonth() !== m ? 'out' : ''} ${key === todayStr ? 'today' : ''}">
+            <div class="cal-num">${cell.getDate()}</div>
+            ${evs.map(l => `<div class="cal-ev ${key < todayStr ? 'past' : ''}" title="${esc(l)}">${esc(l)}</div>`).join('')}
+        </div>`;
+    }
+    document.getElementById('calGrid').innerHTML = html;
+}
+</script>
+</body>
+</html>

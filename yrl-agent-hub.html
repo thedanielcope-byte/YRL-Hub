@@ -763,6 +763,13 @@
 
         .footer a { color: var(--red); }
         .footer a:hover { color: var(--red-light); }
+        .footer-admin-row {
+            display: flex; justify-content: center; gap: 10px;
+            margin-top: 18px; padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+        .footer-admin-row .btn-hub-edit { font-size: 11.5px; padding: 7px 14px; opacity: 0.75; }
+        .footer-admin-row .btn-hub-edit:hover { opacity: 1; }
 
         /* ============================================
            RESPONSIVE
@@ -801,8 +808,9 @@
         body.hub-edit-mode .sec-header { border: 1.5px dashed rgba(192,57,38,0.3); border-radius: 10px; padding: 10px 14px; margin-bottom: 18px; background: rgba(192,57,38,0.03); }
         body.hub-edit-mode .card { cursor: pointer; }
 
-        /* Edit-mode card: pencil badge on hover to signal click-to-edit */
-        body.hub-edit-mode .card .card-edit-hint {
+        /* Edit-mode card: pencil badge on hover to signal click-to-edit.
+           Hidden by default in ALL modes; only revealed on hover while in edit mode. */
+        .card-edit-hint {
             display: none;
             position: absolute; bottom: 8px; right: 8px;
             background: var(--red); color: #fff;
@@ -1248,8 +1256,8 @@
             white-space: nowrap;
         }
     </style>
-    <script src="yrl-auth.js"></script>
-</head>
+    <script src="portal-auth.js"></script>
+<link rel="stylesheet" href="hub-theme.css"><script src="hub-brand.js" defer></script></head>
 <body>
 
 <!-- ═══════════════════════════════════════
@@ -1257,7 +1265,7 @@
 ═══════════════════════════════════════ -->
 <header class="hero">
     <!-- Replace src with your uploaded logo URL in WordPress Media Library -->
-    <img src="https://yrlagent.com/wp-content/uploads/2026/04/Your-Realty-Link-ver6.6-4-final.png" alt="Your Realty Link" class="hero-logo"
+    <img src="https://wdvolamasztetwpitbwg.supabase.co/storage/v1/object/public/hub-files/brand/yrl-logo-color.png" alt="Your Realty Link" class="hero-logo"
          onerror="this.style.display='none'; document.querySelector('.hero-logo-fallback').style.display='block';">
     <div class="hero-logo-fallback">YRL</div>
 
@@ -1312,9 +1320,9 @@
         <a href="yrl-marketing.html" class="qc-btn">
             <i class="fa-solid fa-bullhorn"></i> <span>Marketing</span>
         </a>
-        <button class="btn-hub-edit" id="btnHubEdit" onclick="toggleHubEditMode()">
-            <i class="fa-solid fa-pen"></i> <span>Edit Layout</span>
-        </button>
+        <a id="navNomadAccount" href="index.html?portal=1" style="display:none;align-items:center;gap:6px;background:var(--surface-2);border:1px solid var(--border);color:var(--text-sec);padding:9px 16px;border-radius:100px;font-size:12.5px;font-weight:600;cursor:pointer;text-decoration:none;font-family:'Inter',sans-serif;white-space:nowrap;transition:all 0.2s;" onmouseover="this.style.color='var(--accent,#0d9488)';this.style.borderColor='var(--accent,#0d9488)'" onmouseout="this.style.color='var(--text-sec)';this.style.borderColor='var(--border)'">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i> <span>My Nomad Account</span>
+        </a>
         <span id="yrl-user-name" style="font-size:12px;font-weight:600;color:var(--text-sec);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
         <button onclick="yrlSignOut()" style="display:inline-flex;align-items:center;gap:6px;background:var(--surface-2);border:1px solid var(--border);color:var(--text-sec);padding:9px 16px;border-radius:100px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;transition:all 0.2s;" onmouseover="this.style.background='rgba(192,57,38,0.08)';this.style.color='#c03926';this.style.borderColor='#c03926'" onmouseout="this.style.background='var(--surface-2)';this.style.color='var(--text-sec)';this.style.borderColor='var(--border)'">
             <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Sign Out</span>
@@ -1351,95 +1359,76 @@
 
     <div class="divider"></div>
 
-    <!-- ─── AGENT TOOLS ─── -->
-    <section class="section" data-section-id="agent-tools">
+    <!-- ─── MY TOOLS ─── -->
+    <section class="section" data-section-id="my-tools">
         <div class="sec-header">
-            <div class="sec-icon"><i class="fa-solid fa-bolt"></i></div>
+            <div class="sec-icon"><i class="fa-solid fa-user-gear"></i></div>
             <div>
-                <h2>Agent Tools</h2>
-                <p>Click any card to open the tool</p>
+                <h2>My Tools</h2>
+                <p>Your profile, contacts, and personal workspace</p>
             </div>
         </div>
 
-        <div class="card-grid" data-grid-id="agent-tools">
-            <!-- ⚙️ REPLACE: all href="#" with real links -->
-            <a href="yrl-slideshow-maker.html" class="card" data-card-id="slideshow-maker">
-                <div class="card-icon"><i class="fa-solid fa-film"></i></div>
-                <h3>Listing Slideshow Maker</h3>
-                <p>Paste a listing URL and instantly generate a branded 5-photo slideshow to download or share.</p>
-                <span class="search-keywords">slideshow listing photos canva template maker generator social media instagram facebook reel presentation 5 photos address price accent color auto-fetch url download branded YRL</span>
+        <div class="card-grid" data-grid-id="my-tools">
+            <a href="yrl-agent-info.html" class="card" data-card-id="my-agent-info">
+                <div class="card-icon"><i class="fa-solid fa-id-card"></i></div>
+                <h3>My Agent Info</h3>
+                <p>Your name, license #, address, headshot, tagline, bio, social links — your single source of truth. Used for business cards, email signature, agent website bio, and marketing.</p>
+                <span class="search-keywords">agent info my profile personal information name license number cell phone email address mailing home business cards tagline bio biography headshot photo emergency contact facebook instagram linkedin social marketing details details on file</span>
                 <div class="card-footer">
-                    <span class="pill">Marketing</span>
+                    <span class="pill">Profile</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </div>
             </a>
 
-            <a href="https://video.yrlagent.com/" target="_blank" class="card" data-card-id="listing-videos">
-                <div class="card-icon"><i class="fa-solid fa-video"></i></div>
-                <h3>Listing Videos</h3>
-                <p>Create and manage listing videos for your active properties.</p>
-                <span class="search-keywords">video tour generator youtube shorts reels photos property address MLS BLC number agent photo upload dropbox portrait 9:16 listing scraper auto-fill</span>
+            <a href="yrl-email-signature.html" class="card" data-card-id="email-signature">
+                <div class="card-icon"><i class="fa-solid fa-signature"></i></div>
+                <h3>Email Signature</h3>
+                <p>Auto-fills from your Agent Info. Customize, preview, and copy a polished signature for Gmail, Outlook, or Apple Mail.</p>
+                <span class="search-keywords">email signature generator builder copy paste gmail outlook apple mail signature block REALTOR signature template branded photo headshot logo footer tagline contact info phone email website Facebook Instagram LinkedIn</span>
                 <div class="card-footer">
-                    <span class="pill">Marketing</span>
+                    <span class="pill">Profile</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </div>
             </a>
 
-            <a href="yrl-virtual-open-house.html" class="card" data-card-id="virtual-open-house">
-                <div class="card-icon"><i class="fa-solid fa-house-chimney-window"></i></div>
-                <h3>Virtual Open House</h3>
-                <p>Submit, track, and run live virtual open house events for your listings.</p>
-                <span class="search-keywords">virtual open house VOH livestream live stream broadcast online remote zoom event tour walkthrough property listing buyer interest RSVP register sign up signup attendee leads schedule date time host showing event listing presentation prospect lead capture</span>
+            <a href="yrl-contacts.html" class="card" data-card-id="my-contacts">
+                <div class="card-icon"><i class="fa-solid fa-address-book"></i></div>
+                <h3>My Contacts</h3>
+                <p>Your private contact database — buyers, sellers, leads, vendors, past clients. Import from CSV, export anytime. Only you and the office admins see it.</p>
+                <span class="search-keywords">contacts CRM database my contacts past clients buyers sellers prospects leads vendors address book customer relationship management import CSV export contact list phone email notes tags source</span>
                 <div class="card-footer">
-                    <span class="pill">Marketing</span>
+                    <span class="pill">CRM</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </div>
             </a>
 
-            <a href="yrl-agent-directory.html" class="card" data-card-id="agent-directory">
-                <div class="card-icon"><i class="fa-solid fa-address-card"></i></div>
-                <h3>Agent Directory</h3>
-                <p>Contact info, headshots, and details for every agent in the office.</p>
-                <span class="search-keywords">agent directory roster headshot photo contact info phone email website title REALTOR broker staff team members office people colleagues</span>
+            <a href="yrl-listings-transition.html" class="card" data-card-id="listings-transition">
+                <div class="card-icon"><i class="fa-solid fa-arrow-right-arrow-left"></i></div>
+                <h3>Listings Transition</h3>
+                <p>Every listing and pending you're bringing over to YRL — track Mutual Release, new YRL agreement, and transfer status in one place.</p>
+                <span class="search-keywords">listings transition pending mutual release seller new YRL listing agreement broker change transfer office MIBOR YRLT01 status pending sale active commission cap brokerage move new agent transfer</span>
                 <div class="card-footer">
-                    <span class="pill">Team</span>
+                    <span class="pill">Transition</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </div>
             </a>
+        </div>
+    </section>
 
-            <a href="https://yourrealtylink-my.sharepoint.com/:f:/p/csirealtyteam/IgCNJIcp7yWgQ4ynikADyA9DAR_aa6l1K3AQpp5rillGCTE?e=FQVeuk" target="_blank" class="card" data-card-id="upload-docs">
-                <div class="card-icon"><i class="fa-solid fa-file-arrow-up"></i></div>
-                <h3>Upload/Share Documents</h3>
-                <p>Share contracts, disclosures, and other documents with your team via OneDrive.</p>
-                <span class="search-keywords">upload share documents files contracts disclosures paperwork OneDrive SharePoint folder team share send</span>
-                <div class="card-footer">
-                    <span class="pill">Documents</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </div>
-            </a>
+    <div class="divider"></div>
 
-            <a href="https://yourrealtylink-my.sharepoint.com/:f:/p/csirealtyteam/IgAO9Yn6biq8Sr-yPowsNhHEAUwmgcgzfw2f1rvqtP7zUk0?e=JbU0Sh" target="_blank" class="card" data-card-id="upload-videos">
-                <div class="card-icon"><i class="fa-solid fa-photo-film"></i></div>
-                <h3>Upload/Share Videos</h3>
-                <p>Share listing videos, walkthroughs, and media files with your team via OneDrive.</p>
-                <span class="search-keywords">upload share videos media walkthrough listing video mp4 OneDrive SharePoint folder team share send footage</span>
-                <div class="card-footer">
-                    <span class="pill">Media</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </div>
-            </a>
+    <!-- ─── TRANSACTIONS & CLOSINGS ─── -->
+    <section class="section" data-section-id="transactions">
+        <div class="sec-header">
+            <div class="sec-icon"><i class="fa-solid fa-handshake"></i></div>
+            <div>
+                <h2>Transactions &amp; Closings</h2>
+                <p>MLS, deals, showings, and closing tools</p>
+            </div>
+        </div>
 
-            <a href="https://showingtime.com/solutions/showings-and-offers/showingtime/login" target="_blank" class="card" data-card-id="showings">
-                <div class="card-icon"><i class="fa-solid fa-calendar-check"></i></div>
-                <h3>Book Showings</h3>
-                <p>Schedule and manage property showings with ShowingTime.</p>
-                <span class="search-keywords">showingtime schedule appointments buyer tour open house showing request lockbox feedback confirmation reschedule cancel appointment</span>
-                <div class="card-footer">
-                    <span class="pill">Scheduling</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </div>
-            </a>
-
+        <div class="card-grid" data-grid-id="transactions">
             <a href="https://auth2.mibor.com/login?response_mode=saml_form_post" target="_blank" class="card" data-card-id="mls-listings">
                 <div class="card-icon"><i class="fa-solid fa-house-chimney-user"></i></div>
                 <h3>MLS / Listings Portal</h3>
@@ -1462,99 +1451,124 @@
                 </div>
             </a>
 
+            <a href="yrl-closing-request.html" class="card" data-card-id="closing-request">
+                <div class="card-icon"><i class="fa-solid fa-file-circle-check"></i></div>
+                <h3>Closing Request</h3>
+                <p>Submit a scheduled closing and the broker prepares your signed Disbursement Authorization Form.</p>
+                <span class="search-keywords">closing request disbursement authorization form CDA commission disbursement broker sign title company closer pay agent at closing BLC sales price earnest money net to agent payout commission split listing buyer side closing date submit request approval scheduled closing settlement</span>
+                <div class="card-footer">
+                    <span class="pill">Closings</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
             <a href="yrl-sellers-net-sheet.html" class="card" data-card-id="sellers-net-sheet">
                 <div class="card-icon"><i class="fa-solid fa-receipt"></i></div>
                 <h3>Seller's Net Sheet</h3>
                 <p>Calculate estimated seller proceeds at closing — commissions, title, prorations, payoffs, and net. Indiana defaults included.</p>
                 <span class="search-keywords">seller net sheet proceeds closing costs commission payoff mortgage title proration HOA tax indiana net proceeds estimate calculator reverse closing date sale price lien concession FIRPTA buyer agent credit repair warranty survey</span>
                 <div class="card-footer">
-                    <span class="pill">Tools</span>
+                    <span class="pill">Calculator</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </div>
             </a>
 
-            <div class="card" data-card-id="marketing-requests" onclick="openModal()" style="cursor:pointer;">
-                <div class="card-icon"><i class="fa-solid fa-bullhorn"></i></div>
-                <h3>Marketing Requests</h3>
-                <p>Submit requests for custom flyers, postcards, and designs.</p>
-                <span class="search-keywords">flyer postcard social media graphic yard sign rider email template listing presentation design brochure just listed just sold open house mailer print</span>
+            <a href="https://showingtime.com/solutions/showings-and-offers/showingtime/login" target="_blank" class="card" data-card-id="showings">
+                <div class="card-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                <h3>Book Showings</h3>
+                <p>Schedule and manage property showings with ShowingTime.</p>
+                <span class="search-keywords">showingtime schedule appointments buyer tour open house showing request lockbox feedback confirmation reschedule cancel appointment</span>
                 <div class="card-footer">
-                    <span class="pill">Requests</span>
+                    <span class="pill">Showings</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </div>
-            </div>
-
+            </a>
         </div>
     </section>
 
     <div class="divider"></div>
 
-    <!-- ─── OFFICE RESOURCES ─── -->
-    <section class="section" data-section-id="office-resources">
+    <!-- ─── MARKETING ─── -->
+    <section class="section" data-section-id="marketing">
         <div class="sec-header">
-            <div class="sec-icon"><i class="fa-solid fa-building"></i></div>
+            <div class="sec-icon"><i class="fa-solid fa-bullhorn"></i></div>
             <div>
-                <h2>Office Resources</h2>
-                <p>Policies, training, forms, and team resources</p>
+                <h2>Marketing</h2>
+                <p>Create content, request materials, and promote your listings</p>
             </div>
         </div>
 
-        <div class="card-grid" data-grid-id="office-resources">
-            <a href="https://www.facebook.com/groups/181988872242749" target="_blank" class="card" data-card-id="agent-talk">
-                <div class="card-icon"><i class="fa-brands fa-facebook"></i></div>
-                <h3>YRL Agent Talk</h3>
-                <p>Private employee-only Facebook group for team discussions and updates.</p>
-                <span class="search-keywords">facebook group chat announcements team communication questions help advice tips office news internal discussion</span>
+        <div class="card-grid" data-grid-id="marketing">
+            <a href="yrl-slideshow-maker.html" class="card" data-card-id="slideshow-maker">
+                <div class="card-icon"><i class="fa-solid fa-film"></i></div>
+                <h3>Listing Slideshow Maker</h3>
+                <p>Paste a listing URL and instantly generate a branded 5-photo slideshow to download or share.</p>
+                <span class="search-keywords">slideshow listing photos canva template maker generator social media instagram facebook reel presentation 5 photos address price accent color auto-fetch url download branded YRL</span>
                 <div class="card-footer">
-                    <span class="pill">Community</span>
+                    <span class="pill">Creator</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </div>
             </a>
 
-            <a href="yrl-agent-training.html" class="card" data-card-id="agent-training">
-                <div class="card-icon"><i class="fa-solid fa-graduation-cap"></i></div>
-                <h3>Agent Training</h3>
-                <p>Programs, monthly meetings, and training video library.</p>
-                <span class="search-keywords">tiger training your first year courses videos social media lead generation prospecting sales scripts client skills marketing technology market knowledge business growth monthly meeting continuing education CE</span>
+            <a href="https://tourkitapp.com/" target="_blank" class="card" data-card-id="listing-videos">
+                <div class="card-icon"><i class="fa-solid fa-video"></i></div>
+                <h3>Listing Videos</h3>
+                <p>Create and manage listing videos for your active properties.</p>
+                <span class="search-keywords">video tour generator youtube shorts reels photos property address MLS BLC number agent photo upload dropbox portrait 9:16 listing scraper auto-fill</span>
                 <div class="card-footer">
-                    <span class="pill">Education</span>
+                    <span class="pill">Creator</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="yrl-virtual-open-house.html" class="card" data-card-id="virtual-open-house">
+                <div class="card-icon"><i class="fa-solid fa-house-chimney-window"></i></div>
+                <h3>Virtual Open House</h3>
+                <p>Submit, track, and run live virtual open house events for your listings.</p>
+                <span class="search-keywords">virtual open house VOH livestream live stream broadcast online remote zoom event tour walkthrough property listing buyer interest RSVP register sign up signup attendee leads schedule date time host showing event listing presentation prospect lead capture</span>
+                <div class="card-footer">
+                    <span class="pill">Events</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </div>
             </a>
 
             <a href="yrl-marketing.html" class="card" data-card-id="marketing-resources">
-                <div class="card-icon"><i class="fa-solid fa-bullhorn"></i></div>
+                <div class="card-icon"><i class="fa-solid fa-palette"></i></div>
                 <h3>Marketing Resources</h3>
                 <p>Flyers, scripts, templates, and materials for sellers, buyers, open houses, prospecting, and more.</p>
                 <span class="search-keywords">marketing sellers buyers open house prospecting social media email templates scripts dialogues print materials flyer postcard listing presentation CMA buyer guide farming mailer door hanger just listed just sold objection handlers cold call sphere of influence brochure yard sign canva content calendar captions instagram facebook drip campaign</span>
                 <div class="card-footer">
-                    <span class="pill">Marketing</span>
+                    <span class="pill">Resources</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </div>
             </a>
 
-            <a href="yrl-onboarding.html" class="card" data-card-id="onboarding">
-                <div class="card-icon"><i class="fa-solid fa-clipboard-list"></i></div>
-                <h3>New Agent Onboarding</h3>
-                <p>Checklists, setup guides, and everything needed to get new agents up and running.</p>
-                <span class="search-keywords">new agent checklist first day setup MLS access key fob office tour email account business cards sign install getting started orientation welcome packet independent contractor agreement ICA W-9 W9 tax form direct deposit setup E&O insurance IPLA license transfer emergency contact agent information form headshot photo submit portrait MIBOR MLS setup YRL email Dotloop DocuSign ShowingTime CRM Supra lockbox app MIBOR portal Canva templates tiger training first year plan mentor accountability partner 30 days monthly agent meeting training video library yard sign rider order social media bio template personal branding guidelines YRL logo brand assets listing presentation staff directory broker contact office manager transaction coordinator agent bio onboarding progress checklist phase setup</span>
+            <div class="card" data-card-id="marketing-requests" onclick="openModal()" style="cursor:pointer;">
+                <div class="card-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                <h3>Marketing Requests</h3>
+                <p>Submit requests for custom flyers, postcards, and designs.</p>
+                <span class="search-keywords">flyer postcard social media graphic yard sign rider email template listing presentation design brochure just listed just sold open house mailer print</span>
                 <div class="card-footer">
-                    <span class="pill">Onboarding</span>
+                    <span class="pill">Request</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </div>
-            </a>
+            </div>
+        </div>
+    </section>
 
-            <a href="yrl-company-policies.html" class="card" data-card-id="company-policies">
-                <div class="card-icon"><i class="fa-solid fa-scale-balanced"></i></div>
-                <h3>Company Policies</h3>
-                <p>Commission structure, agent agreements, and office policies all in one place.</p>
-                <span class="search-keywords">commission split cap fees desk fee E&O insurance independent contractor agreement ICA office rules handbook pay compensation broker policy procedures code of ethics confidentiality social media advertising fair housing personal branding</span>
-                <div class="card-footer">
-                    <span class="pill">Policies</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </div>
-            </a>
+    <div class="divider"></div>
 
+    <!-- ─── DOCUMENTS & UPLOADS ─── -->
+    <section class="section" data-section-id="documents">
+        <div class="sec-header">
+            <div class="sec-icon"><i class="fa-solid fa-folder-open"></i></div>
+            <div>
+                <h2>Documents &amp; Uploads</h2>
+                <p>Forms, contracts, and file sharing</p>
+            </div>
+        </div>
+
+        <div class="card-grid" data-grid-id="documents">
             <a href="yrl-contracts.html" class="card" data-card-id="contracts">
                 <div class="card-icon"><i class="fa-solid fa-file-signature"></i></div>
                 <h3>Contracts & Forms</h3>
@@ -1566,13 +1580,142 @@
                 </div>
             </a>
 
-            <a href="yrl-vendors.html" class="card" data-card-id="vendors">
-                <div class="card-icon"><i class="fa-solid fa-address-book"></i></div>
-                <h3>Vendor Directory</h3>
-                <p>Preferred photographers, inspectors, title companies, and lenders.</p>
-                <span class="search-keywords">photographer home inspector appraiser title company lender mortgage loan officer stager staging handyman contractor roofer plumber electrician pest termite surveyor matterport virtual tour drone</span>
+            <a href="https://yourrealtylink-my.sharepoint.com/:f:/p/csirealtyteam/IgCNJIcp7yWgQ4ynikADyA9DAR_aa6l1K3AQpp5rillGCTE?e=FQVeuk" target="_blank" class="card" data-card-id="upload-docs">
+                <div class="card-icon"><i class="fa-solid fa-file-arrow-up"></i></div>
+                <h3>Upload/Share Documents</h3>
+                <p>Share contracts, disclosures, and other documents with your team via OneDrive.</p>
+                <span class="search-keywords">upload share documents files contracts disclosures paperwork OneDrive SharePoint folder team share send</span>
                 <div class="card-footer">
-                    <span class="pill">Vendors</span>
+                    <span class="pill">OneDrive</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="https://yourrealtylink-my.sharepoint.com/:f:/p/csirealtyteam/IgAO9Yn6biq8Sr-yPowsNhHEAUwmgcgzfw2f1rvqtP7zUk0?e=JbU0Sh" target="_blank" class="card" data-card-id="upload-videos">
+                <div class="card-icon"><i class="fa-solid fa-photo-film"></i></div>
+                <h3>Upload/Share Videos</h3>
+                <p>Share listing videos, walkthroughs, and media files with your team via OneDrive.</p>
+                <span class="search-keywords">upload share videos media walkthrough listing video mp4 OneDrive SharePoint folder team share send footage</span>
+                <div class="card-footer">
+                    <span class="pill">OneDrive</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ─── CLIENT TOOLS ─── -->
+    <section class="section" data-section-id="client-tools">
+        <div class="sec-header">
+            <div class="sec-icon"><i class="fa-solid fa-users"></i></div>
+            <div>
+                <h2>Client Tools</h2>
+                <p>Presentations, scripts, and resources for working with clients</p>
+            </div>
+        </div>
+
+        <div class="card-grid" data-grid-id="client-tools">
+            <a href="yrl-client-sellers.html" class="card" data-card-id="client-sellers">
+                <div class="card-icon"><i class="fa-solid fa-house-circle-check"></i></div>
+                <h3>Sellers</h3>
+                <p>Listing presentations, pre-qualifying scripts, objection handlers, pricing tools, and marketing templates for seller clients.</p>
+                <span class="search-keywords">seller listing presentation CMA pre-qualifying script objection handler pricing strategy just listed just sold pending expired FSBO prospecting market stats closing scripts pre-listing package appointment consultation walk through three goals critical questions</span>
+                <div class="card-footer">
+                    <span class="pill">Sellers</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="yrl-client-buyers.html" class="card" data-card-id="client-buyers">
+                <div class="card-icon"><i class="fa-solid fa-key"></i></div>
+                <h3>Buyers</h3>
+                <p>Buyer consultation presentations, compensation agreement explainers, showing prep, and offer strategy guides.</p>
+                <span class="search-keywords">buyer consultation presentation compensation agreement showing offer strategy pre-approval needs assessment first time home buyer FHA VA USDA closing costs inspection contingency escalation clause</span>
+                <div class="card-footer">
+                    <span class="pill">Buyers</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a class="card disabled" data-card-id="client-fsbo">
+                <div class="card-icon"><i class="fa-solid fa-sign-hanging"></i></div>
+                <h3>FSBO <span class="coming-soon">Coming Soon</span></h3>
+                <p>Scripts and presentations for approaching For Sale By Owner sellers and converting them to listings.</p>
+                <span class="search-keywords">for sale by owner FSBO approach script door knock cold call conversion listing presentation pitch value proposition</span>
+                <div class="card-footer">
+                    <span class="pill">FSBO</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a class="card disabled" data-card-id="client-investors">
+                <div class="card-icon"><i class="fa-solid fa-chart-line"></i></div>
+                <h3>Investors <span class="coming-soon">Coming Soon</span></h3>
+                <p>Investment property presentations, cash flow analysis tools, and investor client resources.</p>
+                <span class="search-keywords">investor investment property cash flow ROI rental income cap rate 1031 exchange portfolio multi-family flip rehab wholesale</span>
+                <div class="card-footer">
+                    <span class="pill">Investors</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+        <!-- ─── TRAINING & ONBOARDING ─── -->
+    <section class="section" data-section-id="training">
+        <div class="sec-header">
+            <div class="sec-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+            <div>
+                <h2>Training &amp; Onboarding</h2>
+                <p>Get started, stay sharp, and know the rules</p>
+            </div>
+        </div>
+
+        <div class="card-grid" data-grid-id="training">
+            <a href="yrl-onboarding.html" class="card" data-card-id="onboarding">
+                <div class="card-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+                <h3>New Agent Onboarding</h3>
+                <p>Checklists, setup guides, and everything needed to get new agents up and running.</p>
+                <span class="search-keywords">new agent checklist first day setup MLS access key fob office tour email account business cards sign install getting started orientation welcome packet independent contractor agreement ICA W-9 W9 tax form direct deposit setup E&O insurance IPLA license transfer emergency contact agent information form headshot photo submit portrait MIBOR MLS setup YRL email Dotloop DocuSign ShowingTime CRM Supra lockbox app MIBOR portal Canva templates tiger training first year plan mentor accountability partner 30 days monthly agent meeting training video library yard sign rider order social media bio template personal branding guidelines YRL logo brand assets listing presentation staff directory broker contact office manager transaction coordinator agent bio onboarding progress checklist phase setup</span>
+                <div class="card-footer">
+                    <span class="pill">Getting Started</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="yrl-moving-offices.html" class="card" data-card-id="moving-to-yrl">
+                <div class="card-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+                <h3>Moving to YRL</h3>
+                <p>Interactive 19-step checklist for agents transferring their license to Your Realty Link. Progress saves automatically.</p>
+                <span class="search-keywords">moving offices license transfer new agent join YRL switch brokerages checklist to do mutual release listing contract MIBOR YRLT01 office code business cards signs print materials Access Indiana state license transfer Dotloop email setup signature block office door code WiFi T-mobile Keystone1 printer 7404 Agent Talk Facebook YouTube workspace bio website Homes.com Realtor.com Zillow Google Business LinkedIn voicemail MIBOR class shared laptop 4942 writing contracts onboarding transition transferring</span>
+                <div class="card-footer">
+                    <span class="pill">Checklist</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="yrl-agent-training.html" class="card" data-card-id="agent-training">
+                <div class="card-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
+                <h3>Agent Training</h3>
+                <p>Programs, monthly meetings, and training video library.</p>
+                <span class="search-keywords">tiger training your first year courses videos social media lead generation prospecting sales scripts client skills marketing technology market knowledge business growth monthly meeting continuing education CE</span>
+                <div class="card-footer">
+                    <span class="pill">Education</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="yrl-company-policies.html" class="card" data-card-id="company-policies">
+                <div class="card-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+                <h3>Company Policies</h3>
+                <p>Commission structure, agent agreements, and office policies all in one place.</p>
+                <span class="search-keywords">commission split cap fees desk fee E&O insurance independent contractor agreement ICA office rules handbook pay compensation broker policy procedures code of ethics confidentiality social media advertising fair housing personal branding</span>
+                <div class="card-footer">
+                    <span class="pill">Policies</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </div>
             </a>
@@ -1603,6 +1746,54 @@
 
     <div class="divider"></div>
 
+    <!-- ─── TEAM & OFFICE ─── -->
+    <section class="section" data-section-id="team-office">
+        <div class="sec-header">
+            <div class="sec-icon"><i class="fa-solid fa-people-group"></i></div>
+            <div>
+                <h2>Team &amp; Office</h2>
+                <p>Your colleagues, vendors, and team community</p>
+            </div>
+        </div>
+
+        <div class="card-grid" data-grid-id="team-office">
+            <a href="yrl-agent-directory.html" class="card" data-card-id="agent-directory">
+                <div class="card-icon"><i class="fa-solid fa-address-card"></i></div>
+                <h3>Agent Directory</h3>
+                <p>Contact info, headshots, and details for every agent in the office.</p>
+                <span class="search-keywords">agent directory roster headshot photo contact info phone email website title REALTOR broker staff team members office people colleagues</span>
+                <div class="card-footer">
+                    <span class="pill">Directory</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="https://www.facebook.com/groups/181988872242749" target="_blank" id="agent-talk-card" class="card" data-card-id="agent-talk">
+                <div class="card-icon"><i class="fa-brands fa-facebook"></i></div>
+                <h3>YRL Agent Talk</h3>
+                <p>Private employee-only Facebook group for team discussions and updates.</p>
+                <span class="search-keywords">facebook group chat announcements team communication questions help advice tips office news internal discussion</span>
+                <div class="card-footer">
+                    <span class="pill">Community</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="yrl-vendors.html" class="card" data-card-id="vendors">
+                <div class="card-icon"><i class="fa-solid fa-address-book"></i></div>
+                <h3>Vendor Directory</h3>
+                <p>Preferred photographers, inspectors, title companies, and lenders.</p>
+                <span class="search-keywords">photographer home inspector appraiser title company lender mortgage loan officer stager staging handyman contractor roofer plumber electrician pest termite surveyor matterport virtual tour drone</span>
+                <div class="card-footer">
+                    <span class="pill">Vendors</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
     <!-- ─── BRAND ASSETS ─── -->
     <section class="section">
         <div class="sec-header">
@@ -1619,14 +1810,14 @@
                 <div class="asset-emoji">🖼️</div>
                 <h4>YRL Logo — Color</h4>
                 <p>PNG transparent background</p>
-                <a href="https://yrlagent.com/wp-content/uploads/2026/04/Your-Realty-Link-ver6.6-4-final.png" download class="btn btn-red"><i class="fa-solid fa-download"></i> Download</a>
+                <a href="https://wdvolamasztetwpitbwg.supabase.co/storage/v1/object/public/hub-files/brand/yrl-logo-color.png" download class="btn btn-red"><i class="fa-solid fa-download"></i> Download</a>
             </div>
 
             <div class="asset-card">
                 <div class="asset-emoji">⬜</div>
                 <h4>YRL Logo — White</h4>
-                <p>For dark backgrounds & print</p>
-                <a href="https://yrlagent.com/wp-content/uploads/2026/04/YRL-Logo-All-White.jpg" download class="btn btn-red"><i class="fa-solid fa-download"></i> Download</a>
+                <p>JPG with white background</p>
+                <a href="https://wdvolamasztetwpitbwg.supabase.co/storage/v1/object/public/hub-files/brand/yrl-logo-color.jpg" download class="btn btn-red"><i class="fa-solid fa-download"></i> Download</a>
             </div>
 
             <div class="asset-card">
@@ -1787,10 +1978,10 @@
                 </div>
             </div>
 
-            <a href="yrl-admin.html" class="contact-card" style="border-color:rgba(192,57,38,0.3);background:linear-gradient(135deg,rgba(192,57,38,0.04),rgba(192,57,38,0.08));">
+            <a href="https://portal.nomadsystems.co/" target="_blank" rel="noopener" class="contact-card" style="border-color:rgba(192,57,38,0.3);background:linear-gradient(135deg,rgba(192,57,38,0.04),rgba(192,57,38,0.08));">
                 <div class="c-icon" style="background:var(--red);color:#fff;"><i class="fa-solid fa-lock"></i></div>
                 <div class="c-info">
-                    <h4 style="color:var(--red);">Admin Tools</h4>
+                    <h4 style="color:var(--red);">Admin Portal</h4>
                     <p style="font-size:12px;color:var(--text-muted);">Broker access only</p>
                 </div>
             </a>
@@ -2012,16 +2203,24 @@
      FOOTER
 ═══════════════════════════════════════ -->
 <footer class="footer">
-    <img src="https://yrlagent.com/wp-content/uploads/2026/04/Your-Realty-Link-ver6.6-4-final.png" alt="Your Realty Link" class="footer-logo"
+    <img src="https://wdvolamasztetwpitbwg.supabase.co/storage/v1/object/public/hub-files/brand/yrl-logo-color.png" alt="Your Realty Link" class="footer-logo"
          onerror="this.style.display='none'">
     <p>&copy; 2026 Your Realty Link &nbsp;·&nbsp; All Rights Reserved &nbsp;·&nbsp;
        <a href="https://www.yourrealtylink.com" target="_blank">yourrealtylink.com</a>
     </p>
+    <div class="footer-admin-row">
+        <button class="btn-hub-edit" id="btnHubEdit" onclick="toggleHubEditMode()">
+            <i class="fa-solid fa-pen"></i> <span>Edit Layout</span>
+        </button>
+        <a href="https://portal.nomadsystems.co" target="_blank" rel="noopener" class="btn-hub-edit" style="text-decoration:none;">
+            <i class="fa-solid fa-lock"></i> <span>Admin Portal</span>
+        </a>
+    </div>
 </footer>
 
 
-<!-- yrl-hub.js provides loadHubContent / saveHubContent / uploadHubFile -->
-<script src="yrl-hub.js"></script>
+<!-- hub-data.js provides tenant-aware loadHubContent / saveHubContent / uploadHubFile -->
+<script src="hub-data.js"></script>
 
 <!-- ═══════════════════════════════════════
      SCRIPTS
@@ -2036,9 +2235,24 @@
     const CUSTOM_CARDS_KEY = 'yrl-hub-custom-cards';
     const HIDDEN_CARDS_KEY = 'yrl-hub-hidden-cards';
 
+    /* Edit mode is now role-based: only the brokerage owner (or a Nomad admin)
+       can edit the hub. Agents never see the Edit button. The old broker PIN is
+       retired — the owner role replaces it. */
     function isAuthed() {
-        return sessionStorage.getItem(PIN_KEY) === BROKER_PIN;
+        const role = window.yrlMember && window.yrlMember.role;
+        return role === 'owner' || role === 'nomad_admin';
     }
+
+    /* Show edit controls + owner-only nav once we know who's signed in. */
+    function _hubApplyRole() {
+        const owner = isAuthed();
+        const editBtn = document.getElementById('btnHubEdit');
+        if (editBtn) editBtn.style.display = owner ? '' : 'none';
+        const acct = document.getElementById('navNomadAccount');
+        if (acct) acct.style.display = owner ? '' : 'none';
+    }
+    if (window.yrlMember) { _hubApplyRole(); }
+    else { document.addEventListener('yrl-auth-ready', _hubApplyRole, { once: true }); }
 
     function openHubPinModal() {
         document.getElementById('hubPinInput').value = '';
@@ -3109,6 +3323,29 @@
             mainEl.style.display = '';
         }
     })();
+
+    /* Deep-link handlers from other tools (e.g. Moving to YRL checklist) */
+    document.addEventListener('DOMContentLoaded', () => {
+        try {
+            const params = new URLSearchParams(window.location.search || '');
+            // ?open=marketing → auto-open the Marketing Requests modal once auth resolves
+            if (params.get('open') === 'marketing') {
+                setTimeout(() => { try { if (typeof openModal === 'function') openModal(); } catch(_){} }, 700);
+            }
+            // #agent-talk-card → scroll to and briefly highlight the Agent Talk tile
+            if ((window.location.hash || '') === '#agent-talk-card') {
+                setTimeout(() => {
+                    const el = document.getElementById('agent-talk-card');
+                    if (!el) return;
+                    el.scrollIntoView({ behavior:'smooth', block:'center' });
+                    el.style.transition = 'box-shadow 0.4s, transform 0.4s';
+                    el.style.boxShadow = '0 0 0 4px rgba(192,57,38,0.55), 0 18px 40px rgba(192,57,38,0.25)';
+                    el.style.transform = 'translateY(-3px)';
+                    setTimeout(() => { el.style.boxShadow = ''; el.style.transform = ''; }, 2400);
+                }, 700);
+            }
+        } catch(_) {}
+    });
 </script>
 
 </body>

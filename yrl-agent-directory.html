@@ -393,6 +393,25 @@
         @media (max-width: 380px) {
             .agent-grid { grid-template-columns: 1fr; }
         }
+
+        /* ── Specialties checklist ── */
+        .chk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; }
+        @media (max-width: 520px) { .chk-grid { grid-template-columns: 1fr; } }
+        .chk { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text); cursor: pointer; padding: 3px 2px; }
+        .chk input { width: 15px; height: 15px; accent-color: var(--red); cursor: pointer; }
+
+        /* ── Service Areas picker ── */
+        .area-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0; }
+        .area-chips:empty { display: none; }
+        .area-chip { display: inline-flex; align-items: center; gap: 6px; background: rgba(192,57,38,0.08); color: var(--red); border: 1px solid rgba(192,57,38,0.25); border-radius: 999px; padding: 4px 10px; font-size: 12px; font-weight: 600; }
+        .area-chip button { background: none; border: none; color: var(--red); cursor: pointer; font-size: 15px; line-height: 1; padding: 0; }
+        .area-options { margin-top: 8px; max-height: 220px; overflow-y: auto; border: 1.5px solid var(--border); border-radius: 10px; padding: 6px; background: var(--surface, #fff); }
+        .area-group-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-muted); padding: 8px 6px 3px; }
+        .area-opt { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 6px; font-size: 13px; color: var(--text); cursor: pointer; }
+        .area-opt:hover { background: rgba(192,57,38,0.06); }
+        .area-opt.sel { color: var(--red); font-weight: 600; }
+        .area-opt .tick { width: 15px; text-align: center; color: var(--red); }
+        .area-empty { padding: 12px 8px; font-size: 12px; color: var(--text-muted); text-align: center; }
     </style>
     <script src="yrl-auth.js"></script>
 </head>
@@ -496,6 +515,20 @@
                 <input class="modal-input" id="f-rb" type="text" placeholder="e.g. RB12345678">
             </div>
 
+            <!-- Specialties -->
+            <div class="modal-field full">
+                <label class="modal-label">Specialties <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted)">(check all that apply — shown on the agent's page)</span></label>
+                <div id="specialtiesBox" class="chk-grid"></div>
+            </div>
+
+            <!-- Service Areas -->
+            <div class="modal-field full">
+                <label class="modal-label">Service Areas <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted)">(cities &amp; neighborhoods this agent works — search &amp; click to add)</span></label>
+                <input class="modal-input" id="areaSearch" type="text" placeholder="Search cities or neighborhoods…" oninput="renderAreaOptions()" autocomplete="off">
+                <div id="areaSelected" class="area-chips"></div>
+                <div id="areaOptions" class="area-options"></div>
+            </div>
+
             <!-- Brand Slide -->
             <div class="modal-field full" id="brandSlideField" style="display:none;">
                 <label class="modal-label">Brand Slide <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted)">(optional — downloadable by agent)</span></label>
@@ -555,6 +588,199 @@ let editMode  = false;
 let editingId = null; // id of agent being edited (null = adding new)
 let dragAgentId = null;
 let _agentWasDragging = false;
+let selectedAreas = []; // [[label, url], …] for the agent being edited
+
+/* Preset specialties the broker can check for each agent.
+   Stored on the agent as `expertise` (array of strings). If none are
+   checked, the public site falls back to sensible role-based defaults. */
+const SPECIALTY_OPTIONS = [
+  "Buyer Representation", "Seller Representation", "First-Time Buyers",
+  "Luxury Homes", "Investment Property", "New Construction",
+  "Relocation", "Downsizing & Senior", "Commercial Real Estate",
+  "Land & Lots", "Multi-Family", "Foreclosure & Short Sale",
+  "Divorce & Estate Sales", "New Home Communities",
+];
+
+/* Cities & neighborhoods available to assign — auto-generated from the
+   live site by build-hub-areas.py. Do not hand-edit inside the markers. */
+/*__AREA_OPTIONS_START__*/
+const AREA_OPTIONS = [
+  { group: "Bartholomew County", items: [
+    ["Columbus", "/cities/bartholomew-county/columbus-indiana-real-estate/"],
+  ] },
+  { group: "Boone County", items: [
+    ["Jamestown", "/cities/boone-county/jamestown-indiana-real-estate/"],
+    ["Lebanon", "/cities/boone-county/lebanon-indiana-real-estate/"],
+    ["Thorntown", "/cities/boone-county/thorntown-indiana-real-estate/"],
+    ["Whitestown", "/cities/boone-county/whitestown-indiana-real-estate/"],
+    ["Zionsville", "/cities/boone-county/zionsville-indiana-real-estate/"],
+  ] },
+  { group: "Brown County", items: [
+    ["Bean Blossom", "/cities/brown-county/bean-blossom-indiana-real-estate/"],
+    ["Nashville", "/cities/brown-county/nashville-indiana-real-estate/"],
+  ] },
+  { group: "Decatur County", items: [
+    ["Greensburg", "/cities/decatur-county/greensburg-indiana-real-estate/"],
+    ["Westport", "/cities/decatur-county/westport-indiana-real-estate/"],
+  ] },
+  { group: "Hamilton County", items: [
+    ["Arcadia", "/cities/hamilton-county/arcadia-indiana-real-estate/"],
+    ["Atlanta", "/cities/hamilton-county/atlanta-indiana-real-estate/"],
+    ["Carmel", "/cities/hamilton-county/carmel-indiana-real-estate/"],
+    ["Cicero", "/cities/hamilton-county/cicero-indiana-real-estate/"],
+    ["Fishers", "/cities/hamilton-county/fishers-indiana-real-estate/"],
+    ["Noblesville", "/cities/hamilton-county/noblesville-indiana-real-estate/"],
+    ["Sheridan", "/cities/hamilton-county/sheridan-indiana-real-estate/"],
+    ["Westfield", "/cities/hamilton-county/westfield-indiana-real-estate/"],
+  ] },
+  { group: "Hancock County", items: [
+    ["Cumberland", "/cities/hancock-county/cumberland-indiana-real-estate/"],
+    ["Fortville", "/cities/hancock-county/fortville-indiana-real-estate/"],
+    ["Greenfield", "/cities/hancock-county/greenfield-indiana-real-estate/"],
+    ["McCordsville", "/cities/hancock-county/mccordsville-indiana-real-estate/"],
+    ["New Palestine", "/cities/hancock-county/new-palestine-indiana-real-estate/"],
+    ["Shirley", "/cities/hancock-county/shirley-indiana-real-estate/"],
+  ] },
+  { group: "Hendricks County", items: [
+    ["Avon", "/cities/hendricks-county/avon-indiana-real-estate/"],
+    ["Brownsburg", "/cities/hendricks-county/brownsburg-indiana-real-estate/"],
+    ["Clayton", "/cities/hendricks-county/clayton-indiana-real-estate/"],
+    ["Danville", "/cities/hendricks-county/danville-indiana-real-estate/"],
+    ["Pittsboro", "/cities/hendricks-county/pittsboro-indiana-real-estate/"],
+    ["Plainfield", "/cities/hendricks-county/plainfield-indiana-real-estate/"],
+  ] },
+  { group: "Jackson County", items: [
+    ["Seymour", "/cities/jackson-county/seymour-indiana-real-estate/"],
+  ] },
+  { group: "Jennings County", items: [
+    ["North Vernon", "/cities/jennings-county/north-vernon-indiana-real-estate/"],
+  ] },
+  { group: "Johnson County", items: [
+    ["Bargersville", "/cities/johnson-county/bargersville-indiana-real-estate/"],
+    ["Edinburgh", "/cities/johnson-county/edinburgh-indiana-real-estate/"],
+    ["Franklin", "/cities/johnson-county/franklin-indiana-real-estate/"],
+    ["Greenwood", "/cities/johnson-county/greenwood-indiana-real-estate/"],
+    ["Trafalgar", "/cities/johnson-county/trafalgar-indiana-real-estate/"],
+    ["Whiteland", "/cities/johnson-county/whiteland-indiana-real-estate/"],
+  ] },
+  { group: "Madison County", items: [
+    ["Alexandria", "/cities/madison-county/alexandria-indiana-real-estate/"],
+    ["Anderson", "/cities/madison-county/anderson-indiana-real-estate/"],
+    ["Elwood", "/cities/madison-county/elwood-indiana-real-estate/"],
+    ["Lapel", "/cities/madison-county/lapel-indiana-real-estate/"],
+    ["Pendleton", "/cities/madison-county/pendleton-indiana-real-estate/"],
+  ] },
+  { group: "Marion County", items: [
+    ["Beech Grove", "/cities/marion-county/beech-grove-indiana-real-estate/"],
+    ["Broad Ripple", "/cities/marion-county/broad-ripple-indianapolis-real-estate/"],
+    ["Eagle Creek", "/cities/marion-county/eagle-creek-indianapolis-real-estate/"],
+    ["Geist", "/cities/marion-county/geist-indiana-real-estate/"],
+    ["Irvington", "/cities/marion-county/irvington-indianapolis-real-estate/"],
+    ["Lawrence", "/cities/marion-county/lawrence-indiana-real-estate/"],
+    ["Southport", "/cities/marion-county/southport-indiana-real-estate/"],
+    ["Speedway", "/cities/marion-county/speedway-indiana-real-estate/"],
+  ] },
+  { group: "Montgomery County", items: [
+    ["Crawfordsville", "/cities/montgomery-county/crawfordsville-indiana-real-estate/"],
+  ] },
+  { group: "Morgan County", items: [
+    ["Martinsville", "/cities/morgan-county/martinsville-indiana-real-estate/"],
+    ["Monrovia", "/cities/morgan-county/monrovia-indiana-real-estate/"],
+    ["Mooresville", "/cities/morgan-county/mooresville-indiana-real-estate/"],
+  ] },
+  { group: "Parke County", items: [
+    ["Rockville", "/cities/parke-county/rockville-indiana-real-estate/"],
+  ] },
+  { group: "Putnam County", items: [
+    ["Cloverdale", "/cities/putnam-county/cloverdale-indiana-real-estate/"],
+    ["Greencastle", "/cities/putnam-county/greencastle-indiana-real-estate/"],
+  ] },
+  { group: "Shelby County", items: [
+    ["Fairland", "/cities/shelby-county/fairland-indiana-real-estate/"],
+    ["Morristown", "/cities/shelby-county/morristown-indiana-real-estate/"],
+    ["Shelbyville", "/cities/shelby-county/shelbyville-indiana-real-estate/"],
+    ["Waldron", "/cities/shelby-county/waldron-indiana-real-estate/"],
+  ] },
+  { group: "Indianapolis Neighborhoods", items: [
+    ["Bates-Hendricks", "/neighborhoods/bates-hendricks-indianapolis/"],
+    ["Broad Ripple", "/neighborhoods/broad-ripple-indianapolis/"],
+    ["Butler-Tarkington", "/neighborhoods/butler-tarkington-indianapolis/"],
+    ["Castleton", "/neighborhoods/castleton-indianapolis/"],
+    ["Chatham Arch", "/neighborhoods/chatham-arch-indianapolis/"],
+    ["Cottage Home", "/neighborhoods/cottage-home-indianapolis/"],
+    ["Eagle Creek", "/neighborhoods/eagle-creek-indianapolis/"],
+    ["Fall Creek Place", "/neighborhoods/fall-creek-place-indianapolis/"],
+    ["Fletcher Place", "/neighborhoods/fletcher-place-indianapolis/"],
+    ["Fountain Square", "/neighborhoods/fountain-square-indianapolis/"],
+    ["Garfield Park", "/neighborhoods/garfield-park-indianapolis/"],
+    ["Geist Reservoir", "/neighborhoods/geist-reservoir-indianapolis/"],
+    ["Herron Morton Place", "/neighborhoods/herron-morton-place-indianapolis/"],
+    ["Irvington", "/neighborhoods/irvington-indianapolis/"],
+    ["Lockerbie Square", "/neighborhoods/lockerbie-square-indianapolis/"],
+    ["Mass Ave", "/neighborhoods/mass-ave-indianapolis/"],
+    ["Meridian-Kessler", "/neighborhoods/meridian-kessler-indianapolis/"],
+    ["Nora", "/neighborhoods/nora-indianapolis/"],
+    ["Old Northside", "/neighborhoods/old-northside-indianapolis/"],
+    ["Pike Township", "/neighborhoods/pike-township-indianapolis/"],
+    ["Southport", "/neighborhoods/southport-indianapolis/"],
+    ["Warren Township", "/neighborhoods/warren-township-indianapolis/"],
+  ] },
+];
+/*__AREA_OPTIONS_END__*/
+
+/* ── Specialties + Service Areas UI ── */
+function renderSpecialties(selected) {
+  const set = new Set(selected || []);
+  const box = document.getElementById('specialtiesBox');
+  if (!box) return;
+  box.innerHTML = SPECIALTY_OPTIONS.map(s =>
+    `<label class="chk"><input type="checkbox" value="${esc(s)}" ${set.has(s) ? 'checked' : ''}> ${esc(s)}</label>`
+  ).join('');
+}
+function getCheckedSpecialties() {
+  return Array.from(document.querySelectorAll('#specialtiesBox input:checked')).map(i => i.value);
+}
+
+function renderAreaChips() {
+  const wrap = document.getElementById('areaSelected');
+  if (!wrap) return;
+  wrap.innerHTML = selectedAreas.map(([label, url]) =>
+    `<span class="area-chip">${esc(label)}<button type="button" title="Remove" onclick="removeArea('${esc(url)}')">&times;</button></span>`
+  ).join('');
+}
+function removeArea(url) {
+  selectedAreas = selectedAreas.filter(([, u]) => u !== url);
+  renderAreaChips();
+  renderAreaOptions();
+}
+function toggleArea(label, url) {
+  if (selectedAreas.some(([, u]) => u === url)) {
+    selectedAreas = selectedAreas.filter(([, u]) => u !== url);
+  } else {
+    selectedAreas.push([label, url]);
+  }
+  renderAreaChips();
+  renderAreaOptions();
+}
+function renderAreaOptions() {
+  const box = document.getElementById('areaOptions');
+  if (!box) return;
+  const q = (document.getElementById('areaSearch')?.value || '').trim().toLowerCase();
+  const chosen = new Set(selectedAreas.map(([, u]) => u));
+  let html = '';
+  AREA_OPTIONS.forEach(grp => {
+    const items = grp.items.filter(([label]) =>
+      !q || label.toLowerCase().includes(q) || grp.group.toLowerCase().includes(q));
+    if (!items.length) return;
+    html += `<div class="area-group-label">${esc(grp.group)}</div>`;
+    items.forEach(([label, url]) => {
+      const on = chosen.has(url);
+      html += `<div class="area-opt ${on ? 'sel' : ''}" onclick="toggleArea('${esc(label)}','${esc(url)}')">`
+        + `<span class="tick">${on ? '✓' : ''}</span>${esc(label)}</div>`;
+    });
+  });
+  box.innerHTML = html || '<div class="area-empty">No matching areas. Try another search.</div>';
+}
 
 /* ── Utilities ── */
 function uid() { return Math.random().toString(36).slice(2, 9); }
@@ -820,6 +1046,12 @@ function openEditModal(id) {
     // Show brand slide field in edit modal (edit mode only)
     document.getElementById('brandSlideField').style.display = '';
     setBrandSlideModalState(agent.brandSlide || null);
+    // Specialties + Service Areas
+    renderSpecialties(agent.expertise || []);
+    selectedAreas = Array.isArray(agent.areas) ? agent.areas.map(a => [a[0], a[1]]) : [];
+    document.getElementById('areaSearch').value = '';
+    renderAreaChips();
+    renderAreaOptions();
     openModal();
 }
 
@@ -849,6 +1081,13 @@ function clearForm() {
     // Hide brand slide field for Add modal (no agent id yet to attach it to)
     document.getElementById('brandSlideField').style.display = 'none';
     setBrandSlideModalState(null);
+    // Reset specialties + service areas
+    renderSpecialties([]);
+    selectedAreas = [];
+    const aSearch = document.getElementById('areaSearch');
+    if (aSearch) aSearch.value = '';
+    renderAreaChips();
+    renderAreaOptions();
 }
 
 /* ── Photo preview — refreshes avatar initials when name fields change ── */
@@ -925,14 +1164,16 @@ async function saveAgent() {
     const mibor   = document.getElementById('f-mibor').value.trim();
     const rb      = document.getElementById('f-rb').value.trim();
     const photo   = document.getElementById('f-photo').value.trim();
+    const expertise = getCheckedSpecialties();
+    const areas     = selectedAreas.map(a => [a[0], a[1]]);
 
     if (editingId) {
         const idx = agents.findIndex(a => a.id === editingId);
         if (idx > -1) {
-            agents[idx] = { ...agents[idx], name, title, phone, email, website, mibor, rb, photo };
+            agents[idx] = { ...agents[idx], name, title, phone, email, website, mibor, rb, photo, expertise, areas };
         }
     } else {
-        agents.push({ id: uid(), name, title, phone, email, website, mibor, rb, photo, created: new Date().toISOString() });
+        agents.push({ id: uid(), name, title, phone, email, website, mibor, rb, photo, expertise, areas, created: new Date().toISOString() });
     }
 
     closeModal();

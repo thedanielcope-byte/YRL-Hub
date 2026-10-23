@@ -262,40 +262,28 @@
         <p class="sub">Just a moment…</p>
     </div>
 
-    <!-- ── State: Email form ── -->
+    <!-- ── State: Login form (email + PIN) ── -->
     <div class="state active" id="stateForm">
         <h1>Agent Hub</h1>
-        <p class="sub">Enter your work email and we'll send you a sign-in link — no password needed.</p>
+        <p class="sub">Sign in with your email and 4-digit PIN.</p>
 
         <div class="login-form">
             <label class="form-label" for="emailInput">Work Email</label>
             <input type="email" id="emailInput" class="form-input"
-                   placeholder="you@yourrealtylink.com" autocomplete="email"
-                   onkeydown="if(event.key==='Enter')sendMagicLink()">
-            <div class="error-msg" id="errorMsg"></div>
-            <button class="btn-magic" id="btnMagic" onclick="sendMagicLink()">
-                <i class="fa-solid fa-paper-plane"></i> Send Sign-In Link
-            </button>
-            <p style="font-size:11.5px;color:var(--text-muted);text-align:center;">
-                Check your inbox after clicking — the link expires in 1 hour.
-            </p>
-        </div>
-    </div>
+                   placeholder="you@yourrealtylink.com" autocomplete="email">
 
-    <!-- ── State: Magic link sent ── -->
-    <div class="state" id="stateSuccess">
-        <div class="success-icon"><i class="fa-solid fa-envelope-circle-check"></i></div>
-        <div class="success-title">Check Your Email</div>
-        <p class="success-msg">
-            We sent a sign-in link to <strong id="sentToEmail"></strong>.
-            Click the link in the email to access the hub.
-        </p>
-        <p style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">
-            Don't see it? Check your spam folder. The link expires in 1 hour.
-        </p>
-        <button class="btn-back" onclick="resetForm()">
-            <i class="fa-solid fa-arrow-left"></i> Use a different email
-        </button>
+            <label class="form-label" for="pinInput">PIN <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:10.5px;color:var(--text-muted);">(last 4 of your cell)</span></label>
+            <input type="tel" id="pinInput" class="form-input"
+                   placeholder="••••" inputmode="numeric" autocomplete="off"
+                   maxlength="4" style="text-align:center;font-size:24px;letter-spacing:12px;font-weight:700;"
+                   oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+                   onkeydown="if(event.key==='Enter')signInWithPin()">
+
+            <div class="error-msg" id="errorMsg"></div>
+            <button class="btn-magic" id="btnMagic" onclick="signInWithPin()">
+                <i class="fa-solid fa-right-to-bracket"></i> Sign In
+            </button>
+        </div>
     </div>
 
     <!-- ── State: Auth error ── -->
@@ -322,15 +310,15 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 /* ── Supabase setup ── */
-const _SB_URL = 'https://khhfkxfxefjgunhrihyx.supabase.co';
-const _SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtoaGZreGZ4ZWZqZ3VuaHJpaHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3NzYwMjcsImV4cCI6MjA5MTM1MjAyN30.bYW68xMDUEXBRC1bxOLdj77xCcjXb3wIuHbPAPFdSGo';
+const _SB_URL = 'https://wdvolamasztetwpitbwg.supabase.co';
+const _SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indkdm9sYW1hc3p0ZXR3cGl0YndnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3Nzc2MTYsImV4cCI6MjA5MTM1MzYxNn0.uiGIaZwr88ZNtAobfSV-axlpXB3sos2Rcw3FiFm6JO8';
 const _sb    = supabase.createClient(_SB_URL, _SB_KEY);
 
 const HUB_URL = 'yrl-agent-hub.html';
 
 /* ── State helpers ── */
 function showState(id) {
-    ['stateLoading','stateForm','stateSuccess','stateError'].forEach(s => {
+    ['stateLoading','stateForm','stateError'].forEach(s => {
         document.getElementById(s).classList.remove('active');
     });
     document.getElementById(id).classList.add('active');
@@ -365,6 +353,15 @@ window.addEventListener('load', async function () {
         return;
     }
 
+    /* If redirected here because access was revoked, show the error state */
+    if (new URLSearchParams(window.location.search).get('revoked') === '1') {
+        document.getElementById('errorDetail').textContent =
+            'Your hub access has been revoked. Contact your broker if you believe this is a mistake.';
+        showState('stateError');
+        history.replaceState(null, '', window.location.pathname);
+        return;
+    }
+
     /* Not a callback — check if already logged in */
     const { data: { session } } = await _sb.auth.getSession();
     if (session) {
@@ -380,15 +377,20 @@ window.addEventListener('load', async function () {
     document.getElementById('emailInput').focus();
 });
 
-/* ── Send magic link ── */
-async function sendMagicLink() {
-    const emailEl  = document.getElementById('emailInput');
-    const errorEl  = document.getElementById('errorMsg');
-    const btn      = document.getElementById('btnMagic');
-    const email    = emailEl.value.trim().toLowerCase();
+/* ── Sign in with PIN ── */
+const EDGE_FN_URL = _SB_URL + '/functions/v1/verify-pin';
+
+async function signInWithPin() {
+    const emailEl = document.getElementById('emailInput');
+    const pinEl   = document.getElementById('pinInput');
+    const errorEl = document.getElementById('errorMsg');
+    const btn     = document.getElementById('btnMagic');
+    const email   = emailEl.value.trim().toLowerCase();
+    const pin     = pinEl.value.trim();
 
     errorEl.style.display = 'none';
     emailEl.classList.remove('error');
+    pinEl.classList.remove('error');
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         emailEl.classList.add('error');
@@ -398,46 +400,87 @@ async function sendMagicLink() {
         return;
     }
 
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending…';
-
-    const { error } = await _sb.auth.signInWithOtp({
-        email,
-        options: {
-            emailRedirectTo: window.location.href  /* redirect back to this login page */
-        }
-    });
-
-    if (error) {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send Sign-In Link';
-
-        /* Supabase returns a generic error for unregistered emails to prevent enumeration */
-        const msg = error.message?.toLowerCase() || '';
-        if (msg.includes('not found') || msg.includes('invalid') || msg.includes('signups not allowed')) {
-            document.getElementById('errorDetail').textContent =
-                'This email isn\'t registered for hub access. Contact your broker to get set up.';
-            showState('stateError');
-        } else {
-            errorEl.textContent = 'Something went wrong. Please try again in a moment.';
-            errorEl.style.display = 'block';
-        }
+    if (!/^[0-9]{4}$/.test(pin)) {
+        pinEl.classList.add('error');
+        errorEl.textContent = 'Enter your 4-digit PIN.';
+        errorEl.style.display = 'block';
+        pinEl.focus();
         return;
     }
 
-    /* Success */
-    document.getElementById('sentToEmail').textContent = email;
-    showState('stateSuccess');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Signing in…';
+
+    try {
+        /* Call edge function to verify PIN and get an OTP token */
+        const res = await fetch(EDGE_FN_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', apikey: _SB_KEY },
+            body: JSON.stringify({ email, pin })
+        });
+        const body = await res.json();
+
+        if (!res.ok || !body.otp) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Sign In';
+
+            const msg = body.error || 'Sign-in failed';
+            if (msg.includes('not found') || msg.includes('revoked')) {
+                document.getElementById('errorDetail').textContent =
+                    'This email isn\'t authorized for hub access. Contact your broker to get set up.';
+                showState('stateError');
+            } else if (msg.includes('No PIN set')) {
+                document.getElementById('errorDetail').textContent =
+                    'Your PIN hasn\'t been set up yet. Contact your broker.';
+                showState('stateError');
+            } else {
+                pinEl.classList.add('error');
+                errorEl.textContent = msg.includes('Incorrect') ? 'Incorrect PIN. Try again.' : msg;
+                errorEl.style.display = 'block';
+                pinEl.value = '';
+                pinEl.focus();
+            }
+            return;
+        }
+
+        /* Use the OTP token to create a Supabase session */
+        const { data, error } = await _sb.auth.verifyOtp({
+            email: body.email,
+            token: body.otp,
+            type: 'email'
+        });
+
+        if (error || !data.session) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Sign In';
+            errorEl.textContent = 'Sign-in failed. Please try again.';
+            errorEl.style.display = 'block';
+            return;
+        }
+
+        /* Signed in — go to hub */
+        const intended = sessionStorage.getItem('yrl_intended');
+        sessionStorage.removeItem('yrl_intended');
+        window.location.replace(intended && !intended.includes('yrl-login') ? intended : HUB_URL);
+
+    } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Sign In';
+        errorEl.textContent = 'Connection error. Please try again.';
+        errorEl.style.display = 'block';
+    }
 }
 
 /* ── Reset form ── */
 function resetForm() {
     document.getElementById('emailInput').value = '';
+    document.getElementById('pinInput').value = '';
     document.getElementById('errorMsg').style.display = 'none';
     document.getElementById('emailInput').classList.remove('error');
+    document.getElementById('pinInput').classList.remove('error');
     const btn = document.getElementById('btnMagic');
     btn.disabled = false;
-    btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send Sign-In Link';
+    btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Sign In';
     showState('stateForm');
     setTimeout(() => document.getElementById('emailInput').focus(), 50);
 }

@@ -1,0 +1,16 @@
+{
+  "name": "YRL Agent Hub",
+  "short_name": "YRL Hub",
+  "description": "Your Realty Link agent hub — contacts, tasks, transactions, marketing and training.",
+  "id": "yrl-agent-hub",
+  "start_url": "hub.html?source=app",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#c03926",
+  "icons": [
+    { "src": "yrl-icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "yrl-icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "yrl-icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

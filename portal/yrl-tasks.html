@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasks Manager — Your Realty Link</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="portal-auth.js"></script>
+    <script src="embed-mode.js?v=20260927b"></script>
+    <script src="help-box.js?v=20260916" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root{--red:#c03926;--red-light:#d94a35;--red-dark:#9e2e1e;--bg:#f2f4f7;--surface:#fff;--surface-2:#f7f8fa;--surface-3:#eef0f3;--border:#e2e5ea;--text:#1a1d22;--text-sec:#5a6270;--text-muted:#9ca3af;--green:#16a34a;--amber:#d97706;--blue:#2563eb;--radius:12px;}
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;}
+        a{text-decoration:none;color:inherit;}
+        .page-header{background:linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);padding:24px 20px;}
+        .header-inner{max-width:1080px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+        .header-left{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+        .back-btn{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:9px 16px;border-radius:100px;font-size:13px;font-weight:600;}
+        .back-btn:hover{background:rgba(255,255,255,0.26);}
+        .header-title h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(26px,4vw,36px);letter-spacing:1.5px;color:#fff;line-height:1.05;}
+        .header-title p{font-size:12.5px;color:rgba(255,255,255,0.85);}
+        .btn{display:inline-flex;align-items:center;gap:7px;border:none;border-radius:9px;padding:9px 16px;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;}
+        .btn-primary{background:#fff;color:var(--red);} .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,0,0,0.18);}
+        .btn-ghost{background:var(--surface-3);color:var(--text);border:1px solid var(--border);} .btn-ghost:hover{border-color:var(--red);color:var(--red);}
+        .btn-red{background:var(--red);color:#fff;} .btn-red:hover{background:var(--red-light);}
+        .wrap{max-width:1080px;margin:0 auto;padding:22px 18px 90px;}
+
+        .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+        .view-toggle{display:inline-flex;gap:4px;background:var(--surface-3);border-radius:100px;padding:3px;}
+        .vt{display:inline-flex;align-items:center;gap:6px;border:none;background:transparent;color:var(--text-sec);font-size:12.5px;font-weight:700;padding:7px 14px;border-radius:100px;cursor:pointer;font-family:'Inter',sans-serif;}
+        .vt.active{background:var(--surface);color:var(--red);box-shadow:0 1px 4px rgba(0,0,0,0.08);}
+
+        /* agenda */
+        .grp{margin-bottom:20px;}
+        .grp-h{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+        .grp-h .n{background:var(--surface-3);border-radius:100px;padding:1px 8px;font-size:10.5px;color:var(--text-sec);}
+        .grp.overdue .grp-h{color:#dc2626;}
+        .task{display:flex;align-items:flex-start;gap:11px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 13px;margin-bottom:7px;}
+        .task.od{border-color:#fecaca;background:#fef2f2;}
+        .task.done .t-title{text-decoration:line-through;color:var(--text-muted);}
+        .chk{width:19px;height:19px;margin-top:1px;cursor:pointer;accent-color:var(--red);flex-shrink:0;}
+        .t-body{flex:1;min-width:0;cursor:pointer;}
+        .t-title{font-size:14px;font-weight:600;}
+        .t-meta{font-size:11.5px;color:var(--text-muted);margin-top:3px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+        .chip{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;display:inline-flex;align-items:center;gap:4px;}
+        .chip-contact{background:#e0e7ff;color:#3730a3;} .chip-txn{background:#fef2f2;color:#c03926;} .chip-assigned{background:#fef3c7;color:#92400e;}
+        .chip-agent{background:#dcfce7;color:#166534;}
+        .chip-pri-high{background:#fee2e2;color:#b91c1c;} .chip-pri-med{background:#ffedd5;color:#c2410c;} .chip-pri-low{background:#f3f4f6;color:#6b7280;}
+        .t-time{color:var(--text-sec);font-weight:600;}
+        .t-link{color:var(--red);font-weight:700;}
+
+        /* board */
+        .board{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+        @media(max-width:760px){.board{grid-template-columns:1fr;}}
+        .col{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:10px;min-height:120px;transition:background .12s,outline-color .12s;}
+        .col.drop-hover{background:rgba(192,57,38,0.06);outline:2px dashed rgba(192,57,38,0.45);outline-offset:-4px;}
+        .board .card[draggable="true"]{cursor:grab;}
+        .board .card[draggable="true"]:active{cursor:grabbing;}
+        .col-h{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--text-sec);padding:4px 6px 10px;display:flex;justify-content:space-between;}
+        .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px;margin-bottom:8px;cursor:pointer;}
+        .card:hover{border-color:var(--red);}
+        .card .t-title{font-size:13.5px;}
+        .card-move{margin-top:8px;width:100%;font-size:11px;padding:5px;border-radius:6px;border:1px solid var(--border);background:var(--surface-3);color:var(--text);font-family:'Inter',sans-serif;cursor:pointer;}
+
+        .empty{text-align:center;padding:48px 20px;color:var(--text-muted);font-size:13.5px;}
+        .loading{text-align:center;padding:40px;color:var(--text-muted);}
+
+        /* modal */
+        .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;align-items:center;justify-content:center;padding:18px;}
+        .overlay.open{display:flex;}
+        .modal{background:var(--surface);border-radius:16px;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.35);}
+        .modal-head{padding:16px 20px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+        .modal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;}
+        .modal-close{background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-muted);line-height:1;}
+        .modal-body{padding:16px 20px;}
+        .modal-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center;}
+        .field{margin-bottom:12px;}
+        .field label{display:block;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;color:var(--text-sec);}
+        .field input,.field select,.field textarea{width:100%;background:var(--surface-3);border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13.5px;font-family:'Inter',sans-serif;color:var(--text);outline:none;}
+        .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--red);background:var(--surface);}
+        .field textarea{resize:vertical;min-height:56px;}
+        .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+        @media(max-width:460px){.row2{grid-template-columns:1fr;}}
+        #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--text);color:#fff;padding:11px 22px;border-radius:10px;font-size:12.5px;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,.25);z-index:9999;transition:transform .3s;}
+        #toast.show{transform:translateX(-50%) translateY(0);} #toast.error{background:#dc2626;} #toast.success{background:var(--green);}
+    </style>
+<link rel="stylesheet" href="hub-theme.css?v=20260903b"><script src="hub-brand.js" defer></script></head>
+<body>
+
+<header class="page-header">
+    <div class="header-inner">
+        <div class="header-left">
+            <a href="hub.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Hub</a>
+            <div class="header-title">
+                <h1><i class="fa-solid fa-list-check" style="font-size:.8em;opacity:.9;"></i> Tasks Manager</h1>
+                <p>Your to-dos, CRM follow-ups &amp; transaction deadlines — all in one place</p>
+            </div>
+        </div>
+        <div style="display:flex;gap:8px;">
+            <button id="assignBtn" class="btn btn-ghost" style="display:none;" onclick="openAssign()"><i class="fa-solid fa-user-plus"></i> Assign to agent</button>
+            <button class="btn btn-primary" onclick="openTask()"><i class="fa-solid fa-plus"></i> New Task</button>
+        </div>
+    </div>
+</header>
+
+<div class="wrap">
+    <div id="helpTop"></div>
+    <script>document.addEventListener('DOMContentLoaded',function(){ window.HelpBox && HelpBox.mount({container:'#helpTop',key:'yrl-tasks',label:'the Tasks Manager'}); });</script>
+
+    <div class="bar">
+        <div id="countLine" style="font-size:12.5px;color:var(--text-muted);">—</div>
+        <div class="view-toggle">
+            <button class="vt" data-v="list" onclick="setView('list')"><i class="fa-solid fa-list"></i> List</button>
+            <button class="vt active" data-v="board" onclick="setView('board')"><i class="fa-solid fa-table-columns"></i> Board</button>
+        </div>
+    </div>
+
+    <div id="view"><div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading your tasks…</div></div>
+</div>
+
+<!-- Task add/edit -->
+<div class="overlay" id="taskModal" onclick="if(event.target===this)closeTask()">
+    <div class="modal">
+        <div class="modal-head"><div class="modal-title" id="taskTitle">New Task</div><button class="modal-close" onclick="closeTask()">&times;</button></div>
+        <form class="modal-body" id="taskForm" onsubmit="saveTask(event)">
+            <div class="field"><label>Task *</label><input id="t-title" required placeholder="e.g. Call the Smiths about their offer"></div>
+            <div class="row2">
+                <div class="field"><label>Due date</label><input id="t-date" type="date"></div>
+                <div class="field"><label>Time</label><input id="t-time" type="time"></div>
+            </div>
+            <div class="row2">
+                <div class="field"><label>Priority</label><select id="t-priority"><option value="">Normal</option><option value="high">High</option><option value="med">Medium</option><option value="low">Low</option></select></div>
+                <div class="field"><label>Link to a contact</label><select id="t-contact"><option value="">— None —</option></select></div>
+            </div>
+            <div class="field"><label>Notes</label><textarea id="t-notes" placeholder="Any details…"></textarea></div>
+            <input type="hidden" id="t-id">
+        </form>
+        <div class="modal-foot">
+            <button type="button" class="btn btn-ghost" id="t-delete" onclick="deleteTask()" style="display:none;color:#dc2626;border-color:#fecaca;"><i class="fa-solid fa-trash"></i> Delete</button>
+            <div style="margin-left:auto;display:flex;gap:8px;">
+                <button type="button" class="btn btn-ghost" onclick="closeTask()">Cancel</button>
+                <button type="submit" form="taskForm" class="btn btn-red"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Assign to agent (owner/admin) -->
+<div class="overlay" id="assignModal" onclick="if(event.target===this)closeAssign()">
+    <div class="modal">
+        <div class="modal-head"><div class="modal-title">Assign a task to an agent</div><button class="modal-close" onclick="closeAssign()">&times;</button></div>
+        <form class="modal-body" id="assignForm" onsubmit="saveAssign(event)">
+            <div class="field"><label>Agent *</label><select id="a-agent" required><option value="">Choose an agent…</option></select></div>
+            <div class="field"><label>Task *</label><input id="a-title" required placeholder="What should they do?"></div>
+            <div class="row2">
+                <div class="field"><label>Due date</label><input id="a-date" type="date"></div>
+                <div class="field"><label>Time</label><input id="a-time" type="time"></div>
+            </div>
+            <div class="field"><label>Priority</label><select id="a-priority"><option value="">Normal</option><option value="high">High</option><option value="med">Medium</option><option value="low">Low</option></select></div>
+            <div class="field"><label>Notes</label><textarea id="a-notes" placeholder="Details for the agent…"></textarea></div>
+            <div id="a-status" style="font-size:12.5px;min-height:16px;"></div>
+        </form>
+        <div class="modal-foot" style="justify-content:flex-end;">
+            <button type="button" class="btn btn-ghost" onclick="closeAssign()">Cancel</button>
+            <button type="submit" form="assignForm" class="btn btn-red"><i class="fa-solid fa-paper-plane"></i> Assign &amp; notify</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const $=(id)=>document.getElementById(id);
+const esc=(s)=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+let SB=null, ME=null, ROLE='agent', CID=null, UID=null, EMAIL='', CANASSIGN=false;
+let TASKS=[], CONTACTS=[], TXN=[], ROSTER=[], VIEW='board', TEAM=[];
+let CHK=[];   // open checklist items (hub_txn_tasks) for the current stage of MY active transaction files — id prefix 'htt-'
+/* Admins see the whole team's tasks (each tagged with its agent); agents see their own. */
+function srcTasks(){ return CANASSIGN ? TEAM : TASKS; }
+function isMine(t){ return !CANASSIGN || t.owner_id === UID; }
+
+const pad=(n)=>String(n).padStart(2,'0');
+const todayStr=()=>{const d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());};
+function parseD(s){const p=String(s).slice(0,10).split('-');return new Date(+p[0],+p[1]-1,+p[2]);}
+function fmtD(s){return s?new Date(s+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}):'';}
+function fmtT(t){if(!t)return'';const p=String(t).split(':');let h=+p[0];const m=p[1]||'00';const ap=h>=12?'PM':'AM';h=h%12||12;return h+':'+m+' '+ap;}
+function daysFromToday(s){return Math.round((parseD(s)-parseD(todayStr()))/86400000);}
+
+document.addEventListener('yrl-auth-ready', init);
+if (window.yrlMember) init();
+
+async function init(){
+    if (SB) return;
+    SB=window.yrlClient; ME=window.yrlMember; ROLE=ME.role; CID=ME.client_id;
+    if (ROLE==='txn_client'){ location.replace('my-transaction.html'); return; }
+    const s=await SB.auth.getSession();
+    UID=s.data.session&&s.data.session.user.id; EMAIL=(s.data.session&&s.data.session.user.email)||'';
+    CANASSIGN=(ROLE==='owner'||ROLE==='nomad_admin');
+    if (CANASSIGN) $('assignBtn').style.display='';
+    await Promise.all([loadTasks(), loadContacts(), loadTxn()]);
+    render();
+    // hub sidebar 3rd level: List / Board
+    if (window.__yrlRegisterTabs) window.__yrlRegisterTabs(function(v){ if (v==='list' || v==='board') setView(v); });
+    if (window.__yrlTabChanged) window.__yrlTabChanged(VIEW==='board' ? 'board' : 'list');
+}
+
+async function loadTasks(){
+    try{ const {data}=await SB.from('agent_contact_tasks').select('*'); TASKS=data||[]; }catch(e){ TASKS=[]; }
+    if (CANASSIGN){
+        try{ const {data,error}=await SB.rpc('admin_list_tasks'); TEAM=error?[]:(data||[]); }catch(e){ TEAM=[]; }
+    }
+}
+async function loadContacts(){
+    try{ const {data}=await SB.from('agent_contacts').select('id,name').eq('archived',false); CONTACTS=(data||[]).sort((a,b)=>(a.name||'').localeCompare(b.name||'')); }catch(e){ CONTACTS=[]; }
+}
+async function loadTxn(){
+    try{
+        // active files only — closed/archived files no longer put deadlines on the board
+        const {data:txns}=await SB.from('hub_transactions').select('id,title,client_name,status,current_stage,agent_id').eq('status','active');
+        const map={}; (txns||[]).forEach(t=>map[t.id]=t);
+        const {data:dates}=await SB.from('hub_txn_dates').select('transaction_id,label,date_value');
+        // key dates are deadlines, not to-dos: once a date has passed it drops off the board
+        // (it still shows in the file and on the Calendar)
+        const today=todayStr();
+        TXN=(dates||[]).filter(d=>d.date_value&&map[d.transaction_id]&&String(d.date_value).slice(0,10)>=today).map(d=>({
+            id:'txn-'+d.transaction_id+'-'+(d.label||''),
+            txnId:d.transaction_id, title:(d.label||'Key date'),
+            txnTitle:map[d.transaction_id].title||map[d.transaction_id].client_name||'File',
+            due_date:String(d.date_value).slice(0,10), isTxn:true
+        }));
+        // checklist items for the CURRENT stage of my own files (the broker's team view would otherwise flood)
+        const mine=Object.values(map).filter(t=>t.agent_id===UID);
+        CHK=[];
+        if(mine.length){
+            const {data:tk}=await SB.from('hub_txn_tasks').select('id,transaction_id,stage,label,sort_order,done')
+                .in('transaction_id',mine.map(t=>t.id)).eq('done',false).order('sort_order');
+            CHK=(tk||[]).filter(r=>{ const t=map[r.transaction_id]; return t && (!t.current_stage || r.stage===t.current_stage); }).map(r=>({
+                id:'htt-'+r.id, rowId:r.id, txnId:r.transaction_id, title:r.label||'Checklist item', stage:r.stage||'',
+                txnTitle:map[r.transaction_id].title||map[r.transaction_id].client_name||'File',
+                due_date:null, done:false, isChk:true
+            }));
+        }
+    }catch(e){ TXN=[]; CHK=[]; }
+}
+/* Tick a transaction checklist item off from the Tasks board (writes the file's own checklist). */
+async function toggleChk(rowId,done){
+    try{ const {error}=await SB.from('hub_txn_tasks').update({done, done_at:done?new Date().toISOString():null}).eq('id',rowId); if(error)throw error;
+        if(done) CHK=CHK.filter(x=>x.rowId!==rowId);
+        render(); if(done) toast('Checked off in the transaction file','success'); }
+    catch(e){ toast('Update failed: '+e.message,'error'); render(); }
+}
+function contactName(id){ const c=CONTACTS.find(x=>x.id===id); return c?c.name:''; }
+
+/* ── views ── */
+function setView(v){ VIEW=v; document.querySelectorAll('.vt').forEach(b=>b.classList.toggle('active',b.dataset.v===v)); render(); if (window.__yrlTabChanged) window.__yrlTabChanged(v==='board'?'board':'list'); }
+function render(){
+    const openCount=srcTasks().filter(t=>!t.done).length + TXN.filter(t=>t.due_date>=todayStr()).length + CHK.length;
+    $('countLine').textContent = openCount+' open item'+(openCount===1?'':'s') + (CANASSIGN?' · whole team':'');
+    if (VIEW==='board') return renderBoard();
+    renderAgenda();
+}
+
+function taskRow(t){
+    if(t.isChk){   // transaction checklist item: tick it off here, or open the file
+        return `<div class="task">
+            <input type="checkbox" class="chk" onchange="toggleChk('${esc(t.rowId)}',this.checked)" title="Mark done in the transaction file">
+            <div class="t-body" onclick="location.href='yrl-transactions.html?txn=${esc(t.txnId)}'">
+                <div class="t-title">${esc(t.title)}</div>
+                <div class="t-meta"><span class="chip chip-txn"><i class="fa-solid fa-folder-tree"></i> ${esc(t.txnTitle)}</span>${t.stage?`<span class="chip">${esc(t.stage)}</span>`:''}</div>
+            </div></div>`;
+    }
+    const isTxn=t.isTxn;
+    const chips=[];
+    if(!isTxn && CANASSIGN && t.agent_name) chips.push(`<span class="chip chip-agent"><i class="fa-solid fa-user-tag"></i> ${esc(t.agent_name)}</span>`);
+    if(!isTxn && t.contact_id) chips.push(`<span class="chip chip-contact"><i class="fa-solid fa-user"></i> ${esc(contactName(t.contact_id))}</span>`);
+    if(isTxn) chips.push(`<span class="chip chip-txn"><i class="fa-solid fa-folder-tree"></i> ${esc(t.txnTitle)}</span>`);
+    if(!isTxn && t.assigned_by==='system') chips.push(`<span class="chip chip-contact"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto follow-up</span>`);   // created when a CDA is completed
+    else if(!isTxn && t.assigned_by) chips.push(`<span class="chip chip-assigned"><i class="fa-solid fa-user-tie"></i> From broker</span>`);
+    if(!isTxn && t.priority) chips.push(`<span class="chip chip-pri-${esc(t.priority)}">${t.priority==='high'?'High':t.priority==='med'?'Medium':'Low'} priority</span>`);
+    const when=[t.due_date?fmtD(t.due_date):'', (!isTxn&&t.due_time)?fmtT(t.due_time):''].filter(Boolean).join(' · ');
+    const meta=`<div class="t-meta">${when?`<span class="t-time">${esc(when)}</span>`:''}${chips.join('')}</div>`;
+    if(isTxn){
+        return `<div class="task ${t.due_date<todayStr()?'od':''}">
+            <div style="width:19px;text-align:center;color:var(--red);margin-top:1px;"><i class="fa-solid fa-calendar-day"></i></div>
+            <div class="t-body" onclick="location.href='yrl-transactions.html?txn=${esc(t.txnId)}'">
+                <div class="t-title">${esc(t.title)}</div>${meta}
+                <div style="margin-top:4px;"><a class="t-link" href="yrl-transactions.html?txn=${esc(t.txnId)}">Open file <i class="fa-solid fa-arrow-right" style="font-size:.85em;"></i></a></div>
+            </div></div>`;
+    }
+    const mine=isMine(t);
+    return `<div class="task ${t.done?'done':''} ${(!t.done&&t.due_date&&t.due_date<todayStr())?'od':''}">
+        <input type="checkbox" class="chk" ${t.done?'checked':''} ${mine?`onchange="toggleDone('${t.id}',this.checked)"`:'disabled title="Assigned to '+esc(t.agent_name||'another agent')+'"'}>
+        <div class="t-body" ${mine?`onclick="openTask('${t.id}')"`:'style="cursor:default"'}><div class="t-title">${esc(t.title)}</div>${meta}</div>
+    </div>`;
+}
+
+function renderAgenda(){
+    const items=[...TASKS.filter(t=>!t.done).map(t=>({...t})), ...TXN.map(t=>({...t}))];
+    const today=todayStr();
+    const g={overdue:[],today:[],week:[],later:[],nodate:[]};
+    items.forEach(t=>{
+        if(!t.due_date){ g.nodate.push(t); return; }
+        const d=daysFromToday(t.due_date);
+        if(d<0) g.overdue.push(t); else if(d===0) g.today.push(t); else if(d<=7) g.week.push(t); else g.later.push(t);
+    });
+    const sortFn=(a,b)=>((a.due_date||'9999')+'T'+(a.due_time||'99')).localeCompare((b.due_date||'9999')+'T'+(b.due_time||'99'));
+    Object.values(g).forEach(a=>a.sort(sortFn));
+    const done=TASKS.filter(t=>t.done).sort((a,b)=>(b.due_date||'').localeCompare(a.due_date||''));
+    const sec=(title,arr,cls)=>arr.length?`<div class="grp ${cls||''}"><div class="grp-h">${title} <span class="n">${arr.length}</span></div>${arr.map(taskRow).join('')}</div>`:'';
+    let html=sec('Overdue',g.overdue,'overdue')+sec('Today',g.today)+sec('This week',g.week)+sec('Upcoming',g.later)+sec('No date',g.nodate)+sec('Transaction checklist',CHK);
+    if(done.length) html+=`<div class="grp"><div class="grp-h">Done <span class="n">${done.length}</span></div>${done.slice(0,25).map(taskRow).join('')}</div>`;
+    $('view').innerHTML = html || '<div class="empty"><i class="fa-solid fa-clipboard-check" style="font-size:34px;opacity:.3;display:block;margin-bottom:10px;"></i>No tasks yet. Hit <b>New Task</b>, or they’ll appear here from your CRM follow-ups and transaction deadlines.</div>';
+}
+
+function renderBoard(){
+    const cols=[['todo','To-Do'],['doing','In Progress'],['done','Done']];
+    const inCol=(t,k)=> k==='done' ? t.done : (!t.done && (t.board_status||'todo')===k);
+    const SRC=[...TASKS, ...TXN, ...CHK];   // include transaction deadlines + checklist items (no board_status → land in To-Do)
+    $('view').innerHTML='<div class="board">'+cols.map(([k,label])=>{
+        const list=SRC.filter(t=>inCol(t,k)).sort((a,b)=>((a.due_date||'9999')).localeCompare(b.due_date||'9999'));
+        const cards=list.map(t=>{
+            const when=t.due_date?fmtD(t.due_date):'';
+            if(t.isChk){   // checklist item → tick it off, or open the file
+                return `<div class="card"><div class="t-body" onclick="location.href='yrl-transactions.html?txn=${esc(t.txnId)}'"><div class="t-title">${esc(t.title)}</div><span class="chip chip-txn" style="margin-top:6px;display:inline-flex;"><i class="fa-solid fa-folder-tree"></i> ${esc(t.txnTitle)}</span>${t.stage?` <span class="chip" style="margin-top:6px;display:inline-flex;">${esc(t.stage)}</span>`:''}</div>
+                    <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text-sec);margin-top:8px;cursor:pointer;" onclick="event.stopPropagation()"><input type="checkbox" onchange="toggleChk('${esc(t.rowId)}',this.checked)"> Mark done</label></div>`;
+            }
+            if(t.isTxn){   // read-only card → opens the transaction file (can't be moved between columns)
+                return `<div class="card"><div class="t-body" onclick="location.href='yrl-transactions.html?txn=${esc(t.txnId)}'"><div class="t-title">${esc(t.title)}</div>${when?`<div class="t-meta"><span class="t-time">${esc(when)}</span></div>`:''}<span class="chip chip-txn" style="margin-top:6px;display:inline-flex;"><i class="fa-solid fa-folder-tree"></i> ${esc(t.txnTitle)}</span></div></div>`;
+            }
+            const opts=[['todo','To-Do'],['doing','In Progress'],['done','Done']].map(([v,l])=>`<option value="${v}"${k===v?' selected':''}>${l}</option>`).join('');
+            const contact=t.contact_id?`<span class="chip chip-contact" style="margin-top:6px;display:inline-flex;"><i class="fa-solid fa-user"></i> ${esc(contactName(t.contact_id))}</span>`:'';
+            const agent=(CANASSIGN&&t.agent_name)?`<span class="chip chip-agent" style="margin-top:6px;display:inline-flex;"><i class="fa-solid fa-user-tag"></i> ${esc(t.agent_name)}</span>`:'';
+            const mine=isMine(t);
+            if(!mine){   // another agent's task — read-only for the broker (just visibility + who it's tagged to)
+                return `<div class="card ro"><div class="t-body" style="cursor:default"><div class="t-title">${esc(t.title)}</div>${when?`<div class="t-meta"><span class="t-time">${esc(when)}</span></div>`:''}${agent}${contact}</div></div>`;
+            }
+            return `<div class="card" draggable="true" ondragstart="__taskDragStart(event,'${t.id}')" ondragend="__taskDragEnd(event)"><div class="t-body" onclick="openTask('${t.id}')"><div class="t-title">${esc(t.title)}</div>${when?`<div class="t-meta"><span class="t-time">${esc(when)}</span></div>`:''}${agent}${contact}</div>
+                <select class="card-move" onclick="event.stopPropagation()" onchange="moveTask('${t.id}',this.value)">${opts}</select></div>`;
+        }).join('') || '<div style="color:var(--text-muted);font-size:12px;text-align:center;padding:10px 0;">—</div>';
+        return `<div class="col" data-col="${k}" ondragover="__taskOver(event)" ondragleave="__taskLeave(event)" ondrop="__taskDrop(event,'${k}')"><div class="col-h"><span>${label}</span><span>${list.length}</span></div>${cards}</div>`;
+    }).join('')+'</div>';
+}
+
+/* ── task actions ── */
+async function toggleDone(id,done){
+    if(String(id).indexOf('txn-')===0) return;   // transaction deadlines aren't task rows
+    if(String(id).indexOf('htt-')===0){ return toggleChk(String(id).slice(4), done); }   // checklist item
+    try{ const {error}=await SB.from('agent_contact_tasks').update({done, board_status:done?'done':'todo'}).eq('id',id); if(error)throw error;
+        const t=TASKS.find(x=>x.id===id); if(t){t.done=done;t.board_status=done?'done':'todo';} render(); }
+    catch(e){ toast('Update failed: '+e.message,'error'); }
+}
+/* ── board drag & drop (regular tasks only; the <select> stays as a touch fallback) ── */
+let _dragTask=null;
+window.__taskDragStart=function(e,id){ _dragTask=id; try{ e.dataTransfer.effectAllowed='move'; e.dataTransfer.setData('text/plain',id); }catch(_){} };
+window.__taskDragEnd=function(){ _dragTask=null; document.querySelectorAll('.col.drop-hover').forEach(c=>c.classList.remove('drop-hover')); };
+window.__taskOver=function(e){ if(!_dragTask) return; e.preventDefault(); try{ e.dataTransfer.dropEffect='move'; }catch(_){}
+    const col=e.currentTarget; if(col && !col.classList.contains('drop-hover')) col.classList.add('drop-hover'); };
+window.__taskLeave=function(e){ const col=e.currentTarget; if(col && !col.contains(e.relatedTarget)) col.classList.remove('drop-hover'); };
+window.__taskDrop=function(e,status){ e.preventDefault(); const col=e.currentTarget; if(col) col.classList.remove('drop-hover');
+    const id=_dragTask||(e.dataTransfer&&e.dataTransfer.getData('text/plain')); _dragTask=null;
+    if(!id || String(id).indexOf('txn-')===0) return; moveTask(id,status); };
+async function moveTask(id,status){
+    if(String(id).indexOf('txn-')===0) return;   // transaction deadlines can't change columns
+    if(String(id).indexOf('htt-')===0){ if(status==='done') toggleChk(String(id).slice(4), true); return; }
+    const done=status==='done';
+    try{ const {error}=await SB.from('agent_contact_tasks').update({board_status:done?'done':status, done}).eq('id',id); if(error)throw error;
+        const t=TASKS.find(x=>x.id===id); if(t){t.board_status=done?'done':status;t.done=done;} render(); }
+    catch(e){ toast('Move failed: '+e.message,'error'); }
+}
+
+function fillContactSelect(sel,val){
+    sel.innerHTML='<option value="">— None —</option>'+CONTACTS.map(c=>`<option value="${esc(c.id)}">${esc(c.name||'(unnamed)')}</option>`).join('');
+    sel.value=val||'';
+}
+function openTask(id){
+    if(id && String(id).indexOf('htt-')===0){ var _ck=CHK.find(x=>x.id===id); if(_ck){ location.href='yrl-transactions.html?txn='+encodeURIComponent(_ck.txnId); } return; }
+    if(id && String(id).indexOf('txn-')===0){ var _tx=TXN.find(x=>x.id===id); if(_tx){ location.href='yrl-transactions.html?txn='+encodeURIComponent(_tx.txnId); } return; }
+    $('taskForm').reset(); $('t-id').value=''; $('t-delete').style.display='none'; $('taskTitle').textContent='New Task';
+    fillContactSelect($('t-contact'),'');
+    if(id){ const t=TASKS.find(x=>x.id===id); if(t){
+        $('taskTitle').textContent='Edit Task'; $('t-id').value=t.id; $('t-title').value=t.title||'';
+        $('t-date').value=t.due_date||''; $('t-time').value=t.due_time?String(t.due_time).slice(0,5):'';
+        $('t-priority').value=t.priority||''; fillContactSelect($('t-contact'),t.contact_id||''); $('t-notes').value=t.notes||'';
+        $('t-delete').style.display='';
+    }}
+    $('taskModal').classList.add('open'); setTimeout(()=>$('t-title').focus(),50);
+}
+function closeTask(){ $('taskModal').classList.remove('open'); }
+async function saveTask(e){
+    e.preventDefault();
+    const row={ title:$('t-title').value.trim(), due_date:$('t-date').value||null, due_time:$('t-time').value||null,
+        priority:$('t-priority').value||null, contact_id:$('t-contact').value||null, notes:$('t-notes').value.trim()||null };
+    if(!row.title) return;
+    try{
+        const id=$('t-id').value;
+        let res; if(id) res=await SB.from('agent_contact_tasks').update(row).eq('id',id);
+        else res=await SB.from('agent_contact_tasks').insert(row);
+        if(res.error) throw res.error;
+        closeTask(); await loadTasks(); render(); toast(id?'Saved':'Task added','success');
+    }catch(err){ toast('Save failed: '+err.message,'error'); }
+}
+async function deleteTask(){
+    const id=$('t-id').value; if(!id) return;
+    if(!confirm('Delete this task?')) return;
+    try{ const {error}=await SB.from('agent_contact_tasks').delete().eq('id',id); if(error)throw error;
+        closeTask(); await loadTasks(); render(); toast('Deleted','success'); }
+    catch(e){ toast('Delete failed: '+e.message,'error'); }
+}
+
+/* ── assign to agent (owner/admin) ── */
+async function loadRoster(){
+    if(ROSTER.length) return;
+    try{ const {data}=await SB.from('hub_content').select('content_value').eq('content_key','yrl-agent-directory').limit(1);
+        const arr=(data&&data[0]&&data[0].content_value)||[];
+        ROSTER=(Array.isArray(arr)?arr:[]).filter(a=>a.email&&a.email.trim()&&a.email.trim().toLowerCase()!==EMAIL.toLowerCase())
+            .map(a=>({name:a.name||a.email,email:a.email.trim()})).sort((a,b)=>a.name.localeCompare(b.name));
+    }catch(e){ ROSTER=[]; }
+}
+async function openAssign(){
+    await loadRoster();
+    $('assignForm').reset(); $('a-status').textContent='';
+    $('a-agent').innerHTML='<option value="">Choose an agent…</option>'+ROSTER.map(a=>`<option value="${esc(a.email)}">${esc(a.name)}</option>`).join('');
+    $('assignModal').classList.add('open'); setTimeout(()=>$('a-agent').focus(),50);
+}
+function closeAssign(){ $('assignModal').classList.remove('open'); }
+async function saveAssign(e){
+    e.preventDefault();
+    const st=$('a-status'); st.textContent='Assigning…'; st.style.color='var(--text-muted)';
+    try{
+        const {data,error}=await SB.rpc('assign_task_to_agent',{
+            p_agent_email:$('a-agent').value, p_title:$('a-title').value.trim(),
+            p_due_date:$('a-date').value||null, p_due_time:$('a-time').value||null,
+            p_notes:$('a-notes').value.trim()||null, p_priority:$('a-priority').value||null });
+        if(error) throw error;
+        closeAssign(); toast('Assigned to '+((data&&data.assigned_to)||'agent')+' ✓','success');
+    }catch(err){ st.textContent=(err.message||'Failed').replace(/^.*?:\s*/,''); st.style.color='#dc2626'; }
+}
+
+let _tt;
+function toast(msg,type){const t=$('toast');t.textContent=msg;t.className='';if(type)t.classList.add(type);void t.offsetWidth;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),2600);}
+</script>
+<script src="back-link.js?v=20260917"></script>
+<script src="mobile-tabs.js?v=20260927a" defer></script>
+</body>
+</html>

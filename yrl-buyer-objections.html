@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buyer Objection Handlers — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --red: #c03926; --red-light: #d94a35; --red-dark: #9e2e1e;
+            --bg: #f2f4f7; --surface: #ffffff; --surface-2: #f7f8fa; --surface-3: #eef0f3;
+            --border: #e2e5ea; --text: #1a1d22; --text-sec: #5a6270; --text-muted: #9ca3af;
+            --radius: 12px; --radius-lg: 20px; --shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+        a { text-decoration: none; color: inherit; }
+
+        .sub-header {
+            background: linear-gradient(150deg, #a82f1e 0%, #c03926 45%, #9e2e1e 100%);
+            padding: 28px 20px; border-bottom: 4px solid rgba(0,0,0,0.15);
+            position: relative; overflow: hidden;
+        }
+        .sub-header::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
+            background-size: 28px 28px; pointer-events: none;
+        }
+        .sub-header-inner {
+            max-width: 800px; margin: 0 auto; display: flex; align-items: center;
+            justify-content: space-between; position: relative; z-index: 1;
+        }
+        .sub-header-left { display: flex; align-items: center; gap: 20px; }
+        .sub-header-logo { max-width: 100px; background: #fff; border-radius: 10px; padding: 8px 14px; box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
+        .sub-header-text h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(24px, 5vw, 36px); letter-spacing: 2px; color: #fff; line-height: 1; }
+        .sub-header-text p { color: rgba(255,255,255,0.7); font-size: 13px; margin-top: 4px; }
+        .back-btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35);
+            color: #fff; padding: 9px 18px; border-radius: 100px; font-size: 12.5px;
+            font-weight: 600; transition: all 0.2s; white-space: nowrap;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .main { max-width: 800px; margin: 0 auto; padding: 40px 20px 90px; }
+
+        .intro-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); padding: 28px 32px; margin-bottom: 32px;
+        }
+        .intro-card h2 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .intro-card p { font-size: 14px; color: var(--text-sec); line-height: 1.7; }
+
+        /* Quick jump nav */
+        .jump-nav {
+            display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px;
+        }
+        .jump-btn {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 100px;
+            padding: 8px 16px; font-size: 13px; font-weight: 600; color: var(--text-sec);
+            cursor: pointer; transition: all 0.2s; font-family: inherit;
+        }
+        .jump-btn:hover, .jump-btn.active {
+            border-color: var(--red); color: var(--red); background: rgba(192,57,38,0.04);
+        }
+
+        /* Objection card */
+        .objection {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); margin-bottom: 24px; overflow: hidden;
+        }
+        .objection-header {
+            padding: 20px 28px; border-bottom: 1px solid var(--border);
+            cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+            transition: background 0.2s;
+        }
+        .objection-header:hover { background: var(--surface-2); }
+        .objection-header h3 {
+            font-size: 17px; font-weight: 700; color: var(--text);
+            display: flex; align-items: center; gap: 12px;
+        }
+        .objection-header h3 i { color: var(--red); font-size: 20px; }
+        .objection-toggle {
+            color: var(--text-muted); font-size: 16px; transition: transform 0.3s;
+        }
+        .objection.open .objection-toggle { transform: rotate(180deg); }
+        .objection-body {
+            max-height: 0; overflow: hidden; transition: max-height 0.4s ease;
+        }
+        .objection.open .objection-body { max-height: 2000px; }
+        .objection-content { padding: 24px 28px; }
+
+        .response {
+            margin-bottom: 24px; padding-bottom: 24px;
+            border-bottom: 1px solid var(--surface-3);
+        }
+        .response:last-child { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+        .response-label {
+            font-size: 11px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--red); margin-bottom: 8px;
+        }
+        .response-alt {
+            font-size: 11px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--text-muted); margin-bottom: 8px;
+        }
+        .say {
+            background: rgba(192,57,38,0.04); border-left: 3px solid var(--red);
+            padding: 14px 18px; border-radius: 0 8px 8px 0;
+            font-size: 15px; line-height: 1.8; color: var(--text);
+        }
+        .tip {
+            margin-top: 12px; font-size: 13px; color: var(--text-muted);
+            font-style: italic; padding-left: 18px;
+            border-left: 2px solid var(--surface-3);
+        }
+
+        .isolate-box {
+            background: var(--surface-2); border-radius: var(--radius);
+            padding: 14px 18px; margin-bottom: 16px;
+        }
+        .isolate-box strong { color: var(--red); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .isolate-box p { font-size: 14px; color: var(--text-sec); margin-top: 4px; line-height: 1.6; }
+
+        .footer {
+            text-align: center; padding: 40px 20px 32px; color: var(--text-muted); font-size: 12px;
+        }
+        .footer-logo { max-width: 130px; margin: 0 auto 14px; opacity: 0.5; }
+
+        @media (max-width: 600px) {
+            .sub-header-inner { flex-direction: column; gap: 16px; text-align: center; }
+            .sub-header-left { flex-direction: column; }
+            .objection-content { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="sub-header">
+    <div class="sub-header-inner">
+        <div class="sub-header-left">
+            <img src="https://wdvolamasztetwpitbwg.supabase.co/storage/v1/object/public/hub-files/brand/yrl-logo-color.png"
+                 alt="Your Realty Link" class="sub-header-logo">
+            <div class="sub-header-text">
+                <h1>Buyer Objection Handlers</h1>
+                <p>Confident responses to every common buyer objection</p>
+            </div>
+        </div>
+        <a href="yrl-client-buyers.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Buyer Tools</a>
+    </div>
+</header>
+
+<main class="main">
+
+    <div class="intro-card">
+        <h2>The Isolate Technique</h2>
+        <p>Before responding to any objection, isolate it first: <strong>"So what you're saying is [restate their concern]. Other than that, is there anything else holding you back?"</strong> This ensures you're solving the real problem &mdash; not chasing a smokescreen while the actual concern stays hidden.</p>
+    </div>
+
+    <div class="jump-nav">
+        <button class="jump-btn active" onclick="showAll()">All</button>
+        <button class="jump-btn" onclick="jumpTo('sign-nothing')">Won't Sign</button>
+        <button class="jump-btn" onclick="jumpTo('no-agent')">Don't Need Agent</button>
+        <button class="jump-btn" onclick="jumpTo('other-agent')">Have an Agent</button>
+        <button class="jump-btn" onclick="jumpTo('commission')">Commission</button>
+        <button class="jump-btn" onclick="jumpTo('think-about-it')">Think About It</button>
+        <button class="jump-btn" onclick="jumpTo('listing-agent')">Listing Agent</button>
+    </div>
+
+    <!-- OBJECTION 1: Won't Sign Before Seeing Homes -->
+    <div class="objection open" id="sign-nothing">
+        <div class="objection-header" onclick="toggleObj(this)">
+            <h3><i class="fa-solid fa-file-signature"></i> "I don't want to sign anything before I see homes"</h3>
+            <i class="fa-solid fa-chevron-down objection-toggle"></i>
+        </div>
+        <div class="objection-body">
+            <div class="objection-content">
+                <div class="isolate-box">
+                    <strong>Isolate First</strong>
+                    <p>"So what you're saying is you'd feel more comfortable seeing homes before signing an agreement. Other than that, is there anything else holding you back from working together?"</p>
+                </div>
+                <div class="response">
+                    <div class="response-label">Response</div>
+                    <div class="say">
+                        I completely understand that &mdash; and honestly, that's the most common question I get. Here's the thing: as of August 2024, every agent in Indiana is required by law to have a written agreement with you before showing homes. It's not something I invented &mdash; it's an industry-wide change designed to protect buyers like you.
+                        <br><br>
+                        Think of it this way: would you hire a lawyer without knowing their fee? Or a contractor without a written estimate? This agreement simply puts in writing what I'll do for you and what it costs. No surprises.
+                        <br><br>
+                        And here's what most buyers don't realize &mdash; in most transactions, the seller offers concessions that cover your agent's compensation. So you're getting professional representation, and the seller is often paying for it.
+                        <br><br>
+                        Let me walk you through the agreement &mdash; it's two pages. I think once you see how simple it is, you'll feel a lot more comfortable.
+                    </div>
+                    <div class="tip">Stay calm and confident. This is the #1 objection you'll face in 2026. If you fumble this one, you lose the client. Practice it until it's natural.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OBJECTION 2: Don't Want to Pay an Agent -->
+    <div class="objection" id="no-agent">
+        <div class="objection-header" onclick="toggleObj(this)">
+            <h3><i class="fa-solid fa-magnifying-glass"></i> "I don't want to pay an agent &mdash; I can find homes myself online"</h3>
+            <i class="fa-solid fa-chevron-down objection-toggle"></i>
+        </div>
+        <div class="objection-body">
+            <div class="objection-content">
+                <div class="isolate-box">
+                    <strong>Isolate First</strong>
+                    <p>"So what you're saying is you feel like you can handle the home search on your own and you're not sure you need an agent. Other than that, is there anything else holding you back?"</p>
+                </div>
+                <div class="response">
+                    <div class="response-label">Response</div>
+                    <div class="say">
+                        You absolutely can search for homes online &mdash; and you should! Zillow, Realtor.com, they're great tools. But here's what they can't do for you:
+                        <br><br>
+                        They can't tell you that the house on Oak Street has foundation issues that the photos don't show. They can't negotiate $15,000 off the price because the comparable sales don't support the asking price. They can't review a 40-page purchase agreement to make sure you're protected. And they can't coordinate inspections, appraisals, and title work to make sure you actually get to closing.
+                        <br><br>
+                        Finding the home is maybe 20% of what I do. The other 80% is protecting you &mdash; your money, your timeline, and your interests &mdash; from contract to closing. That's where the real value is.
+                        <br><br>
+                        And like I mentioned, in most cases the seller offers concessions that cover my compensation. So you're getting all of that for what often costs you nothing out of pocket.
+                    </div>
+                    <div class="tip">Don't be defensive. Acknowledge that online search is great &mdash; then pivot to the 80% they can't see.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OBJECTION 3: Already Working with Another Agent -->
+    <div class="objection" id="other-agent">
+        <div class="objection-header" onclick="toggleObj(this)">
+            <h3><i class="fa-solid fa-user-group"></i> "We're already working with another agent"</h3>
+            <i class="fa-solid fa-chevron-down objection-toggle"></i>
+        </div>
+        <div class="objection-body">
+            <div class="objection-content">
+                <div class="isolate-box">
+                    <strong>Isolate First</strong>
+                    <p>"So what you're saying is you already have someone helping you. Other than that, is there anything else that would keep you from considering us?"</p>
+                </div>
+                <div class="response">
+                    <div class="response-label">Opening</div>
+                    <div class="say">
+                        That's great &mdash; having an agent you trust is important. Just out of curiosity, have you signed a buyer compensation agreement with them?
+                    </div>
+                </div>
+                <div class="response">
+                    <div class="response-alt">If they say NO</div>
+                    <div class="say">
+                        Then technically you're not committed yet. I'm not here to badmouth anyone &mdash; but I'd love the chance to show you what Your Realty Link brings to the table. Sometimes it's worth comparing before you commit. Would you be open to a quick 20-minute meeting?
+                    </div>
+                </div>
+                <div class="response">
+                    <div class="response-alt">If they say YES</div>
+                    <div class="say">
+                        I respect that completely. A signed agreement means you've made a commitment, and I wouldn't want someone to do that to me either. If things ever change or when that agreement expires, I'd love to be your next call. Can I stay in touch?
+                    </div>
+                    <div class="tip">If they have a signed agreement, do NOT try to poach them. It's unethical and violates MIBOR rules. Be professional &mdash; plant the seed for later.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OBJECTION 4: Commission Too High -->
+    <div class="objection" id="commission">
+        <div class="objection-header" onclick="toggleObj(this)">
+            <h3><i class="fa-solid fa-percent"></i> "Your commission is too high / Another agent said they'd do it for less"</h3>
+            <i class="fa-solid fa-chevron-down objection-toggle"></i>
+        </div>
+        <div class="objection-body">
+            <div class="objection-content">
+                <div class="isolate-box">
+                    <strong>Isolate First</strong>
+                    <p>"So what you're saying is the compensation is a concern. Other than that, is there anything else holding you back from working with me?"</p>
+                </div>
+                <div class="response">
+                    <div class="response-label">Response</div>
+                    <div class="say">
+                        I appreciate you bringing that up &mdash; compensation is an important conversation. Let me ask you this: if you needed heart surgery, would you choose the cheapest surgeon? Of course not. You'd want the one with the best track record.
+                        <br><br>
+                        Real estate is the same way. The difference between a good agent and a discount agent can be tens of thousands of dollars in your purchase price. I've seen buyers represented by discount agents miss inspection issues, overpay by $20,000, or lose their earnest deposit because someone missed a deadline.
+                        <br><br>
+                        My compensation reflects the level of service, expertise, and negotiation skill I bring to the table. And I earn every dollar of it &mdash; because my job is to save you more than I cost you.
+                        <br><br>
+                        Would you rather save $2,000 on commission and overpay $15,000 on the house? Or invest in an agent who negotiates the best possible deal for you?
+                    </div>
+                    <div class="tip">Never apologize for your compensation. If you don't believe you're worth it, they won't either.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OBJECTION 5: Want to Think About It -->
+    <div class="objection" id="think-about-it">
+        <div class="objection-header" onclick="toggleObj(this)">
+            <h3><i class="fa-solid fa-brain"></i> "We want to think about it"</h3>
+            <i class="fa-solid fa-chevron-down objection-toggle"></i>
+        </div>
+        <div class="objection-body">
+            <div class="objection-content">
+                <div class="isolate-box">
+                    <strong>Isolate First</strong>
+                    <p>"So what you're saying is you need a little more time before deciding. Other than that, is there anything else that's giving you pause?"</p>
+                </div>
+                <div class="response">
+                    <div class="response-label">Response</div>
+                    <div class="say">
+                        Of course &mdash; this is an important decision and you should feel 100% comfortable. Can I ask what specifically you'd like to think about? Is it the agreement itself, or is there something about working together that you're not sure about?
+                    </div>
+                    <div class="tip">Listen to their answer, then address the specific concern they raise.</div>
+                </div>
+                <div class="response">
+                    <div class="response-alt">After they share their concern</div>
+                    <div class="say">
+                        I completely understand. Here's what I'd suggest &mdash; homes in your target area are moving fast right now. The average days on market is under two weeks. While you're thinking it over, great homes are coming and going. I don't want you to miss out on the right home because we waited too long to get started.
+                        <br><br>
+                        Why don't we go ahead and sign the agreement today so we're ready to move when the right home comes along? That way you're not scrambling to get paperwork done when a home hits the market tomorrow morning.
+                    </div>
+                </div>
+                <div class="response">
+                    <div class="response-alt">If they still hesitate</div>
+                    <div class="say">
+                        Tell you what &mdash; take tonight to talk it over. I'll follow up tomorrow at a time that works for you. But I want you to know that I'm excited to work with you, and I'm confident I can find you the right home.
+                    </div>
+                    <div class="tip">"Think about it" usually means they have an unspoken objection. Your job is to find it. Ask questions until the real concern surfaces.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OBJECTION 6: Why Can't Listing Agent Show Us -->
+    <div class="objection" id="listing-agent">
+        <div class="objection-header" onclick="toggleObj(this)">
+            <h3><i class="fa-solid fa-house-chimney"></i> "Why can't the listing agent just show us the home?"</h3>
+            <i class="fa-solid fa-chevron-down objection-toggle"></i>
+        </div>
+        <div class="objection-body">
+            <div class="objection-content">
+                <div class="isolate-box">
+                    <strong>Isolate First</strong>
+                    <p>"So what you're saying is you're wondering why you need your own agent when the listing agent is already there. Other than that, is there anything else holding you back?"</p>
+                </div>
+                <div class="response">
+                    <div class="response-label">Response</div>
+                    <div class="say">
+                        Great question. The listing agent can show you the home &mdash; but here's what you need to understand: the listing agent works for the seller. Their job is to get the highest price and best terms for the seller, not for you.
+                        <br><br>
+                        That's like going to court and asking the other side's lawyer to represent you too. Would you do that?
+                        <br><br>
+                        When you have your own agent &mdash; me &mdash; I work exclusively for you. I review the property disclosures to find issues. I pull comparable sales to make sure you're not overpaying. I negotiate repairs after the inspection. I make sure every deadline is met so you don't lose your earnest money.
+                        <br><br>
+                        The listing agent is going to do what's best for their client. I'm going to do what's best for you. That's a big difference when you're spending $300,000 or more on a home.
+                    </div>
+                    <div class="tip">This is a great objection to get because the answer is so clear-cut. The dual agency / conflict of interest angle resonates with every buyer.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<footer class="footer">
+    <img src="https://wdvolamasztetwpitbwg.supabase.co/storage/v1/object/public/hub-files/brand/yrl-logo-color.png"
+         alt="Your Realty Link" class="footer-logo" onerror="this.style.display='none'">
+    <p>&copy; 2026 Your Realty Link &nbsp;&middot;&nbsp; All Rights Reserved</p>
+</footer>
+
+<script>
+function toggleObj(header) {
+    header.closest('.objection').classList.toggle('open');
+}
+
+function jumpTo(id) {
+    document.querySelectorAll('.jump-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    const el = document.getElementById(id);
+    if (el) {
+        el.classList.add('open');
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+function showAll() {
+    document.querySelectorAll('.jump-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    document.querySelectorAll('.objection').forEach(o => o.classList.add('open'));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>

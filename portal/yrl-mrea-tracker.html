@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>My Scorecard — The Millionaire Agent Path</title>
+<script src="portal-auth.js"></script>
+<script src="embed-mode.js?v=20260927b"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="tiger-shell.css?v=20260927b">
+<link rel="stylesheet" href="tiger-module.css">
+<link rel="stylesheet" href="mrea-module.css">
+<style>
+.sc-wrap{padding:6px 34px 70px;max-width:940px}
+.sc-sec{margin:26px 0}
+.sc-sec > h2{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1.2px;margin:0 0 4px;color:#12312e}
+.sc-sec > p.sub{margin:0 0 14px;font-size:13px;color:#9ca3af}
+.sc-empty{background:#f7f8fa;border:1px dashed #d0d4da;border-radius:12px;padding:20px;text-align:center}
+.sc-empty p{margin:0 0 10px;font-size:13.5px;color:#5a6270}
+.sc-empty a{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:#0f766e}
+.sc-src{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;letter-spacing:.05em;
+  text-transform:uppercase;color:#0f766e;background:rgba(15,118,110,.09);padding:3px 8px;border-radius:99px;margin-left:8px}
+.sc-hero{display:flex;gap:22px;align-items:center;flex-wrap:wrap;background:#0c2523;color:#eaf5f3;
+  border-radius:18px;padding:22px 26px;margin:14px 0 8px}
+.sc-hero .n{font-family:'Bebas Neue',sans-serif;font-size:58px;line-height:.85;color:#14b8a6}
+.sc-hero .n small{display:block;font-family:'Inter';font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#8fb3ae;font-weight:700;margin-top:6px}
+.sc-hero .t{flex:1;min-width:220px}
+.sc-hero .t h3{margin:0 0 5px;font-size:18px}
+.sc-hero .t p{margin:0;font-size:13.5px;color:#bcd6d2;line-height:1.5}
+.sc-prog{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin:2px 0 20px}
+.sc-prog .bar{flex:1;min-width:180px;height:10px;border-radius:99px;background:#eef0f3;overflow:hidden}
+.sc-prog .bar > i{display:block;height:100%;background:linear-gradient(90deg,#0f766e,#14b8a6);width:0;transition:width .4s}
+.sc-prog .lbl{font-size:12.5px;font-weight:700;color:#5a6270}
+@media(max-width:640px){.sc-wrap{padding:6px 18px 70px}}
+@media print{.sc-hero{background:#fff !important;color:#000 !important;border:1px solid #999}.sc-hero .n{color:#000 !important}}
+</style>
+</head>
+<body class="tiger-shell mrea-shell" data-tiger-page="tracker" data-tiger-ns="mrea" data-tiger-program="Millionaire Agent Path">
+
+<button class="tiger-menu-btn" id="tigerMenuBtn" aria-label="Modules"><i class="fa-solid fa-bars"></i></button>
+<aside class="tiger-side" id="tigerSide"></aside>
+<div class="tiger-backdrop" id="tigerBackdrop"></div>
+
+<main class="tiger-main">
+
+<div class="reader-topbar">
+  <a class="btn btn-ghost" href="yrl-mrea-training.html"><i class="fa-solid fa-arrow-left"></i> <span>The Path</span></a>
+  <a class="btn btn-ghost" href="hub.html"><i class="fa-solid fa-house"></i> <span>Hub</span></a>
+  <div class="spacer"></div>
+  <button class="btn btn-ghost" onclick="window.print()"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
+</div>
+
+<header class="reader-head">
+  <p class="reader-eyebrow">The Millionaire Agent Path <span class="chip">Scorecard</span></p>
+  <h1 class="reader-title">My Scorecard</h1>
+  <p class="reader-lede">Every number you have worked out across the eighteen modules, on one page. Nothing here is typed in — it all comes from the modules, so if a section is empty it means that module is still waiting for you.</p>
+  <p class="reader-who">For <b data-tiger-name>Agent</b> · <span data-tiger-date></span></p>
+</header>
+
+<div class="sc-wrap">
+
+  <div class="sc-prog">
+    <span class="lbl" id="progLbl">Loading…</span>
+    <span class="bar"><i id="progBar"></i></span>
+  </div>
+
+  <div id="scHero"></div>
+
+  <div class="sc-sec">
+    <h2>Your Economic Model <span class="sc-src">Module 2.1</span></h2>
+    <p class="sub">What you have to produce to keep what you want.</p>
+    <div id="scEcon"></div>
+  </div>
+
+  <div class="sc-sec">
+    <h2>Your Database <span class="sc-src">Modules 2.4 &amp; 3.1</span></h2>
+    <p class="sub">The people who produce it, and the gap between what you have and what you need.</p>
+    <div id="scDb"></div>
+  </div>
+
+  <div class="sc-sec">
+    <h2>Your Conversion Rates <span class="sc-src">Module 2.2</span></h2>
+    <p class="sub">The variable that decides how many appointments your income actually requires.</p>
+    <div id="scConv"></div>
+  </div>
+
+  <div class="sc-sec">
+    <h2>Your Marketing Machine <span class="sc-src">Modules 3.2 – 3.6</span></h2>
+    <p class="sub">What is built, and what is still on paper.</p>
+    <div id="scMachine"></div>
+  </div>
+
+  <div class="sc-sec">
+    <h2>Your Leverage <span class="sc-src">Phase 4</span></h2>
+    <p class="sub">Where you are on the seven levels, and what the next move is.</p>
+    <div id="scLev"></div>
+  </div>
+
+  <div class="sc-sec">
+    <h2>Module progress</h2>
+    <p class="sub">Eighteen modules. Work them in order — each feeds the next.</p>
+    <div class="mrea-tablewrap"><table class="mrea-table"><thead><tr>
+      <th>Module</th><th>Name</th><th class="num" style="width:110px">Status</th>
+    </tr></thead><tbody id="scMods"></tbody></table></div>
+  </div>
+
+</div>
+</main>
+
+<script src="hub-data.js"></script>
+<script src="mrea-nav.js"></script>
+<script src="mrea-kit.js"></script>
+<script>
+(function(){
+  var K=MREA;
+  function money(n){return K.money(n);}
+  function empty(host,msg,mod){
+    var href=(window.mreaHref&&window.mreaHref(mod))||'yrl-mrea-training.html';
+    document.getElementById(host).innerHTML =
+      '<div class="sc-empty"><p>'+msg+'</p><a href="'+href+'">Open Module '+mod+' <i class="fa-solid fa-arrow-right"></i></a></div>';
+  }
+  function stats(host,items){
+    document.getElementById(host).innerHTML='<div class="mrea-stats">'+items.map(function(i){
+      return '<div class="mrea-stat'+(i[3]?' '+i[3]:'')+'"><span class="sv">'+i[0]+'</span><span class="sl">'+i[1]+'</span>'+
+             (i[2]?'<span class="sn">'+i[2]+'</span>':'')+'</div>';
+    }).join('')+'</div>';
+  }
+  function verdictHTML(cls,head,paras){
+    return '<div class="mrea-verdict'+(cls?' is-'+cls:'')+'"><p class="vt">What this means</p><h3 class="vh">'+head+'</h3>'+
+      paras.map(function(p){return '<p class="vp">'+p+'</p>';}).join('')+'</div>';
+  }
+
+  function paintEcon(m){
+    if(!m.gci_needed){ empty('scEcon','Work out what you need to produce and everything else on this page gets easier.','2.1'); return; }
+    stats('scEcon',[
+      [money(m.net_goal||0),'Net income goal',''],
+      [money(m.gci_needed),'Gross commission needed',''],
+      [K.cnt(m.sides_needed||0,0),'Closed sides a year', m.sides_needed?K.cnt(m.sides_needed/12,1)+'/month':''],
+      [K.cnt(m.listings_taken_mo||0,1),'Listings to take a month',''],
+      [K.cnt(m.appts_week||0,1),'Appointments a week','the number that matters','hot']
+    ]);
+  }
+
+  function paintDb(m){
+    if(!m.met_needed && !m.met_now){ empty('scDb','Size the database your income actually requires.','2.4'); return; }
+    var metNow=m.met_now||0, metNeed=m.met_needed||0, hmNow=m.hm_now||0, hmNeed=m.hm_needed||0;
+    var gapMet=Math.max(0,metNeed-metNow), gapHM=Math.max(0,hmNeed-hmNow);
+    stats('scDb',[
+      [K.cnt(metNow,0),'Met contacts today', metNeed?'need '+K.cnt(metNeed,0):''],
+      [K.cnt(hmNow,0),"Haven't Met today", hmNeed?'need '+K.cnt(hmNeed,0):''],
+      [K.cnt(gapMet+gapHM,0),'Contacts short', (gapMet+gapHM)>0?'':'you&rsquo;re there',(gapMet+gapHM)>0?'hot':'good'],
+      [m.daily_adds?K.cnt(Math.max(0,m.daily_adds),1):'—','Names to add per day','']
+    ]);
+    var extra='';
+    if(m.touch_total && m.touch_total!==33){
+      extra = verdictHTML('warn','Your 33 Touch year totals '+m.touch_total+', not 33',
+        ['Go back to <b>Module 3.3</b> and adjust the mix until it lands on 33. Twelve touches a year will not hold the top spot in anyone&rsquo;s mind — and that top spot is the whole point.']);
+    } else if((gapMet+gapHM)>0){
+      extra = verdictHTML('warn',K.cnt(gapMet+gapHM,0)+' contacts short of your goal',
+        ['No amount of skill closes this gap — there are simply not enough people in the database to produce the closings you need.',
+         m.daily_adds?'Adding about <b>'+K.cnt(m.daily_adds,1)+' names every working day</b> closes it inside a year.':'Set a daily add target in Module 2.4.']);
+    } else if(metNow>0){
+      extra = verdictHTML('ok','Your database is big enough',
+        ['If the closings are not showing up, size is not the problem — frequency is. Nothing in a database produces anything until it is on a touch schedule.']);
+    }
+    document.getElementById('scDb').innerHTML += extra;
+  }
+
+  function paintConv(m){
+    var rows=[['Lead → appointment','conv_lead_to_appt',25],['Seller appt → listing','conv_appt_to_listing',80],
+              ['Listing → sold','conv_listing_to_sold',65],['Buyer appt → BRA','conv_appt_to_bra',65],
+              ['BRA → closed','conv_bra_to_closed',80]];
+    var any=rows.some(function(r){return m[r[1]]!==undefined;});
+    if(!any){ empty('scConv','Find your real conversion rates — they decide how hard the rest of the model has to work.','2.2'); return; }
+    var html='<div class="mrea-tablewrap"><table class="mrea-table"><thead><tr><th>Conversion</th><th class="num">Yours</th><th class="num">Benchmark</th><th class="num">Gap</th></tr></thead><tbody>';
+    rows.forEach(function(r){
+      var v=m[r[1]];
+      if(v===undefined){ html+='<tr><td>'+r[0]+'</td><td class="num">—</td><td class="num">'+r[2]+'%</td><td class="num">—</td></tr>'; return; }
+      var gap=v-r[2], col=gap>=0?'#2e9e5b':(gap>=-15?'#c2820b':'#c03926');
+      html+='<tr><td>'+r[0]+'</td><td class="num out">'+v+'%</td><td class="num">'+r[2]+'%</td>'+
+            '<td class="num" style="color:'+col+';font-weight:800">'+(gap>=0?'+':'')+K.round(gap,0)+' pts</td></tr>';
+    });
+    html+='</tbody></table></div>';
+    if(m.weakest_conv) html+=verdictHTML('','Weakest link: '+m.weakest_conv,
+      ['Fix this one alone for thirty days. Every point you add here removes appointments from your weekly number — that is cheaper than buying more leads, and it lasts.']);
+    document.getElementById('scConv').innerHTML=html;
+  }
+
+  function paintMachine(m,prog){
+    var built=[];
+    built.push(['8&times;8 sequence', m.eight_by_eight_planned>=8, (m.eight_by_eight_planned||0)+'/8 weeks planned','3.2']);
+    built.push(['33 Touch year', m.touch_total===33, (m.touch_total||0)+'/33 touches','3.3']);
+    built.push(['12 Direct farm', !!m.farm_size, m.farm_size?K.cnt(m.farm_size,0)+' addresses':'no farm yet','3.4']);
+    built.push(['Lead source tracking', !!m.cost_per_closing, m.cost_per_closing?money(m.cost_per_closing)+' per closing':'not traced yet','3.5']);
+    built.push(['Listings as a lead engine', m.listing_buyer_gap===0, (m.listing_buyer_gap>0?K.cnt(m.listing_buyer_gap,0)+' buyers left on the table':'pulling their weight'),'3.6']);
+    var html='<div class="mrea-tablewrap"><table class="mrea-table"><thead><tr><th>Programme</th><th>Status</th><th class="num" style="width:96px"></th></tr></thead><tbody>';
+    built.forEach(function(b){
+      var done=b[1];
+      html+='<tr><td><b>'+b[0]+'</b></td><td style="color:'+(done?'#2e9e5b':'#c2820b')+';font-weight:700">'+
+        (done?'<i class="fa-solid fa-check"></i> ':'<i class="fa-solid fa-circle-half-stroke"></i> ')+b[2]+
+        '</td><td class="num"><a href="'+((window.mreaHref&&window.mreaHref(b[3]))||'#')+'" style="color:#0f766e;font-weight:700">'+b[3]+' <i class="fa-solid fa-arrow-right" style="font-size:11px"></i></a></td></tr>';
+    });
+    html+='</tbody></table></div>';
+    if(m.touch_budget||m.farm_cost){
+      var t=(m.touch_budget||0)+(m.farm_cost||0);
+      html+='<p class="mrea-note"><i class="fa-solid fa-circle-info"></i> Your planned programmes run about <b>'+money(t)+'</b> a year in touches'+
+            (m.gci_needed?' — that is '+K.round(t/m.gci_needed*100,1)+'% of your GCI goal, against a model of about 10%':'')+'.</p>';
+    }
+    document.getElementById('scMachine').innerHTML=html;
+  }
+
+  function paintLev(m){
+    if(!m.seventh_level && !m.next_hire){ empty('scLev','Find out where you are on the seven levels and what the next hire is.','4.3'); return; }
+    var html='';
+    if(m.seventh_level){
+      html+='<div class="mrea-stats"><div class="mrea-stat"><span class="sv">'+m.seventh_level+'</span><span class="sl">Of seven levels</span>'+
+            (m.hours_week?'<span class="sn">'+K.cnt(m.hours_week,0)+' hrs/week</span>':'')+'</div>'+
+            (m.last_candidate_score?'<div class="mrea-stat"><span class="sv">'+m.last_candidate_score+'</span><span class="sl">Last candidate score</span><span class="sn">out of 10</span></div>':'')+
+            '</div>';
+    }
+    if(m.next_hire) html+=verdictHTML('','Next hire: '+m.next_hire,
+      ['Remember the order — administrative help before sales help. Salespeople are generally poor at building systems, and half of that first role is systems.']);
+    document.getElementById('scLev').innerHTML=html;
+  }
+
+  function paintHero(m,pct){
+    var host=document.getElementById('scHero');
+    if(m.appts_week){
+      host.innerHTML='<div class="sc-hero"><div class="n">'+K.cnt(m.appts_week,1)+'<small>Appts / week</small></div>'+
+        '<div class="t"><h3>This is your number</h3><p>'+
+        (m.net_goal?'To keep <b>'+money(m.net_goal)+'</b> you need about <b>'+K.cnt(m.appts_week,1)+' appointments a week</b>':'About '+K.cnt(m.appts_week,1)+' appointments a week')+
+        (m.listings_taken_mo?' and <b>'+K.cnt(m.listings_taken_mo,1)+' listings taken a month</b>':'')+
+        '. Everything else on this page exists to produce them.</p></div></div>';
+    } else if(m.three_l_bottleneck){
+      host.innerHTML='<div class="sc-hero"><div class="n" style="font-size:40px">'+m.three_l_bottleneck+'<small>Your bottleneck</small></div>'+
+        '<div class="t"><h3>Start here</h3><p>Module 1.1 says '+m.three_l_bottleneck+' is what is holding you back. Next, work out your economic model in Module 2.1 so you know what you have to produce.</p></div></div>';
+    } else {
+      host.innerHTML='<div class="sc-hero"><div class="n" style="font-size:40px">'+pct+'%<small>Path complete</small></div>'+
+        '<div class="t"><h3>Nothing here yet</h3><p>Start with <b>Module 1.1</b> to find your bottleneck, then <b>Module 2.1</b> to turn your income goal into a weekly number. This page fills itself in as you go.</p></div></div>';
+    }
+  }
+
+  function paintMods(prog){
+    var html='';
+    (window.mreaPhases||[]).forEach(function(ph){
+      ph.mods.forEach(function(mod){
+        var p=prog[mod.id]||{};
+        var s = p.done ? '<span style="color:#2e9e5b;font-weight:800"><i class="fa-solid fa-check"></i> Done</span>'
+              : (p.pct>0 ? '<span style="color:#c2820b;font-weight:800">'+p.pct+'%</span>'
+              : '<span style="color:#9ca3af">Not started</span>');
+        html+='<tr><td><b>'+mod.id+'</b></td><td><a href="'+mod.href+'" style="color:#0f766e">'+mod.name+'</a></td><td class="num">'+s+'</td></tr>';
+      });
+    });
+    document.getElementById('scMods').innerHTML=html;
+  }
+
+  async function boot(){
+    var email=K.email();
+    var pkey='mrea:v1:progress:'+email;
+    var prog={}; try{prog=JSON.parse(localStorage.getItem(pkey))||{};}catch(e){}
+    if(typeof loadHubContent==='function'){
+      var c=await K.withTimeout(loadHubContent(pkey), 2500, null);
+      if(c && typeof c==='object') prog=c;
+    }
+    var total=0,done=0;
+    (window.mreaPhases||[]).forEach(function(ph){ph.mods.forEach(function(mm){total++;if(prog[mm.id]&&prog[mm.id].done)done++;});});
+    var pct= total?Math.round(done/total*100):0;
+    document.getElementById('progBar').style.width=pct+'%';
+    document.getElementById('progLbl').textContent=pct+'% complete · '+done+'/'+(total||18)+' modules';
+
+    var m = await K.metrics();
+    paintHero(m,pct); paintEcon(m); paintDb(m); paintConv(m); paintMachine(m,prog); paintLev(m); paintMods(prog);
+
+    var name=(window.yrlUser&&(window.yrlUser.user_metadata&&(window.yrlUser.user_metadata.full_name||window.yrlUser.user_metadata.name)))||(email!=='anon'?email.split('@')[0]:'Agent');
+    document.querySelectorAll('[data-tiger-name]').forEach(function(n){n.textContent=name;});
+    document.querySelectorAll('[data-tiger-date]').forEach(function(n){n.textContent=new Date().toLocaleDateString();});
+  }
+  if(window.yrlUser) boot();
+  else{document.addEventListener('yrl-auth-ready',boot,{once:true});setTimeout(boot,3200);}
+})();
+</script>
+</body>
+</html>

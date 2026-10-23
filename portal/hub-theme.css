@@ -1,0 +1,58 @@
+/* ============================================================
+   hub-theme.css — shared Nomad Systems look for every brokerage hub.
+   Loaded AFTER each page's own <style>, so it wins on :root variables.
+
+   The hub was built in a red theme (--red / --red-dark / --red-light).
+   We remap that family onto the Nomad accent so every existing
+   var(--red*) usage recolors automatically — giving all hubs one
+   consistent Nomad shell. Per-client branding (accent + logo) is the
+   ONLY thing that varies, applied at runtime by hub-brand.js.
+   ============================================================ */
+:root {
+  /* Nomad accent (default teal; hub-brand.js overrides per client) */
+  --accent: #0d9488;
+  --accent-light: #14b8a6;
+  --accent-dark: #0f766e;
+  --accent-bg: #f0fdfa;
+
+  /* Remap the hub's red family → the accent. */
+  --red: var(--accent);
+  --red-dark: var(--accent-dark);
+  --red-light: var(--accent-light);
+  --shadow-red: 0 6px 28px rgba(13, 148, 136, 0.18);
+
+  /* Warm Nomad-OS neutrals: cream ground, warm-white cards, slate ink.
+     (Was cool grey #f1f5f9 / white. The accent chain above is untouched —
+     YRL red stays the one accent via hub-brand.js.) */
+  --ink: #2C3340;
+  --slate: #2C3340;               /* dark sidebar + heading ink */
+  --slate-light: #3D4758;
+  --bg: #F5F0E8;                  /* cream page ground */
+  --surface: #FDFAF6;             /* warm-white card surface */
+  --surface-2: #F0EADF;           /* warm inset (tab strips, wells) */
+  --surface-3: #EFE6D6;
+  --border: #E2D9C8;              /* warm border */
+  --border-light: #EDE6D6;        /* subtle card border */
+  --border-dark: #D4C9A8;
+  --text: #2C3340;
+  --text-sec: #5B6472;
+  --text-muted: #9CA3AF;
+  --shadow: 0 1px 3px rgba(44,51,64,0.08);
+  --shadow-md: 0 4px 12px rgba(44,51,64,0.12);
+}
+
+/* Hub mastheads wear the BROKERAGE's accent (hub-brand.js sets --accent from
+   the client's brand color — YRL red, etc.), so every hub is on-brand while
+   the layout stays the shared Nomad shell. */
+.hub-header, .hero, .page-hero, .admin-header, header.hero,
+.sub-header, header.sub-header {
+  background: linear-gradient(150deg, var(--accent-dark) 0%, var(--accent) 55%, var(--accent-dark) 100%) !important;
+}
+/* The masthead is now a dark brand color, so its title/back link must read white
+   (they were styled dark for the old white header). */
+.sub-header .sub-header-title,
+header.sub-header .sub-header-title { color:#fff !important; }
+.sub-header .sub-header-back,
+header.sub-header .sub-header-back { color:rgba(255,255,255,0.9) !important; border-color:transparent !important; }
+.sub-header .sub-header-back:hover,
+header.sub-header .sub-header-back:hover { color:#fff !important; background:rgba(255,255,255,0.15) !important; border-color:rgba(255,255,255,0.3) !important; }

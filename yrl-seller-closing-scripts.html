@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Closing Scripts — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --red: #c03926; --red-light: #d94a35; --red-dark: #9e2e1e;
+            --bg: #f2f4f7; --surface: #ffffff; --surface-2: #f7f8fa; --surface-3: #eef0f3;
+            --border: #e2e5ea; --text: #1a1d22; --text-sec: #5a6270; --text-muted: #9ca3af;
+            --radius: 12px; --radius-lg: 20px; --shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+        a { text-decoration: none; color: inherit; }
+
+        .sub-header {
+            background: linear-gradient(150deg, #a82f1e 0%, #c03926 45%, #9e2e1e 100%);
+            padding: 28px 20px; border-bottom: 4px solid rgba(0,0,0,0.15);
+            position: relative; overflow: hidden;
+        }
+        .sub-header::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
+            background-size: 28px 28px; pointer-events: none;
+        }
+        .sub-header-inner {
+            max-width: 800px; margin: 0 auto; display: flex; align-items: center;
+            justify-content: space-between; position: relative; z-index: 1;
+        }
+        .sub-header-left { display: flex; align-items: center; gap: 20px; }
+        .sub-header-logo { max-width: 100px; background: #fff; border-radius: 10px; padding: 8px 14px; box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
+        .sub-header-text h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(24px, 5vw, 36px); letter-spacing: 2px; color: #fff; line-height: 1; }
+        .sub-header-text p { color: rgba(255,255,255,0.7); font-size: 13px; margin-top: 4px; }
+        .back-btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35);
+            color: #fff; padding: 9px 18px; border-radius: 100px; font-size: 12.5px;
+            font-weight: 600; transition: all 0.2s; white-space: nowrap;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .main { max-width: 800px; margin: 0 auto; padding: 40px 20px 90px; }
+
+        .intro-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); padding: 28px 32px; margin-bottom: 32px;
+        }
+        .intro-card h2 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .intro-card p { font-size: 14px; color: var(--text-sec); line-height: 1.7; }
+
+        .script-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); margin-bottom: 20px; overflow: hidden;
+            transition: border-color 0.2s;
+        }
+        .script-card:hover { border-color: rgba(192,57,38,0.3); }
+
+        .script-card-header {
+            padding: 20px 28px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 16px;
+        }
+        .script-card-num {
+            width: 44px; height: 44px; min-width: 44px;
+            background: var(--red); color: #fff; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Bebas Neue', sans-serif; font-size: 22px;
+        }
+        .script-card-meta h3 { font-size: 17px; font-weight: 700; }
+        .script-card-meta p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+        .script-card-body { padding: 24px 28px; }
+
+        .say {
+            background: rgba(192,57,38,0.04); border-left: 3px solid var(--red);
+            padding: 16px 20px; border-radius: 0 8px 8px 0;
+            font-size: 15px; line-height: 1.85; color: var(--text);
+        }
+        .tip {
+            margin-top: 14px; font-size: 13px; color: var(--text-muted);
+            font-style: italic; padding-left: 18px;
+            border-left: 2px solid var(--surface-3);
+        }
+
+        .when-tag {
+            display: inline-block; background: rgba(192,57,38,0.08); color: var(--red);
+            font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 100px;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
+        .footer {
+            text-align: center; padding: 40px 20px 32px; color: var(--text-muted); font-size: 12px;
+        }
+        .footer-logo { max-width: 130px; margin: 0 auto 14px; opacity: 0.5; }
+
+        @media (max-width: 600px) {
+            .sub-header-inner { flex-direction: column; gap: 16px; text-align: center; }
+            .sub-header-left { flex-direction: column; }
+            .script-card-body { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="sub-header">
+    <div class="sub-header-inner">
+        <div class="sub-header-left">
+            <img src="https://wdvolamasztetwpitbwg.supabase.co/storage/v1/object/public/hub-files/brand/yrl-logo-color.png"
+                 alt="Your Realty Link" class="sub-header-logo">
+            <div class="sub-header-text">
+                <h1>Closing Scripts</h1>
+                <p>9 proven approaches to get the listing agreement signed</p>
+            </div>
+        </div>
+        <a href="yrl-client-sellers.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Seller Tools</a>
+    </div>
+</header>
+
+<main class="main">
+
+    <div class="intro-card">
+        <h2>Getting to the Signature</h2>
+        <p>After you've presented your marketing plan, discussed pricing, and shown where buyers come from, it's time to ask for the business. Choose the closing approach that fits the moment. You don't need to use all nine &mdash; pick the one that matches the conversation and the seller's personality.</p>
+    </div>
+
+    <!-- Close 1 -->
+    <div class="script-card">
+        <div class="script-card-header">
+            <div class="script-card-num">1</div>
+            <div class="script-card-meta">
+                <h3>The Olympian Close</h3>
+                <p><span class="when-tag">Best for: Confident sellers</span></p>
+            </div>
+        </div>
+        <div class="script-card-body">
+            <div class="say">
+                Many people think all real estate agents are the same. Let me ask you &mdash; if one of you had to run to your mailbox, could you? Sure, most people could. Yet would you go to the Olympics for running? Of course not.
+                <br><br>
+                See, just because you can run doesn't make you an Olympian, and just because you have a real estate license doesn't mean you can get the job done.
+                <br><br>
+                Go ahead and hire me. I'm the Olympian compared to most agents, and I know you want someone that can sell your house &mdash; don't you?
+            </div>
+        </div>
+    </div>
+
+    <!-- Close 2 -->
+    <div class="script-card">
+        <div class="script-card-header">
+            <div class="script-card-num">2</div>
+            <div class="script-card-meta">
+                <h3>The Expert Close</h3>
+                <p><span class="when-tag">Best for: Analytical sellers</span></p>
+            </div>
+        </div>
+        <div class="script-card-body">
+            <div class="say">
+                If you were in need of surgery and you were going to hire a doctor to perform the surgery, would you hire someone that had performed hundreds of surgeries successfully, or someone who was just starting out?
+                <br><br>
+                Why? That's why so many people hire me to sell their house.
+            </div>
+        </div>
+    </div>
+
+    <!-- Close 3 -->
+    <div class="script-card">
+        <div class="script-card-header">
+            <div class="script-card-num">3</div>
+            <div class="script-card-meta">
+                <h3>The Confidence Close</h3>
+                <p><span class="when-tag">Best for: Ready-to-go sellers</span></p>
+            </div>
+        </div>
+        <div class="script-card-body">
+            <div class="say">
+                Do you think I can sell your house? Great &mdash; put me to work, and let me show you how I get houses sold.
+            </div>
+            <div class="tip">Short and direct. Use when the seller has been engaged and positive throughout the presentation.</div>
+        </div>
+    </div>
+
+    <!-- Close 4 -->
+    <div class="script-card">
+        <div class="script-card-header">
+            <div class="script-card-num">4</div>
+            <div class="script-card-meta">
+                <h3>The Value Close</h3>
+                <p><span class="when-tag">Best for: Price-focused sellers</span></p>
+            </div>
+        </div>
+        <div class="script-card-body">
+            <div class="say">
+                Any agent can list your house &mdash; and yet it's like your job. Do you think you do a great job? What if you knew you could do the job and your boss wanted to hire someone at a cheaper rate that didn't have a track record? What if he gave them your job?
+                <br><br>
+                Would it make sense for him to lose money? Training the new person and allowing them to learn the job you already know means you could do it faster, therefore saving him money.
+                <br><br>
+                So sometimes hiring someone for less actually costs you more, right?
+            </div>
+        </div>
+    </div>
+
+    <!-- Close 5 -->
+    <div class="script-card">
+        <div class="script-card-header">
+            <div class="script-card-num">5</div>
+            <div class="script-card-meta">
+                <h3>The Direct Close</h3>
+                <p><span class="when-tag">Best for: Decisive sellers</span></p>
+            </div>
+        </div>
+        <div class="script-card-body">
+            <div class="say">
+                Go ahead and put me to work for you tonight.
+            </div>
+            <div class="tip">The simplest and often most effective close. Hand them the pen with the listing agreement. Silence after this line is your friend &mdash; let them respond.</div>
+        </div>
+    </div>
+
+    <!-- Close 6 -->
+    <div class="script-card">
+        <div class="script-card-header">
+            <div class="script-card-num">6</div>
+            <div class="script-card-meta">
+                <h3>The Assurance Close</h3>
+                <p><span class="when-tag">Best for: Nervous sellers</span></p>
+            </div>
+        </div>
+        <div class="script-card-body">
+            <div class="say">
+                You'll always be glad you took action. I will make certain all the agents know about your house, as well as calling and asking if they have a buyer for your house.
+            </div>
+        </div>
+    </div>
+
+    <!-- Close 7 -->
+    <div class="script-card">
+        <div class="script-card-header">
+            <div class="script-card-num">7</div>
+            <div class="script-card-meta">
+                <h3>The No-Pressure Close</h3>
+                <p><span class="when-tag">Best for: Hesitant sellers</span></p>
+            </div>
+        </div>
+        <div class="script-card-body">
+            <div class="say">
+                I'm not here to pressure you into making a bad decision. I am here making certain you have enough information to make a great decision.
+            </div>
+            <div class="tip">Follow up with a gentle pause, then: "Based on everything we've talked about tonight, are you ready to get started?"</div>
+        </div>
+    </div>
+
+    <!-- Close 8 -->
+    <div class="script-card">
+        <div class="script-card-header">
+            <div class="script-card-num">8</div>
+            <div class="script-card-meta">
+                <h3>The Team Advantage Close</h3>
+                <p><span class="when-tag">Best for: Sellers comparing agents</span></p>
+            </div>
+        </div>
+        <div class="script-card-body">
+            <div class="say">
+                Why put one agent to work when you can get a whole team for the same price? At Your Realty Link, when you hire me, you get every agent on our team working to find a buyer for your home. That's more connections, more showings, and more opportunities to sell.
+            </div>
+        </div>
+    </div>
+
+    <!-- Close 9 -->
+    <div class="script-card">
+        <div class="script-card-header">
+            <div class="script-card-num">9</div>
+            <div class="script-card-meta">
+                <h3>The Dream Close</h3>
+                <p><span class="when-tag">Best for: Emotionally motivated sellers</span></p>
+            </div>
+        </div>
+        <div class="script-card-body">
+            <div class="say">
+                So, all we need to do now is sign the agreement so you can get to <em>[where they want to go]</em> by <em>[when they want to be there]</em>. Let's make that happen.
+            </div>
+            <div class="tip">This is the most powerful close because it connects the signature directly to their personal motivation. Reference back to what they told you during the pre-qualifying call or at the beginning of the presentation. Use their own words.</div>
+        </div>
+    </div>
+
+    <!-- Pro Tips -->
+    <div class="intro-card" style="margin-top: 32px; border-color: rgba(192,57,38,0.2); background: rgba(192,57,38,0.02);">
+        <h2 style="color: var(--red);"><i class="fa-solid fa-lightbulb"></i> &nbsp;Pro Tips</h2>
+        <ul style="font-size: 14px; color: var(--text-sec); line-height: 2; padding-left: 20px; margin-top: 12px;">
+            <li>After you deliver a closing line, <strong>be quiet</strong>. The first person who speaks loses.</li>
+            <li>Place the listing agreement and pen in front of the seller as you deliver the close.</li>
+            <li>If they object, use the <a href="yrl-seller-objections.html" style="color:var(--red);font-weight:600;">Objection Handlers</a> and then close again with a different script.</li>
+            <li>Always tie back to their motivation &mdash; the "why" they told you at the beginning.</li>
+            <li>It's not about being pushy. It's about being confident enough to ask for the business.</li>
+        </ul>
+    </div>
+
+</main>
+
+<footer class="footer">
+    <img src="https://wdvolamasztetwpitbwg.supabase.co/storage/v1/object/public/hub-files/brand/yrl-logo-color.png"
+         alt="Your Realty Link" class="footer-logo" onerror="this.style.display='none'">
+    <p>&copy; 2026 Your Realty Link &nbsp;&middot;&nbsp; All Rights Reserved</p>
+</footer>
+
+</body>
+</html>

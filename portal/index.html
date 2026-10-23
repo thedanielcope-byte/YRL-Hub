@@ -310,6 +310,7 @@
 .bk .ptab{width:100%;justify-content:flex-start;border:none!important;border-radius:10px;padding:10px 12px;margin:0;color:var(--text)}
 .bk .ptab:hover{background:var(--surface-2)}
 .bk .ptab.active{background:var(--accent-bg);color:var(--accent)}
+.bk .ptab[data-ptab="numbers"]{order:-1!important}
 .bk .ptab[data-ptab="files"]{order:1}
 .bk .ptab[data-ptab="uploads"]{order:2}
 .bk .ptab[data-ptab="messages"]{order:3}
@@ -358,6 +359,65 @@
 .tk.done .tk-ti{color:var(--text-muted);text-decoration:line-through}
 .tk-de{font-size:12.5px;color:var(--text-sec);margin-top:2px}
 .tk-right{margin-left:auto;flex:0 0 auto;display:flex;gap:6px;align-items:center}
+/* ══ Your Numbers (financial dashboard) ══
+   Chart series colors are fixed (validated blue/orange pair), NOT the client accent —
+   a per-client accent can't be guaranteed to separate from a second series. */
+#numbersSection{--nb-rev:#2a78d6;--nb-exp:#eb6834;--nb-grid:#e2e8f0;--nb-good:#15803d;--nb-bad:#b91c1c}
+.nb-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.nb-head h2{margin-bottom:2px}
+.nb-sub{font-size:12.5px;color:var(--text-sec);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#nbMonth{width:auto;min-width:170px}
+.nb-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--surface-2);border:1px solid var(--border);color:var(--text-sec)}
+.nb-pill.wip{background:var(--amber-light);border-color:#fcd34d;color:#92400e}
+.nb-note{background:var(--accent-bg);border:1px solid var(--border);border-radius:12px;padding:11px 14px;font-size:13px;color:var(--text);margin-bottom:14px;display:flex;gap:9px}
+.nb-note i{color:var(--accent);margin-top:3px}
+.nb-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:12px}
+.nb-tiles.sm{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+@media(max-width:1180px){.nb-tiles:not(.sm){grid-template-columns:repeat(2,minmax(0,1fr))}}
+.nb-tile{border:1px solid var(--border);border-radius:14px;padding:14px 16px;background:var(--surface)}
+.nb-tl{font-size:12px;font-weight:700;color:var(--text-sec);display:flex;align-items:center;gap:6px}
+.nb-tl i{color:var(--text-muted);font-size:11px}
+.nb-tv{font-size:26px;font-weight:800;letter-spacing:-.5px;margin:4px 0 2px;color:var(--text);font-variant-numeric:tabular-nums}
+.nb-tile.sm .nb-tv{font-size:20px}
+.nb-tm{font-size:12px;color:var(--text-muted);line-height:1.45}
+.nb-d{font-weight:700}
+.nb-d.good{color:var(--nb-good)} .nb-d.bad{color:var(--nb-bad)} .nb-d.flat{color:var(--text-sec)}
+.nb-grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px;margin:12px 0}
+.nb-card{border:1px solid var(--border);border-radius:14px;padding:14px 16px 10px;background:var(--surface);min-width:0}
+.nb-card h3{font-size:13.5px;font-weight:800;margin:0 0 2px}
+.nb-card .nb-cs{font-size:12px;color:var(--text-muted);margin-bottom:8px}
+.nb-legend{display:flex;gap:14px;font-size:12px;color:var(--text-sec);margin-bottom:4px;flex-wrap:wrap}
+.nb-legend span{display:inline-flex;align-items:center;gap:6px}
+.nb-legend b{width:10px;height:10px;border-radius:3px;display:inline-block}
+.nb-chart{position:relative}
+.nb-chart svg{width:100%;height:auto;display:block;overflow:visible}
+.nb-chart text{font-family:'Inter',sans-serif;font-size:10.5px;fill:#64748b}
+.nb-hit{fill:transparent;cursor:default}
+.nb-hit:hover{fill:rgba(15,23,42,.05)}
+#nbTip{position:fixed;z-index:80;pointer-events:none;background:var(--ink);color:#fff;border-radius:9px;padding:8px 10px;font-size:12px;line-height:1.5;box-shadow:0 8px 24px rgba(15,23,42,.25);display:none;white-space:nowrap}
+#nbTip .k{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px}
+.nb-table{width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+.nb-table th,.nb-table td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap}
+.nb-table th:first-child,.nb-table td:first-child{text-align:left}
+.nb-table thead th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);font-weight:700}
+.nb-table tr.tot td{font-weight:800}
+.nb-table tr.sub td{color:var(--text-sec)}
+.nb-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.nb-foot{font-size:12px;color:var(--text-muted);margin-top:12px}
+.nb-foot a{color:var(--accent);font-weight:600;cursor:pointer}
+.nb-empty{border:1.5px dashed var(--border);border-radius:14px;padding:28px 20px;text-align:center;color:var(--text-sec);font-size:13.5px}
+.nb-empty i{font-size:22px;color:var(--accent);display:block;margin-bottom:8px}
+.nb-soon-wrap{position:relative;min-height:420px}
+.nb-ghost{filter:grayscale(1);opacity:.45;pointer-events:none;user-select:none}
+.nb-ghost .nb-tv{color:var(--text-muted)}
+.nb-soon-card{position:absolute;top:110px;left:50%;transform:translateX(-50%);width:min(460px,calc(100% - 24px));background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px 24px;box-shadow:0 18px 50px rgba(15,23,42,.14);text-align:center}
+.nb-soon-card .nb-pill{display:inline-flex}
+@media(max-width:560px){.nb-soon-card{top:60px;padding:18px}}
+details.nb-card summary{cursor:pointer;font-size:13.5px;font-weight:800;list-style:none}
+details.nb-card summary::-webkit-details-marker{display:none}
+details.nb-card summary i{color:var(--text-muted);margin-right:6px;transition:transform .15s}
+details.nb-card[open] summary i{transform:rotate(90deg)}
+@media(max-width:560px){.nb-tv{font-size:22px}.nb-grid2{grid-template-columns:1fr}}
 /* ══ Help drawer ══ */
 #helpScrim{position:fixed;inset:0;background:rgba(15,23,42,.34);opacity:0;pointer-events:none;transition:opacity .2s;z-index:60}
 #helpScrim.on{opacity:1;pointer-events:auto}
@@ -395,6 +455,7 @@ body.pshell #ptabs .ptab i{width:18px;text-align:center;flex:none}
 body.pshell #ptabs .ptab:hover{background:rgba(255,255,255,.07);color:#fff}
 body.pshell #ptabs .ptab.active{background:var(--accent);color:#fff}
 body.pshell #ptabs .ptab[data-ptab="dashboard"]{order:0!important}
+body.pshell #ptabs .ptab[data-ptab="numbers"]{order:-1!important}   /* Your Numbers is always first, above Home (Dan 10/20) */
 body.pshell #ptabs .msg-badge{margin-left:auto;background:#fff;color:var(--ink)}
 #psAdminNav{display:flex;flex-direction:column;gap:3px;flex:1}
 #psAdminNav:empty{display:none}
@@ -426,6 +487,25 @@ body.pshell #homeSummary{display:grid;grid-template-columns:repeat(auto-fit,minm
 .hs-t{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hs-m{font-size:12px;color:var(--text-muted);white-space:nowrap}
 .hs-empty{font-size:13px;color:var(--text-muted);padding:6px 0}
+/* Work log card ("Latest work on your books") */
+.wl-last{font-size:12px;color:var(--text-muted);margin:-2px 0 6px}
+.wl-row{display:flex;gap:12px;padding:9px 0;border-top:1px solid var(--border);font-size:13px;line-height:1.45}
+.wl-d{flex:none;width:44px;font-weight:700;color:var(--text-sec);font-size:12px;padding-top:1px}
+.wl-t{min-width:0}
+.wl-c{display:block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--accent);margin-bottom:1px}
+.sa-row{display:flex;align-items:center;gap:14px;padding:13px 14px;border:1px solid var(--border);border-radius:12px;margin-bottom:9px;background:var(--surface)}
+.sa-ic{width:38px;height:38px;border-radius:10px;background:var(--accent-bg);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex:none}
+.sa-main{min-width:0;flex:1}
+.sa-app{font-weight:700;font-size:14px}
+.sa-app a{color:inherit}
+.sa-meta{font-size:12.5px;color:var(--text-sec);margin-top:1px}
+.sa-st{flex:none;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--green-light);color:#166534}
+.sa-st.pending{background:var(--amber-light);color:#92400e}
+.sa-st.revoked{background:#f1f5f9;color:#64748b}
+.wl-tot{font-size:12.5px;color:var(--text);background:var(--accent-bg);border-radius:9px;padding:7px 10px;margin:2px 0 8px;line-height:1.5}
+.wl-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+.wl-tags span{font-size:11px;font-weight:600;color:var(--text-sec);background:var(--surface-2);border:1px solid var(--border);border-radius:999px;padding:1px 8px}
+.wl-more{background:none;border:none;color:var(--accent);font-weight:600;font-size:12.5px;cursor:pointer;padding:8px 0 0;font-family:inherit}
 body.pshell .ac-nav{display:none}
 body.pshell .ac-layout{display:block;min-height:0;box-shadow:none;border-radius:0;overflow:visible}
 body.pshell .ac-content{padding:0;background:none}
@@ -469,6 +549,7 @@ body.pshell .ac-content{padding:0;background:none}
 
         <div class="ptabs" id="ptabs" style="display:none;">
             <button class="ptab active" data-ptab="dashboard" onclick="switchPortalTab('dashboard')"><i class="fa-solid fa-table-columns"></i> Dashboard</button>
+            <button class="ptab" data-ptab="numbers" id="numbersTab" onclick="switchPortalTab('numbers')" style="display:none;"><i class="fa-solid fa-chart-column"></i> Your Numbers</button>
             <button class="ptab" data-ptab="gbp" id="gbpTab" onclick="switchPortalTab('gbp')" style="display:none;"><i class="fa-brands fa-google"></i> GBP</button>
             <button class="ptab" data-ptab="messages" onclick="switchPortalTab('messages')"><i class="fa-solid fa-comments"></i> Messages <span id="msgTabBadge" class="msg-badge" style="display:none;"></span></button>
             <button class="ptab" data-ptab="onboarding" onclick="switchPortalTab('onboarding')"><i class="fa-solid fa-clipboard-list"></i> Onboarding</button>
@@ -479,6 +560,7 @@ body.pshell .ac-content{padding:0;background:none}
             <button class="ptab" data-ptab="requests" onclick="switchPortalTab('requests')"><i class="fa-solid fa-paper-plane"></i> Requests</button>
             <button class="ptab" data-ptab="tasks" id="tasksTab" onclick="switchPortalTab('tasks')" style="display:none;"><i class="fa-solid fa-list-check"></i> Tasks</button>
             <button class="ptab" data-ptab="dates" id="datesTab" onclick="switchPortalTab('dates')" style="display:none;"><i class="fa-solid fa-calendar-day"></i> Important Dates</button>
+            <button class="ptab" data-ptab="access" id="accessTab" onclick="switchPortalTab('access')" style="display:none;"><i class="fa-solid fa-key"></i> Shared Access</button>
             <button class="ptab" data-ptab="team" id="teamTab" onclick="switchPortalTab('team')" style="display:none;"><i class="fa-solid fa-users"></i> Team</button>
             <button class="ptab" data-ptab="account" id="accountTab" onclick="switchPortalTab('account')" style="display:none;"><i class="fa-solid fa-user-gear"></i> Account</button>
         </div>
@@ -634,6 +716,14 @@ body.pshell .ac-content{padding:0;background:none}
             <div id="reqList"><div class="req-empty">Loading…</div></div>
         </div>
 
+        <div class="section" id="numbersSection">
+            <div class="nb-head">
+                <div><h2><i class="fa-solid fa-chart-column"></i> Your Numbers</h2><p class="nb-sub" id="nbSub"></p></div>
+                <select id="nbMonth" class="onb-input" onchange="renderNumbers()" aria-label="Month" style="display:none;"></select>
+            </div>
+            <div id="nbBody"><div class="req-empty">Loading…</div></div>
+        </div>
+
         <div class="section" id="tasksSection">
             <h2><i class="fa-solid fa-list-check"></i> Tasks</h2>
             <p style="font-size:13px;color:var(--text-sec);margin:-6px 0 14px;">Track what needs doing — add your own, or check off what we've asked for.</p>
@@ -650,6 +740,12 @@ body.pshell .ac-content{padding:0;background:none}
             <h2><i class="fa-solid fa-calendar-day"></i> Important Dates</h2>
             <p style="font-size:13px;color:var(--text-sec);margin:-6px 0 16px;">Key tax deadlines and filing dates to keep on your radar.</p>
             <div id="datesList"><div class="req-empty">Loading…</div></div>
+        </div>
+
+        <div class="section" id="accessSection">
+            <h2><i class="fa-solid fa-key"></i> Shared Access</h2>
+            <p style="font-size:13px;color:var(--text-sec);margin:-6px 0 16px;">The systems you've given us access to, and how we get in. You can remove our access to any of them at any time — message us in Chat if anything here looks wrong.</p>
+            <div id="accessList"><div class="req-empty">Loading…</div></div>
         </div>
 
         <div class="section" id="teamSection">
@@ -1202,6 +1298,9 @@ async function renderClientDash(){
     loadClientAudits();
     if (_hasGbp) loadGbpChecklist();
     loadProjects();
+    await loadNumbers();   /* sets the Your Numbers tab's visibility before applyTabConfig orders the nav */
+    loadWorkLog();
+    await loadSharedAccess();
     switchPortalTab(_isBk && !NEWLOOK ? 'files' : 'dashboard');
     /* Template-driven left-nav order + per-client tab hides (Phase 3). Runs last so it
        reorders/hides on top of the entitlement/role logic above, and can also force a
@@ -1240,7 +1339,9 @@ function applyTabConfig(config, overrides, order){
         const tab = document.querySelector('.ptab[data-ptab="' + key + '"]');
         return tab && window.getComputedStyle(tab).display !== 'none';
     });
-    if (NEWLOOK) switchPortalTab('dashboard');   /* new look always lands on Home */
+    /* Land on Your Numbers when the client has published months (Dan 10/20); else Home (new look) / first tab (classic). */
+    if (_finRows.length && _tabVisible('numbers')) switchPortalTab('numbers');   /* a pending (cleanup) client lands on Home, not on the coming-soon page */
+    else if (NEWLOOK) switchPortalTab('dashboard');
     else if (firstVisible) switchPortalTab(firstVisible);
 }
 
@@ -1248,7 +1349,7 @@ function renderAdminDash(){
     document.getElementById('clientName').textContent = 'Nomad Systems';
     document.getElementById('dashSubtitle').textContent = 'Your command center — what needs you across all clients.';
     document.getElementById('portalBanners').innerHTML = '';
-    ['requests','myRequests','filesSection','uploadsSection','messagesSection','onboardingSection','gbpSection','contractorsSection','projectsSection','tasksSection','datesSection','teamSection','accountSection']
+    ['requests','myRequests','numbersSection','accessSection','filesSection','uploadsSection','messagesSection','onboardingSection','gbpSection','contractorsSection','projectsSection','tasksSection','datesSection','teamSection','accountSection']
         .forEach((id) => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
     document.getElementById('topBilling').style.display = 'none';
     document.getElementById('ptabs').style.display = 'none';
@@ -1475,11 +1576,14 @@ async function renderPreview(clientId){
         loadTeam();
         loadProjects();
         if (_hasGbp) loadGbpChecklist();
+        await loadNumbers();
+        loadWorkLog();
+        await loadSharedAccess();
         if (client.template_key) {
             const { data: tpl } = await sb.from('client_portal_templates').select('tab_config').eq('key', client.template_key).maybeSingle();
             applyTabConfig((tpl && tpl.tab_config) || [], client.tab_overrides || {}, client.tab_order || null);
         }
-        switchPortalTab(NEWLOOK ? 'dashboard' : 'files');
+        switchPortalTab(_finRows.length && _tabVisible('numbers') ? 'numbers' : (NEWLOOK ? 'dashboard' : 'files'));
     } else {
         if (NEWLOOK) {
             /* Sidebar layout for every template: show the client's real tabs. Requests stays
@@ -2292,6 +2396,337 @@ async function delUpload(id, path){
     toast('File removed.'); loadUploads();
 }
 
+/* ── Your Numbers (financial dashboard) ──────────────────────
+   One client_portal_financials row per month, loaded after the close (snapshot today,
+   a QBO sync later — same rows either way). Clients only get published rows (RLS);
+   the .eq('published') keeps the admin preview showing exactly what the client sees. */
+let _finRows = [];
+const _FIN_SRC = { qbo: 'QuickBooks', puzzle: 'Puzzle', manual: 'your books' };
+function _fnum(v){ return (v === null || v === undefined || v === '') ? null : Number(v); }
+function _finNorm(r){
+    const y = +r.period.slice(0, 4), m = +r.period.slice(5, 7);
+    const cogs = _fnum(r.cogs), opex = _fnum(r.operating_expenses);
+    const cashIn = _fnum(r.cash_in), cashOut = _fnum(r.cash_out);
+    return { raw: r, key: r.period.slice(0, 7), y, m, status: r.status, source: r.source, note: r.note || '',
+        revenue: _fnum(r.revenue), cogs, opex, net: _fnum(r.net_income),
+        expenses: (cogs === null && opex === null) ? null : (cogs || 0) + (opex || 0),
+        cash: _fnum(r.cash_balance), ar: _fnum(r.ar_balance), ap: _fnum(r.ap_balance), cards: _fnum(r.card_balance),
+        cashIn, cashOut, netCash: (cashIn === null && cashOut === null) ? null : (cashIn || 0) - (cashOut || 0),
+        draws: _fnum(r.owner_draws), metricLabel: r.metric_label || '', metric: _fnum(r.metric_value), metricUnit: r.metric_unit || '' };
+}
+function _mon3(r){ return _FMON[r.m].slice(0, 3); }
+function _kmoney(n){
+    if (n === null || !isFinite(n)) return '—';
+    const a = Math.abs(n), s = n < 0 ? '-' : '';
+    if (a >= 1e6) return s + '$' + (a / 1e6).toFixed(a >= 1e7 ? 0 : 1).replace(/\.0$/, '') + 'M';
+    if (a >= 1e3) return s + '$' + (a / 1e3).toFixed(a >= 1e4 ? 0 : 1).replace(/\.0$/, '') + 'k';
+    return s + '$' + Math.round(a);
+}
+function _fmoney(n){ return n === null ? '—' : _money(n); }
+function _finMetric(v, unit){
+    if (v === null) return '—';
+    if (unit === '%') return (Math.round(v * 10) / 10) + '%';
+    if (unit === 'x') return (Math.round(v * 10) / 10) + 'x';
+    return _money(v);
+}
+/* Default month = the latest month that has ENDED, closed or not (a client with Jan–Feb closed and
+   Mar–Aug in progress lands on August, not February). Only a still-running month is skipped. */
+function _finLatest(){
+    const t0 = new Date(); t0.setHours(0, 0, 0, 0);
+    return _finRows.slice().reverse().find((r) => new Date(r.y, r.m, 0) < t0) || _finRows[_finRows.length - 1] || null;
+}
+function _finPrev(r){ const pm = r.m === 1 ? 12 : r.m - 1, py = r.m === 1 ? r.y - 1 : r.y; return _finRows.find((x) => x.y === py && x.m === pm) || null; }
+function _finSum(rows, k){ const v = rows.map((r) => r[k]).filter((x) => x !== null); return v.length ? v.reduce((a, b) => a + b, 0) : null; }
+
+async function loadNumbers(){
+    _finRows = [];
+    const isBook = !!(currentClient && currentClient.template_key === 'bookkeeping');
+    if (isBook && _cid) {
+        const { data, error } = await sb.from('client_portal_financials').select('*')
+            .eq('client_id', _cid).eq('published', true).order('period', { ascending: true });
+        if (!error) _finRows = (data || []).map(_finNorm);
+    }
+    const tab = document.getElementById('numbersTab');
+    /* numbers_pending: the client is mid-cleanup — show the tab with a "coming soon" page until a month is published. */
+    if (tab) tab.style.display = (_finRows.length || (isBook && currentClient && currentClient.numbers_pending)) ? '' : 'none';
+    const sel = document.getElementById('nbMonth');
+    if (sel) {
+        const keep = sel.value;
+        sel.innerHTML = _finRows.slice().reverse().map((r) =>
+            `<option value="${r.key}">${_FMON[r.m]} ${r.y}${r.status === 'in_progress' ? ' (in progress)' : ''}</option>`).join('');
+        sel.style.display = _finRows.length > 1 ? '' : 'none';
+        const latest = _finLatest();
+        sel.value = (keep && _finRows.some((r) => r.key === keep)) ? keep : (latest ? latest.key : '');
+    }
+    renderNumbers();
+    renderHomeSummary();
+}
+
+/* "▲ 12% vs Aug" — direction as icon + word-free arrow, color only reinforces it. */
+function _finDelta(cur, prev, opt){
+    if (cur === null || prev === null || !opt.vs) return '';
+    const diff = cur - prev;
+    let txt;
+    if (opt.pct && prev !== 0) {
+        const p = diff / Math.abs(prev) * 100;
+        if (Math.abs(p) < 0.5) return `<span class="nb-d flat">flat</span> vs ${opt.vs}`;
+        txt = Math.abs(p) >= 100 ? Math.round(Math.abs(p)) + '%' : (Math.round(Math.abs(p) * 10) / 10) + '%';
+    } else {
+        if (Math.abs(diff) < 0.5) return `<span class="nb-d flat">flat</span> vs ${opt.vs}`;
+        txt = _kmoney(Math.abs(diff));
+    }
+    const up = diff > 0;
+    const cls = opt.neutral ? 'flat' : ((up === (opt.upGood !== false)) ? 'good' : 'bad');
+    return `<span class="nb-d ${cls}"><i class="fa-solid fa-arrow-${up ? 'up' : 'down'}"></i> ${txt}</span> vs ${opt.vs}`;
+}
+function _finTile(label, icon, value, meta, small){
+    return `<div class="nb-tile${small ? ' sm' : ''}"><div class="nb-tl"><i class="${icon}"></i>${esc(label)}</div><div class="nb-tv">${value}</div><div class="nb-tm">${meta || '&nbsp;'}</div></div>`;
+}
+
+function renderNumbers(){
+    const body = document.getElementById('nbBody'), sub = document.getElementById('nbSub');
+    if (!body) return;
+    if (!_finRows.length) {
+        if (sub) sub.innerHTML = '';
+        body.innerHTML = (currentClient && currentClient.numbers_pending) ? _finComingSoon()
+            : '<div class="nb-empty"><i class="fa-solid fa-chart-column"></i>Your numbers will show up here once your first month is closed.</div>';
+        return;
+    }
+    const sel = document.getElementById('nbMonth');
+    let idx = _finRows.findIndex((r) => r.key === (sel && sel.value));
+    if (idx < 0) idx = _finRows.indexOf(_finLatest());
+    const cur = _finRows[idx], prev = _finPrev(cur), wip = cur.status === 'in_progress';
+    /* "In progress" = not final. Only a month that hasn't ENDED yet is partial: it gets "Month to date",
+       today's as-of date and no P&L deltas (part of a month vs a full one isn't a comparison). A finished
+       month that's still being worked on (e.g. waiting on the CPA) compares normally and keeps its month-end date. */
+    const _t0 = new Date(); _t0.setHours(0, 0, 0, 0);
+    const partial = wip && new Date(cur.y, cur.m, 0) >= _t0;
+    const vsCash = prev ? _mon3(prev) : '', vs = partial ? '' : vsCash;
+    const ytd = _finRows.filter((r) => r.y === cur.y && r.m <= cur.m);
+    const ytdLbl = ytd.length > 1 ? `${_mon3(ytd[0])}–${_mon3(cur)}` : '';
+    const latestClosed = _finRows.slice().reverse().find((r) => r.status === 'closed');
+    const src = _FIN_SRC[cur.source] || 'your books';
+
+    if (sub) sub.innerHTML = (latestClosed ? `<span class="nb-pill"><i class="fa-solid fa-circle-check" style="color:var(--nb-good)"></i>Books closed through ${_FMON[latestClosed.m]} ${latestClosed.y}</span>` : '')
+        + (cur.status === 'in_progress' ? '<span class="nb-pill wip"><i class="fa-solid fa-hourglass-half"></i>In progress — not final</span>' : '')
+        + `<span>From ${esc(src)}</span>`;
+
+    /* Headline tiles */
+    const margin = (cur.net !== null && cur.revenue) ? Math.round(cur.net / cur.revenue * 1000) / 10 : null;
+    const ytdRev = _finSum(ytd, 'revenue'), ytdExp = _finSum(ytd, 'expenses'), ytdNet = _finSum(ytd, 'net');
+    const ytdTxt = (v) => (ytdLbl && v !== null) ? `<br>${ytdLbl}: ${_kmoney(v)}` : '';
+    const asOf = partial
+        ? new Date(cur.raw.synced_at || cur.raw.updated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+        : `${_mon3(cur)} ${new Date(cur.y, cur.m, 0).getDate()}`;
+    const monLbl = partial ? 'Month to date' : _FMON[cur.m];
+    const tiles = [
+        _finTile('Cash in the bank', 'fa-solid fa-building-columns', _fmoney(cur.cash),
+            `As of ${asOf}${prev && prev.cash !== null && cur.cash !== null ? '<br>' + _finDelta(cur.cash, prev.cash, { vs: vsCash }) : ''}`),
+        _finTile('Revenue', 'fa-solid fa-arrow-trend-up', _fmoney(cur.revenue),
+            (_finDelta(cur.revenue, prev && prev.revenue, { pct: true, vs }) || monLbl) + ytdTxt(ytdRev)),
+        _finTile('Expenses', 'fa-solid fa-receipt', _fmoney(cur.expenses),
+            (_finDelta(cur.expenses, prev && prev.expenses, { pct: true, upGood: false, vs }) || monLbl) + ytdTxt(ytdExp)),
+        _finTile('Net profit', 'fa-solid fa-sack-dollar', _fmoney(cur.net),
+            (margin !== null ? `${margin}% margin` : (partial ? monLbl : '')) + (vs && prev && prev.net !== null && cur.net !== null ? (margin !== null ? ' · ' : '') + _finDelta(cur.net, prev.net, { vs }) : '') + ytdTxt(ytdNet))
+    ].join('');
+
+    /* Second row — only what this client's books actually carry */
+    const small = [];
+    /* A/R and A/P tiles only for a real balance — a −$35 vendor credit or −$719 customer credit reads as nonsense on a tile (the Balance Sheet table still shows it). */
+    if (cur.ar !== null && cur.ar >= 0.5) small.push(_finTile('Owed to you', 'fa-solid fa-file-invoice', _fmoney(cur.ar), 'Unpaid customer invoices', true));
+    if (cur.ap !== null && cur.ap >= 0.5) small.push(_finTile('Bills to pay', 'fa-solid fa-file-invoice-dollar', _fmoney(cur.ap), 'Unpaid vendor bills', true));
+    if (cur.cards !== null) small.push(_finTile('Credit cards', 'fa-solid fa-credit-card', _fmoney(cur.cards), 'Balance owed at month end', true));
+    if (cur.draws !== null) { const yd = _finSum(ytd, 'draws'); small.push(_finTile('Owner draws', 'fa-solid fa-hand-holding-dollar', _fmoney(cur.draws), ytdLbl && yd !== null ? `${ytdLbl}: ${_kmoney(yd)}` : monLbl, true)); }
+    if (cur.cogs && cur.revenue && !/gross margin/i.test(cur.metricLabel)) {
+        const gm = Math.round((cur.revenue - cur.cogs) / cur.revenue * 1000) / 10;
+        const pgm = (prev && prev.cogs && prev.revenue) ? Math.round((prev.revenue - prev.cogs) / prev.revenue * 1000) / 10 : null;
+        small.push(_finTile('Gross margin', 'fa-solid fa-percent', gm + '%', (vs && pgm !== null) ? `${pgm}% in ${vs}` : 'Revenue after cost of goods', true));
+    }
+    if (cur.metricLabel && cur.metric !== null) {
+        const pm = vs && prev && prev.metricLabel === cur.metricLabel ? prev.metric : null;
+        small.push(_finTile(cur.metricLabel, 'fa-solid fa-bullseye', _finMetric(cur.metric, cur.metricUnit), pm !== null ? `${_finMetric(pm, cur.metricUnit)} in ${vs}` : monLbl, true));
+    }
+
+    /* Charts: up to 12 loaded months ending at the selected one */
+    const win = _finRows.slice(Math.max(0, idx - 11), idx + 1);
+    const showRev = win.some((r) => r.revenue !== null || r.expenses !== null);
+    const showCash = win.some((r) => r.cash !== null);
+    const revChart = showRev ? `<div class="nb-card"><h3>Revenue vs expenses</h3><div class="nb-cs">By month</div>
+        <div class="nb-legend"><span><b style="background:var(--nb-rev)"></b>Revenue</span><span><b style="background:var(--nb-exp)"></b>Expenses</span></div>
+        <div class="nb-chart">${_finBars(win, [{ k: 'revenue', label: 'Revenue', color: '#2a78d6' }, { k: 'expenses', label: 'Expenses', color: '#eb6834' }])}</div></div>` : '';
+    const cashChart = showCash ? `<div class="nb-card"><h3>Cash in the bank</h3><div class="nb-cs">Month-end balance, all bank accounts</div>
+        <div class="nb-chart" style="margin-top:24px">${_finLine(win, 'cash', '#2a78d6')}</div></div>` : '';
+
+    /* Profit vs cash — the "I made $X, why is there $Y in the bank?" table */
+    const w3 = _finRows.slice(Math.max(0, idx - 2), idx + 1);
+    let cashTbl = '';
+    if (w3.some((r) => r.cashIn !== null || r.cashOut !== null)) {
+        const tr = (label, k, tot, cls) => `<tr class="${cls || ''}"><td>${label}</td>${w3.map((r) => `<td>${_fmoney(r[k])}</td>`).join('')}<td>${tot ? _fmoney(_finSum(w3, k)) : ''}</td></tr>`;
+        const showDraws = w3.some((r) => r.draws !== null);
+        cashTbl = `<div class="nb-card"><h3>Profit vs cash</h3><div class="nb-cs">Profit is what you earned. Cash is what actually moved through the bank. They're rarely the same number.</div>
+            <div class="nb-scroll"><table class="nb-table"><thead><tr><th></th>${w3.map((r) => `<th>${_mon3(r)} ${r.y}</th>`).join('')}<th>Total</th></tr></thead><tbody>
+            ${tr('Money in', 'cashIn', true)}${tr('Money out', 'cashOut', true)}${tr('Net cash', 'netCash', true, 'tot')}
+            ${tr('Net profit', 'net', true, 'sub')}${showDraws ? tr('Owner draws', 'draws', true, 'sub') : ''}${tr('Cash at month end', 'cash', false, 'sub')}
+            </tbody></table></div></div>`;
+    }
+
+    /* The two statements in plain view: P&L by month (+ YTD) and Balance Sheet at each month end.
+       Named after the reports they come from, so anyone can match them to the PDFs in Files. */
+    const hasCogs = win.some((r) => r.cogs);
+    const pct = (n, d) => (n !== null && d) ? (Math.round(n / d * 1000) / 10) + '%' : '—';
+    const head = (extra) => `<thead><tr><th></th>${win.map((r) => `<th>${_mon3(r)} ${String(r.y).slice(2)}</th>`).join('')}${extra || ''}</tr></thead>`;
+    const ytdRows = ytd.length > 1 ? ytd : null;
+    const ytdCell = (fn) => ytdRows ? `<td><b>${fn(ytdRows)}</b></td>` : '';
+    const drow = (label, fn, cls, yfn) => `<tr class="${cls || ''}"><td>${label}</td>${win.map((r) => `<td>${fn(r)}</td>`).join('')}${yfn ? ytdCell(yfn) : (ytdRows ? '<td></td>' : '')}</tr>`;
+    const sumK = (k) => (rows) => _fmoney(_finSum(rows, k));
+    const plTbl = `<div class="nb-card"><h3>Profit &amp; Loss (P&amp;L) — month by month</h3>
+        <div class="nb-cs">What came in and what was spent each month, from your Profit &amp; Loss report.${ytdRows ? ' The last column is the year so far.' : ''}</div>
+        <div class="nb-scroll"><table class="nb-table">${head(ytdRows ? `<th>${ytdLbl} ${cur.y}</th>` : '')}<tbody>
+        ${drow('Revenue', (r) => _fmoney(r.revenue), '', sumK('revenue'))}
+        ${hasCogs ? drow('Cost of goods sold', (r) => _fmoney(r.cogs), 'sub', sumK('cogs'))
+                  + drow('Gross profit', (r) => (r.revenue !== null ? _fmoney(r.revenue - (r.cogs || 0)) : '—'), '', (rows) => _fmoney((_finSum(rows, 'revenue') || 0) - (_finSum(rows, 'cogs') || 0))) : ''}
+        ${drow('Operating expenses', (r) => _fmoney(r.opex), 'sub', sumK('opex'))}
+        ${drow('Net profit', (r) => _fmoney(r.net), 'tot', sumK('net'))}
+        ${drow('Net margin', (r) => pct(r.net, r.revenue), 'sub', (rows) => pct(_finSum(rows, 'net'), _finSum(rows, 'revenue')))}
+        </tbody></table></div></div>`;
+
+    let bsTbl = '';
+    if (win.some((r) => r.raw.total_assets !== null || r.cash !== null)) {
+        const ta = (r) => _fnum(r.raw.total_assets), tl = (r) => _fnum(r.raw.total_liabilities), te = (r) => _fnum(r.raw.total_equity);
+        const other = (r) => (ta(r) !== null && r.cash !== null) ? ta(r) - r.cash : null;
+        const brow = (label, fn, cls) => `<tr class="${cls || ''}"><td>${label}</td>${win.map((r) => `<td>${_fmoney(fn(r))}</td>`).join('')}</tr>`;
+        const any = (fn) => win.some((r) => { const v = fn(r); return v !== null && Math.abs(v) >= 0.5; });
+        bsTbl = `<div class="nb-card"><h3>Balance Sheet — month end</h3>
+            <div class="nb-cs">What the business owned and owed on the last day of each month, from your Balance Sheet report.</div>
+            <div class="nb-scroll"><table class="nb-table">${head()}<tbody>
+            ${brow('Cash in the bank', (r) => r.cash)}
+            ${any((r) => r.ar) ? brow('Owed to you (A/R)', (r) => r.ar, 'sub') : ''}
+            ${any(other) ? brow('Everything else you own', other, 'sub') : ''}
+            ${any(ta) ? brow('Total assets', ta, 'tot') : ''}
+            ${any((r) => r.cards) ? brow('Credit cards', (r) => r.cards, 'sub') : ''}
+            ${any((r) => r.ap) ? brow('Bills to pay (A/P)', (r) => r.ap, 'sub') : ''}
+            ${win.some((r) => tl(r) !== null) ? brow('Total owed (liabilities)', tl, 'tot') : ''}
+            ${any(te) ? brow('Owner’s equity', te, 'tot') : ''}
+            </tbody></table></div></div>`;
+    }
+    const detail = plTbl + '<div style="height:12px"></div>' + bsTbl;
+
+    const filesLink = _tabVisible('files') ? ` The full reports for each month are in <a onclick="switchPortalTab('files')">Files</a>.` : '';
+    body.innerHTML = (cur.note ? `<div class="nb-note"><i class="fa-solid fa-message"></i><div>${esc(cur.note)}</div></div>` : '')
+        + `<div class="nb-tiles">${tiles}</div>`
+        + (small.length ? `<div class="nb-tiles sm">${small.join('')}</div>` : '')
+        + ((revChart || cashChart) ? `<div class="nb-grid2">${revChart}${cashChart}</div>` : '')
+        + cashTbl + (cashTbl ? '<div style="height:12px"></div>' : '') + detail
+        + `<p class="nb-foot">These figures come from your reconciled books in ${esc(src)}.${filesLink}</p>`;
+    _finBindTips(body);
+}
+
+/* Mid-cleanup clients: the real dashboard layout, grayed out with no figures, under a "Coming soon" card.
+   Placeholder bars are decorative (no axis values), so nothing here reads as a real number. */
+function _finComingSoon(){
+    const tile = (label, icon) => _finTile(label, icon, '$ —', '&nbsp;');
+    const bars = [38, 52, 46, 61, 57, 70, 64, 78, 72].map((h, i) =>
+        `<rect x="${16 + i * 48}" y="${150 - h * 1.6}" width="16" height="${h * 1.6}" rx="4" fill="#cbd5e1"/><rect x="${34 + i * 48}" y="${150 - h * 1.15}" width="16" height="${h * 1.15}" rx="4" fill="#e2e8f0"/>`).join('');
+    const pts = [30, 42, 38, 55, 62, 58, 71, 76, 84].map((h, i) => `${20 + i * 52},${150 - h * 1.5}`).join(' ');
+    const rows = ['Revenue', 'Cost of goods sold', 'Gross profit', 'Operating expenses', 'Net profit'].map((r) =>
+        `<tr><td>${r}</td>${'<td>—</td>'.repeat(6)}</tr>`).join('');
+    const workLink = _workLog.length ? ' Follow our progress on your <a style="color:var(--accent);font-weight:700;cursor:pointer;" onclick="switchPortalTab(\'dashboard\')">Home</a> page.' : '';
+    return `<div class="nb-soon-wrap">
+        <div class="nb-ghost" aria-hidden="true">
+            <div class="nb-tiles">${tile('Cash in the bank', 'fa-solid fa-building-columns')}${tile('Revenue', 'fa-solid fa-arrow-trend-up')}${tile('Expenses', 'fa-solid fa-receipt')}${tile('Net profit', 'fa-solid fa-sack-dollar')}</div>
+            <div class="nb-grid2">
+                <div class="nb-card"><h3>Revenue vs expenses</h3><div class="nb-cs">By month</div><svg viewBox="0 0 460 160" style="width:100%;height:auto">${bars}</svg></div>
+                <div class="nb-card"><h3>Cash in the bank</h3><div class="nb-cs">Month-end balance</div><svg viewBox="0 0 460 160" style="width:100%;height:auto"><polyline points="${pts}" fill="none" stroke="#cbd5e1" stroke-width="3" stroke-linejoin="round"/></svg></div>
+            </div>
+            <div class="nb-card"><h3>Profit &amp; Loss (P&amp;L) — month by month</h3><div class="nb-scroll"><table class="nb-table"><tbody>${rows}</tbody></table></div></div>
+        </div>
+        <div class="nb-soon-card">
+            <span class="nb-pill wip" style="margin-bottom:10px;"><i class="fa-solid fa-hourglass-half"></i>Coming soon</span>
+            <div style="font-weight:800;font-size:17px;color:var(--text);margin-bottom:6px;">Your numbers are on the way</div>
+            <div style="font-size:13.5px;color:var(--text-sec);line-height:1.55;">We're getting your books caught up and reconciled. As soon as every account ties out, this page fills in with your revenue, expenses, profit and cash, month by month.</div>
+            <div style="font-size:12.5px;color:var(--text-muted);margin-top:10px;line-height:1.5;">We only show numbers once they're reconciled, so what you see here is something you can rely on.${workLink}</div>
+        </div>
+    </div>`;
+}
+
+/* ── Chart helpers (plain SVG; one y-axis; thin marks with 4px rounded data ends) ── */
+function _niceTicks(lo, hi){
+    if (hi === lo) hi = lo + 1;
+    const raw = (hi - lo) / 4, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+    const step = (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p;
+    const a = Math.floor(lo / step) * step, b = Math.ceil(hi / step) * step, out = [];
+    for (let v = a; v <= b + step / 2; v += step) out.push(Math.round(v * 100) / 100);
+    return out;
+}
+function _finAxis(vals, W, H, L, R, T, B){
+    const ticks = _niceTicks(Math.min(0, ...vals), Math.max(0, ...vals));
+    const bot = ticks[0], top = ticks[ticks.length - 1];
+    const y = (v) => T + (H - T - B) * (top - v) / (top - bot);
+    const grid = ticks.map((t) => `<line x1="${L}" x2="${W - R}" y1="${y(t)}" y2="${y(t)}" stroke="${t === 0 ? '#cbd5e1' : '#eef2f6'}" stroke-width="1"/><text x="${L - 6}" y="${y(t) + 3.5}" text-anchor="end">${_kmoney(t)}</text>`).join('');
+    return { y, grid };
+}
+function _xLabel(r, i){ return _mon3(r) + ((i === 0 || r.m === 1) ? ' ’' + String(r.y).slice(2) : ''); }
+function _tipAttr(html){ return ` data-tip="${esc(html)}"`; }
+function _finBars(rows, series){
+    const W = 460, H = 210, L = 42, R = 4, T = 8, B = 22;
+    const vals = []; rows.forEach((r) => series.forEach((s) => { if (r[s.k] !== null) vals.push(r[s.k]); }));
+    if (!vals.length) return '';
+    const { y, grid } = _finAxis(vals, W, H, L, R, T, B);
+    const n = rows.length, gw = (W - L - R) / n, bw = Math.max(4, Math.min(22, (gw * 0.72 - 2) / series.length)), y0 = y(0);
+    let marks = '', hits = '', labels = '';
+    rows.forEach((r, i) => {
+        const cx = L + gw * (i + 0.5), x0 = cx - (bw * series.length + 2 * (series.length - 1)) / 2;
+        series.forEach((s, j) => {
+            const v = r[s.k]; if (v === null) return;
+            const x = x0 + j * (bw + 2), y1 = y(v), rr = Math.min(4, bw / 2, Math.abs(y1 - y0));
+            marks += (v >= 0)
+                ? `<path fill="${s.color}" d="M${x},${y0}V${y1 + rr}Q${x},${y1} ${x + rr},${y1}H${x + bw - rr}Q${x + bw},${y1} ${x + bw},${y1 + rr}V${y0}Z"/>`
+                : `<path fill="${s.color}" d="M${x},${y0}V${y1 - rr}Q${x},${y1} ${x + rr},${y1}H${x + bw - rr}Q${x + bw},${y1} ${x + bw},${y1 - rr}V${y0}Z"/>`;
+        });
+        const tip = `<b>${_FMON[r.m]} ${r.y}</b>` + series.map((s) => `<br><span class="k" style="background:${s.color}"></span>${s.label}: ${_fmoney(r[s.k])}`).join('') + (r.net !== null ? `<br>Net profit: ${_fmoney(r.net)}` : '');
+        hits += `<rect class="nb-hit" x="${L + gw * i}" y="${T}" width="${gw}" height="${H - T - B}"${_tipAttr(tip)}/>`;
+        labels += `<text x="${cx}" y="${H - 6}" text-anchor="middle">${_xLabel(r, i)}</text>`;
+    });
+    return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Revenue and expenses by month">${grid}${marks}${labels}${hits}</svg>`;
+}
+function _finLine(rows, k, color){
+    const W = 460, H = 210, L = 42, R = 38, T = 8, B = 22;
+    const pts = rows.map((r, i) => ({ r, i, v: r[k] })).filter((p) => p.v !== null);
+    if (!pts.length) return '';
+    const { y, grid } = _finAxis(pts.map((p) => p.v), W, H, L, R, T, B);
+    const n = rows.length, pw = W - L - R, x = (i) => n > 1 ? L + pw * i / (n - 1) : L + pw / 2;
+    const d = pts.map((p, j) => (j ? 'L' : 'M') + x(p.i) + ',' + y(p.v)).join('');
+    const base = y(0);
+    const area = pts.length > 1 ? `<path d="${d}L${x(pts[pts.length - 1].i)},${base}L${x(pts[0].i)},${base}Z" fill="${color}" opacity=".08"/>` : '';
+    const dots = pts.map((p) => `<circle cx="${x(p.i)}" cy="${y(p.v)}" r="4" fill="${color}" stroke="#fff" stroke-width="2"/>`).join('');
+    const last = pts[pts.length - 1];
+    const endLbl = `<text x="${x(last.i) + 8}" y="${y(last.v) + 3.5}" style="fill:#0f172a;font-weight:700">${_kmoney(last.v)}</text>`;
+    const band = n > 1 ? pw / (n - 1) : pw;
+    const hits = rows.map((r, i) => `<rect class="nb-hit" x="${x(i) - band / 2}" y="${T}" width="${band}" height="${H - T - B}"${_tipAttr(`<b>${_FMON[r.m]} ${r.y}</b><br>Cash at month end: ${_fmoney(r[k])}`)}/>`).join('');
+    const labels = rows.map((r, i) => `<text x="${x(i)}" y="${H - 6}" text-anchor="middle">${_xLabel(r, i)}</text>`).join('');
+    return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cash in the bank by month">${grid}${area}<path d="${d}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round"/>${dots}${endLbl}${labels}${hits}</svg>`;
+}
+function _finBindTips(root){
+    let tip = document.getElementById('nbTip');
+    if (!tip) { tip = document.createElement('div'); tip.id = 'nbTip'; document.body.appendChild(tip); }
+    const show = (e) => {
+        const t = e.target.closest && e.target.closest('[data-tip]');
+        if (!t) { tip.style.display = 'none'; return; }
+        tip.innerHTML = t.getAttribute('data-tip');
+        tip.style.display = 'block';
+        const w = tip.offsetWidth, h = tip.offsetHeight;
+        let left = e.clientX + 14, top = e.clientY - h - 10;
+        if (left + w > window.innerWidth - 8) left = e.clientX - w - 14;
+        if (top < 8) top = e.clientY + 16;
+        tip.style.left = left + 'px'; tip.style.top = top + 'px';
+    };
+    root.querySelectorAll('.nb-chart').forEach((c) => {
+        c.addEventListener('pointermove', show);
+        c.addEventListener('pointerdown', show);
+        c.addEventListener('pointerleave', () => { tip.style.display = 'none'; });
+    });
+}
+
 /* ── Tabs + realtime ─────────────────────────────────────── */
 let _hasAudits = false, _hasFiles = false, _hasGbp = false, _hasContractors = false, _hasReports = false, _msgChannel = null;
 function activePortalTab(){ const t = document.querySelector('.ptab.active'); return t ? t.dataset.ptab : 'dashboard'; }
@@ -2305,6 +2740,71 @@ const NEWLOOK = (() => {
     } catch (e) { return !/[?&]classic=1/.test(location.search); }
 })();
 let _openClientTasks = [], _kdAll = [], _unreadMsgs = 0;
+/* ── Work log: dated, client-facing list of work done in the books (client_portal_work_log).
+   Written by Claude after any session in a client's books, quick-added by the admin, or by triggers
+   (reports uploaded, Your Numbers published). Members only ever receive visible rows (RLS). ── */
+let _workLog = [], _wlAll = false;
+/* ── Shared Access: systems the client gave us access to (client_portal_access). No secrets here —
+   vault links + internal notes live in client_portal_access_private, which members can't read. ── */
+const _SA_TYPE = { accountant_invite: 'Accountant user (invited by you)', own_user: 'Our own user login', shared_login: 'Shared login', read_only: 'Read-only access', other: 'Access granted' };
+let _accessRows = [];
+async function loadSharedAccess(){
+    _accessRows = [];
+    if (currentClient && currentClient.template_key === 'bookkeeping' && _cid) {
+        const { data } = await sb.from('client_portal_access').select('app,app_url,access_type,login_email,granted_on,status')
+            .eq('client_id', _cid).eq('visible', true).order('sort_order').order('app');
+        _accessRows = data || [];
+    }
+    const tab = document.getElementById('accessTab'); if (tab) tab.style.display = _accessRows.length ? '' : 'none';
+    const el = document.getElementById('accessList'); if (!el) return;
+    if (!_accessRows.length) { el.innerHTML = '<div class="req-empty">Nothing listed yet.</div>'; return; }
+    const st = { active: 'Active', pending: 'Pending', revoked: 'Removed' };
+    el.innerHTML = _accessRows.map((a) => {
+        const href = /^https:\/\//i.test(a.app_url || '') ? a.app_url : '';
+        const meta = [_SA_TYPE[a.access_type] || 'Access granted', a.login_email ? 'as ' + a.login_email : '',
+                      a.granted_on ? 'since ' + new Date(a.granted_on + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '']
+                      .filter(Boolean).join(' · ');
+        return `<div class="sa-row"><div class="sa-ic">${esc((a.app || '?').trim().charAt(0).toUpperCase())}</div>
+            <div class="sa-main"><div class="sa-app">${href ? `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(a.app)}</a>` : esc(a.app)}</div><div class="sa-meta">${esc(meta)}</div></div>
+            <span class="sa-st ${esc(a.status)}">${st[a.status] || esc(a.status)}</span></div>`;
+    }).join('');
+}
+async function loadWorkLog(){
+    _workLog = [];
+    if (currentClient && currentClient.template_key === 'bookkeeping' && _cid) {
+        const { data } = await sb.from('client_portal_work_log').select('work_date,category,summary,details,created_at')
+            .eq('client_id', _cid).eq('visible', true)
+            .order('work_date', { ascending: false }).order('created_at', { ascending: false }).limit(60);
+        _workLog = data || [];
+    }
+    renderHomeSummary();
+}
+/* Counts on each entry → tags ("38 transactions · 2 accounts reconciled") and a month-so-far line. */
+const _WL_UNITS = [['transactions', 'transaction', 'transactions', 'organized'], ['accounts', 'account', 'accounts', 'reconciled'],
+                   ['entries', 'journal entry', 'journal entries', 'posted'], ['fixes', 'correction', 'corrections', 'made'], ['reports', 'report', 'reports', 'delivered']];
+function _wlTags(d, verb){
+    d = d || {};
+    return _WL_UNITS.filter(([k]) => +d[k] > 0)
+        .map(([k, one, many, v]) => `${(+d[k]).toLocaleString('en-US')} ${+d[k] === 1 ? one : many}${verb ? ' ' + v : (k === 'accounts' ? ' reconciled' : '')}`);
+}
+function _wlCard(){
+    if (!_workLog.length) return '';
+    const d0 = new Date(_workLog[0].work_date + 'T00:00:00'), today = new Date(); today.setHours(0, 0, 0, 0);
+    const days = Math.round((today - d0) / 86400000);
+    const when = days <= 0 ? 'today' : days === 1 ? 'yesterday' : `${days} days ago`;
+    const fmt = (iso) => new Date(iso + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const shown = _wlAll ? _workLog.slice(0, 30) : _workLog.slice(0, 3);
+    const ym = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0'), tot = {};   /* local month, not UTC */
+    _workLog.filter((w) => (w.work_date || '').slice(0, 7) === ym)
+        .forEach((w) => _WL_UNITS.forEach(([k]) => { if (+((w.details || {})[k]) > 0) tot[k] = (tot[k] || 0) + +w.details[k]; }));
+    const totTags = _wlTags(tot, true);
+    const monthLine = totTags.length ? `<div class="wl-tot"><b>${today.toLocaleDateString('en-US', { month: 'long' })} so far:</b> ${totTags.join(' · ')}</div>` : '';
+    const more = _workLog.length > 3
+        ? `<button class="wl-more" onclick="_wlAll=!_wlAll;renderHomeSummary()">${_wlAll ? 'Show less' : `Show all (${_workLog.length})`}</button>` : '';
+    return `<div class="hs-card"><h3><i class="fa-solid fa-clipboard-check" style="color:var(--accent);margin-right:6px;"></i>Latest work on your books</h3>
+        <div class="wl-last">Last worked in your books ${when}${days > 1 ? ' (' + fmt(_workLog[0].work_date) + ')' : ''}.</div>${monthLine}
+        ${shown.map((w) => { const tg = _wlTags(w.details); return `<div class="wl-row"><span class="wl-d">${fmt(w.work_date)}</span><span class="wl-t"><span class="wl-c">${esc(w.category)}</span>${esc(w.summary)}${tg.length ? `<span class="wl-tags">${tg.map((t) => `<span>${esc(t)}</span>`).join('')}</span>` : ''}</span></div>`; }).join('')}${more}</div>`;
+}
 
 /* Builds the sidebar once and MOVES the existing tab list + top-bar buttons into it,
    so every id and handler (switchPortalTab, applyTabConfig, openBilling…) keeps working. */
@@ -2373,6 +2873,13 @@ function renderHomeSummary(){
                          : '<div class="hs-empty">Your reports will show up here as soon as they\'re ready.</div>'}</div>`
         : '';
 
+    const fr = _finLatest();
+    const numbers = (fr && _tabVisible('numbers'))
+        ? `<div class="hs-card"><h3><i class="fa-solid fa-chart-column" style="color:var(--accent);margin-right:6px;"></i>Your numbers · ${_FMON[fr.m].slice(0, 3)} ${fr.y}${fr.status === 'in_progress' ? ' <span class="nb-pill wip" style="font-size:10px;padding:1px 7px;margin-left:4px;">In progress</span>' : ''}</h3>${
+            [['Revenue', fr.revenue], ['Net profit', fr.net], ['Cash in the bank', fr.cash]].filter((x) => x[1] !== null)
+                .map((x) => `<div class="hs-row" onclick="switchPortalTab('numbers')"><span class="hs-t">${x[0]}</span><span style="font-weight:800;font-variant-numeric:tabular-nums;">${_money(x[1])}</span></div>`).join('')}</div>`
+        : '';
+
     const needs = [];
     if (_unreadMsgs > 0) needs.push(row('messages', _unreadMsgs + ' new message' + (_unreadMsgs !== 1 ? 's' : ''), 'Chat'));
     if (_tabVisible('tasks')) _openClientTasks.slice(0, 3).forEach((t) => needs.push(row('tasks', t.title, t.due_date ? 'Due ' + fmt(new Date(t.due_date + 'T00:00:00')) : 'Task')));
@@ -2380,7 +2887,7 @@ function renderHomeSummary(){
     _kdAll.map((d) => ({ d, dt: new Date(d.due_date + 'T00:00:00') })).filter((x) => x.dt >= today).sort((a, b) => a.dt - b.dt).slice(0, 2)
         .forEach((x) => needs.push(row('dates', x.d.title, fmt(x.dt))));
     const needsCard = `<div class="hs-card"><h3><i class="fa-solid fa-bell" style="color:var(--accent);margin-right:6px;"></i>Needs you</h3>${needs.length ? needs.join('') : '<div class="hs-empty">You\'re all caught up.</div>'}</div>`;
-    el.innerHTML = reports + needsCard;
+    el.innerHTML = _wlCard() + numbers + reports + needsCard;
 
     const tb = document.getElementById('taskTabBadge');
     if (tb) { const n = _openClientTasks.length; if (n > 0) { tb.textContent = n; tb.style.display = ''; } else tb.style.display = 'none'; }
@@ -2398,7 +2905,8 @@ function switchPortalTab(name){
     if (_nl) {
         /* New look: link cards, announcements, greeting and the summary live on Home only. */
         const home = name === 'dashboard';
-        ['homeSummary', 'portalBanners'].forEach((id) => { const el = document.getElementById(id); if (el) el.style.display = home ? '' : 'none'; });
+        { const hs = document.getElementById('homeSummary'); if (hs) hs.style.display = home ? '' : 'none'; }
+        { const pb = document.getElementById('portalBanners'); if (pb) pb.style.display = (home || name === 'numbers') ? '' : 'none'; }   /* landing page keeps the announcement */
         const dh = document.querySelector('.dash-head'); if (dh) dh.style.display = home ? '' : 'none';
         psToggle(false);
         window.scrollTo(0, 0);
@@ -2406,6 +2914,8 @@ function switchPortalTab(name){
     }
     const vis = {
         cardGrid: name === 'dashboard' || (!_nl && document.body.classList.contains('bk')),
+        numbersSection: name === 'numbers',
+        accessSection: name === 'access',
         gbpSection: name === 'gbp',
         messagesSection: name === 'messages',
         onboardingSection: name === 'onboarding',
@@ -2422,6 +2932,7 @@ function switchPortalTab(name){
     };
     Object.keys(vis).forEach((id) => { const el = document.getElementById(id); if (el) el.style.display = vis[id] ? '' : 'none'; });
     if (name === 'messages') markMessagesRead();
+    if (name === 'numbers') renderNumbers();
     if (name === 'team') loadTeam();
     if (name === 'tasks') loadClientTasks();
     if (name === 'uploads') loadUploads();

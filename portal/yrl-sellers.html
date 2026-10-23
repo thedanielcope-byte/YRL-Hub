@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Tools — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="portal-auth.js"></script>
+    <script src="embed-mode.js?v=20260927b"></script>
+    <script src="help-box.js?v=20260916" defer></script>
+    <style>
+        :root {
+            --red:#c03926; --red-light:#d94a35; --red-dark:#9e2e1e;
+            --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f7f8fa; --surface-3:#eef0f3;
+            --border:#e2e5ea; --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+            --radius:14px; --shadow:0 4px 20px rgba(0,0,0,0.08); --shadow-red:0 6px 28px rgba(192,57,38,0.22);
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        html{scroll-behavior:smooth;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
+        a{text-decoration:none;color:inherit;}
+
+        .page-header{background:linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);padding:28px 24px 24px;}
+        .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+        .back-btn{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:9px 18px;border-radius:100px;font-size:13px;font-weight:600;white-space:nowrap;}
+        .back-btn:hover{background:rgba(255,255,255,0.26);}
+        .header-title h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(26px,4vw,38px);letter-spacing:1.5px;color:#fff;line-height:1.1;}
+        .header-title p{font-size:13px;color:rgba(255,255,255,0.85);}
+
+        .wrap{max-width:1100px;margin:0 auto;padding:40px 24px 90px;}
+        .section{margin-bottom:48px;scroll-margin-top:20px;}
+        .sec-header{display:flex;align-items:center;gap:14px;margin-bottom:22px;}
+        .sec-icon{width:46px;height:46px;background:rgba(192,57,38,0.08);border:1px solid rgba(192,57,38,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--red);font-size:18px;flex-shrink:0;}
+        .sec-header h2{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1.5px;color:var(--text);line-height:1;}
+        .sec-header p{font-size:12.5px;color:var(--text-muted);margin-top:3px;}
+
+        .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
+        .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;display:flex;flex-direction:column;gap:10px;transition:all 0.25s ease;position:relative;overflow:hidden;}
+        .card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform 0.3s ease;}
+        .card:hover{background:var(--surface-2);border-color:rgba(192,57,38,0.3);transform:translateY(-4px);box-shadow:var(--shadow-red);}
+        .card:hover::after{transform:scaleX(1);}
+        .card[href^="http"] .card-icon{background:rgba(37,99,235,0.10);color:#2563eb;}
+        .card[href^="http"] .pill{color:#2563eb;background:rgba(37,99,235,0.10);}
+        .card[href^="http"]::after{background:#2563eb;}
+        .card[href^="http"]:hover{border-color:rgba(37,99,235,0.35);box-shadow:0 8px 28px rgba(37,99,235,0.18);}
+        .card[href^="http"] .card-footer i{color:#2563eb;}
+        .card-icon{width:50px;height:50px;background:rgba(192,57,38,0.1);border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--red);font-size:20px;flex-shrink:0;}
+        .card h3{font-size:15px;font-weight:700;color:var(--text);margin-top:2px;}
+        .card p{font-size:12.5px;color:var(--text-sec);flex:1;line-height:1.55;}
+        .card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:4px;}
+        .pill{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--red);background:rgba(192,57,38,0.1);padding:3px 9px;border-radius:5px;}
+        .card-footer i{color:var(--text-muted);font-size:12px;transition:all 0.2s;}
+        .card:hover .card-footer i{color:var(--red);transform:translateX(3px);}
+        @media(max-width:820px){.card-grid{grid-template-columns:repeat(2,1fr);}}
+        @media(max-width:520px){.card-grid{grid-template-columns:1fr;}}
+
+        /* resource-list component */
+        .rl-top{display:flex;justify-content:flex-end;margin-bottom:8px;}
+        .rl-editbtn{display:inline-flex;align-items:center;gap:6px;background:rgba(192,57,38,0.08);color:var(--red);border:1.5px solid var(--red);border-radius:8px;padding:7px 14px;font-size:12.5px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;}
+        .rl-editbtn.on{background:var(--red);color:#fff;}
+        .rl-cat{margin-bottom:26px;}
+        .rl-catname{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+        .rl-catctrl{display:inline-flex;gap:6px;}
+        .rl-catctrl button{background:var(--surface-2);border:1.5px solid var(--border);border-radius:6px;width:26px;height:26px;cursor:pointer;color:var(--text-sec);font-size:11px;}
+        .rl-catctrl button:hover{border-color:var(--red);color:var(--red);}
+        .rl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;}
+        .rl-item{position:relative;}
+        .rl-tile{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px 15px;font-size:13px;font-weight:600;color:var(--text);min-height:48px;transition:all .15s;position:relative;}
+        .rl-tile:hover{border-color:rgba(192,57,38,0.35);}
+        .rl-tile.rl-dim{opacity:.7;}
+        .rl-tile.rl-edit{cursor:pointer;border-style:dashed;}
+        .rl-name{overflow:hidden;text-overflow:ellipsis;}
+        .rl-badge{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--red);background:rgba(192,57,38,0.1);padding:3px 8px;border-radius:5px;white-space:nowrap;}
+        .rl-soon{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);background:var(--surface-3);padding:3px 8px;border-radius:5px;white-space:nowrap;}
+        .rl-x{position:absolute;top:-7px;right:-7px;z-index:2;width:20px;height:20px;border:none;border-radius:50%;background:var(--red);color:#fff;font-size:13px;cursor:pointer;line-height:1;}
+        .rl-up{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:12px;}
+        .rl-up:hover{color:var(--red);}
+        .rl-hint{position:absolute;bottom:2px;left:15px;font-size:9px;color:var(--text-muted);}
+        .rl-add,.rl-addcat{background:var(--surface-2);border:1.5px dashed var(--border);border-radius:10px;padding:12px;font-size:12.5px;font-weight:700;color:var(--text-sec);cursor:pointer;font-family:'Inter',sans-serif;}
+        .rl-add:hover,.rl-addcat:hover{border-color:var(--red);color:var(--red);}
+        .rl-addcat{display:block;width:100%;margin-top:8px;}
+        .rl-empty{padding:24px;text-align:center;color:var(--text-muted);font-size:13px;}
+    </style>
+<link rel="stylesheet" href="hub-theme.css?v=20260903b"><script src="hub-brand.js" defer></script></head>
+<body>
+
+<header class="page-header">
+    <div class="header-inner">
+        <a href="hub.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Hub</a>
+        <div class="header-title">
+            <h1><i class="fa-solid fa-house" style="font-size:0.8em;opacity:.9;"></i> Seller Tools</h1>
+            <p>Everything you need for a listing — pricing, open house, marketing, and documents</p>
+        </div>
+    </div>
+</header>
+
+<div class="wrap">
+    <div id="helpTop"></div>
+    <script>document.addEventListener("DOMContentLoaded",function(){ window.HelpBox && HelpBox.mount({container:"#helpTop",key:"yrl-sellers",label:"Seller Tools"}); });</script>
+
+    <div id="sellerTools"></div>
+
+</div>
+
+<script src="hub-data.js"></script>
+<script src="edit-gate.js?v=20260916"></script>
+<script src="resource-list.js?v=20260903a"></script>
+<script src="tile-grid.js?v=20260927b"></script>
+<script>
+    function __sellerInit(){
+        TileGrid.mount({ container:'#sellerTools', key:'yrl-seller-tools', layout:'side',
+            sidebarLinks:[{ name:'Marketing Hub', icon:'fa-solid fa-bullhorn', href:'yrl-marketing.html' }] });
+    }
+    document.addEventListener('yrl-auth-ready', __sellerInit);
+    if (window.yrlMember) __sellerInit();
+</script>
+<script src="back-link.js?v=20260917"></script>
+</body>
+</html>

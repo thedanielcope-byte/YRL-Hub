@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Contacts — Your Realty Link</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="yrl-auth.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --red:#c03926; --red-light:#d94a35; --red-dark:#9e2e1e;
+            --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f7f8fa;
+            --surface-3:#eef0f3; --border:#e2e5ea;
+            --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+            --green:#16a34a; --green-light:#dcfce7;
+            --orange:#ea580c; --blue:#1d4ed8;
+            --radius:12px; --radius-lg:20px;
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;}
+        a{text-decoration:none;color:inherit;}
+
+        /* Header */
+        .sub-header{background:linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);padding:26px 20px 22px;color:#fff;position:relative;overflow:hidden;}
+        .sub-header::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.07) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;}
+        .sub-header-inner{max-width:980px;margin:0 auto;position:relative;z-index:1;}
+        .back-btn{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:rgba(255,255,255,0.85);background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:7px 14px;margin-bottom:14px;cursor:pointer;}
+        .back-btn:hover{background:rgba(255,255,255,0.2);color:#fff;}
+        .header-row{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;}
+        .header-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1.6px;line-height:1.05;}
+        .header-sub{font-size:13px;opacity:0.85;margin-top:5px;max-width:560px;}
+
+        .main{max-width:980px;margin:0 auto;padding:20px 16px 80px;}
+
+        /* Toolbar */
+        .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;}
+        .toolbar .search{flex:1;min-width:200px;position:relative;}
+        .toolbar .search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:12px;}
+        .toolbar .search input{width:100%;background:var(--surface-3);border:1.5px solid var(--border);border-radius:8px;padding:8px 12px 8px 32px;font-size:13px;font-family:'Inter',sans-serif;color:var(--text);outline:none;}
+        .toolbar .search input:focus{border-color:var(--red);background:var(--surface);}
+        .toolbar select{background:var(--surface-3);border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:13px;font-family:'Inter',sans-serif;color:var(--text);outline:none;cursor:pointer;}
+        .toolbar select:focus{border-color:var(--red);}
+        .btn{display:inline-flex;align-items:center;gap:7px;border:none;border-radius:8px;padding:8px 14px;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:700;cursor:pointer;transition:all 0.15s;text-decoration:none;}
+        .btn-primary{background:var(--red);color:#fff;}
+        .btn-primary:hover{background:var(--red-light);transform:translateY(-1px);}
+        .btn-ghost{background:var(--surface-3);color:var(--text);border:1px solid var(--border);}
+        .btn-ghost:hover{border-color:var(--red);color:var(--red);}
+
+        .count-row{font-size:12px;color:var(--text-muted);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
+
+        /* Contact card */
+        .contact-list{display:flex;flex-direction:column;gap:8px;}
+        .contact{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;cursor:pointer;transition:all 0.15s;}
+        .contact:hover{border-color:rgba(192,57,38,0.3);box-shadow:0 4px 14px rgba(0,0,0,0.05);}
+        .contact-avatar{width:38px;height:38px;border-radius:50%;background:rgba(192,57,38,0.08);color:var(--red);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;}
+        .contact-info{min-width:0;}
+        .contact-name{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+        .contact-meta{font-size:12px;color:var(--text-muted);margin-top:3px;}
+        .contact-actions{display:flex;gap:4px;}
+        .icon-btn{background:none;border:none;color:var(--text-muted);cursor:pointer;padding:6px 8px;border-radius:6px;font-size:12px;}
+        .icon-btn:hover{background:var(--surface-3);color:var(--red);}
+        .pill{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;}
+        .pill-buyer{background:#dbeafe;color:#1e40af;}
+        .pill-seller{background:#fef3c7;color:#92400e;}
+        .pill-prospect{background:#fce7f3;color:#9d174d;}
+        .pill-lead{background:#e0e7ff;color:#3730a3;}
+        .pill-past_client{background:var(--green-light);color:#065f46;}
+        .pill-vendor{background:#f3e8ff;color:#7e22ce;}
+        .pill-other{background:var(--surface-3);color:var(--text-sec);}
+        .status-dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:6px;}
+        .status-active{background:var(--green);}
+        .status-cold{background:var(--text-muted);}
+        .status-closed{background:var(--blue);}
+        .status-do_not_contact{background:#dc2626;}
+
+        .contact-expand{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:12.5px;color:var(--text-sec);display:none;}
+        .contact.open .contact-expand{display:block;}
+        .contact-expand strong{color:var(--text);}
+        .contact-detail-row{margin-bottom:4px;}
+        .contact.open{grid-template-columns:auto 1fr auto;}
+
+        .empty{text-align:center;padding:50px 20px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);}
+        .empty i{font-size:38px;opacity:0.3;margin-bottom:10px;display:block;}
+        .empty h3{font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px;}
+        .empty p{font-size:13px;max-width:380px;margin:0 auto 16px;}
+        .loading{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:13px;}
+
+        /* Modal */
+        .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;align-items:center;justify-content:center;padding:20px;}
+        .modal-overlay.open{display:flex;}
+        .modal{background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:540px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.35);}
+        .modal-head{padding:20px 24px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+        .modal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1.3px;}
+        .modal-close{background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-muted);line-height:1;}
+        .modal-close:hover{color:var(--red);}
+        .modal-body{padding:18px 24px;}
+        .modal-foot{padding:14px 24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+        .field{margin-bottom:12px;}
+        .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+        @media(max-width:520px){.field-row{grid-template-columns:1fr;}}
+        .field label{display:block;font-size:10.5px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;}
+        .field input,.field select,.field textarea{width:100%;background:var(--surface-3);border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13.5px;font-family:'Inter',sans-serif;color:var(--text);outline:none;}
+        .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--red);background:var(--surface);}
+        .field textarea{resize:vertical;min-height:65px;}
+        .field-hint{font-size:11px;color:var(--text-muted);margin-top:3px;line-height:1.4;}
+
+        /* Section divider inside the modal */
+        .section-head{
+            display:flex;align-items:center;gap:8px;
+            font-size:10.5px;font-weight:800;color:var(--red);
+            text-transform:uppercase;letter-spacing:0.8px;
+            margin:18px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);
+        }
+        .section-head i{font-size:11px;}
+        .section-head:first-of-type{margin-top:4px;}
+
+        /* Address row: Street full, then City | State | Zip */
+        .addr-row{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;margin-bottom:12px;}
+        @media(max-width:520px){.addr-row{grid-template-columns:1fr 1fr;}}
+
+        /* Linked-contact pill on a card */
+        .pill-linked{
+            display:inline-flex;align-items:center;gap:4px;
+            background:#ecfeff;color:#0e7490;border:1px solid #a5f3fc;
+            border-radius:20px;padding:2px 8px;font-size:10.5px;font-weight:700;
+            text-transform:uppercase;letter-spacing:0.4px;
+        }
+        .pill-linked i{font-size:9px;}
+
+        /* Linked panel inside modal */
+        .link-current{
+            background:var(--surface-3);border:1px solid var(--border);border-radius:8px;
+            padding:9px 12px;font-size:12.5px;color:var(--text);
+            display:flex;justify-content:space-between;align-items:center;gap:8px;
+        }
+        .link-current b{font-weight:700;}
+        .btn-unlink{
+            background:none;border:1px solid var(--border);color:#dc2626;
+            border-radius:6px;padding:4px 9px;font-size:11px;font-weight:700;
+            cursor:pointer;font-family:'Inter',sans-serif;
+        }
+        .btn-unlink:hover{border-color:#dc2626;background:#fef2f2;}
+
+        .import-preview{margin-top:10px;background:var(--surface-3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text-sec);max-height:200px;overflow:auto;}
+        .import-preview table{width:100%;border-collapse:collapse;font-size:11px;}
+        .import-preview th,.import-preview td{padding:4px 8px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+        .import-preview th{color:var(--red);font-weight:700;}
+
+        #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--text);color:#fff;padding:11px 22px;border-radius:10px;font-size:12.5px;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,0.25);z-index:9999;transition:transform 0.3s;max-width:90vw;text-align:center;}
+        #toast.show{transform:translateX(-50%) translateY(0);}
+        #toast.error{background:#dc2626;}
+        #toast.success{background:var(--green);}
+    </style>
+</head>
+<body>
+
+<header class="sub-header">
+    <div class="sub-header-inner">
+        <a href="yrl-agent-hub.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Hub</a>
+        <div class="header-row">
+            <div>
+                <div class="header-title">MY CONTACTS</div>
+                <div class="header-sub">Your private contact database — buyers, sellers, leads, vendors, past clients. Only you and the office admins see this list.</div>
+            </div>
+            <button class="btn btn-primary" onclick="openContactModal()"><i class="fa-solid fa-plus"></i> Add Contact</button>
+        </div>
+    </div>
+</header>
+
+<main class="main">
+    <div class="toolbar">
+        <div class="search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="searchInput" type="search" placeholder="Search name, email, phone…" oninput="renderContacts()">
+        </div>
+        <select id="typeFilter" onchange="renderContacts()">
+            <option value="">All types</option>
+            <option value="buyer">Buyer</option>
+            <option value="seller">Seller</option>
+            <option value="prospect">Prospect</option>
+            <option value="lead">Lead</option>
+            <option value="past_client">Past client</option>
+            <option value="vendor">Vendor</option>
+            <option value="other">Other</option>
+        </select>
+        <button class="btn btn-ghost" onclick="openImportModal()" title="Import contacts from CSV"><i class="fa-solid fa-file-arrow-up"></i> Import CSV</button>
+        <button class="btn btn-ghost" onclick="exportCsv()" title="Download my contacts as CSV"><i class="fa-solid fa-file-arrow-down"></i> Export CSV</button>
+    </div>
+
+    <div class="count-row">
+        <span id="countLine">—</span>
+        <span style="font-size:11px;">Click a row to expand details</span>
+    </div>
+
+    <div id="listWrap">
+        <div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading your contacts…</div>
+    </div>
+</main>
+
+<!-- Add/Edit modal -->
+<div class="modal-overlay" id="contactModal" onclick="if(event.target===this)closeContactModal()">
+    <div class="modal">
+        <div class="modal-head">
+            <div class="modal-title" id="contactModalTitle">Add Contact</div>
+            <button class="modal-close" onclick="closeContactModal()">&times;</button>
+        </div>
+        <form class="modal-body" id="contactForm" onsubmit="saveContact(event)">
+            <div class="field-row">
+                <div class="field">
+                    <label>Name *</label>
+                    <input type="text" id="c-name" required placeholder="Jane Doe">
+                </div>
+                <div class="field">
+                    <label>Type</label>
+                    <select id="c-type">
+                        <option value="prospect">Prospect</option>
+                        <option value="buyer">Buyer</option>
+                        <option value="seller">Seller</option>
+                        <option value="lead">Lead</option>
+                        <option value="past_client">Past client</option>
+                        <option value="vendor">Vendor</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label>Email</label>
+                    <input type="email" id="c-email" placeholder="jane@email.com">
+                </div>
+                <div class="field">
+                    <label>Phone</label>
+                    <input type="tel" id="c-phone" placeholder="317-555-1234">
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label>Last Contact</label>
+                    <input type="date" id="c-last_contact">
+                </div>
+                <div class="field">
+                    <label>Status</label>
+                    <select id="c-status">
+                        <option value="active">Active</option>
+                        <option value="cold">Cold</option>
+                        <option value="closed">Closed</option>
+                        <option value="do_not_contact">Do Not Contact</option>
+                    </select>
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label>Source</label>
+                    <input type="text" id="c-source" placeholder="Zillow lead, referral, open house…">
+                </div>
+                <div class="field">
+                    <label>Tags</label>
+                    <input type="text" id="c-tags" placeholder="comma, separated, tags">
+                </div>
+            </div>
+            <div class="field">
+                <label>Notes</label>
+                <textarea id="c-notes" placeholder="Anything you want to remember…"></textarea>
+            </div>
+
+            <div class="section-head"><i class="fa-solid fa-location-dot"></i> Address</div>
+            <div class="field">
+                <label>Street</label>
+                <input type="text" id="c-street" placeholder="123 Main St" autocomplete="off">
+            </div>
+            <div class="addr-row">
+                <div class="field" style="margin:0;">
+                    <label>City</label>
+                    <input type="text" id="c-city" placeholder="Indianapolis" autocomplete="off">
+                </div>
+                <div class="field" style="margin:0;">
+                    <label>State</label>
+                    <input type="text" id="c-state" placeholder="IN" maxlength="2" style="text-transform:uppercase;" autocomplete="off">
+                </div>
+                <div class="field" style="margin:0;">
+                    <label>Zip</label>
+                    <input type="text" id="c-zip" placeholder="46227" autocomplete="off">
+                </div>
+            </div>
+
+            <div class="section-head"><i class="fa-solid fa-link"></i> Linked Contact</div>
+            <div id="link-current-wrap" style="display:none;margin-bottom:12px;">
+                <div class="link-current">
+                    <div>Currently linked to <b id="link-current-name">—</b> <span id="link-current-rel" style="color:var(--text-muted);"></span></div>
+                    <button type="button" class="btn-unlink" onclick="clearLink()"><i class="fa-solid fa-link-slash"></i> Unlink</button>
+                </div>
+            </div>
+            <div class="field-row" id="link-pickers">
+                <div class="field" style="margin:0;">
+                    <label>Link to another contact</label>
+                    <select id="c-linked_contact_id" onchange="onLinkPickerChange()">
+                        <option value="">— None —</option>
+                    </select>
+                    <div class="field-hint">Spouses, partners, co-buyers, business partners. The other contact is automatically linked back to this one.</div>
+                </div>
+                <div class="field" style="margin:0;">
+                    <label>Relationship</label>
+                    <select id="c-relationship">
+                        <option value="">—</option>
+                        <option value="spouse">Spouse</option>
+                        <option value="partner">Partner</option>
+                        <option value="co_buyer">Co-buyer</option>
+                        <option value="sibling">Sibling</option>
+                        <option value="parent">Parent (of linked)</option>
+                        <option value="child">Child (of linked)</option>
+                        <option value="business_partner">Business partner</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <input type="hidden" id="c-id">
+            <input type="hidden" id="c-prev-linked">
+            <input type="hidden" id="c-prev-relationship">
+        </form>
+        <div class="modal-foot">
+            <button type="button" class="btn btn-ghost" id="deleteBtn" onclick="deleteCurrent()" style="display:none;color:#dc2626;border-color:#fecaca;"><i class="fa-solid fa-trash"></i> Delete</button>
+            <div style="margin-left:auto;display:flex;gap:8px;">
+                <button type="button" class="btn btn-ghost" onclick="closeContactModal()">Cancel</button>
+                <button type="submit" form="contactForm" class="btn btn-primary" id="saveBtn"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CSV Import modal -->
+<div class="modal-overlay" id="importModal" onclick="if(event.target===this)closeImportModal()">
+    <div class="modal">
+        <div class="modal-head">
+            <div class="modal-title">Import Contacts</div>
+            <button class="modal-close" onclick="closeImportModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p style="font-size:13px;color:var(--text-sec);margin-bottom:10px;">Drop a CSV exported from Gmail, Outlook, your old CRM, or anywhere else. We match common column names automatically (name, email, phone, type, notes, etc.).</p>
+            <input type="file" id="csvFile" accept=".csv,text/csv" onchange="handleCsvFile(this)" style="font-size:13px;">
+            <div id="importStatus" style="font-size:12px;color:var(--text-muted);margin-top:8px;"></div>
+            <div id="importPreview"></div>
+        </div>
+        <div class="modal-foot" style="justify-content:flex-end;">
+            <button type="button" class="btn btn-ghost" onclick="closeImportModal()">Cancel</button>
+            <button type="button" class="btn btn-primary" id="importBtn" onclick="confirmImport()" disabled><i class="fa-solid fa-cloud-arrow-up"></i> <span id="importBtnLabel">Import</span></button>
+        </div>
+    </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════════
+   My Contacts — RLS-backed CRM (table: public.agent_contacts)
+   ════════════════════════════════════════════════════════════════════ */
+const SB_URL = 'https://wdvolamasztetwpitbwg.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indkdm9sYW1hc3p0ZXR3cGl0YndnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3Nzc2MTYsImV4cCI6MjA5MTM1MzYxNn0.uiGIaZwr88ZNtAobfSV-axlpXB3sos2Rcw3FiFm6JO8';
+
+let currentUser = null;
+let contacts = [];
+let editingId = null;
+let parsedCsvRows = null;   // for the import flow
+
+/* Bidirectional relationship mirror — when A is X to B, B is MIRROR[X] to A */
+const REL_MIRROR = {
+    spouse: 'spouse',
+    partner: 'partner',
+    co_buyer: 'co_buyer',
+    sibling: 'sibling',
+    parent: 'child',
+    child: 'parent',
+    business_partner: 'business_partner',
+    other: 'other'
+};
+const REL_LABEL = {
+    spouse: 'Spouse',
+    partner: 'Partner',
+    co_buyer: 'Co-buyer',
+    sibling: 'Sibling',
+    parent: 'Parent',
+    child: 'Child',
+    business_partner: 'Business partner',
+    other: 'Other'
+};
+
+document.addEventListener('yrl-auth-ready', async ({ detail }) => {
+    currentUser = detail.user; init();
+});
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(async () => {
+        if (currentUser) return;
+        if (!window.yrlClient) return;
+        const { data } = await window.yrlClient.auth.getSession();
+        if (data.session) { currentUser = data.session.user; init(); }
+    }, 700);
+});
+
+async function getToken(){
+    if (!window.yrlClient) throw new Error('Not signed in');
+    const { data } = await window.yrlClient.auth.getSession();
+    if (!data.session) throw new Error('Session expired');
+    return data.session.access_token;
+}
+function sbHeaders(token, extra){ return Object.assign({apikey:SB_KEY, Authorization:'Bearer '+token, 'Content-Type':'application/json'}, extra||{}); }
+function agentDisplayName(u){ return u.user_metadata?.full_name || u.user_metadata?.name || (u.email||'').split('@')[0] || 'Agent'; }
+
+async function init(){ await loadContacts(); }
+
+async function loadContacts(){
+    const wrap = document.getElementById('listWrap');
+    wrap.innerHTML = '<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading your contacts…</div>';
+    try {
+        const token = await getToken();
+        const res = await fetch(SB_URL+'/rest/v1/agent_contacts?select=*&order=updated_at.desc', { headers: sbHeaders(token) });
+        if (!res.ok) throw new Error('HTTP '+res.status);
+        contacts = await res.json();
+        renderContacts();
+    } catch(e) {
+        wrap.innerHTML = '<div class="empty"><i class="fa-solid fa-triangle-exclamation"></i><h3>Couldn\'t load contacts</h3><p>'+esc(e.message)+'</p><button class="btn btn-primary" onclick="loadContacts()">Try again</button></div>';
+    }
+}
+
+function renderContacts(){
+    const wrap = document.getElementById('listWrap');
+    const q = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+    const t = document.getElementById('typeFilter').value;
+    let list = contacts.slice();
+    if (t) list = list.filter(c => c.type === t);
+    if (q) list = list.filter(c => [c.name, c.email, c.phone, c.notes, c.source, c.tags].some(v => (v||'').toString().toLowerCase().includes(q)));
+    document.getElementById('countLine').textContent = list.length + ' of ' + contacts.length + ' contact' + (contacts.length===1?'':'s');
+    if (!list.length) {
+        if (!contacts.length) {
+            wrap.innerHTML = '<div class="empty"><i class="fa-solid fa-address-book"></i><h3>No contacts yet</h3><p>Click <b>Add Contact</b> to enter one by hand, or use <b>Import CSV</b> to bring in your contacts from your old CRM/email.</p><button class="btn btn-primary" onclick="openContactModal()"><i class="fa-solid fa-plus"></i> Add your first contact</button></div>';
+        } else {
+            wrap.innerHTML = '<div class="empty"><i class="fa-solid fa-magnifying-glass"></i><h3>No matches</h3><p>Nothing matches your search/filter.</p></div>';
+        }
+        return;
+    }
+    wrap.innerHTML = '<div class="contact-list">' + list.map(renderContact).join('') + '</div>';
+}
+
+function renderContact(c){
+    const initials = (c.name||'?').split(/\s+/).map(w=>w[0]).filter(Boolean).slice(0,2).join('').toUpperCase();
+    const lastDate = c.last_contact ? new Date(c.last_contact+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : null;
+    const meta = [
+        c.email,
+        c.phone,
+        lastDate ? ('Last: '+lastDate) : null
+    ].filter(Boolean).join('  ·  ');
+
+    // Address line
+    const addrParts = [c.street, [c.city, c.state].filter(Boolean).join(', '), c.zip].filter(Boolean);
+    const addrLine = addrParts.length ? addrParts.join(' · ') : null;
+
+    // Linked partner
+    const partner = c.linked_contact_id ? contacts.find(x => x.id === c.linked_contact_id) : null;
+    const relLabel = c.relationship ? (REL_LABEL[c.relationship] || c.relationship) : '';
+    const linkedPill = partner
+        ? `<span class="pill-linked" title="Linked to ${esc(partner.name||'')}"><i class="fa-solid fa-link"></i>${esc(relLabel || 'Linked')}</span>`
+        : '';
+    const linkedRow = partner
+        ? `<div class="contact-detail-row"><strong>${esc(relLabel || 'Linked')}:</strong> ${esc(partner.name||'(unnamed)')}${partner.email ? ' · '+esc(partner.email) : ''}${partner.phone ? ' · '+esc(partner.phone) : ''}</div>`
+        : '';
+
+    const expandRows = [
+        addrLine && `<div class="contact-detail-row"><strong>Address:</strong> ${esc(addrLine)}</div>`,
+        linkedRow,
+        c.source && `<div class="contact-detail-row"><strong>Source:</strong> ${esc(c.source)}</div>`,
+        c.tags   && `<div class="contact-detail-row"><strong>Tags:</strong> ${esc(c.tags)}</div>`,
+        c.notes  && `<div class="contact-detail-row"><strong>Notes:</strong> ${esc(c.notes)}</div>`,
+    ].filter(Boolean).join('');
+    return `<div class="contact" id="contact-${esc(c.id)}" onclick="toggleContact(event,'${esc(c.id)}')">
+        <div class="contact-avatar">${esc(initials || '?')}</div>
+        <div class="contact-info">
+            <div class="contact-name">
+                ${esc(c.name)}
+                <span class="pill pill-${esc(c.type || 'other')}">${esc((c.type||'other').replace('_',' '))}</span>
+                ${linkedPill}
+                <span style="font-size:11px;color:var(--text-muted);"><span class="status-dot status-${esc(c.status || 'active')}"></span>${esc((c.status||'active').replace(/_/g,' '))}</span>
+            </div>
+            <div class="contact-meta">${esc(meta) || '<em style="color:var(--text-muted);">No contact info yet</em>'}</div>
+            ${expandRows ? `<div class="contact-expand">${expandRows}</div>` : ''}
+        </div>
+        <div class="contact-actions">
+            <button class="icon-btn" title="Edit" onclick="event.stopPropagation();openContactModal('${esc(c.id)}')"><i class="fa-solid fa-pen"></i></button>
+        </div>
+    </div>`;
+}
+
+function toggleContact(e, id){
+    const el = document.getElementById('contact-'+id);
+    if (el) el.classList.toggle('open');
+}
+
+/* ── Add / Edit modal ──────────────────────────────────────────── */
+function openContactModal(id){
+    editingId = id || null;
+    document.getElementById('contactModalTitle').textContent = id ? 'Edit Contact' : 'Add Contact';
+    document.getElementById('deleteBtn').style.display = id ? '' : 'none';
+    document.getElementById('contactForm').reset();
+    document.getElementById('c-id').value = id || '';
+    document.getElementById('c-prev-linked').value = '';
+    document.getElementById('c-prev-relationship').value = '';
+    populateLinkPicker(id || null);
+    if (id) {
+        const c = contacts.find(x => x.id === id);
+        if (c) {
+            document.getElementById('c-name').value         = c.name || '';
+            document.getElementById('c-type').value         = c.type || 'prospect';
+            document.getElementById('c-email').value        = c.email || '';
+            document.getElementById('c-phone').value        = c.phone || '';
+            document.getElementById('c-last_contact').value = c.last_contact || '';
+            document.getElementById('c-status').value       = c.status || 'active';
+            document.getElementById('c-source').value       = c.source || '';
+            document.getElementById('c-tags').value         = c.tags || '';
+            document.getElementById('c-notes').value        = c.notes || '';
+            document.getElementById('c-street').value       = c.street || '';
+            document.getElementById('c-city').value         = c.city || '';
+            document.getElementById('c-state').value        = c.state || 'IN';
+            document.getElementById('c-zip').value          = c.zip || '';
+            document.getElementById('c-linked_contact_id').value = c.linked_contact_id || '';
+            document.getElementById('c-relationship').value      = c.relationship || '';
+            document.getElementById('c-prev-linked').value        = c.linked_contact_id || '';
+            document.getElementById('c-prev-relationship').value  = c.relationship || '';
+        }
+    } else {
+        // Default state on new contact
+        document.getElementById('c-state').value = 'IN';
+    }
+    renderLinkCurrent();
+    document.getElementById('contactModal').classList.add('open');
+    setTimeout(() => document.getElementById('c-name').focus(), 60);
+}
+function closeContactModal(){ document.getElementById('contactModal').classList.remove('open'); editingId = null; }
+
+/* Build the <select> of other contacts to link to */
+function populateLinkPicker(excludeId){
+    const sel = document.getElementById('c-linked_contact_id');
+    const options = contacts
+        .filter(c => c.id !== excludeId)
+        .slice()
+        .sort((a,b) => (a.name||'').localeCompare(b.name||''))
+        .map(c => {
+            const sub = c.email || c.phone || '';
+            return `<option value="${esc(c.id)}">${esc(c.name)}${sub ? ' — '+esc(sub) : ''}</option>`;
+        }).join('');
+    sel.innerHTML = '<option value="">— None —</option>' + options;
+}
+
+function onLinkPickerChange(){
+    const id = document.getElementById('c-linked_contact_id').value;
+    const rel = document.getElementById('c-relationship').value;
+    if (id && !rel) document.getElementById('c-relationship').value = 'spouse';
+    renderLinkCurrent();
+}
+
+function clearLink(){
+    document.getElementById('c-linked_contact_id').value = '';
+    document.getElementById('c-relationship').value = '';
+    renderLinkCurrent();
+}
+
+function renderLinkCurrent(){
+    const id = document.getElementById('c-linked_contact_id').value;
+    const rel = document.getElementById('c-relationship').value;
+    const wrap = document.getElementById('link-current-wrap');
+    if (!id) { wrap.style.display = 'none'; return; }
+    const partner = contacts.find(c => c.id === id);
+    if (!partner) { wrap.style.display = 'none'; return; }
+    document.getElementById('link-current-name').textContent = partner.name || '(unnamed)';
+    document.getElementById('link-current-rel').textContent  = rel ? ('· ' + (REL_LABEL[rel] || rel)) : '';
+    wrap.style.display = '';
+}
+
+async function saveContact(e){
+    e.preventDefault();
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true;
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…';
+    try {
+        const id = document.getElementById('c-id').value || null;
+        const linkedId = document.getElementById('c-linked_contact_id').value || null;
+        const relationship = (document.getElementById('c-relationship').value || '').trim() || null;
+        const prevLinked = document.getElementById('c-prev-linked').value || null;
+
+        // Guardrails
+        if (linkedId && id && linkedId === id) {
+            throw new Error("A contact can't be linked to itself.");
+        }
+        if (linkedId && !relationship) {
+            throw new Error('Pick a relationship type for the linked contact.');
+        }
+
+        const payload = {
+            name:              document.getElementById('c-name').value.trim(),
+            type:              document.getElementById('c-type').value || null,
+            email:             document.getElementById('c-email').value.trim() || null,
+            phone:             document.getElementById('c-phone').value.trim() || null,
+            last_contact:      document.getElementById('c-last_contact').value || null,
+            source:            document.getElementById('c-source').value.trim() || null,
+            tags:              document.getElementById('c-tags').value.trim() || null,
+            notes:             document.getElementById('c-notes').value.trim() || null,
+            status:            document.getElementById('c-status').value || 'active',
+            street:            document.getElementById('c-street').value.trim() || null,
+            city:              document.getElementById('c-city').value.trim() || null,
+            state:            (document.getElementById('c-state').value.trim().toUpperCase()) || null,
+            zip:               document.getElementById('c-zip').value.trim() || null,
+            linked_contact_id: linkedId,
+            relationship:      linkedId ? relationship : null,
+            agent_name:        agentDisplayName(currentUser),
+            agent_email:       currentUser.email || null
+        };
+        const token = await getToken();
+        const url = id ? (SB_URL+'/rest/v1/agent_contacts?id=eq.'+encodeURIComponent(id)) : (SB_URL+'/rest/v1/agent_contacts');
+        const method = id ? 'PATCH' : 'POST';
+        const res = await fetch(url, { method, headers: sbHeaders(token, {'Prefer':'return=representation'}), body: JSON.stringify(payload) });
+        if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(err.message || ('HTTP '+res.status)); }
+        const saved = await res.json();
+        const savedRow = Array.isArray(saved) ? saved[0] : saved;
+        const myId = savedRow?.id || id;
+
+        // ── Bidirectional mirror sync ─────────────────────────────────
+        // 1. If we used to link to X and now don't (or link to someone else), unlink X if X was pointing back to us.
+        if (prevLinked && prevLinked !== linkedId) {
+            await unlinkIfPointingTo(token, prevLinked, myId);
+        }
+        // 2. If we now link to Y, set Y's link back to us with the mirrored relationship.
+        if (linkedId && myId) {
+            const mirroredRel = REL_MIRROR[relationship] || 'other';
+            await setMirrorLink(token, linkedId, myId, mirroredRel);
+        }
+
+        toast(id ? 'Updated' : 'Added', 'success');
+        closeContactModal();
+        await loadContacts();
+    } catch(err) {
+        toast('Save failed: '+err.message, 'error');
+    } finally {
+        btn.disabled = false; btn.innerHTML = orig;
+    }
+}
+
+/* Mirror helpers */
+async function setMirrorLink(token, partnerId, myId, mirroredRel){
+    try {
+        await fetch(SB_URL+'/rest/v1/agent_contacts?id=eq.'+encodeURIComponent(partnerId), {
+            method:'PATCH',
+            headers: sbHeaders(token, {'Prefer':'return=minimal'}),
+            body: JSON.stringify({ linked_contact_id: myId, relationship: mirroredRel })
+        });
+    } catch(_){ /* silent — primary save already succeeded */ }
+}
+async function unlinkIfPointingTo(token, partnerId, myId){
+    try {
+        // Only unlink if that contact's linked_contact_id is currently ME
+        const r = await fetch(SB_URL+'/rest/v1/agent_contacts?id=eq.'+encodeURIComponent(partnerId)+'&select=linked_contact_id', { headers: sbHeaders(token) });
+        if (!r.ok) return;
+        const rows = await r.json();
+        if (!rows.length || rows[0].linked_contact_id !== myId) return;
+        await fetch(SB_URL+'/rest/v1/agent_contacts?id=eq.'+encodeURIComponent(partnerId), {
+            method:'PATCH',
+            headers: sbHeaders(token, {'Prefer':'return=minimal'}),
+            body: JSON.stringify({ linked_contact_id: null, relationship: null })
+        });
+    } catch(_){ /* silent */ }
+}
+
+async function deleteCurrent(){
+    const id = document.getElementById('c-id').value;
+    if (!id) return;
+    if (!confirm('Delete this contact? This cannot be undone.')) return;
+    try {
+        const token = await getToken();
+        // If this contact had a linked partner, clear their link first
+        const linkedTo = document.getElementById('c-prev-linked').value || null;
+        if (linkedTo) await unlinkIfPointingTo(token, linkedTo, id);
+        const res = await fetch(SB_URL+'/rest/v1/agent_contacts?id=eq.'+encodeURIComponent(id), { method:'DELETE', headers: sbHeaders(token) });
+        if (!res.ok && res.status !== 204) throw new Error('HTTP '+res.status);
+        toast('Deleted', 'success');
+        closeContactModal();
+        await loadContacts();
+    } catch(err){ toast('Delete failed: '+err.message, 'error'); }
+}
+
+/* ── CSV import ────────────────────────────────────────────────── */
+function openImportModal(){
+    document.getElementById('importModal').classList.add('open');
+    document.getElementById('importPreview').innerHTML = '';
+    document.getElementById('importStatus').textContent = '';
+    document.getElementById('csvFile').value = '';
+    document.getElementById('importBtn').disabled = true;
+    document.getElementById('importBtnLabel').textContent = 'Import';
+    parsedCsvRows = null;
+}
+function closeImportModal(){ document.getElementById('importModal').classList.remove('open'); parsedCsvRows = null; }
+
+async function handleCsvFile(input){
+    const file = input.files && input.files[0];
+    if (!file) return;
+    document.getElementById('importStatus').textContent = 'Reading…';
+    document.getElementById('importPreview').innerHTML = '';
+    try {
+        const text = await file.text();
+        const rows = parseCsv(text);
+        if (!rows.length) throw new Error('Empty file');
+        const headers = rows[0].map(h => (h||'').trim());
+        const mapping = mapHeaders(headers);
+        const data = rows.slice(1).filter(r => r.some(c => c && c.trim()));
+        if (!data.length) throw new Error('No data rows found');
+        const mapped = data.map(r => buildContactFromRow(r, mapping)).filter(c => c.name && c.name.trim());
+        if (!mapped.length) throw new Error('Could not find a name column in your CSV. Common headers: "Name", "Full Name", "First Name"+"Last Name".');
+        parsedCsvRows = mapped;
+        // Preview
+        const preview = mapped.slice(0,5);
+        const headRow = '<th>Name</th><th>Type</th><th>Email</th><th>Phone</th>';
+        const bodyRows = preview.map(c => `<tr><td>${esc(c.name)}</td><td>${esc(c.type||'prospect')}</td><td>${esc(c.email||'')}</td><td>${esc(c.phone||'')}</td></tr>`).join('');
+        document.getElementById('importPreview').innerHTML = `<div class="import-preview"><div style="margin-bottom:6px;color:var(--text);font-weight:600;">Preview — first ${preview.length} of ${mapped.length}</div><table><tr>${headRow}</tr>${bodyRows}</table></div>`;
+        document.getElementById('importStatus').textContent = `${mapped.length} contacts ready to import`;
+        document.getElementById('importStatus').style.color = 'var(--green)';
+        document.getElementById('importBtn').disabled = false;
+        document.getElementById('importBtnLabel').textContent = 'Import '+mapped.length+' contacts';
+    } catch(err) {
+        document.getElementById('importStatus').textContent = err.message;
+        document.getElementById('importStatus').style.color = '#dc2626';
+        document.getElementById('importBtn').disabled = true;
+        parsedCsvRows = null;
+    }
+}
+
+async function confirmImport(){
+    if (!parsedCsvRows || !parsedCsvRows.length) return;
+    const btn = document.getElementById('importBtn');
+    btn.disabled = true;
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Importing…';
+    try {
+        const token = await getToken();
+        // Add agent_name + agent_email to each row
+        const enriched = parsedCsvRows.map(r => Object.assign({}, r, {
+            agent_name: agentDisplayName(currentUser),
+            agent_email: currentUser.email || null
+        }));
+        // Send in chunks to avoid huge requests
+        const chunkSize = 200;
+        for (let i = 0; i < enriched.length; i += chunkSize) {
+            const chunk = enriched.slice(i, i + chunkSize);
+            const res = await fetch(SB_URL+'/rest/v1/agent_contacts', { method:'POST', headers: sbHeaders(token, {'Prefer':'return=minimal'}), body: JSON.stringify(chunk) });
+            if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(err.message || ('HTTP '+res.status)); }
+        }
+        toast('Imported '+enriched.length+' contacts', 'success');
+        closeImportModal();
+        await loadContacts();
+    } catch(err) {
+        toast('Import failed: '+err.message, 'error');
+        btn.disabled = false; btn.innerHTML = orig;
+    }
+}
+
+/* Minimal CSV parser — handles quoted values, escaped quotes, \\r\\n */
+function parseCsv(text){
+    const rows = []; let row = [], cell = '', inQuote = false;
+    for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        if (inQuote) {
+            if (c === '"' && text[i+1] === '"') { cell += '"'; i++; }
+            else if (c === '"') inQuote = false;
+            else cell += c;
+        } else {
+            if (c === '"') inQuote = true;
+            else if (c === ',') { row.push(cell); cell = ''; }
+            else if (c === '\n') { row.push(cell); rows.push(row); row = []; cell = ''; }
+            else if (c === '\r') { /* skip */ }
+            else cell += c;
+        }
+    }
+    if (cell.length || row.length) { row.push(cell); rows.push(row); }
+    return rows;
+}
+
+/* Map common column headers → our field names */
+function mapHeaders(headers){
+    const m = {};
+    headers.forEach((h, i) => {
+        const key = (h||'').toLowerCase().trim().replace(/[^a-z0-9 ]+/g,'');
+        if (!key) return;
+        if (/^(name|full ?name|contact ?name)$/.test(key))            m.name_full  = i;
+        else if (/^(first|first ?name|firstname|given ?name)$/.test(key)) m.first_name = i;
+        else if (/^(last|last ?name|lastname|surname|family ?name)$/.test(key)) m.last_name = i;
+        else if (/^(e ?mail|email ?address)$/.test(key))                 m.email      = i;
+        else if (/^(phone|cell|mobile|phone ?number|tel|telephone)$/.test(key)) m.phone = i;
+        else if (/^(type|category|contact ?type)$/.test(key))            m.type       = i;
+        else if (/^(last ?contact|last ?contacted|last ?contact ?date)$/.test(key)) m.last_contact = i;
+        else if (/^(source|lead ?source|where ?from)$/.test(key))        m.source     = i;
+        else if (/^(tags|labels|categories)$/.test(key))                 m.tags       = i;
+        else if (/^(notes|description|remarks|comments|note)$/.test(key)) m.notes     = i;
+        else if (/^(status)$/.test(key))                                  m.status    = i;
+        else if (/^(street|address|street ?address|address ?1|address ?line ?1|mailing ?address)$/.test(key)) m.street = i;
+        else if (/^(city|town)$/.test(key))                               m.city      = i;
+        else if (/^(state|st|province|region)$/.test(key))                m.state     = i;
+        else if (/^(zip|zipcode|zip ?code|postal|postal ?code)$/.test(key)) m.zip     = i;
+    });
+    return m;
+}
+function buildContactFromRow(r, m){
+    const get = i => (i==null ? '' : (r[i]||'').toString().trim());
+    let name = get(m.name_full);
+    if (!name) {
+        const f = get(m.first_name), l = get(m.last_name);
+        name = [f,l].filter(Boolean).join(' ').trim();
+    }
+    let type = (get(m.type) || 'prospect').toLowerCase().replace(/\s+/g,'_');
+    if (!['buyer','seller','prospect','lead','past_client','vendor','other'].includes(type)) type = 'other';
+    let status = (get(m.status) || 'active').toLowerCase().replace(/\s+/g,'_');
+    if (!['active','cold','closed','do_not_contact'].includes(status)) status = 'active';
+    let lastContact = get(m.last_contact) || null;
+    // Coerce common date formats; if invalid, drop it
+    if (lastContact) {
+        const d = new Date(lastContact);
+        lastContact = isNaN(+d) ? null : d.toISOString().slice(0,10);
+    }
+    const stateRaw = get(m.state);
+    return {
+        name,
+        type,
+        email:        get(m.email)  || null,
+        phone:        get(m.phone)  || null,
+        last_contact: lastContact,
+        source:       get(m.source) || null,
+        tags:         get(m.tags)   || null,
+        notes:        get(m.notes)  || null,
+        status,
+        street:       get(m.street) || null,
+        city:         get(m.city)   || null,
+        state:        stateRaw ? stateRaw.toUpperCase() : null,
+        zip:          get(m.zip)    || null
+        // linked_contact_id + relationship intentionally not set on import — link manually after
+    };
+}
+
+/* ── CSV export ────────────────────────────────────────────────── */
+function exportCsv(){
+    const cols = ['name','type','email','phone','street','city','state','zip','linked_to','relationship','last_contact','status','source','tags','notes'];
+    const head = cols.map(c => csvQ(c)).join(',');
+    const body = contacts.map(c => {
+        const partner = c.linked_contact_id ? contacts.find(x => x.id === c.linked_contact_id) : null;
+        const row = Object.assign({}, c, {
+            linked_to:    partner ? (partner.name || '') : '',
+            relationship: c.relationship ? (REL_LABEL[c.relationship] || c.relationship) : ''
+        });
+        return cols.map(k => csvQ(row[k]==null?'':row[k])).join(',');
+    }).join('\n');
+    const csv  = '﻿' + head + '\n' + body;
+    const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url;
+    a.download = 'my-contacts-' + new Date().toISOString().slice(0,10) + '.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast('Exported ' + contacts.length + ' contacts');
+}
+function csvQ(v){ const s = String(v); return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; }
+
+/* ── utils ────────────────────────────────────────────────────── */
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+let _toastT;
+function toast(msg, type){
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.className = ''; if (type) t.classList.add(type);
+    void t.offsetWidth; t.classList.add('show');
+    clearTimeout(_toastT); _toastT = setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>

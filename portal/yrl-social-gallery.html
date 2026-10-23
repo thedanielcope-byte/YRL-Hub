@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Media Images — YRL</title>
+<script src="portal-auth.js"></script>
+<script src="embed-mode.js?v=20260927b"></script>
+<script src="hub-data.js"></script>
+<script src="edit-gate.js"></script>
+<script src="hub-brand.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="hub-theme.css?v=20260903b">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Inter',sans-serif;background:var(--bg,#F5F0E8);color:var(--text,#2C3340);line-height:1.5;}
+  .page-header{background:linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);padding:24px 22px;}
+  .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .back-btn{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:9px 16px;border-radius:100px;font-size:13px;font-weight:600;text-decoration:none;white-space:nowrap;}
+  .header-title h1{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1.5px;color:#fff;line-height:1.05;}
+  .header-title p{font-size:13px;color:rgba(255,255,255,.85);margin-top:3px;}
+  .wrap{max-width:1100px;margin:0 auto;padding:20px 22px 60px;}
+  .g-top{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-bottom:14px;}
+  .g-editbtn{display:inline-flex;align-items:center;gap:6px;background:rgba(192,57,38,0.08);color:var(--red,#c03926);border:1.5px solid var(--red,#c03926);border-radius:8px;padding:8px 15px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;}
+  .g-editbtn.on{background:var(--red,#c03926);color:#fff;}
+  .g-hint{font-size:13px;color:var(--text-muted,#9CA3AF);margin:-4px 0 14px;}
+  /* category segmented tabs */
+  .g-cats{display:flex;flex-wrap:wrap;gap:3px;background:var(--surface-2,#F0EADF);border:1px solid var(--border,#E2D9C8);border-radius:11px;padding:3px;margin-bottom:18px;}
+  .g-cat{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border:none;border-radius:8px;background:none;color:var(--text,#2C3340);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;}
+  .g-cat:hover{background:rgba(44,51,64,0.06);}
+  .g-cat.on{background:var(--red,#c03926);color:#fff;box-shadow:0 1px 2px rgba(44,51,64,.14);}
+  .g-cat .cnt{font-size:11px;opacity:.6;}
+  .g-cat.on .cnt{opacity:.85;}
+  .g-catx{border:none;background:none;color:inherit;cursor:pointer;opacity:.6;font-size:12px;}
+  .g-catadd{background:none;border:1.5px dashed var(--border,#E2D9C8);border-radius:8px;padding:8px 12px;font-size:12.5px;font-weight:700;color:var(--text-sec,#5B6472);cursor:pointer;font-family:inherit;}
+  /* image grid */
+  .g-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;}
+  .g-tile{position:relative;display:block;border:1px solid var(--border-light,#EDE6D6);border-radius:12px;overflow:hidden;background:var(--surface,#FDFAF6);box-shadow:0 1px 3px rgba(44,51,64,.06);text-decoration:none;transition:transform .12s,box-shadow .12s;}
+  .g-tile:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(44,51,64,.14);}
+  .g-tile img{width:100%;height:150px;object-fit:cover;display:block;}
+  .g-dl{position:absolute;bottom:8px;right:8px;background:rgba(15,23,42,.62);color:#fff;border-radius:8px;padding:6px 9px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:5px;opacity:0;transition:opacity .12s;}
+  .g-tile:hover .g-dl{opacity:1;}
+  .g-x{position:absolute;top:6px;right:6px;width:24px;height:24px;border:none;border-radius:50%;background:var(--red,#c03926);color:#fff;font-size:14px;line-height:1;cursor:pointer;z-index:2;}
+  .g-add{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;height:150px;border:1.5px dashed var(--border,#E2D9C8);border-radius:12px;background:var(--surface-2,#F0EADF);color:var(--text-sec,#5B6472);font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;text-align:center;padding:10px;}
+  .g-add:hover{border-color:var(--red,#c03926);color:var(--red,#c03926);}
+  .g-add i{font-size:20px;}
+  .g-empty{color:var(--text-muted,#9CA3AF);font-size:13.5px;padding:26px 4px;}
+  .g-uploading{font-size:12.5px;color:var(--text-muted,#9CA3AF);margin-top:10px;}
+</style>
+</head>
+<body>
+<header class="page-header">
+  <div class="header-inner">
+    <a href="hub.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Hub</a>
+    <div class="header-title"><h1><i class="fa-solid fa-images" style="font-size:.8em;opacity:.9;"></i> Social Media Images</h1>
+      <p>Grab a photo, drop it in Chat, and make it your own.</p></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div id="galleryRoot"><div class="g-empty">Loading…</div></div>
+  <input type="file" id="gFile" accept="image/png,image/jpeg,image/webp,image/gif" multiple style="display:none">
+</div>
+
+<script>
+(function(){
+  var KEY='yrl-social-gallery';
+  var DEFAULTS=['Just Listed','Open House','Sold','Buyer','Seller','Holidays','Tips'];
+  var state={categories:[]};
+  var edit=false, activeCat=null, busyMsg='';
+  var el=document.getElementById('galleryRoot');
+  function uid(){ return Math.random().toString(36).slice(2,9); }
+  function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function isOwner(){ return !!(window.yrlMember && (window.yrlMember.role==='owner'||window.yrlMember.role==='nomad_admin')); }
+  function cat(id){ return state.categories.filter(function(c){return c.id===id;})[0]; }
+
+  async function boot(){
+    try { var data = (typeof loadHubContent==='function') ? await loadHubContent(KEY) : null;
+      if (data && Array.isArray(data.categories)) state=data; } catch(e){}
+    if (!state.categories.length)
+      state.categories = DEFAULTS.map(function(n){ return { id:uid(), name:n, images:[] }; });
+    if (!activeCat || !cat(activeCat)) activeCat = state.categories[0] ? state.categories[0].id : null;
+    render();
+  }
+  async function save(){ try { if (typeof saveHubContent==='function') await saveHubContent(KEY, state); } catch(e){ alert('Could not save: '+(e.message||e)); } }
+
+  function render(){
+    var owner=isOwner();
+    var editBtn = owner ? '<button class="g-editbtn '+(edit?'on':'')+'" onclick="__sgToggle()">'+(edit?'<i class="fa-solid fa-check"></i> Done':'<i class="fa-solid fa-pen"></i> Add / manage photos')+'</button>' : '';
+    var cats = state.categories.map(function(c){
+      var on = c.id===activeCat;
+      var x = (edit && on) ? ' <span class="g-catx" onclick="event.stopPropagation();__sgDelCat(\''+c.id+'\')" title="Delete category">&times;</span>' : '';
+      return '<button class="g-cat'+(on?' on':'')+'" onclick="__sgPick(\''+c.id+'\')">'+esc(c.name)+' <span class="cnt">'+((c.images||[]).length)+'</span>'+x+'</button>';
+    }).join('');
+    if (edit) cats += '<button class="g-catadd" onclick="__sgAddCat()"><i class="fa-solid fa-plus"></i> Category</button>';
+
+    var c = cat(activeCat), imgs = (c && c.images) || [];
+    var grid = imgs.map(function(im){
+      var del = edit ? '<button class="g-x" title="Remove" onclick="__sgDel(\''+im.id+'\')">&times;</button>' : '';
+      return '<a class="g-tile" href="'+esc(im.url)+'" target="_blank" rel="noopener" download>'+del+
+        '<img src="'+esc(im.url)+'" alt="" loading="lazy">'+
+        '<span class="g-dl"><i class="fa-solid fa-download"></i> Save</span></a>';
+    }).join('');
+    if (edit) grid += '<div class="g-add" onclick="__sgUpload()"><i class="fa-solid fa-cloud-arrow-up"></i> Add photos</div>';
+    if (!imgs.length && !edit) grid = '<div class="g-empty">No photos here yet.</div>';
+
+    el.innerHTML = '<div class="g-top">'+editBtn+'</div>' +
+      '<div class="g-hint">Tap a photo to save it, then post it and add your own details.</div>' +
+      '<div class="g-cats">'+cats+'</div>' +
+      '<div class="g-grid">'+grid+'</div>' +
+      (busyMsg?'<div class="g-uploading">'+esc(busyMsg)+'</div>':'');
+  }
+
+  window.__sgPick   = function(id){ activeCat=id; render(); };
+  window.__sgToggle = function(){ if (edit){ edit=false; render(); return; } editGate(function(){ edit=true; render(); }); };
+  window.__sgUpload = function(){ document.getElementById('gFile').click(); };
+  window.__sgAddCat = function(){ var n=prompt('New category name:'); if(!n) return; state.categories.push({id:uid(),name:n.trim(),images:[]}); activeCat=state.categories[state.categories.length-1].id; save(); render(); };
+  window.__sgDelCat = function(id){ var c=cat(id); if(!c) return; if(!confirm('Delete "'+c.name+'" and its '+((c.images||[]).length)+' photo(s)?')) return; state.categories=state.categories.filter(function(x){return x.id!==id;}); if(activeCat===id) activeCat=state.categories[0]?state.categories[0].id:null; save(); render(); };
+  window.__sgDel = function(id){ var c=cat(activeCat); if(!c) return; c.images=(c.images||[]).filter(function(x){return x.id!==id;}); save(); render(); };
+
+  document.getElementById('gFile').addEventListener('change', async function(){
+    var files=[].slice.call(this.files||[]); this.value='';
+    if(!files.length) return; var c=cat(activeCat); if(!c) return;
+    for (var i=0;i<files.length;i++){
+      busyMsg='Uploading '+(i+1)+' of '+files.length+'…'; render();
+      try { var url=await uploadHubFile(files[i],'social'); if(url){ c.images=c.images||[]; c.images.push({id:uid(),url:url}); await save(); } }
+      catch(e){ alert('Upload failed: '+(e.message||e)); }
+    }
+    busyMsg=''; render();
+  });
+
+  if (window.yrlClient) boot();
+  else document.addEventListener('yrl-auth-ready', boot, { once:true });
+})();
+</script>
+<script src="back-link.js?v=20260917"></script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>MREA 2.5 · Red Light, Green Light — Your Realty Link</title>
+<script src="portal-auth.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="tiger-shell.css?v=20260927b">
+<link rel="stylesheet" href="tiger-module.css">
+<link rel="stylesheet" href="mrea-module.css">
+</head>
+<body class="tiger-shell mrea-shell" data-tiger-module="2.5" data-tiger-title="Red Light, Green Light" data-tiger-ns="mrea" data-tiger-program="Millionaire Agent Path">
+
+<button class="tiger-menu-btn" id="tigerMenuBtn" aria-label="Modules"><i class="fa-solid fa-bars"></i></button>
+<aside class="tiger-side" id="tigerSide"></aside>
+<div class="tiger-backdrop" id="tigerBackdrop"></div>
+
+<main class="tiger-main">
+
+<div class="reader-topbar">
+  <div class="prog">
+    <div class="track"><i id="tigerProgressBar"></i></div>
+    <div class="prog-lbl" id="tigerProgressLabel">0% complete</div>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn btn-ghost" data-tiger-action="pdf"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
+  <button class="btn btn-primary" data-tiger-action="save"><i class="fa-solid fa-floppy-disk"></i> <span>Save</span></button>
+</div>
+
+<header class="reader-head">
+  <p class="reader-eyebrow">Phase 2 · Module 2.5 <span class="chip">Worksheet</span></p>
+  <h1 class="reader-title">Red Light, Green Light</h1>
+  <p class="reader-lede">Spending money in this business isn&#x27;t risky. Spending money that never has to report back is. This is the discipline that turns every expense into an experiment with a verdict — and it is the reason careful agents can outspend cautious ones.</p>
+  <p class="reader-who">Worksheet for <b data-tiger-name>Agent</b> · <span data-tiger-date></span> · saves automatically as you type</p>
+</header>
+
+<div class="print-only" style="text-align:center;margin:0 0 6px">
+  <strong>YOUR REALTY LINK · THE MILLIONAIRE AGENT PATH</strong> — Module 2.5: Red Light, Green Light
+</div>
+
+<div class="reader-body">
+<section class="card"><h2><span class="n">01</span>The rule</h2><p class="teach">Add an expense. Then require that expense to produce a matching increase in results <b>before</b> you add the next one. Red light. You sit at that light until the result shows up. When it does, the light turns green and you may spend again.</p><p class="teach">That is the entire method, and it does something subtle: it converts risk into information. You are never guessing whether marketing works — you are running a sequence of small, cheap, answerable tests.</p><div class="callout">The failure mode is &ldquo;cost creep&rdquo; — expenses that rise steadily with no matching rise in results. It is rarely one bad decision. It is twelve small ones nobody ever went back and checked.</div></section>
+<section class="card"><h2><span class="n">02</span>Put one expense at the light</h2><p class="sub">Pick something you are spending on now, or about to start.</p><div class="grid2"><div class="field"><label class="field-label" for="rl_name">The expense</label><input class="tiger-input" id="rl_name" data-tiger="rl_name" inputmode="text" placeholder="Monthly farm mailer to 1,000 homes in Center Grove"></div><div class="field"><label class="field-label" for="rl_cost">Cost per month</label><div class="input-money"><input class="tiger-input" id="rl_cost" data-tiger="rl_cost" inputmode="numeric" placeholder="550"></div></div></div><div class="grid2"><div class="field"><label class="field-label" for="rl_result">The result it must produce <span class="field-hint">a countable thing, not &amp;ldquo;brand awareness&amp;rdquo;</span></label><input class="tiger-input" id="rl_result" data-tiger="rl_result" inputmode="text" placeholder="Listing appointments from that farm"></div><div class="field"><label class="field-label" for="rl_target">How many, per month</label><input class="tiger-input" id="rl_target" data-tiger="rl_target" inputmode="decimal" placeholder="2"></div></div><div class="grid2"><div class="field"><label class="field-label" for="rl_by">Judged by when <span class="field-hint">give it a fair run — 6 to 12 months for marketing</span></label><input class="tiger-input" id="rl_by" data-tiger="rl_by" inputmode="text" placeholder="After 6 monthly mailings"></div><div class="field"><label class="field-label" for="rl_value">What one of those results is worth to me <span class="field-hint">your average GCI per side</span></label><div class="input-money"><input class="tiger-input" id="rl_value" data-tiger="rl_value" inputmode="numeric" placeholder="7500"></div></div></div></section>
+<section class="card"><h2><span class="n">03</span>The verdict</h2><p class="sub">Come back and fill this in when the review date arrives.</p><div class="grid2"><div class="field"><label class="field-label" for="rl_actual">Results it actually produced (per month)</label><input class="tiger-input" id="rl_actual" data-tiger="rl_actual" inputmode="decimal" placeholder="1.5"></div><div class="field"><label class="field-label" for="rl_convert">% of those that became closings <span class="field-hint">be strict</span></label><input class="tiger-input" id="rl_convert" data-tiger="rl_convert" inputmode="decimal" placeholder="35"></div></div><div class="mrea-stats"><div class="mrea-stat" id="stCPR"></div><div class="mrea-stat" id="stReturn"></div><div class="mrea-stat" id="stROI"></div></div><div class="mrea-verdict" id="rVerdict"><p class="vt">What this means</p><h3 class="vh">Fill in the expense above</h3><p class="vp">Then return at the review date and enter what it actually produced.</p></div></section>
+<section class="card"><h2><span class="n">04</span>Audit everything else</h2><p class="teach">Now do the uncomfortable part. List every recurring business expense you have. Beside each one, you should be able to say what it returns. Anything you can&#x27;t answer for goes to the red light next.</p><div class="tiger-list" data-list="rl_audit" data-list-title="Every recurring expense I have" data-min="8" data-placeholder="e.g. CRM $99/mo · lead portal $400/mo · signs &amp; riders · listing photography · farm mailer"></div><div class="check"><input type="checkbox" id="r_one" data-tiger-check="r_one"><label for="r_one">Change one thing at a time — simultaneous changes produce unreadable results</label></div><div class="check"><input type="checkbox" id="r_fair" data-tiger-check="r_fair"><label for="r_fair">Give marketing a fair run before judging it — six to twelve months, not six weeks</label></div><div class="check"><input type="checkbox" id="r_fixed" data-tiger-check="r_fixed"><label for="r_fixed">Keep fixed costs low so a slow quarter never forces me to cut lead generation</label></div><div class="check"><input type="checkbox" id="r_case" data-tiger-check="r_case"><label for="r_case">Require a written economic case before any new recurring expense</label></div><div class="field"><label class="field-label" for="rl_kill">The expense I&amp;#x27;m putting at a red light this month</label><textarea id="rl_kill" data-tiger="rl_kill" placeholder="The paid lead portal — six months, and I cannot trace a single closing to it."></textarea></div><div class="grid2"><div class="field"><label class="field-label" for="sign">Signed</label><input class="tiger-input" id="sign" data-tiger="sign" inputmode="text" placeholder="Your name"></div><div class="field"><label class="field-label" for="signdate">Date</label><input class="tiger-input" id="signdate" data-tiger="signdate" inputmode="text" placeholder="MM/DD/YYYY"></div></div></section>
+</div>
+
+<div class="actions"><div class="actions-in">
+  <span class="note"><i class="fa-solid fa-cloud"></i> Your answers save automatically to your account — pick up on any device.</span>
+  <button class="btn btn-ghost" data-tiger-action="txt"><i class="fa-solid fa-list"></i> Download list</button>
+  <button class="btn btn-ghost" data-tiger-action="pdf"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
+  <button class="btn btn-ghost" data-tiger-action="reset"><i class="fa-solid fa-eraser"></i> Clear</button>
+  <button class="btn btn-primary" data-tiger-action="complete"><i class="fa-solid fa-check"></i> Mark complete</button>
+</div></div>
+
+</main>
+
+<script src="hub-data.js"></script>
+<script src="mrea-nav.js"></script>
+<script src="yrl-tiger.js"></script>
+<script src="mrea-kit.js"></script>
+<script>
+
+(function(){
+  var K=MREA;
+  function paint(){
+    var cost=K.nval('rl_cost'), target=K.nval('rl_target'), value=K.nval('rl_value'),
+        actual=K.nval('rl_actual'), conv=K.nval('rl_convert');
+    if(!(cost>0)){
+      ['stCPR','stReturn','stROI'].forEach(function(i){K.stat(i,'—','');});
+      K.verdict('rVerdict','','Fill in the expense above',['Then return at the review date and enter what it actually produced.']);
+      return;
+    }
+    if(!(actual>0)){
+      K.stat('stCPR', target>0?K.money(cost/target):'—','Budgeted cost per result','what you&#x27;re paying for one');
+      K.stat('stReturn','—','Monthly return','');
+      K.stat('stROI','—','Return per dollar','');
+      K.verdict('rVerdict','', 'Red light — awaiting the result',
+        ['You are paying <b>'+K.money(cost)+'</b> a month expecting <b>'+K.cnt(target,1)+'</b> results'+(target>0?' — about '+K.money(cost/target)+' each':'')+'.',
+         'Do not add another expense in this category until this one reports back. Come back on the review date and fill in section 03.']);
+      return;
+    }
+    var cpr=cost/actual;
+    var closings = actual*((conv>0?conv:100)/100);
+    var ret = closings*value;
+    var roi = cost>0 ? ret/cost : 0;
+    K.stat('stCPR', K.money(cpr), 'Actual cost per result', target>0?'budgeted '+K.money(cost/target):'');
+    K.stat('stReturn', K.money(ret), 'Monthly return', K.cnt(closings,1)+' closings/mo');
+    K.stat('stROI', roi>0?K.round(roi,1)+'×':'—', 'Return per dollar', 'spent');
+    var lines=[], c, head;
+    if(roi>=3){
+      c='ok'; head='Green light — spend more here';
+      lines.push('Every dollar is returning about <b>'+K.round(roi,1)+'</b>. That is a real result, not a rounding error.');
+      lines.push('Increase this expense by a defined increment and put it straight back at a red light. That is how you scale spending without ever gambling.');
+    } else if(roi>=1.5){
+      c='warn'; head='Amber — it works, but not brilliantly';
+      lines.push('A return of <b>'+K.round(roi,1)+'×</b> is genuinely positive but leaves little room for error, and it will not survive a soft quarter.');
+      lines.push('Before adding money, try improving it: better list, better offer, better follow-up speed. Same spend, better conversion, is the cheapest gain available.');
+    } else if(roi>=1){
+      c='warn'; head='Barely breaking even';
+      lines.push('At <b>'+K.round(roi,1)+'×</b> you are trading a dollar for roughly a dollar, plus your time. If a dollar returns a dollar, keep the dollar.');
+      lines.push('Give it one more defined cycle with a single change, then decide. No third cycle.');
+    } else {
+      c='bad'; head='Red light — stop this one';
+      lines.push('This is returning <b>'+K.round(roi,1)+'×</b>. It is costing <b>'+K.money(cost)+'</b> a month to lose money slowly.');
+      lines.push('Stop it, redirect the money to whatever is already working, and check in ninety days whether anything actually got worse. Usually nothing does — which is the finding.');
+    }
+    K.verdict('rVerdict', c, head, lines);
+  }
+  K.bind(['rl_cost','rl_target','rl_value','rl_actual','rl_convert'], paint);
+  MREA.metrics().then(function(m){
+    var el=K.$('rl_value');
+    if(el && !el.value && m && m.gci_needed && m.sides_needed){
+      el.value=Math.round(m.gci_needed/m.sides_needed); paint();
+    }
+  });
+})();
+
+</script>
+</body>
+</html>

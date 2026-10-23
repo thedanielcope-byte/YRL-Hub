@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Signature — Your Realty Link</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="yrl-auth.js"></script>
+    <script src="yrl-hub.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --red:#c03926; --red-light:#d94a35; --red-dark:#9e2e1e;
+            --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f7f8fa;
+            --surface-3:#eef0f3; --border:#e2e5ea;
+            --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+            --green:#16a34a; --green-light:#dcfce7;
+            --radius:12px; --radius-lg:20px;
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        html{scroll-behavior:smooth;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.55;}
+        a{text-decoration:none;color:inherit;}
+
+        /* Header */
+        .sub-header{
+            background:linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);
+            padding:26px 20px 22px;color:#fff;position:relative;overflow:hidden;
+        }
+        .sub-header::before{
+            content:'';position:absolute;inset:0;
+            background-image:radial-gradient(rgba(255,255,255,0.07) 1px,transparent 1px);
+            background-size:28px 28px;pointer-events:none;
+        }
+        .sub-header-inner{max-width:1080px;margin:0 auto;position:relative;z-index:1;}
+        .back-btn{
+            display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;
+            color:rgba(255,255,255,0.85);background:rgba(255,255,255,0.12);
+            border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:7px 14px;
+            margin-bottom:14px;transition:all 0.2s;cursor:pointer;
+        }
+        .back-btn:hover{background:rgba(255,255,255,0.2);color:#fff;}
+        .header-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1.8px;line-height:1.05;}
+        .header-sub{font-size:13px;opacity:0.85;margin-top:6px;max-width:560px;}
+
+        /* Layout */
+        .main{max-width:1080px;margin:0 auto;padding:22px 16px 80px;}
+
+        .info-banner{
+            display:flex;align-items:center;justify-content:space-between;gap:12px;
+            background:var(--surface);border:1px solid var(--border);
+            border-radius:12px;padding:10px 16px;margin-bottom:18px;flex-wrap:wrap;
+        }
+        .info-banner .who{font-size:13px;color:var(--text);}
+        .info-banner .who b{font-weight:700;}
+        .info-banner .who span{color:var(--text-muted);font-size:12px;}
+        .edit-info-link{
+            display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;
+            color:var(--red);background:rgba(192,57,38,0.08);
+            border:1px solid rgba(192,57,38,0.25);border-radius:8px;
+            padding:7px 12px;transition:all 0.15s;
+        }
+        .edit-info-link:hover{background:rgba(192,57,38,0.15);}
+
+        .loading{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:13px;}
+        .empty-state{
+            background:var(--surface);border:1px solid var(--border);
+            border-radius:var(--radius-lg);padding:38px 24px;text-align:center;
+        }
+        .empty-state i{font-size:36px;color:var(--text-muted);margin-bottom:12px;display:block;}
+        .empty-state h3{font-size:16px;font-weight:700;margin-bottom:6px;}
+        .empty-state p{font-size:13px;color:var(--text-sec);max-width:420px;margin:0 auto 18px;}
+        .btn-link{
+            display:inline-flex;align-items:center;gap:8px;background:var(--red);color:#fff;
+            border:none;border-radius:9px;padding:11px 22px;font-size:13px;font-weight:700;
+            font-family:'Inter',sans-serif;text-decoration:none;
+        }
+
+        /* Builder grid */
+        .builder{display:grid;grid-template-columns:1fr 1.05fr;gap:18px;align-items:start;}
+        @media(max-width:920px){.builder{grid-template-columns:1fr;}}
+
+        .panel{
+            background:var(--surface);border:1px solid var(--border);
+            border-radius:var(--radius-lg);padding:20px 22px;
+        }
+        .panel-title{
+            font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.4px;
+            margin-bottom:6px;display:flex;align-items:center;gap:9px;
+        }
+        .panel-title i{color:var(--red);font-size:14px;}
+        .panel-sub{font-size:12px;color:var(--text-muted);margin-bottom:14px;}
+
+        /* Fields */
+        .field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
+        .field-label{
+            font-size:10.5px;font-weight:700;color:var(--text);
+            text-transform:uppercase;letter-spacing:0.5px;
+        }
+        .field-input{
+            width:100%;background:var(--surface-3);border:1.5px solid var(--border);
+            border-radius:8px;padding:9px 12px;font-size:13.5px;
+            font-family:'Inter',sans-serif;color:var(--text);
+            outline:none;transition:border-color 0.15s;
+        }
+        .field-input:focus{border-color:var(--red);background:var(--surface);}
+        .field-hint{font-size:11px;color:var(--text-muted);line-height:1.4;}
+        .field-hint .yrl{color:var(--red);font-weight:600;}
+        .field-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+        @media(max-width:560px){.field-grid-2{grid-template-columns:1fr;}}
+
+        /* Toggle rows */
+        .toggle-grid{
+            display:flex;flex-direction:column;gap:6px;
+            background:var(--surface-3);border:1px solid var(--border);
+            border-radius:10px;padding:8px 12px;margin-top:6px;
+        }
+        .toggle-row{
+            display:flex;align-items:center;justify-content:space-between;
+            padding:6px 0;cursor:pointer;
+        }
+        .toggle-row + .toggle-row{border-top:1px solid var(--border);}
+        .toggle-row .label{font-size:12.5px;color:var(--text);font-weight:600;}
+        .switch{
+            position:relative;width:40px;height:22px;background:var(--border);
+            border-radius:30px;flex-shrink:0;transition:background 0.2s;
+        }
+        .switch::after{
+            content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;
+            background:#fff;border-radius:50%;transition:transform 0.2s;
+            box-shadow:0 1px 3px rgba(0,0,0,0.18);
+        }
+        .switch.on{background:var(--green);}
+        .switch.on::after{transform:translateX(18px);}
+
+        /* Preview */
+        .preview-card{
+            background:#ffffff;border:1px solid var(--border);
+            border-radius:12px;padding:24px 22px;margin-top:6px;
+            overflow-x:auto;
+        }
+        .preview-host{display:block;}
+
+        /* Copy bar */
+        .copy-bar{
+            display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;
+        }
+        .btn-primary,.btn-secondary{
+            display:inline-flex;align-items:center;gap:7px;
+            border:none;border-radius:8px;padding:9px 16px;
+            font-family:'Inter',sans-serif;font-size:12.5px;font-weight:700;
+            cursor:pointer;transition:all 0.15s;
+        }
+        .btn-primary{background:var(--red);color:#fff;}
+        .btn-primary:hover{background:var(--red-light);transform:translateY(-1px);}
+        .btn-primary.copied{background:var(--green);}
+        .btn-secondary{background:var(--surface-3);color:var(--text);border:1px solid var(--border);}
+        .btn-secondary:hover{border-color:var(--red);color:var(--red);}
+        .btn-secondary.copied{background:var(--green-light);border-color:var(--green);color:#15803d;}
+
+        .paste-hint{
+            font-size:11.5px;color:var(--text-muted);margin-top:12px;line-height:1.5;
+        }
+        .paste-hint b{color:var(--text-sec);}
+
+        #toast{
+            position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);
+            background:var(--text);color:#fff;padding:11px 22px;border-radius:10px;
+            font-size:12.5px;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,0.25);
+            z-index:9999;transition:transform 0.3s;max-width:90vw;text-align:center;
+        }
+        #toast.show{transform:translateX(-50%) translateY(0);}
+        #toast.error{background:#dc2626;}
+    </style>
+</head>
+<body>
+
+<header class="sub-header">
+    <div class="sub-header-inner">
+        <a href="yrl-agent-hub.html" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i> Back to Hub
+        </a>
+        <div class="header-title">EMAIL SIGNATURE</div>
+        <div class="header-sub">Auto-filled from your Agent Info. Tweak anything you like below, then copy and paste into Gmail, Outlook, or Apple Mail.</div>
+    </div>
+</header>
+
+<main class="main">
+
+    <div class="info-banner">
+        <div class="who">
+            <b id="agentNameDisp">—</b><br>
+            <span id="agentEmailDisp">—</span>
+        </div>
+        <a href="yrl-agent-info.html" class="edit-info-link">
+            <i class="fa-solid fa-pen-to-square"></i> Edit my Agent Info
+        </a>
+    </div>
+
+    <div id="loadingState" class="loading">
+        <i class="fa-solid fa-spinner fa-spin"></i> Loading your info…
+    </div>
+
+    <div id="emptyState" style="display:none;">
+        <div class="empty-state">
+            <i class="fa-solid fa-id-card"></i>
+            <h3>No Agent Info on file yet</h3>
+            <p>Fill out the <b>Agent Info Form</b> first so we can build your signature from your real details — name, phone, license, headshot, and all.</p>
+            <a href="yrl-agent-info.html" class="btn-link"><i class="fa-solid fa-arrow-right"></i> Open My Agent Info</a>
+        </div>
+    </div>
+
+    <div class="builder" id="builderRoot" style="display:none;">
+
+        <!-- ── FORM ── -->
+        <div class="panel">
+            <div class="panel-title"><i class="fa-solid fa-sliders"></i> CUSTOMIZE</div>
+            <div class="panel-sub">Edits here only affect this signature — your saved Agent Info is unchanged.</div>
+
+            <div class="field-grid-2">
+                <div class="field">
+                    <label class="field-label">Display Name</label>
+                    <input class="field-input" id="sig-name" oninput="renderPreview()">
+                </div>
+                <div class="field">
+                    <label class="field-label">License #</label>
+                    <input class="field-input" id="sig-license" oninput="renderPreview()">
+                </div>
+            </div>
+
+            <div class="field-grid-2">
+                <div class="field">
+                    <label class="field-label">Phone</label>
+                    <input class="field-input" id="sig-phone" oninput="renderPreview()">
+                </div>
+                <div class="field">
+                    <label class="field-label">Email</label>
+                    <input class="field-input" id="sig-email" type="email" oninput="renderPreview()">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="field-label">Website</label>
+                <input class="field-input" id="sig-website" oninput="renderPreview()">
+            </div>
+
+            <div class="field">
+                <label class="field-label">Tagline</label>
+                <input class="field-input" id="sig-tagline" oninput="renderPreview()" placeholder="Your Realty Link · Indianapolis Real Estate">
+                <span class="field-hint">Leave blank to use the generic line above.</span>
+            </div>
+
+            <div class="field-grid-2">
+                <div class="field">
+                    <label class="field-label"><i class="fa-brands fa-facebook" style="color:#1877f2;"></i> Facebook</label>
+                    <input class="field-input" id="sig-fb" oninput="renderPreview()" placeholder="https://facebook.com/yourrealtylink">
+                    <span class="field-hint">Blank → <span class="yrl">YRL company FB</span></span>
+                </div>
+                <div class="field">
+                    <label class="field-label"><i class="fa-brands fa-instagram" style="color:#e1306c;"></i> Instagram</label>
+                    <input class="field-input" id="sig-ig" oninput="renderPreview()" placeholder="https://instagram.com/IndianapolisRealEstate">
+                    <span class="field-hint">Blank → <span class="yrl">YRL company IG</span></span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="field-label"><i class="fa-brands fa-linkedin" style="color:#0a66c2;"></i> LinkedIn (optional)</label>
+                <input class="field-input" id="sig-li" oninput="renderPreview()" placeholder="https://linkedin.com/in/your-name">
+            </div>
+
+            <div class="toggle-grid">
+                <div class="toggle-row" onclick="toggleSwitch('opt-photo')">
+                    <span class="label">Include my headshot photo</span>
+                    <span class="switch on" id="opt-photo"></span>
+                </div>
+                <div class="toggle-row" onclick="toggleSwitch('opt-footer')">
+                    <span class="label">Include YRL company footer line</span>
+                    <span class="switch on" id="opt-footer"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── PREVIEW + COPY ── -->
+        <div class="panel">
+            <div class="panel-title"><i class="fa-solid fa-eye"></i> PREVIEW</div>
+            <div class="panel-sub">This is what your signature will look like in your sent emails.</div>
+            <div class="preview-card">
+                <div class="preview-host" id="sigPreview"></div>
+            </div>
+
+            <div class="copy-bar">
+                <button class="btn-primary" id="btnCopyRich" onclick="copyRich(this)">
+                    <i class="fa-solid fa-copy"></i> Copy signature
+                </button>
+                <button class="btn-secondary" id="btnCopyText" onclick="copyText(this)">
+                    <i class="fa-regular fa-file-lines"></i> Copy plain text
+                </button>
+                <button class="btn-secondary" id="btnCopySrc" onclick="copySource(this)">
+                    <i class="fa-solid fa-code"></i> Copy HTML source
+                </button>
+            </div>
+
+            <div class="paste-hint">
+                <b>How to install:</b><br>
+                • <b>Gmail</b> → Settings (gear) → See all settings → General → Signature → paste in the signature box.<br>
+                • <b>Outlook</b> → File → Options → Mail → Signatures → paste in the edit box.<br>
+                • <b>Apple Mail</b> → Mail → Settings → Signatures → paste.
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+<div id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════════
+   Email Signature Generator
+   Reads the agent's most-recent agent-info submission and builds a
+   table-based HTML signature (Style A — clean, professional).
+   ════════════════════════════════════════════════════════════════════ */
+
+const SUBMISSIONS_KEY = 'yrl-onboarding-submissions';
+const YRL_LOGO_URL    = 'https://yrlagent.com/wp-content/uploads/2026/04/Your-Realty-Link-ver6.6-4-final.png';
+const YRL_FB_DEFAULT  = 'https://www.facebook.com/yourrealtylink';
+const YRL_IG_DEFAULT  = 'http://www.instagram.com/IndianapolisRealEstate';
+const DEFAULT_TAGLINE = 'Your Realty Link · Indianapolis Real Estate';
+const DEFAULT_WEBSITE = 'yourrealtylink.com';
+const COMPANY_FOOTER  = 'Your Realty Link, LLC · 2302 E Southport Rd, Indianapolis IN 46227 · 317-997-7404';
+const COLOR_RED       = '#c03926';
+const COLOR_TEXT      = '#1a1d22';
+const COLOR_SEC       = '#5a6270';
+const COLOR_MUTED     = '#9ca3af';
+const COLOR_RULE      = '#e2e5ea';
+
+let currentUser = null;
+let agentInfo = null;       // latest agent-info submission data, or null
+let headshotUrl = '';
+
+document.addEventListener('yrl-auth-ready', async ({ detail }) => {
+    currentUser = detail.user;
+    init();
+});
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(async () => {
+        if (currentUser) return;
+        if (!window.yrlClient) return;
+        const { data } = await window.yrlClient.auth.getSession();
+        if (data.session) { currentUser = data.session.user; init(); }
+    }, 700);
+});
+
+function agentDisplayName(u){
+    if (!u) return '';
+    return u.user_metadata?.full_name || u.user_metadata?.name || (u.email ? u.email.split('@')[0] : 'Agent');
+}
+
+async function init() {
+    document.getElementById('agentNameDisp').textContent  = agentDisplayName(currentUser);
+    document.getElementById('agentEmailDisp').textContent = currentUser?.email || '';
+
+    try {
+        const list = (await loadHubContent(SUBMISSIONS_KEY)) || [];
+        const userEmail = (currentUser?.email || '').toLowerCase();
+        const mine = (Array.isArray(list) ? list : [])
+            .filter(s => s && s.type === 'agent-info' && (s.data?.email || '').toLowerCase() === userEmail)
+            .sort((a,b) => (b.timestamp || '').localeCompare(a.timestamp || ''));
+        agentInfo = mine[0]?.data || null;
+    } catch (_) { agentInfo = null; }
+
+    document.getElementById('loadingState').style.display = 'none';
+
+    if (!agentInfo) {
+        document.getElementById('emptyState').style.display = '';
+        return;
+    }
+
+    // Pre-fill form from agent info
+    setVal('sig-name',    agentInfo.cardname || agentInfo.name || agentDisplayName(currentUser));
+    setVal('sig-license', agentInfo.license || '');
+    setVal('sig-phone',   agentInfo.phone || '');
+    setVal('sig-email',   agentInfo.email || currentUser?.email || '');
+    setVal('sig-website', DEFAULT_WEBSITE);
+    setVal('sig-tagline', agentInfo.tagline || '');
+    setVal('sig-fb',      agentInfo.facebook || '');
+    setVal('sig-ig',      agentInfo.instagram || '');
+    setVal('sig-li',      agentInfo.linkedin || '');
+    headshotUrl = agentInfo.headshot_url || '';
+
+    document.getElementById('builderRoot').style.display = '';
+    renderPreview();
+}
+
+function setVal(id, v){ const el = document.getElementById(id); if (el) el.value = v || ''; }
+
+function toggleSwitch(id){
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('on');
+    renderPreview();
+}
+
+function getValues(){
+    return {
+        name:    document.getElementById('sig-name').value.trim()    || agentDisplayName(currentUser),
+        license: document.getElementById('sig-license').value.trim(),
+        phone:   document.getElementById('sig-phone').value.trim(),
+        email:   document.getElementById('sig-email').value.trim()   || (currentUser?.email || ''),
+        website: document.getElementById('sig-website').value.trim() || DEFAULT_WEBSITE,
+        tagline: document.getElementById('sig-tagline').value.trim() || DEFAULT_TAGLINE,
+        facebook:  document.getElementById('sig-fb').value.trim()    || YRL_FB_DEFAULT,
+        instagram: document.getElementById('sig-ig').value.trim()    || YRL_IG_DEFAULT,
+        linkedin:  document.getElementById('sig-li').value.trim(),
+        includePhoto:  document.getElementById('opt-photo').classList.contains('on'),
+        includeFooter: document.getElementById('opt-footer').classList.contains('on'),
+        photo:   headshotUrl
+    };
+}
+
+/* Build the HTML signature — table-based, inline styles, email-safe. */
+function buildSignatureHtml(v){
+    const photoOk  = v.includePhoto && !!v.photo;
+    const websiteHref = v.website.startsWith('http') ? v.website : ('https://' + v.website);
+    const socialLinks = [];
+    if (v.facebook)  socialLinks.push(`<a href="${esc(v.facebook)}"  style="color:${COLOR_RED};text-decoration:none;font-weight:600;">Facebook</a>`);
+    if (v.instagram) socialLinks.push(`<a href="${esc(v.instagram)}" style="color:${COLOR_RED};text-decoration:none;font-weight:600;">Instagram</a>`);
+    if (v.linkedin)  socialLinks.push(`<a href="${esc(v.linkedin)}"  style="color:${COLOR_RED};text-decoration:none;font-weight:600;">LinkedIn</a>`);
+    const socialLine = socialLinks.length
+        ? `<div style="font-size:11px;color:${COLOR_SEC};margin-top:6px;">${socialLinks.join(' &nbsp;·&nbsp; ')}</div>`
+        : '';
+    const infoLeftPad = photoOk ? 14 : 0;
+    const infoBorder  = photoOk ? `border-left:3px solid ${COLOR_RED};` : '';
+    const photoCell = photoOk
+        ? `<td style="padding-right:14px;vertical-align:top;width:96px;">
+               <img src="${esc(v.photo)}" width="90" height="90" alt="" style="border-radius:50%;display:block;border:0;width:90px;height:90px;object-fit:cover;">
+           </td>`
+        : '';
+    const footerRow = v.includeFooter
+        ? `<tr><td colspan="${photoOk?2:1}" style="font-size:10.5px;color:${COLOR_MUTED};padding-top:10px;border-top:1px solid ${COLOR_RULE};">${esc(COMPANY_FOOTER)}</td></tr>`
+        : '';
+
+    return `<table cellpadding="0" cellspacing="0" border="0" style="font-family:Helvetica,Arial,sans-serif;color:${COLOR_TEXT};border-collapse:collapse;line-height:1.45;">
+        <tr>
+            ${photoCell}
+            <td style="vertical-align:top;padding-left:${infoLeftPad}px;${infoBorder}">
+                <div style="font-size:17px;font-weight:bold;color:${COLOR_TEXT};line-height:1.1;">${esc(v.name)}</div>
+                <div style="font-size:12px;color:${COLOR_SEC};margin-top:3px;">REALTOR&reg;${v.license ? ' &nbsp;&middot;&nbsp; License #' + esc(v.license) : ''}</div>
+                <div style="font-size:12px;color:${COLOR_TEXT};margin-top:8px;">
+                    ${v.phone ? `<span style="color:${COLOR_RED};font-weight:bold;">P:</span>&nbsp;${esc(v.phone)}` : ''}
+                    ${v.phone && v.email ? '&nbsp;&nbsp;|&nbsp;&nbsp;' : ''}
+                    ${v.email ? `<span style="color:${COLOR_RED};font-weight:bold;">E:</span>&nbsp;<a href="mailto:${esc(v.email)}" style="color:${COLOR_TEXT};text-decoration:none;">${esc(v.email)}</a>` : ''}
+                </div>
+                ${v.website ? `<div style="font-size:12px;color:${COLOR_TEXT};margin-top:3px;"><span style="color:${COLOR_RED};font-weight:bold;">W:</span>&nbsp;<a href="${esc(websiteHref)}" style="color:${COLOR_TEXT};text-decoration:none;">${esc(v.website)}</a></div>` : ''}
+                <div style="margin-top:10px;">
+                    <img src="${esc(YRL_LOGO_URL)}" alt="Your Realty Link" height="34" style="display:block;border:0;height:34px;">
+                </div>
+                ${v.tagline ? `<div style="font-size:11.5px;color:${COLOR_SEC};font-style:italic;margin-top:8px;">${esc(v.tagline)}</div>` : ''}
+                ${socialLine}
+            </td>
+        </tr>
+        ${footerRow}
+    </table>`;
+}
+
+function buildPlainText(v){
+    const lines = [];
+    lines.push(v.name);
+    lines.push('REALTOR®' + (v.license ? '  ·  License #' + v.license : ''));
+    if (v.phone || v.email) {
+        const parts = [];
+        if (v.phone) parts.push('P: ' + v.phone);
+        if (v.email) parts.push('E: ' + v.email);
+        lines.push(parts.join('  |  '));
+    }
+    if (v.website) lines.push('W: ' + v.website);
+    lines.push('Your Realty Link');
+    if (v.tagline) lines.push(v.tagline);
+    const social = [];
+    if (v.facebook)  social.push('Facebook: ' + v.facebook);
+    if (v.instagram) social.push('Instagram: ' + v.instagram);
+    if (v.linkedin)  social.push('LinkedIn: ' + v.linkedin);
+    if (social.length) lines.push(social.join('  |  '));
+    if (v.includeFooter) { lines.push(''); lines.push(COMPANY_FOOTER); }
+    return lines.join('\n');
+}
+
+function renderPreview(){
+    const html = buildSignatureHtml(getValues());
+    document.getElementById('sigPreview').innerHTML = html;
+}
+
+/* ── Copy actions ─────────────────────────────────────────────────── */
+async function copyRich(btn){
+    const v = getValues();
+    const html  = buildSignatureHtml(v);
+    const plain = buildPlainText(v);
+    let ok = false;
+    try {
+        if (navigator.clipboard && window.ClipboardItem) {
+            const item = new ClipboardItem({
+                'text/html':  new Blob([html],  { type:'text/html'  }),
+                'text/plain': new Blob([plain], { type:'text/plain' })
+            });
+            await navigator.clipboard.write([item]);
+            ok = true;
+        }
+    } catch (_) { /* fall through to execCommand */ }
+    if (!ok) {
+        // Fallback: select the rendered preview and use execCommand('copy')
+        try {
+            const node = document.getElementById('sigPreview');
+            const range = document.createRange(); range.selectNodeContents(node);
+            const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+            ok = document.execCommand('copy');
+            sel.removeAllRanges();
+        } catch (_) { ok = false; }
+    }
+    if (ok) { flashButton(btn, '<i class="fa-solid fa-check"></i> Copied — now paste into your signature setting'); toast('Signature copied — paste into Gmail, Outlook, or Apple Mail.'); }
+    else { toast('Couldn\'t copy — try the HTML source instead.', 'error'); }
+}
+
+async function copyText(btn){
+    const plain = buildPlainText(getValues());
+    try { await navigator.clipboard.writeText(plain); flashButton(btn, '<i class="fa-solid fa-check"></i> Copied'); toast('Plain-text signature copied.'); }
+    catch (_) { fallbackPlain(plain); flashButton(btn, '<i class="fa-solid fa-check"></i> Copied'); toast('Plain-text signature copied.'); }
+}
+
+async function copySource(btn){
+    const html = buildSignatureHtml(getValues());
+    try { await navigator.clipboard.writeText(html); flashButton(btn, '<i class="fa-solid fa-check"></i> Copied'); toast('HTML source copied.'); }
+    catch (_) { fallbackPlain(html); flashButton(btn, '<i class="fa-solid fa-check"></i> Copied'); toast('HTML source copied.'); }
+}
+
+function fallbackPlain(s){
+    const ta = document.createElement('textarea');
+    ta.value = s; ta.setAttribute('readonly','');
+    ta.style.position = 'absolute'; ta.style.left = '-9999px';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch(_){}
+    document.body.removeChild(ta);
+}
+
+function flashButton(btn, html){
+    const original = btn.innerHTML;
+    btn.classList.add('copied');
+    btn.innerHTML = html;
+    setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = original; }, 2200);
+}
+
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+let _toastT;
+function toast(msg, type){
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.className = ''; if (type) t.classList.add(type);
+    void t.offsetWidth; t.classList.add('show');
+    clearTimeout(_toastT); _toastT = setTimeout(() => t.classList.remove('show'), 3500);
+}
+</script>
+</body>
+</html>

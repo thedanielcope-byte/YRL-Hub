@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>MREA 3.3 · The 33 Touch Planner — Your Realty Link</title>
+<script src="portal-auth.js"></script>
+<script src="embed-mode.js?v=20260927b"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="tiger-shell.css?v=20260927b">
+<link rel="stylesheet" href="tiger-module.css">
+<link rel="stylesheet" href="mrea-module.css">
+</head>
+<body class="tiger-shell mrea-shell" data-tiger-module="3.3" data-tiger-title="The 33 Touch Planner" data-tiger-ns="mrea" data-tiger-program="Millionaire Agent Path">
+
+<button class="tiger-menu-btn" id="tigerMenuBtn" aria-label="Modules"><i class="fa-solid fa-bars"></i></button>
+<aside class="tiger-side" id="tigerSide"></aside>
+<div class="tiger-backdrop" id="tigerBackdrop"></div>
+
+<main class="tiger-main">
+
+<div class="reader-topbar">
+  <div class="prog">
+    <div class="track"><i id="tigerProgressBar"></i></div>
+    <div class="prog-lbl" id="tigerProgressLabel">0% complete</div>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn btn-ghost" data-tiger-action="pdf"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
+  <button class="btn btn-primary" data-tiger-action="save"><i class="fa-solid fa-floppy-disk"></i> <span>Save</span></button>
+</div>
+
+<header class="reader-head">
+  <p class="reader-eyebrow">Phase 3 · Module 3.3 <span class="chip">Planner</span></p>
+  <h1 class="reader-title">The 33 Touch Planner</h1>
+  <p class="reader-lede">Thirty-three contacts a year with the people who already know you. Twelve isn&#x27;t enough to hold the top spot in someone&#x27;s mind; twenty-four might not be. Build your year here — the counter won&#x27;t go green until it adds up.</p>
+  <p class="reader-who">Worksheet for <b data-tiger-name>Agent</b> · <span data-tiger-date></span> · saves automatically as you type</p>
+</header>
+
+<div class="print-only" style="text-align:center;margin:0 0 6px">
+  <strong>YOUR REALTY LINK · THE MILLIONAIRE AGENT PATH</strong> — Module 3.3: The 33 Touch Planner
+</div>
+
+<div class="reader-body">
+<section class="card"><h2><span class="n">01</span>What 33 touches buys you</h2><p class="teach">Worked properly, every <b>12 people</b> in your Met database produce about <b>2 closings a year</b> — one repeat, one referral. That ratio is the engine of a referral-based business, and it only holds at genuine frequency.</p><p class="teach">Frequency beats creativity here, and it isn&#x27;t close. Agents burn months designing the perfect piece when the stronger correlation is simply with how consistently and how often the message arrives.</p><div class="callout">Every touch — all thirty-three — carries a reminder that you work by referral and instructions on how to send you one. That is the mechanism. A touch that doesn&#x27;t ask is a greeting card.</div></section>
+<section class="card"><h2><span class="n">02</span>The mix</h2><p class="sub">Adjust the counts if you like. The total has to reach 33.</p><div class="mrea-tablewrap"><table class="mrea-table"><thead><tr><th>Touch type</th><th class="num" style="width:110px">How many</th><th>What it looks like at YRL</th></tr></thead><tbody id="mixRows"></tbody></table></div><div class="mrea-counter"><span class="cn" id="tCount">0</span><div class="ct"><b id="tHead">Build to 33</b><span id="tSub">Adjust the counts until they total exactly 33.</span><span class="cbar"><i id="tBar"></i></span></div></div><input type="hidden" data-tiger="touch_total" id="touch_total"></section>
+<section class="card"><h2><span class="n">03</span>Your twelve months</h2><p class="sub">Prefilled with a working year built from what YRL already publishes. Make it yours.</p><div class="mrea-months" id="monthRows"></div><p class="mrea-note"><i class="fa-solid fa-circle-info"></i> Schedule all of it in January, in one sitting. A year planned once takes an afternoon; a year planned monthly never actually happens.</p></section>
+<section class="card"><h2><span class="n">04</span>What it&#x27;s worth</h2><div class="grid2"><div class="field"><label class="field-label" for="t_met">People in my Met database</label><input class="tiger-input" id="t_met" data-tiger="t_met" inputmode="numeric" placeholder="300"></div><div class="field"><label class="field-label" for="t_cost">Average cost per touch</label><input class="tiger-input" id="t_cost" data-tiger="t_cost" inputmode="decimal" placeholder="0.50"></div></div><div class="mrea-stats"><div class="mrea-stat" id="stExpected"></div><div class="mrea-stat" id="stTouchCost"></div><div class="mrea-stat" id="stPerSale"></div></div><div class="mrea-verdict" id="tVerdict"><p class="vt">What this means</p><h3 class="vh">Enter your database size</h3><p class="vp">The 12:2 ratio turns a contact count into an expected number of closings.</p></div></section>
+<section class="card"><h2><span class="n">05</span>Make it real</h2><div class="check"><input type="checkbox" id="t_sched" data-tiger-check="t_sched"><label for="t_sched">All 33 scheduled in the CRM in one sitting</label></div><div class="check"><input type="checkbox" id="t_news" data-tiger-check="t_news"><label for="t_news">The monthly market update wired into the newsletter automation — that&#x27;s 12 of the 18 value touches</label></div><div class="check"><input type="checkbox" id="t_mag" data-tiger-check="t_mag"><label for="t_mag">Quarterly Canva magazine template built — that&#x27;s 4 more</label></div><div class="check"><input type="checkbox" id="t_dates" data-tiger-check="t_dates"><label for="t_dates">Birthday, spouse birthday and home-anniversary fields populated</label></div><div class="check"><input type="checkbox" id="t_precall" data-tiger-check="t_precall"><label for="t_precall">A physical mailing lands before each of the 3 calls</label></div><div class="check"><input type="checkbox" id="t_ask" data-tiger-check="t_ask"><label for="t_ask">Referral ask and instructions on every single touch</label></div><div class="field"><label class="field-label" for="t_block">When I do this work each week <span class="field-hint">a real slot on a real calendar</span></label><textarea id="t_block" data-tiger="t_block" placeholder="Friday 9–10am — touch prep for the following week, no exceptions."></textarea></div><div class="grid2"><div class="field"><label class="field-label" for="sign">Signed</label><input class="tiger-input" id="sign" data-tiger="sign" inputmode="text" placeholder="Your name"></div><div class="field"><label class="field-label" for="signdate">Date</label><input class="tiger-input" id="signdate" data-tiger="signdate" inputmode="text" placeholder="MM/DD/YYYY"></div></div></section>
+</div>
+
+<div class="actions"><div class="actions-in">
+  <span class="note"><i class="fa-solid fa-cloud"></i> Your answers save automatically to your account — pick up on any device.</span>
+  <button class="btn btn-ghost" data-tiger-action="txt"><i class="fa-solid fa-list"></i> Download list</button>
+  <button class="btn btn-ghost" data-tiger-action="pdf"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
+  <button class="btn btn-ghost" data-tiger-action="reset"><i class="fa-solid fa-eraser"></i> Clear</button>
+  <button class="btn btn-primary" data-tiger-action="complete"><i class="fa-solid fa-check"></i> Mark complete</button>
+</div></div>
+
+</main>
+
+<script src="hub-data.js"></script>
+<script src="mrea-nav.js"></script>
+<script src="yrl-tiger.js"></script>
+<script src="mrea-kit.js"></script>
+<script>
+
+(function(){
+  var K=MREA;
+  var MIX=[
+    ['Value touches','18','v','Monthly market update ×12 · quarterly magazine ×4 · summer recap · year in review'],
+    ['Thank-you / thinking-of-you cards','8','c','New Year · spring · summer · back-to-school · fall · Thanksgiving · holiday · home anniversary'],
+    ['Phone calls','3','p','Q1 year-ahead · mid-year recap · year-end equity &amp; tax timing'],
+    ['Birthday cards','2','b','Both spouses, on the date'],
+    ["Mother's Day",'1','m',''],
+    ["Father's Day",'1','f','']
+  ];
+  var host=K.$('mixRows');
+  MIX.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td><b>'+r[0]+'</b></td>'+
+      '<td class="num"><input class="tiger-input" id="mx_'+r[2]+'" data-tiger="mx_'+r[2]+'" inputmode="numeric" placeholder="'+r[1]+'" value=""></td>'+
+      '<td style="font-size:12.5px;color:#5a6270">'+r[3]+'</td>';
+    host.appendChild(tr);
+  });
+
+  var MONTHS=[
+    ['JAN','Market update · Q1 magazine · New Year card · CALL #1'],
+    ['FEB','Market update'],
+    ['MAR','Market update · spring home-maintenance card'],
+    ['APR','Market update · Q2 magazine'],
+    ['MAY','Market update · Mother&#x27;s Day card'],
+    ['JUN','Market update · summer card · Father&#x27;s Day card · CALL #2'],
+    ['JUL','Market update · summer market recap'],
+    ['AUG','Market update · back-to-school card'],
+    ['SEP','Market update · Q3 magazine'],
+    ['OCT','Market update · fall home-prep card'],
+    ['NOV','Market update · Thanksgiving card · CALL #3'],
+    ['DEC','Market update · Q4 magazine · year in review · holiday card']
+  ];
+  var mh=K.$('monthRows');
+  MONTHS.forEach(function(m,i){
+    var n=i+1, row=document.createElement('div');
+    row.className='mrea-month';
+    row.innerHTML='<div class="mn">'+m[0]+'</div><div class="mf">'+
+      '<input class="tiger-input" id="mo'+n+'" data-tiger="mo'+n+'" placeholder="'+m[1]+'"></div>';
+    mh.appendChild(row);
+  });
+
+  function mixVal(k, dflt){ var v=K.val('mx_'+k); return v.trim()===''?dflt:K.num(v); }
+  function paint(){
+    var total = mixVal('v',18)+mixVal('c',8)+mixVal('p',3)+mixVal('b',2)+mixVal('m',1)+mixVal('f',1);
+    var cn=K.$('tCount'), bar=K.$('tBar');
+    cn.textContent=total;
+    cn.className='cn'+(total===33?' done':(total>33?' over':''));
+    bar.style.width=Math.min(100,total/33*100)+'%';
+    bar.className=(total===33?'done':'');
+    if(total===33){ K.set('tHead','That&#x27;s 33 — the year is built'); K.set('tSub','Now schedule every one of them in the CRM, in one sitting.'); }
+    else if(total>33){ K.set('tHead',total+' touches — more than 33'); K.set('tSub','Over is fine and costs a little more. Under is the failure mode, not over.'); }
+    else { K.set('tHead','Only '+total+' touches planned'); K.set('tSub',(33-total)+' short. Twelve a year will not hold the top spot in anyone&#x27;s mind.'); }
+    var h=K.$('touch_total'); if(h) h.value=total;
+
+    var met=K.nval('t_met'), cost=K.nval('t_cost')||0.50;
+    if(met>0){
+      var sales=met/6, annual=met*total*cost, per=sales>0?annual/sales:0;
+      K.stat('stExpected', K.cnt(sales,1), 'Closings a year', 'at the 12:2 ratio');
+      K.stat('stTouchCost', K.money(annual), 'Annual cost', K.cnt(met,0)+' × '+total+' touches');
+      K.stat('stPerSale', K.money(per), 'Cost per closing', '');
+      var c = per<=250?'ok':(per<=450?'warn':'bad');
+      K.verdict('tVerdict', c, K.cnt(sales,1)+' closings from '+K.cnt(met,0)+' people',
+        ['Touching '+K.cnt(met,0)+' people '+total+' times a year runs about <b>'+K.money(annual)+'</b> and should produce roughly <b>'+K.cnt(sales,1)+' closings</b> — about '+K.money(per)+' each.',
+         'That is the cheapest business in real estate, and it is the reason the database is worth protecting. Half of it arrives as referrals you never had to advertise for.',
+         total!==33?'Your mix currently totals '+total+', not 33. Fix that above before you build it.':'Your mix totals 33. Go schedule it.']);
+    } else {
+      ['stExpected','stTouchCost','stPerSale'].forEach(function(i){K.stat(i,'—','');});
+      K.verdict('tVerdict','','Enter your database size',['The 12:2 ratio turns a contact count into an expected number of closings.']);
+    }
+    K.publish({touch_total:total, touch_met:met});
+  }
+  var ids=['mx_v','mx_c','mx_p','mx_b','mx_m','mx_f','t_met','t_cost'];
+  for(var i=1;i<=12;i++) ids.push('mo'+i);
+  K.bind(ids, paint);
+  MREA.metrics().then(function(m){
+    var el=K.$('t_met');
+    if(el && !el.value && m && (m.met_now||m.met_needed)){ el.value=m.met_now||m.met_needed; paint(); }
+  });
+})();
+
+</script>
+</body>
+</html>

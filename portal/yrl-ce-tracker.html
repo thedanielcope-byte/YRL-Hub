@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CE Tracker &amp; Log — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="portal-auth.js"></script>
+    <script src="embed-mode.js?v=20260927b"></script>
+    <script src="help-box.js?v=20260918a" defer></script>
+    <style>
+        :root{
+            --red:#c03926; --red-light:#d94a35; --red-dark:#9e2e1e;
+            --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f7f8fa; --surface-3:#eef0f3;
+            --border:#e2e5ea; --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af; --green:#16a34a;
+            --radius:14px; --shadow:0 4px 20px rgba(0,0,0,0.08);
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
+        a{text-decoration:none;color:inherit;}
+        .page-header{background:linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);padding:26px 22px;}
+        .header-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+        .header-left{display:flex;align-items:center;gap:16px;}
+        .back-btn{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:9px 16px;border-radius:100px;font-size:13px;font-weight:600;white-space:nowrap;}
+        .back-btn:hover{background:rgba(255,255,255,0.26);}
+        .header-title h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(26px,4vw,38px);letter-spacing:1.5px;color:#fff;line-height:1.1;}
+        .header-title p{font-size:13px;color:rgba(255,255,255,0.85);}
+        .btn-primary{display:inline-flex;align-items:center;gap:7px;background:#fff;color:var(--red);border:none;border-radius:9px;padding:10px 16px;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;}
+        .btn-primary:hover{filter:brightness(0.97);}
+        .wrap{max-width:1000px;margin:0 auto;padding:30px 22px 90px;}
+        .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:8px;}
+        @media(max-width:600px){.kpis{grid-template-columns:1fr;}}
+        .kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+        .kpi .lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);}
+        .kpi .val{font-family:'Bebas Neue',sans-serif;font-size:34px;line-height:1.05;letter-spacing:1px;color:var(--text);margin-top:3px;}
+        .kpi .sub{font-size:11.5px;color:var(--text-muted);margin-top:2px;}
+        .note{font-size:12.5px;color:var(--text-sec);background:var(--surface-3);border-radius:9px;padding:9px 13px;margin:14px 0 20px;}
+        .sec-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--text);margin:8px 0 12px;display:flex;align-items:center;gap:10px;}
+        .ce-list{display:flex;flex-direction:column;gap:9px;}
+        .ce-row{display:flex;align-items:center;gap:13px;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:13px 16px;}
+        .ce-ic{width:38px;height:38px;border-radius:10px;background:rgba(192,57,38,.1);color:var(--red);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+        .ce-main{flex:1;min-width:0;}
+        .ce-t{font-size:14.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .ce-s{font-size:12px;color:var(--text-muted);}
+        .ce-hrs{flex-shrink:0;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.5px;color:var(--text);text-align:center;min-width:54px;}
+        .ce-hrs small{display:block;font-family:'Inter';font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:var(--text-muted);font-weight:700;}
+        .ce-cert{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--red);border:1px solid var(--border);border-radius:8px;padding:6px 11px;}
+        .ce-cert:hover{border-color:var(--red);}
+        .ce-cert.none{color:var(--text-muted);border-style:dashed;}
+        .ce-act{flex-shrink:0;border:none;background:none;color:var(--text-muted);cursor:pointer;font-size:13px;padding:5px;}
+        .ce-act:hover{color:var(--red);}
+        .empty{text-align:center;padding:44px 20px;color:var(--text-muted);}
+        .empty i{font-size:36px;opacity:.3;display:block;margin-bottom:12px;}
+        .pill{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;padding:2px 8px;border-radius:20px;background:var(--surface-3);color:var(--text-sec);}
+        .team{margin-top:28px;padding-top:18px;border-top:1px solid var(--border);}
+        .team .ce-row{background:var(--surface-2);}
+        .ava{width:30px;height:30px;border-radius:50%;background:var(--slate,#2C3340);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        /* modal */
+        .cm-ov{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:6000;display:flex;align-items:center;justify-content:center;padding:18px;}
+        .cm{background:var(--surface);border-radius:16px;box-shadow:0 20px 60px rgba(15,23,42,.3);width:100%;max-width:480px;max-height:92vh;overflow:auto;}
+        .cm-h{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);}
+        .cm-h h3{margin:0;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--text);}
+        .cm-x{border:none;background:none;font-size:22px;color:var(--text-muted);cursor:pointer;}
+        .cm-b{padding:16px 20px;display:flex;flex-direction:column;gap:12px;}
+        .cm-b label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin-bottom:5px;}
+        .cm-b input,.cm-b select,.cm-b textarea{width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:inherit;font-size:14px;color:var(--text);background:var(--surface);}
+        .cm-b textarea{min-height:52px;resize:vertical;}
+        .cm-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+        .cm-file{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+        .cm-upload{display:inline-flex;align-items:center;gap:7px;background:rgba(192,57,38,.08);color:var(--red);border:1.5px dashed var(--red);border-radius:8px;padding:8px 13px;font-size:12.5px;font-weight:700;cursor:pointer;}
+        .cm-fstat{font-size:12px;color:var(--text-muted);}
+        .cm-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:4px 20px 20px;}
+        .cm-del{border:none;background:none;color:var(--red);font-size:12.5px;font-weight:700;cursor:pointer;}
+        .cm-save{background:var(--red);color:#fff;border:none;border-radius:9px;padding:10px 18px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;}
+        .cm-ghost{background:var(--surface-3);color:var(--text);border:none;border-radius:9px;padding:10px 18px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;}
+    </style>
+    <link rel="stylesheet" href="hub-theme.css?v=20260903b"><script src="hub-brand.js" defer></script>
+</head>
+<body>
+
+<header class="page-header">
+    <div class="header-inner">
+        <div class="header-left">
+            <a href="hub.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Hub</a>
+            <div class="header-title">
+                <h1><i class="fa-solid fa-graduation-cap" style="font-size:0.8em;opacity:.9;"></i> CE Tracker &amp; Log</h1>
+                <p>Log your continuing-education hours and keep your certificates in one place</p>
+            </div>
+        </div>
+        <button class="btn-primary" id="addBtn"><i class="fa-solid fa-plus"></i> Log CE</button>
+    </div>
+</header>
+
+<div class="wrap">
+    <div id="helpTop"></div>
+    <script>document.addEventListener("DOMContentLoaded",function(){ window.HelpBox && HelpBox.mount({container:"#helpTop",key:"yrl-ce-tracker",label:"the CE Tracker"}); });</script>
+    <div id="ceView"><div class="empty"><i class="fa-solid fa-spinner fa-spin"></i>Loading your CE log…</div></div>
+</div>
+
+<script src="hub-data.js"></script>
+<script>
+const CATS = ['Required','Elective','Managing Broker','Post-Licensing','Other'];
+let SB=null, ME=null, UID=null, IS_ADMIN=false, ROWS=[], TEAM=null, booted=false, pendingCert=null;
+const $ = (id)=>document.getElementById(id);
+const esc = (s)=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const initials = (n)=>{ n=String(n||'').trim(); if(!n) return '?'; const p=n.split(/\s+/); return ((p[0]||'')[0]||'').toUpperCase()+(p.length>1?(p[p.length-1][0]||'').toUpperCase():''); };
+function fmtDate(d){ return d ? new Date(String(d).slice(0,10)+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : ''; }
+function num(n){ n=+n||0; return Number.isInteger(n)?String(n):n.toFixed(1); }
+
+async function fetchAll(){
+    try{ const r=await SB.from('agent_ce_records').select('*').order('completed_date',{ascending:false}); ROWS=r.data||[]; }catch(e){ ROWS=[]; }
+    if (IS_ADMIN){ try{ const t=await SB.rpc('admin_list_ce'); TEAM=t.error?[]:(t.data||[]); }catch(e){ TEAM=[]; } }
+}
+
+async function render(){
+    if (!SB){ $('ceView').innerHTML='<div class="empty">Sign in to track your CE.</div>'; return; }
+    await fetchAll();
+    const total = ROWS.reduce((s,r)=>s+(+r.ce_hours||0),0);
+    const thisYear = new Date().getFullYear();
+    const ytd = ROWS.filter(r=>r.completed_date && +String(r.completed_date).slice(0,4)===thisYear).reduce((s,r)=>s+(+r.ce_hours||0),0);
+    let html =
+        '<div class="kpis">'+
+          kpi('Total CE Hours', num(total), ROWS.length+' record'+(ROWS.length===1?'':'s')) +
+          kpi('Hours This Year', num(ytd), String(thisYear)) +
+          kpi('Certificates', String(ROWS.filter(r=>r.certificate_url).length), 'uploaded') +
+        '</div>'+
+        '<div class="note"><i class="fa-solid fa-circle-info" style="color:var(--red);"></i> Indiana brokers need <strong>36 CE hours</strong> per 3-year license cycle (including required courses). Log each course as you finish it and upload the certificate so you and the broker always have it.</div>'+
+        '<div class="sec-title"><i class="fa-solid fa-list-check" style="color:var(--red);font-size:.85em;"></i> My CE Log</div>'+
+        rowList(ROWS, false);
+    if (IS_ADMIN) html += teamBlock();
+    $('ceView').innerHTML = html;
+    $('ceView').querySelectorAll('.ce-row[data-id]').forEach(r=>{ const b=r.querySelector('.ce-edit'); if(b) b.onclick=()=>{ const rec=ROWS.find(x=>x.id===r.getAttribute('data-id')); if(rec) openModal(rec); }; });
+}
+function kpi(l,v,s){ return '<div class="kpi"><div class="lbl">'+esc(l)+'</div><div class="val">'+esc(v)+'</div><div class="sub">'+esc(s)+'</div></div>'; }
+function certLink(r){ return r.certificate_url ? '<a class="ce-cert" href="'+esc(r.certificate_url)+'" target="_blank" rel="noopener"><i class="fa-solid fa-file-arrow-down"></i> Certificate</a>' : '<span class="ce-cert none"><i class="fa-solid fa-file"></i> No cert</span>'; }
+function rowHtml(r, readOnly){
+    const sub=[r.category?('<span class="pill">'+esc(r.category)+'</span>'):'', r.provider?esc(r.provider):'', fmtDate(r.completed_date)].filter(Boolean).join(' &middot; ');
+    return '<div class="ce-row"'+(readOnly?'':' data-id="'+esc(r.id)+'"')+'>'+
+        '<span class="ce-ic"><i class="fa-solid fa-certificate"></i></span>'+
+        '<div class="ce-main"><div class="ce-t">'+esc(r.course_name||'CE course')+'</div><div class="ce-s">'+sub+'</div></div>'+
+        '<div class="ce-hrs">'+num(r.ce_hours)+'<small>hrs</small></div>'+
+        certLink(r)+
+        (readOnly?'':'<button class="ce-act ce-edit" title="Edit"><i class="fa-solid fa-pen"></i></button>')+
+    '</div>';
+}
+function rowList(rows, readOnly){
+    if (!rows.length) return '<div class="empty"><i class="fa-regular fa-file-lines"></i>No CE logged yet. Click "Log CE" to add your first course.</div>';
+    return '<div class="ce-list">'+rows.map(r=>rowHtml(r,readOnly)).join('')+'</div>';
+}
+function teamBlock(){
+    const team=TEAM||[];
+    const byAgent={};
+    team.forEach(r=>{ const k=r.agent_email||r.agent_id||'—'; if(!byAgent[k]) byAgent[k]={name:r.agent_name||k, rows:[]}; byAgent[k].rows.push(r); });
+    const agents=Object.keys(byAgent).map(k=>byAgent[k]).sort((a,b)=>{ const ha=a.rows.reduce((s,r)=>s+(+r.ce_hours||0),0), hb=b.rows.reduce((s,r)=>s+(+r.ce_hours||0),0); return hb-ha; });
+    let body;
+    if (!team.length){ body='<div class="empty" style="padding:20px;">No CE logged by any agent yet.</div>'; }
+    else {
+        body='<div class="ce-list">'+agents.map(a=>{
+            const hrs=a.rows.reduce((s,r)=>s+(+r.ce_hours||0),0), certs=a.rows.filter(r=>r.certificate_url).length;
+            return '<div class="ce-row"><span class="ava">'+esc(initials(a.name))+'</span>'+
+                '<div class="ce-main"><div class="ce-t">'+esc(a.name)+'</div><div class="ce-s">'+a.rows.length+' course'+(a.rows.length===1?'':'s')+' &middot; '+certs+' cert'+(certs===1?'':'s')+'</div></div>'+
+                '<div class="ce-hrs">'+num(hrs)+'<small>hrs</small></div></div>'+
+                '<div style="margin:2px 0 10px 42px;display:flex;flex-direction:column;gap:6px;">'+a.rows.map(r=>
+                    '<div style="display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--text-sec);">'+
+                    '<span style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+esc(r.course_name||'CE')+' &middot; '+num(r.ce_hours)+'h &middot; '+esc(fmtDate(r.completed_date))+'</span>'+
+                    (r.certificate_url?'<a class="ce-cert" href="'+esc(r.certificate_url)+'" target="_blank" rel="noopener"><i class="fa-solid fa-file-arrow-down"></i> Cert</a>':'<span class="ce-cert none">No cert</span>')+'</div>'
+                ).join('')+'</div>';
+        }).join('')+'</div>';
+    }
+    return '<div class="team"><div class="sec-title"><i class="fa-solid fa-users" style="color:var(--red);font-size:.85em;"></i> Team CE (broker view)</div>'+body+'</div>';
+}
+
+/* ── modal ── */
+function openModal(rec){
+    const editing=!!rec; rec=rec||{}; pendingCert=null;
+    const ov=document.createElement('div'); ov.className='cm-ov';
+    const catOpts=CATS.map(c=>'<option value="'+c+'"'+((rec.category||'')===c?' selected':'')+'>'+c+'</option>').join('');
+    ov.innerHTML='<div class="cm">'+
+        '<div class="cm-h"><h3>'+(editing?'Edit CE Record':'Log CE')+'</h3><button class="cm-x">&times;</button></div>'+
+        '<div class="cm-b">'+
+            '<div><label>Course name</label><input id="cmCourse" type="text" value="'+esc(rec.course_name||'')+'" placeholder="e.g. Fair Housing &amp; Advertising"></div>'+
+            '<div class="cm-2"><div><label>CE hours</label><input id="cmHours" type="number" inputmode="decimal" step="0.5" value="'+(rec.ce_hours||'')+'" placeholder="3"></div>'+
+              '<div><label>Category</label><select id="cmCat"><option value="">—</option>'+catOpts+'</select></div></div>'+
+            '<div class="cm-2"><div><label>Completed date</label><input id="cmDate" type="date" value="'+esc(rec.completed_date?String(rec.completed_date).slice(0,10):'')+'"></div>'+
+              '<div><label>License period (optional)</label><input id="cmPeriod" type="text" value="'+esc(rec.license_period||'')+'" placeholder="2024–2027"></div></div>'+
+            '<div><label>Provider (optional)</label><input id="cmProvider" type="text" value="'+esc(rec.provider||'')+'" placeholder="e.g. MIBOR, The CE Shop"></div>'+
+            '<div><label>Certificate</label><div class="cm-file"><label class="cm-upload"><i class="fa-solid fa-arrow-up-from-bracket"></i> '+(rec.certificate_url?'Replace file':'Upload certificate')+'<input type="file" id="cmFile" accept=".pdf,.jpg,.jpeg,.png,.webp" style="display:none;"></label><span class="cm-fstat" id="cmFstat">'+(rec.certificate_url?'<a href="'+esc(rec.certificate_url)+'" target="_blank" rel="noopener" style="color:var(--red);font-weight:700;">Current certificate</a>':'PDF or image')+'</span></div></div>'+
+            '<div><label>Notes (optional)</label><textarea id="cmNotes" placeholder="Anything to remember">'+esc(rec.notes||'')+'</textarea></div>'+
+        '</div>'+
+        '<div class="cm-foot">'+(editing?'<button class="cm-del" id="cmDel"><i class="fa-solid fa-trash"></i> Delete</button>':'<span></span>')+
+          '<div style="display:flex;gap:8px;"><button class="cm-ghost" data-x>Cancel</button><button class="cm-save" id="cmSave">Save</button></div></div>'+
+    '</div>';
+    ov.addEventListener('click',e=>{ if(e.target===ov) ov.remove(); });
+    document.body.appendChild(ov);
+    ov.querySelector('.cm-x').onclick=()=>ov.remove();
+    ov.querySelector('[data-x]').onclick=()=>ov.remove();
+    ov.querySelector('#cmFile').onchange=function(){ const f=this.files&&this.files[0]; if(f){ pendingCert=f; ov.querySelector('#cmFstat').textContent=f.name; } };
+    if (editing) ov.querySelector('#cmDel').onclick=async function(){
+        if(!confirm('Delete this CE record?')) return; this.disabled=true;
+        const res=await SB.from('agent_ce_records').delete().eq('id',rec.id);
+        if(res.error){ alert('Could not delete: '+res.error.message); this.disabled=false; return; }
+        ov.remove(); render();
+    };
+    ov.querySelector('#cmSave').onclick=async function(){
+        const course=ov.querySelector('#cmCourse').value.trim();
+        if(!course){ ov.querySelector('#cmCourse').focus(); return; }
+        this.disabled=true; this.textContent='Saving…';
+        let certUrl=rec.certificate_url||null;
+        if (pendingCert){
+            try{ certUrl=await uploadHubFile(pendingCert,'ce-certs'); }
+            catch(err){ alert('Certificate upload failed: '+(err.message||err)); this.disabled=false; this.textContent='Save'; return; }
+        }
+        const row={ course_name:course, ce_hours:parseFloat(ov.querySelector('#cmHours').value)||null,
+            category:ov.querySelector('#cmCat').value||null, completed_date:ov.querySelector('#cmDate').value||null,
+            license_period:ov.querySelector('#cmPeriod').value.trim()||null, provider:ov.querySelector('#cmProvider').value.trim()||null,
+            notes:ov.querySelector('#cmNotes').value.trim()||null, certificate_url:certUrl };
+        let res;
+        if (editing) res=await SB.from('agent_ce_records').update(row).eq('id',rec.id);
+        else { if(UID) row.agent_id=UID; res=await SB.from('agent_ce_records').insert(row); }
+        if(res.error){ alert('Could not save: '+res.error.message); this.disabled=false; this.textContent='Save'; return; }
+        ov.remove(); render();
+    };
+}
+
+function boot(){
+    SB=window.yrlClient; ME=window.yrlMember; UID=(window.yrlUser&&window.yrlUser.id)||null;
+    IS_ADMIN=!!(ME&&(ME.role==='owner'||ME.role==='nomad_admin'));
+    $('addBtn').onclick=()=>openModal(null);
+    render();
+}
+document.addEventListener('yrl-auth-ready', function(){ if(!booted){ booted=true; boot(); } });
+if (window.yrlMember && window.yrlClient) { booted=true; boot(); }
+</script>
+</body>
+</html>

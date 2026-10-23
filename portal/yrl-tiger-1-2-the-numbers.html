@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Tiger 1.2 · The Numbers: How Agents Get Paid — Your Realty Link</title>
+<script src="portal-auth.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="tiger-shell.css?v=20260927b">
+<link rel="stylesheet" href="tiger-module.css">
+</head>
+<body class="tiger-shell" data-tiger-module="1.2" data-tiger-title="The Numbers: How Agents Get Paid">
+
+<button class="tiger-menu-btn" id="tigerMenuBtn" aria-label="Modules"><i class="fa-solid fa-bars"></i></button>
+<aside class="tiger-side" id="tigerSide"></aside>
+<div class="tiger-backdrop" id="tigerBackdrop"></div>
+
+<main class="tiger-main">
+
+<div class="reader-topbar">
+  <div class="prog">
+    <div class="track"><i id="tigerProgressBar"></i></div>
+    <div class="prog-lbl" id="tigerProgressLabel">0% complete</div>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn btn-ghost" data-tiger-action="pdf"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
+  <button class="btn btn-primary" data-tiger-action="save"><i class="fa-solid fa-floppy-disk"></i> <span>Save</span></button>
+</div>
+
+<header class="reader-head">
+  <p class="reader-eyebrow">Phase 1 · Module 1.2 <span class="chip">Worksheet</span></p>
+  <h1 class="reader-title">The Numbers: How Agents Get Paid</h1>
+  <p class="reader-lede">Before you sell a single house, understand exactly how money moves from a closing table to your bank account — and how much of it is really yours. This is the module that keeps new agents from going broke in a good year.</p>
+  <p class="reader-who">Worksheet for <b data-tiger-name>Agent</b> · <span data-tiger-date></span> · saves automatically as you type</p>
+</header>
+
+<div class="print-only" style="text-align:center;margin:0 0 6px">
+  <strong>YOUR REALTY LINK · TIGER TRAINING</strong> — Module 1.2: The Numbers: How Agents Get Paid
+</div>
+
+<div class="reader-body">
+<section class="card"><h2><span class="n">01</span>Why this matters</h2><p class="teach">Real estate pays in lump sums, weeks or months apart, with nobody withholding your taxes. Agents who don't understand their numbers spend a $9,000 commission like it's $9,000 — then panic at tax time. Agents who <b>do</b> understand them build a real business.</p><div class="callout">You are a <b>1099 independent contractor</b>, not an employee. No taxes are withheld. What lands in your account is not what you get to keep.</div></section>
+<section class="card"><h2><span class="n">02</span>How a commission actually flows</h2><p class="teach">A home sells. The total commission (agreed in the listing) is split between the <b>listing side</b> and the <b>buying side</b>. Your side's commission goes to your brokerage first — then <b>you</b> get your split of it, minus any fees.</p><p class="teach">So one closing runs: <b>Sale price → total commission → your side's share → your split with Your Realty Link → minus fees → minus what you set aside for taxes → your take-home.</b></p><div class="callout confirm">Confirm your exact commission split and any monthly or transaction fees with <b>Janet Giles-Schultz</b> (317-997-7404). Every agent's arrangement can differ — use your real numbers below.</div></section>
+<section class="card"><h2><span class="n">03</span>Your take-home on one deal</h2><p class="sub">Enter your real numbers. This updates as you type.</p><div class="grid2"><div class="field"><label class="field-label" for="avg_price">Typical sale price <span class="field-hint">a home you&#x27;d list/sell</span></label><div class="input-money"><input class="tiger-input" id="avg_price" data-tiger="avg_price" inputmode="numeric" placeholder="275,000"></div></div><div class="field"><label class="field-label" for="comm_pct">Your side&#x27;s commission % <span class="field-hint">e.g. 3</span></label><input class="tiger-input" id="comm_pct" data-tiger="comm_pct" inputmode="decimal" placeholder="3"></div></div><div class="grid2"><div class="field"><label class="field-label" for="split_pct">Your split with YRL (%) <span class="field-hint">your share — ask Janet</span></label><input class="tiger-input" id="split_pct" data-tiger="split_pct" inputmode="numeric" placeholder="80"></div><div class="field"><label class="field-label" for="tax_pct">Set aside for taxes (%) <span class="field-hint">25–30% is smart</span></label><input class="tiger-input" id="tax_pct" data-tiger="tax_pct" inputmode="numeric" placeholder="28"></div></div><div class="calc"><div class="big" id="calcGross">—<small>Your commission</small></div><div class="big" id="calcTake">—<small>Take-home after tax</small></div><div class="say" id="calcSay">Enter a sale price and your commission % to see what one closing really pays you.</div></div><input type="hidden" data-tiger="take_home" id="take_home"></section>
+<section class="card"><h2><span class="n">04</span>You're running a business</h2><p class="teach">Because no one withholds for you, you have to do it yourself. The agents who last treat every commission as three buckets: <b>taxes, business, and pay.</b></p><div class="check"><input type="checkbox" id="n_account" data-tiger-check="n_account"><label for="n_account">Open a separate bank account just for taxes — move your set-aside % there the day you get paid</label></div><div class="check"><input type="checkbox" id="n_track" data-tiger-check="n_track"><label for="n_track">Track every business expense (mileage, MLS/MIBOR dues, signs, photos, marketing)</label></div><div class="check"><input type="checkbox" id="n_quarterly" data-tiger-check="n_quarterly"><label for="n_quarterly">Plan to pay estimated taxes quarterly — talk to a tax pro before your first big check</label></div><div class="check"><input type="checkbox" id="n_reserve" data-tiger-check="n_reserve"><label for="n_reserve">Build a reserve — real estate income is lumpy; aim for a few months of expenses</label></div></section>
+<section class="card"><h2><span class="n">05</span>Your money rules</h2><div class="field"><label class="field-label" for="tax_rule">My rule for taxes <span class="field-hint">write it as a promise</span></label><textarea id="tax_rule" data-tiger="tax_rule" placeholder="The day any commission hits my account, I move 28% straight to my tax account — before I spend a dollar."></textarea></div><div class="tiger-list" data-list="expenses" data-list-title="Business expenses I&#x27;ll track" data-min="5" data-placeholder="e.g. MIBOR dues, gas/mileage, listing photos ($150–250), signs, closing gifts"></div></section>
+<section class="card"><h2><span class="n">06</span>Your action this week</h2><div class="field"><label class="field-label" for="action">This week I will…</label><textarea id="action" data-tiger="action" placeholder="Open a separate tax account and decide the exact % I&#x27;ll move from every check."></textarea></div><div class="grid2"><div class="field"><label class="field-label" for="sign">Signed</label><input class="tiger-input" id="sign" data-tiger="sign" inputmode="text" placeholder="Your name"></div><div class="field"><label class="field-label" for="signdate">Date</label><input class="tiger-input" id="signdate" data-tiger="signdate" inputmode="text" placeholder="MM/DD/YYYY"></div></div></section>
+</div>
+
+<div class="actions"><div class="actions-in">
+  <span class="note"><i class="fa-solid fa-cloud"></i> Your answers save automatically to your account — pick up on any device.</span>
+  <button class="btn btn-ghost" data-tiger-action="txt"><i class="fa-solid fa-list"></i> Download list</button>
+  <button class="btn btn-ghost" data-tiger-action="pdf"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
+  <button class="btn btn-ghost" data-tiger-action="reset"><i class="fa-solid fa-eraser"></i> Clear</button>
+  <button class="btn btn-primary" data-tiger-action="complete"><i class="fa-solid fa-check"></i> Mark complete</button>
+</div></div>
+
+</main>
+
+<script src="hub-data.js"></script>
+<script src="tiger-nav.js"></script>
+<script src="yrl-tiger.js"></script>
+<script>
+
+(function(){
+  var num=function(s){return parseFloat(String(s||'').replace(/[^0-9.]/g,''))||0;};
+  var g=document.getElementById('calcGross'),t=document.getElementById('calcTake'),
+      say=document.getElementById('calcSay'),hid=document.getElementById('take_home');
+  function recalc(){
+    var price=num(document.getElementById('avg_price').value),
+        comm=num(document.getElementById('comm_pct').value),
+        split=num(document.getElementById('split_pct').value),
+        tax=num(document.getElementById('tax_pct').value);
+    if(price>0&&comm>0){
+      var side=price*comm/100, yours=side*(split>0?split/100:1),
+          take=yours*(1-(tax>0?tax/100:0));
+      g.innerHTML='$'+Math.round(yours).toLocaleString()+'<small>Your commission</small>';
+      t.innerHTML='$'+Math.round(take).toLocaleString()+'<small>Take-home after tax</small>';
+      hid.value=Math.round(take);
+      say.textContent='One closing at $'+price.toLocaleString()+' pays you about $'+Math.round(yours).toLocaleString()+
+        ' — and roughly $'+Math.round(take).toLocaleString()+' after setting aside taxes. That gap is why you plan ahead.';
+    } else { g.innerHTML='—<small>Your commission</small>';t.innerHTML='—<small>Take-home after tax</small>';hid.value='';
+      say.textContent='Enter a sale price and your commission % to see what one closing really pays you.';}
+  }
+  ['avg_price','comm_pct','split_pct','tax_pct'].forEach(function(id){document.getElementById(id).addEventListener('input',recalc);});
+  document.addEventListener('yrl-auth-ready',function(){setTimeout(recalc,300);});
+  setTimeout(recalc,1200);
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>The Millionaire Agent Path — Your Realty Link</title>
+<script src="portal-auth.js"></script>
+<script src="embed-mode.js?v=20260927b"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="tiger-shell.css?v=20260927b">
+<link rel="stylesheet" href="mrea-module.css">
+<style>
+:root{
+  --red:#c03926; --red-dark:#9e2e1e;
+  --mrea:#0f766e; --mrea-light:#14b8a6; --mrea-deep:#0b544e;
+  --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f7f8fa; --surface-3:#eef0f3;
+  --border:#e2e5ea; --border-light:#d0d4da;
+  --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+  --radius:14px; --shadow:0 4px 20px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+
+.ov{padding:6px 34px 60px;max-width:920px}
+.ov-start{display:flex;gap:24px;align-items:center;flex-wrap:wrap;background:#0c2523;color:#eaf5f3;
+  border-radius:18px;padding:24px 26px;position:relative;overflow:hidden;margin:16px 0 26px}
+.ov-start .topo{position:absolute;inset:0;opacity:.16;
+  background:repeating-radial-gradient(circle at 82% 30%, var(--mrea-light) 0 1px, transparent 1px 26px)}
+.ov-pct{position:relative;font-family:'Bebas Neue',sans-serif;font-size:64px;line-height:.85;color:var(--mrea-light)}
+.ov-pct small{display:block;font-family:'Inter';font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#8fb3ae;font-weight:700;margin-top:6px}
+.ov-start-txt{position:relative;flex:1;min-width:220px}
+.ov-start-txt h2{margin:0 0 4px;font-size:19px}
+.ov-start-txt p{margin:0 0 14px;color:#bcd6d2;font-size:14px}
+.ov-cta{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;padding:11px 18px;border-radius:10px;margin:0 8px 8px 0}
+.ov-cta.primary{background:var(--mrea);color:#fff}
+.ov-cta.primary:hover{background:var(--mrea-deep)}
+.ov-cta.ghost{background:rgba(255,255,255,.08);color:#eaf5f3;border:1px solid rgba(255,255,255,.18)}
+.ov-cta.ghost:hover{background:rgba(255,255,255,.15)}
+
+.ov-how{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin:0 0 30px}
+.ov-step{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;box-shadow:var(--shadow)}
+.ov-step .si{width:34px;height:34px;border-radius:9px;background:rgba(15,118,110,.1);color:var(--mrea);display:grid;place-items:center;font-size:15px;margin-bottom:11px}
+.ov-step h3{margin:0 0 5px;font-size:15px}
+.ov-step p{margin:0;font-size:13px;color:var(--text-sec);line-height:1.45}
+
+.phase{margin:24px 0;border-top:1px solid var(--border);padding-top:20px}
+.phase-head{display:flex;align-items:baseline;gap:14px;margin:0 0 6px}
+.phase-num{font-family:'Bebas Neue',sans-serif;font-size:34px;color:transparent;-webkit-text-stroke:1.4px var(--mrea);line-height:1}
+.phase-title{font-size:19px;font-weight:750;margin:0}
+.phase-goal{color:var(--text-muted);font-size:13.5px;margin:0 0 14px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:12px}
+.mod{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:15px 16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:9px;min-height:112px;transition:.15s}
+.mod:hover{transform:translateY(-2px);border-color:var(--mrea)}
+.mod .top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mod .id{font-size:11px;font-weight:800;letter-spacing:.04em;color:var(--text-muted)}
+.mod .badge{font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:99px;background:var(--mrea);color:#fff}
+.mod .badge.done{background:#2e9e5b}
+.mod .badge.part{background:#c2820b}
+.mod .name{font-size:14.5px;font-weight:650;line-height:1.28;flex:1}
+.mod .mbar{height:6px;border-radius:99px;background:var(--surface-3);overflow:hidden}
+.mod .mbar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--mrea),var(--mrea-light));border-radius:99px;transition:width .4s}
+.mod .go{font-size:12.5px;font-weight:700;color:var(--mrea);display:inline-flex;align-items:center;gap:6px}
+
+.woven{margin-top:34px;background:#0c2523;color:#dcebe8;border-radius:18px;padding:24px 26px;position:relative;overflow:hidden}
+.woven .topo{position:absolute;inset:0;opacity:.12;background:repeating-radial-gradient(circle at 88% 20%, var(--mrea-light) 0 1px, transparent 1px 22px)}
+.woven h3{position:relative;margin:0 0 14px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--mrea-light)}
+.woven-grid{position:relative;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.woven-item{border-left:2px solid var(--mrea-light);padding-left:13px}
+.woven-item h4{margin:0 0 5px;font-size:15px}
+.woven-item p{margin:0;font-size:13px;color:#9fbbb7;line-height:1.45}
+
+.src{margin:26px 0 0;padding:16px 18px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px}
+.src p{margin:0;font-size:12.5px;color:var(--text-sec);line-height:1.55}
+@media(max-width:640px){.ov{padding:6px 18px 60px}}
+</style>
+</head>
+<body class="tiger-shell mrea-shell" data-tiger-page="overview" data-tiger-ns="mrea" data-tiger-program="Millionaire Agent Path">
+
+<button class="tiger-menu-btn" id="tigerMenuBtn" aria-label="Modules"><i class="fa-solid fa-bars"></i></button>
+<aside class="tiger-side" id="tigerSide"></aside>
+<div class="tiger-backdrop" id="tigerBackdrop"></div>
+
+<main class="tiger-main">
+
+<div class="reader-topbar">
+  <a class="btn btn-ghost" href="yrl-agent-training.html"><i class="fa-solid fa-arrow-left"></i> <span>Training</span></a>
+  <a class="btn btn-ghost" href="hub.html"><i class="fa-solid fa-house"></i> <span>Hub</span></a>
+  <div class="spacer"></div>
+  <div style="font-size:13px;color:var(--text-muted)">Signed in as <b id="yrl-user-name" style="color:var(--text-sec)">…</b></div>
+</div>
+
+<header class="reader-head">
+  <p class="reader-eyebrow">Your Realty Link · Business Growth Path <span class="chip">Course</span></p>
+  <h1 class="reader-title">The Millionaire Agent Path</h1>
+  <p class="reader-lede">Eighteen working modules that turn your practice into a business. Not theory — you enter your own numbers and the page tells you what they mean. Work out what you have to produce, size the database that produces it, build the touch programs that work it, and know which hire comes next.</p>
+</header>
+
+<div class="ov">
+  <div class="ov-start">
+    <div class="topo"></div>
+    <div class="ov-pct"><span id="ovPct">0%</span><small>Complete</small></div>
+    <div class="ov-start-txt">
+      <h2 id="ovHead">Start with your bottleneck</h2>
+      <p id="ovSub">Module 1.1 finds which of the three L&rsquo;s is actually holding you back — so you don&rsquo;t spend a month fixing a problem you don&rsquo;t have.</p>
+      <a class="ov-cta primary" id="continueBtn" href="yrl-mrea-1-1-three-ls.html">Start Module 1.1 <i class="fa-solid fa-arrow-right"></i></a>
+      <a class="ov-cta ghost" href="yrl-mrea-tracker.html"><i class="fa-solid fa-chart-line"></i> My Scorecard</a>
+      <a class="ov-cta ghost" href="yrl-mrea-marketing.html"><i class="fa-solid fa-bullhorn"></i> MREA Marketing</a>
+    </div>
+  </div>
+
+  <div class="ov-how">
+    <div class="ov-step"><div class="si"><i class="fa-solid fa-calculator"></i></div><h3>Enter your numbers</h3><p>Every calculator runs on your figures — your average price, your split, your conversion rates. No generic benchmarks pretending to be your business.</p></div>
+    <div class="ov-step"><div class="si"><i class="fa-solid fa-link"></i></div><h3>They carry forward</h3><p>Work out your GCI in 2.1 and it pre-fills your budget in 2.3 and your database size in 2.4. Do the maths once.</p></div>
+    <div class="ov-step"><div class="si"><i class="fa-solid fa-bullhorn"></i></div><h3>Then go use it</h3><p>What you build here — your 8&times;8, your 33 Touch year, your listing checklist — lands in MREA Marketing as tools you open every week.</p></div>
+  </div>
+
+  <div id="phases"></div>
+
+  <div class="woven">
+    <div class="topo"></div>
+    <h3>Runs through every phase</h3>
+    <div class="woven-grid">
+      <a class="woven-item" href="yrl-mrea-tracker.html" style="display:block"><h4>My Scorecard <i class="fa-solid fa-arrow-right" style="font-size:12px;color:var(--mrea-light)"></i></h4><p>Every number you enter across all eighteen modules, pulled into one page. Your economic model, your database gap, your conversion rates.</p></a>
+      <a class="woven-item" href="yrl-mrea-marketing.html" style="display:block"><h4>MREA Marketing <i class="fa-solid fa-arrow-right" style="font-size:12px;color:var(--mrea-light)"></i></h4><p>The daily-use side. Calendars, checklists and templates you open while working, not to learn from.</p></a>
+      <a class="woven-item" href="yrl-tiger-training.html" style="display:block"><h4>Tiger Training <i class="fa-solid fa-arrow-right" style="font-size:12px;color:var(--mrea-light)"></i></h4><p>The first-year path. Tiger teaches you the job; this path turns the job into a business. They overlap on purpose.</p></a>
+    </div>
+  </div>
+
+  <div class="src">
+    <p><b>Where this comes from.</b> The frameworks in this path are drawn from <i>The Millionaire Real Estate Agent</i> by Gary Keller, Dave Jenks and Jay Papasan. The teaching, worksheets and every calculator here are Your Realty Link&rsquo;s own, built around Central Indiana and our own tools. Where the book&rsquo;s 2004 assumptions no longer hold — a flat 6% commission, a fixed average sale price, buyer agency without a written agreement — we use your real numbers instead and flag the current rules.</p>
+  </div>
+</div>
+
+</main>
+
+<script src="hub-data.js"></script>
+<script src="mrea-nav.js"></script>
+<script>
+(function(){
+  function email(){const u=window.yrlUser;return u&&u.email?u.email.toLowerCase():(localStorage.getItem('yrl_agent_email')||'anon');}
+  const GOALS={
+    '01':'Find the one thing actually holding you back.',
+    '02':'Turn your income goal into a weekly appointment number.',
+    '03':'Build the machine that produces the leads.',
+    '04':'Get your time back without losing the business.'
+  };
+  function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+  function render(prog){
+    const host=document.getElementById('phases');
+    if(!host||!window.mreaPhases) return;
+    let total=0,done=0;
+    host.innerHTML = window.mreaPhases.map(ph=>{
+      const cards = ph.mods.map(m=>{
+        total++;
+        const p=prog[m.id]||{};
+        if(p.done) done++;
+        const badge = p.done ? '<span class="badge done">Done</span>'
+                    : (p.pct>0 ? '<span class="badge part">'+p.pct+'%</span>'
+                    : '<span class="badge">Open</span>');
+        return '<a class="mod" href="'+m.href+'">'+
+          '<div class="top"><span class="id">'+m.id+'</span>'+badge+'</div>'+
+          '<div class="name">'+esc(m.name)+'</div>'+
+          '<div class="mbar"><i style="width:'+(p.done?100:(p.pct||0))+'%"></i></div>'+
+          '<span class="go">'+(p.done?'Review':(p.pct>0?'Continue':'Start'))+' <i class="fa-solid fa-arrow-right"></i></span></a>';
+      }).join('');
+      return '<div class="phase"><div class="phase-head"><span class="phase-num">'+ph.n+'</span>'+
+             '<h2 class="phase-title">'+esc(ph.title)+'</h2></div>'+
+             '<p class="phase-goal">'+(GOALS[ph.n]||'')+'</p>'+
+             '<div class="cards">'+cards+'</div></div>';
+    }).join('');
+    return {total:total,done:done};
+  }
+
+  async function boot(){
+    const key='mrea:v1:progress:'+email();
+    let prog={};try{prog=JSON.parse(localStorage.getItem(key))||{};}catch(e){}
+    if(typeof loadHubContent==='function'){
+      // loadHubContent never settles when Supabase isn't ready — race it.
+      const c=await Promise.race([
+        Promise.resolve(loadHubContent(key)).catch(()=>null),
+        new Promise(r=>setTimeout(()=>r(null),2500))
+      ]);
+      if(c && typeof c==='object') prog=c;
+    }
+    const r=render(prog)||{total:18,done:0};
+    document.getElementById('ovPct').textContent=Math.round((r.done/(r.total||18))*100)+'%';
+
+    const order=[];
+    (window.mreaPhases||[]).forEach(ph=>ph.mods.forEach(m=>order.push(m.id)));
+    const next=order.find(id=>!(prog[id]&&prog[id].done));
+    const btn=document.getElementById('continueBtn'),
+          head=document.getElementById('ovHead'),
+          sub=document.getElementById('ovSub');
+    if(!next){
+      btn.innerHTML='Review Module 1.1 <i class="fa-solid fa-arrow-right"></i>';
+      btn.href=window.mreaHref('1.1');
+      head.textContent='You have worked the whole path';
+      sub.textContent='Re-run 2.1 and 2.2 every quarter — the numbers move, and the model is only as good as the inputs.';
+    } else {
+      const href=window.mreaHref(next); if(href) btn.href=href;
+      if(prog[next]&&prog[next].pct>0){
+        btn.innerHTML='Continue Module '+next+' <i class="fa-solid fa-arrow-right"></i>';
+        head.textContent='Pick up where you left off';
+        sub.textContent='You started Module '+next+'. Everything you typed is still there.';
+      } else {
+        btn.innerHTML='Start Module '+next+' <i class="fa-solid fa-arrow-right"></i>';
+        head.textContent = next==='1.1' ? 'Start with your bottleneck' : 'Next up';
+        sub.textContent = next==='1.1'
+          ? 'Module 1.1 finds which of the three L’s is actually holding you back — so you don’t spend a month fixing a problem you don’t have.'
+          : 'Module '+next+' is your next step. Work through them in order — each one feeds the next.';
+      }
+    }
+  }
+  if(window.yrlUser) boot();
+  else{document.addEventListener('yrl-auth-ready',boot,{once:true});setTimeout(boot,3000);}
+})();
+</script>
+</body>
+</html>

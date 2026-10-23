@@ -4,8 +4,8 @@
        <script src="yrl-auth.js"></script>
    ============================================================ */
 
-const _AUTH_SB_URL    = 'https://khhfkxfxefjgunhrihyx.supabase.co';
-const _AUTH_SB_KEY    = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtoaGZreGZ4ZWZqZ3VuaHJpaHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3NzYwMjcsImV4cCI6MjA5MTM1MjAyN30.bYW68xMDUEXBRC1bxOLdj77xCcjXb3wIuHbPAPFdSGo';
+const _AUTH_SB_URL    = 'https://wdvolamasztetwpitbwg.supabase.co';
+const _AUTH_SB_KEY    = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indkdm9sYW1hc3p0ZXR3cGl0YndnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3Nzc2MTYsImV4cCI6MjA5MTM1MzYxNn0.uiGIaZwr88ZNtAobfSV-axlpXB3sos2Rcw3FiFm6JO8';
 const _AUTH_LOGIN_URL = 'yrl-login.html';
 
 let _authClient = null;
@@ -36,6 +36,19 @@ async function _yrlInitAuth() {
         /* Save where they were trying to go so login can send them back */
         sessionStorage.setItem('yrl_intended', window.location.href);
         window.location.replace(_AUTH_LOGIN_URL);
+        return;
+    }
+
+    /* Verify this agent is still authorized (not revoked) */
+    const { data: access } = await _authClient
+        .from('hub_authorized_agents')
+        .select('status')
+        .eq('email', session.user.email.toLowerCase())
+        .eq('status', 'active');
+
+    if (!access || access.length === 0) {
+        await _authClient.auth.signOut();
+        window.location.replace(_AUTH_LOGIN_URL + '?revoked=1');
         return;
     }
 

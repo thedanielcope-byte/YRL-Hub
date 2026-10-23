@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CE &amp; Licensing — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="portal-auth.js"></script>
+    <script src="embed-mode.js?v=20260927b"></script>
+    <script src="help-box.js?v=20260916" defer></script>
+    <style>
+        :root {
+            --red:#c03926; --red-light:#d94a35; --red-dark:#9e2e1e;
+            --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f7f8fa; --surface-3:#eef0f3;
+            --border:#e2e5ea; --text:#1a1d22; --text-sec:#5a6270; --text-muted:#9ca3af;
+            --radius:14px;
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        html{scroll-behavior:smooth;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
+        a{text-decoration:none;color:inherit;}
+        .page-header{background:linear-gradient(150deg,#a82f1e 0%,#c03926 45%,#9e2e1e 100%);padding:28px 24px 24px;}
+        .header-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+        .back-btn{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:9px 18px;border-radius:100px;font-size:13px;font-weight:600;white-space:nowrap;}
+        .back-btn:hover{background:rgba(255,255,255,0.26);}
+        .header-title h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(26px,4vw,38px);letter-spacing:1.5px;color:#fff;line-height:1.1;}
+        .header-title p{font-size:13px;color:rgba(255,255,255,0.85);}
+        .wrap{max-width:1000px;margin:0 auto;padding:40px 24px 90px;}
+
+        /* ── top tabs ── */
+        .ce-tabs{display:flex;gap:6px;border-bottom:2px solid var(--border);margin-bottom:26px;flex-wrap:wrap;}
+        .ce-tab{display:inline-flex;align-items:center;gap:8px;background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;padding:12px 18px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;color:var(--text-sec);cursor:pointer;transition:all .15s;white-space:nowrap;}
+        .ce-tab:hover{color:var(--red);}
+        .ce-tab.on{color:var(--red);border-bottom-color:var(--red);}
+        .ce-tab i{font-size:13px;}
+        .ce-pane{display:none;}
+        .ce-pane.on{display:block;}
+
+        /* CE Tracker embedded frame */
+        .ce-frame{width:100%;border:0;display:block;min-height:640px;background:transparent;}
+
+        /* ── tile-grid 'grid' layout: base card styles (tile-grid.js only styles the edit chrome) ── */
+        .section{margin-bottom:8px;}
+        .sec-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+        .sec-icon{width:46px;height:46px;background:rgba(192,57,38,0.08);border:1px solid rgba(192,57,38,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--red);font-size:18px;flex-shrink:0;}
+        .sec-header h2{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1.5px;color:var(--text);line-height:1;}
+        .sec-header p{font-size:12.5px;color:var(--text-muted);margin-top:3px;}
+        .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
+        .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;display:flex;flex-direction:column;gap:10px;transition:all .2s ease;position:relative;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.05);}
+        .card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .3s ease;}
+        .card:hover{background:var(--surface-2);border-color:rgba(192,57,38,0.3);transform:translateY(-4px);box-shadow:0 10px 30px rgba(192,57,38,0.14);}
+        .card:hover::after{transform:scaleX(1);}
+        .card[href^="http"] .card-icon{background:rgba(37,99,235,0.10);color:#2563eb;}
+        .card[href^="http"] .pill{color:#2563eb;background:rgba(37,99,235,0.10);}
+        .card[href^="http"]::after{background:#2563eb;}
+        .card[href^="http"]:hover{border-color:rgba(37,99,235,0.35);box-shadow:0 8px 28px rgba(37,99,235,0.18);}
+        .card[href^="http"] .card-footer i{color:#2563eb;}
+        .card-icon{width:50px;height:50px;background:rgba(192,57,38,0.1);border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--red);font-size:20px;flex-shrink:0;}
+        .card h3{font-size:15px;font-weight:700;color:var(--text);margin-top:2px;}
+        .card p{font-size:12.5px;color:var(--text-sec);flex:1;line-height:1.55;}
+        .card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:4px;}
+        .pill{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--red);background:rgba(192,57,38,0.1);padding:3px 9px;border-radius:5px;}
+        .card-footer i{color:var(--text-muted);font-size:12px;transition:all .2s;}
+        .card:hover .card-footer i{color:var(--red);transform:translateX(4px);}
+        @media(max-width:640px){.card-grid{grid-template-columns:1fr;}}
+    </style>
+<link rel="stylesheet" href="hub-theme.css?v=20260903b"><script src="hub-brand.js" defer></script></head>
+<body>
+
+<header class="page-header">
+    <div class="header-inner">
+        <a href="hub.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Hub</a>
+        <div class="header-title">
+            <h1><i class="fa-solid fa-graduation-cap" style="font-size:0.8em;opacity:.9;"></i> CE &amp; Licensing</h1>
+            <p>Track your CE hours, browse approved courses, and manage your license</p>
+        </div>
+    </div>
+</header>
+
+<div class="wrap">
+    <div id="helpTop"></div>
+    <script>document.addEventListener("DOMContentLoaded",function(){ window.HelpBox && HelpBox.mount({container:"#helpTop",key:"yrl-ce-licensing",label:"CE & Licensing"}); });</script>
+
+    <div class="ce-tabs" role="tablist">
+        <button class="ce-tab on" data-tab="tracker" onclick="ceTab('tracker')"><i class="fa-solid fa-list-check"></i> CE Tracker</button>
+        <button class="ce-tab" data-tab="courses" onclick="ceTab('courses')"><i class="fa-solid fa-graduation-cap"></i> Approved CE Course List</button>
+        <button class="ce-tab" data-tab="licensing" onclick="ceTab('licensing')"><i class="fa-solid fa-clipboard-list"></i> Licensing Requirements</button>
+    </div>
+
+    <div class="ce-pane on" id="pane-tracker">
+        <iframe id="ceTrackerFrame" class="ce-frame" title="CE Tracker &amp; Log" src="about:blank"></iframe>
+    </div>
+    <div class="ce-pane" id="pane-courses">
+        <div id="ceCourses"></div>
+    </div>
+    <div class="ce-pane" id="pane-licensing">
+        <div id="ceLicensing"></div>
+    </div>
+</div>
+
+<script src="hub-data.js"></script>
+<script src="edit-gate.js?v=20260916"></script>
+<script src="tile-grid.js?v=20260927b"></script>
+<script>
+(function(){
+    var TRACKER_SRC = 'yrl-ce-tracker.html?embed=1&v=20260922';
+    var trackerLoaded = false;
+    function loadTracker(){
+        if (trackerLoaded) return;
+        trackerLoaded = true;
+        var fr = document.getElementById('ceTrackerFrame');
+        if (fr) fr.src = TRACKER_SRC;
+    }
+
+    /* tile-grid.js registers GLOBAL window.__tg_* handlers per mount, so two grids
+       on one page collide. We mount only ONE grid at a time — (re)mounting the
+       target grid on tab activation keeps those globals pointed at the visible grid. */
+    function mountCourses(){ TileGrid.mount({ container:'#ceCourses',   key:'yrl-ce-courses',       layout:'grid' }); }
+    function mountLicensing(){ TileGrid.mount({ container:'#ceLicensing', key:'yrl-ce-licensing-req', layout:'grid' }); }
+
+    window.ceTab = function(name){
+        var tabs = document.querySelectorAll('.ce-tab');
+        for (var i=0;i<tabs.length;i++){ tabs[i].classList.toggle('on', tabs[i].getAttribute('data-tab')===name); }
+        var panes = document.querySelectorAll('.ce-pane');
+        for (var j=0;j<panes.length;j++){ panes[j].classList.remove('on'); }
+        var p = document.getElementById('pane-'+name);
+        if (p) p.classList.add('on');
+        if (name==='tracker') loadTracker();
+        else if (name==='courses') mountCourses();
+        else if (name==='licensing') mountLicensing();
+        // nudge the hub to re-fit our (now taller/shorter) content
+        try { window.dispatchEvent(new Event('resize')); } catch(e){}
+        if (window.__yrlTabChanged) window.__yrlTabChanged(name);   // hub sidebar highlight follows
+    };
+
+    /* Size the nested CE Tracker iframe to its REAL content height.
+       We read its own body.scrollHeight (same-origin) rather than the postMessage
+       height — the reported value is max(body, documentElement), and documentElement
+       inflates to whatever height we give the iframe, which would create a runaway
+       feedback loop (iframe grows → reported height grows → iframe grows …). */
+    function fitTracker(){
+        var fr = document.getElementById('ceTrackerFrame');
+        if (!fr) return;
+        var h = 0;
+        try { var b = fr.contentDocument && fr.contentDocument.body; if (b) h = b.scrollHeight; } catch(err){ return; }
+        if (!h) return;
+        h = Math.min(6000, Math.max(560, h + 24));
+        if (fr.style.height !== h + 'px') fr.style.height = h + 'px';
+    }
+    window.addEventListener('message', function(e){
+        var d = e.data; if (!d || !d.__yrlEmbedH) return;
+        var fr = document.getElementById('ceTrackerFrame');
+        if (!fr || fr.contentWindow !== e.source) return;
+        fitTracker();
+    });
+
+    function __ceInit(){
+        loadTracker();   // CE Tracker is the default tab — load it now (grids mount lazily on their tab)
+        // hub sidebar 3rd level: CE Tracker / Approved CE Course List / Licensing Requirements
+        if (window.__yrlRegisterTabs) window.__yrlRegisterTabs(function(n){ if (['tracker','courses','licensing'].indexOf(n) > -1) window.ceTab(n); });
+    }
+    document.addEventListener('yrl-auth-ready', __ceInit);
+    if (window.yrlMember) __ceInit();
+})();
+</script>
+<script src="back-link.js?v=20260917"></script>
+<script src="mobile-tabs.js?v=20260927a" defer></script>
+</body>
+</html>

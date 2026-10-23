@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>MREA 3.5 · Lead Source Audit — Your Realty Link</title>
+<script src="portal-auth.js"></script>
+<script src="embed-mode.js?v=20260927b"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="tiger-shell.css?v=20260927b">
+<link rel="stylesheet" href="tiger-module.css">
+<link rel="stylesheet" href="mrea-module.css">
+</head>
+<body class="tiger-shell mrea-shell" data-tiger-module="3.5" data-tiger-title="Lead Source Audit" data-tiger-ns="mrea" data-tiger-program="Millionaire Agent Path">
+
+<button class="tiger-menu-btn" id="tigerMenuBtn" aria-label="Modules"><i class="fa-solid fa-bars"></i></button>
+<aside class="tiger-side" id="tigerSide"></aside>
+<div class="tiger-backdrop" id="tigerBackdrop"></div>
+
+<main class="tiger-main">
+
+<div class="reader-topbar">
+  <div class="prog">
+    <div class="track"><i id="tigerProgressBar"></i></div>
+    <div class="prog-lbl" id="tigerProgressLabel">0% complete</div>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn btn-ghost" data-tiger-action="pdf"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
+  <button class="btn btn-primary" data-tiger-action="save"><i class="fa-solid fa-floppy-disk"></i> <span>Save</span></button>
+</div>
+
+<header class="reader-head">
+  <p class="reader-eyebrow">Phase 3 · Module 3.5 <span class="chip">Audit</span></p>
+  <h1 class="reader-title">Lead Source Audit</h1>
+  <p class="reader-lede">Almost any lead source can work — just not every source, for every agent, in every market. The only way to know which ones work for you is to put cost, leads and closings side by side and let the arithmetic pick the winners.</p>
+  <p class="reader-who">Worksheet for <b data-tiger-name>Agent</b> · <span data-tiger-date></span> · saves automatically as you type</p>
+</header>
+
+<div class="print-only" style="text-align:center;margin:0 0 6px">
+  <strong>YOUR REALTY LINK · THE MILLIONAIRE AGENT PATH</strong> — Module 3.5: Lead Source Audit
+</div>
+
+<div class="reader-body">
+<section class="card"><h2><span class="n">01</span>You cannot manage what you don&#x27;t source</h2><p class="teach">Every lead has to be <b>captured</b> (who, and how do we reach them), <b>sourced</b> (where did it come from), <b>assigned</b> (who owns the follow-up) and <b>stored</b> (where do we find it again). Miss the sourcing step and you are spending blind forever.</p><p class="teach">The reward for tracking is that you stop arguing about marketing and start reading it. Ranked cost-per-closing turns a matter of opinion into a matter of record.</p><div class="callout">Give any new source six to twelve months before you judge it. Marketing response is back-loaded — you are waiting for people to need you, and that timing is theirs, not yours.</div></section>
+<section class="card"><h2><span class="n">02</span>Last twelve months, by source</h2><p class="sub">Annual cost, leads received, and closings you can actually trace back. Leave rows blank if they don&amp;#x27;t apply.</p><div class="mrea-tablewrap"><table class="mrea-table"><thead><tr><th style="min-width:150px">Source</th><th class="num" style="width:110px">Annual cost</th><th class="num" style="width:92px">Leads</th><th class="num" style="width:92px">Closings</th><th class="num" style="width:104px">Per closing</th></tr></thead><tbody id="srcRows"></tbody></table></div><div class="mrea-stats"><div class="mrea-stat" id="stSpend"></div><div class="mrea-stat" id="stLeads"></div><div class="mrea-stat" id="stClose"></div><div class="mrea-stat good" id="stBlended"></div></div><div class="mrea-verdict" id="srcVerdict"><p class="vt">What this means</p><h3 class="vh">Fill in your sources</h3><p class="vp">Cost per closing ranks them for you.</p></div></section>
+<section class="card"><h2><span class="n">03</span>Fix the tracking itself</h2><p class="teach">If most of your rows read &ldquo;I don&#x27;t know,&rdquo; that is the finding — and it is fixable in a fortnight. Your website already stamps a source on every form submission; what&#x27;s usually missing is assignment and outcome.</p><div class="check"><input type="checkbox" id="src_source" data-tiger-check="src_source"><label for="src_source">Every form and call captures where the lead came from</label></div><div class="check"><input type="checkbox" id="src_specific" data-tiger-check="src_specific"><label for="src_specific">Source values are specific enough to act on — not one bucket called &ldquo;website&rdquo;</label></div><div class="check"><input type="checkbox" id="src_assign" data-tiger-check="src_assign"><label for="src_assign">Every lead is assigned to a person, with a timestamp</label></div><div class="check"><input type="checkbox" id="src_outcome" data-tiger-check="src_outcome"><label for="src_outcome">Every lead gets an outcome: appointment / agreement / closed / dead</label></div><div class="check"><input type="checkbox" id="src_report" data-tiger-check="src_report"><label for="src_report">A monthly report shows leads → appointments → closings <b>by source</b></label></div><div class="check"><input type="checkbox" id="src_speed" data-tiger-check="src_speed"><label for="src_speed">First-contact speed is measured — it moves conversion more than lead quality does</label></div></section>
+<section class="card"><h2><span class="n">04</span>Decide something</h2><p class="teach">An audit that changes no spending was a nice afternoon. Name the source you are cutting and the one you are feeding.</p><div class="grid2"><div class="field"><label class="field-label" for="src_cut">Source I&amp;#x27;m cutting or pausing</label><input class="tiger-input" id="src_cut" data-tiger="src_cut" inputmode="text" placeholder="Paid portal leads"></div><div class="field"><label class="field-label" for="src_feed">Source I&amp;#x27;m putting that money into</label><input class="tiger-input" id="src_feed" data-tiger="src_feed" inputmode="text" placeholder="Farm mailer + sphere touches"></div></div><div class="field"><label class="field-label" for="src_why">What I&amp;#x27;ll watch to know if I was wrong <span class="field-hint">Red Light, Green Light — give it a review date</span></label><textarea id="src_why" data-tiger="src_why" placeholder="If listing appointments drop below 3/month by January, I&amp;#x27;ll revisit."></textarea></div><div class="grid2"><div class="field"><label class="field-label" for="sign">Signed</label><input class="tiger-input" id="sign" data-tiger="sign" inputmode="text" placeholder="Your name"></div><div class="field"><label class="field-label" for="signdate">Date</label><input class="tiger-input" id="signdate" data-tiger="signdate" inputmode="text" placeholder="MM/DD/YYYY"></div></div></section>
+</div>
+
+<div class="actions"><div class="actions-in">
+  <span class="note"><i class="fa-solid fa-cloud"></i> Your answers save automatically to your account — pick up on any device.</span>
+  <button class="btn btn-ghost" data-tiger-action="txt"><i class="fa-solid fa-list"></i> Download list</button>
+  <button class="btn btn-ghost" data-tiger-action="pdf"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
+  <button class="btn btn-ghost" data-tiger-action="reset"><i class="fa-solid fa-eraser"></i> Clear</button>
+  <button class="btn btn-primary" data-tiger-action="complete"><i class="fa-solid fa-check"></i> Mark complete</button>
+</div></div>
+
+</main>
+
+<script src="hub-data.js"></script>
+<script src="mrea-nav.js"></script>
+<script src="yrl-tiger.js"></script>
+<script src="mrea-kit.js"></script>
+<script>
+
+(function(){
+  var K=MREA, host=K.$('srcRows');
+  var SRC=['Sphere / past clients','Geographic farm mail','Website &amp; SEO','Open houses',
+           'Social media','Paid portal leads','Signs &amp; sign calls','Agent referrals',
+           'Community / sponsorship','Other'];
+  SRC.forEach(function(s,i){
+    var n=i+1, tr=document.createElement('tr');
+    tr.innerHTML='<td><input class="tiger-input" id="s'+n+'n" data-tiger="s'+n+'n" placeholder="'+s+'"></td>'+
+      '<td class="num"><input class="tiger-input" id="s'+n+'c" data-tiger="s'+n+'c" inputmode="numeric" placeholder="0"></td>'+
+      '<td class="num"><input class="tiger-input" id="s'+n+'l" data-tiger="s'+n+'l" inputmode="numeric" placeholder="0"></td>'+
+      '<td class="num"><input class="tiger-input" id="s'+n+'x" data-tiger="s'+n+'x" inputmode="decimal" placeholder="0"></td>'+
+      '<td class="num out" id="s'+n+'r">—</td>';
+    host.appendChild(tr);
+  });
+  function paint(){
+    var tc=0,tl=0,tx=0,best=null,worst=null;
+    for(var i=1;i<=SRC.length;i++){
+      var c=K.nval('s'+i+'c'), l=K.nval('s'+i+'l'), x=K.nval('s'+i+'x');
+      var name=K.val('s'+i+'n').trim()||SRC[i-1].replace(/&amp;/g,'&');
+      tc+=c; tl+=l; tx+=x;
+      var cell=K.$('s'+i+'r');
+      if(x>0){
+        var per=c/x;
+        cell.textContent=K.money(per);
+        cell.style.color = per<=300?'#2e9e5b':(per<=800?'#c2820b':'#c03926');
+        if(c>0){
+          if(best===null||per<best.per) best={name:name,per:per,x:x};
+          if(worst===null||per>worst.per) worst={name:name,per:per,c:c,x:x};
+        }
+      } else if(c>0){
+        cell.textContent='no closings';
+        cell.style.color='#c03926';
+        if(worst===null||Infinity>worst.per) worst={name:name,per:Infinity,c:c,x:0};
+      } else { cell.textContent='—'; cell.style.color='#9ca3af'; }
+    }
+    K.stat('stSpend', tc>0?K.money(tc):'—','Total spend','last 12 months');
+    K.stat('stLeads', tl>0?K.cnt(tl,0):'—','Leads received', tl>0&&tc>0?K.money(tc/tl)+' each':'');
+    K.stat('stClose', tx>0?K.cnt(tx,1):'—','Closings traced','');
+    K.stat('stBlended', tx>0&&tc>0?K.money(tc/tx):'—','Blended cost per closing','');
+    if(!(tc>0)){ K.verdict('srcVerdict','','Fill in your sources',['Cost per closing ranks them for you.']); return; }
+    var lines=[], c='', head;
+    if(tx<=0){
+      c='bad'; head='You cannot trace a single closing to a source';
+      lines.push('You spent <b>'+K.money(tc)+'</b> last year and no closing is attributed to any of it. That is not a spending problem — it is a tracking problem, and it is why every marketing decision currently feels like a guess.');
+      lines.push('Fix the four steps in section 03 before changing a single line of spend. You cannot cut wisely without data.');
+    } else {
+      head='Blended cost per closing: '+K.money(tc/tx);
+      if(best) lines.push('Your best source is <b>'+best.name+'</b> at '+K.money(best.per)+' per closing. That is where additional money goes first — and it goes in increments, with a review date.');
+      if(worst && worst.per>(best?best.per*3:900)){
+        c='warn';
+        lines.push('Your worst is <b>'+worst.name+'</b> at '+(worst.per===Infinity?'no traced closings at all despite '+K.money(worst.c)+' spent':K.money(worst.per)+' per closing')+'. Put it at a red light: one defined cycle to improve, then cut it.');
+      } else { c='ok'; lines.push('Nothing here is wildly out of line, which is rarer than you&#x27;d think. Keep the tracking running and re-audit each quarter.'); }
+      if(tl>0) lines.push('Across everything you paid about <b>'+K.money(tc/tl)+' per lead</b> and converted '+K.round(tx/tl*100,1)+'% of them. If that conversion looks low, the fix is Module 2.2 — not more leads.');
+    }
+    K.verdict('srcVerdict', c, head, lines);
+    K.publish({source_spend:Math.round(tc), source_leads:Math.round(tl),
+               source_closings:K.round(tx,1), cost_per_closing: tx>0?Math.round(tc/tx):null});
+  }
+  var ids=[]; for(var i=1;i<=SRC.length;i++){ids.push('s'+i+'c');ids.push('s'+i+'l');ids.push('s'+i+'x');ids.push('s'+i+'n');}
+  K.bind(ids, paint);
+})();
+
+</script>
+</body>
+</html>

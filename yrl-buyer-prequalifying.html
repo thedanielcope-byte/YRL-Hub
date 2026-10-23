@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pre-Qualifying Buyer Call — Your Realty Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --red: #c03926; --red-light: #d94a35; --red-dark: #9e2e1e;
+            --bg: #f2f4f7; --surface: #ffffff; --surface-2: #f7f8fa; --surface-3: #eef0f3;
+            --border: #e2e5ea; --text: #1a1d22; --text-sec: #5a6270; --text-muted: #9ca3af;
+            --radius: 12px; --radius-lg: 20px; --shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+        a { text-decoration: none; color: inherit; }
+
+        .sub-header {
+            background: linear-gradient(150deg, #a82f1e 0%, #c03926 45%, #9e2e1e 100%);
+            padding: 28px 20px; border-bottom: 4px solid rgba(0,0,0,0.15);
+            position: relative; overflow: hidden;
+        }
+        .sub-header::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
+            background-size: 28px 28px; pointer-events: none;
+        }
+        .sub-header-inner {
+            max-width: 800px; margin: 0 auto; display: flex; align-items: center;
+            justify-content: space-between; position: relative; z-index: 1;
+        }
+        .sub-header-left { display: flex; align-items: center; gap: 20px; }
+        .sub-header-logo { max-width: 100px; background: #fff; border-radius: 10px; padding: 8px 14px; box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
+        .sub-header-text h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(24px, 5vw, 36px); letter-spacing: 2px; color: #fff; line-height: 1; }
+        .sub-header-text p { color: rgba(255,255,255,0.7); font-size: 13px; margin-top: 4px; }
+        .back-btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35);
+            color: #fff; padding: 9px 18px; border-radius: 100px; font-size: 12.5px;
+            font-weight: 600; transition: all 0.2s; white-space: nowrap;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .main { max-width: 800px; margin: 0 auto; padding: 40px 20px 90px; }
+
+        .intro-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); padding: 28px 32px; margin-bottom: 32px;
+        }
+        .intro-card h2 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .intro-card p { font-size: 14px; color: var(--text-sec); line-height: 1.7; }
+        .intro-card .rules {
+            display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;
+        }
+        .intro-card .rule {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(192,57,38,0.06); border: 1px solid rgba(192,57,38,0.15);
+            border-radius: 100px; padding: 6px 14px; font-size: 12px; font-weight: 600; color: var(--red);
+        }
+
+        .script-section {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); margin-bottom: 20px; overflow: hidden;
+        }
+        .script-header {
+            padding: 20px 28px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 14px;
+        }
+        .script-num {
+            width: 36px; height: 36px; min-width: 36px; background: var(--red); color: #fff;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-family: 'Bebas Neue', sans-serif; font-size: 18px;
+        }
+        .script-header h3 { font-size: 16px; font-weight: 700; }
+        .script-header p { font-size: 12px; color: var(--text-muted); }
+
+        .script-body { padding: 24px 28px; }
+        .script-line {
+            font-size: 15px; line-height: 1.8; color: var(--text);
+            margin-bottom: 16px; position: relative; padding-left: 0;
+        }
+        .script-line:last-child { margin-bottom: 0; }
+        .script-line .say {
+            background: rgba(192,57,38,0.06); border-left: 3px solid var(--red);
+            padding: 12px 16px; border-radius: 0 8px 8px 0; display: block;
+            font-style: italic;
+        }
+        .script-line .note {
+            font-size: 12px; color: var(--text-muted); font-style: italic;
+            display: block; margin-top: 4px;
+        }
+        .script-line .blank {
+            border-bottom: 2px solid var(--border); display: inline-block;
+            min-width: 100px; margin: 0 4px;
+        }
+        .divider { height: 1px; background: var(--border); margin: 32px 0; }
+
+        .opener-script {
+            background: rgba(192,57,38,0.04); border: 2px solid rgba(192,57,38,0.15);
+            border-radius: var(--radius-lg); padding: 28px 32px; margin-bottom: 32px;
+        }
+        .opener-script h2 {
+            font-family: 'Bebas Neue', sans-serif; font-size: 24px;
+            letter-spacing: 1px; color: var(--red); margin-bottom: 12px;
+        }
+        .opener-script .say { background: rgba(255,255,255,0.8); }
+
+        .footer {
+            text-align: center; padding: 40px 20px 32px; color: var(--text-muted); font-size: 12px;
+        }
+        .footer-logo { max-width: 130px; margin: 0 auto 14px; opacity: 0.5; }
+
+        @media (max-width: 600px) {
+            .sub-header-inner { flex-direction: column; gap: 16px; text-align: center; }
+            .sub-header-left { flex-direction: column; }
+            .script-body { padding: 20px; }
+            .intro-card .rules { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="sub-header">
+    <div class="sub-header-inner">
+        <div class="sub-header-left">
+            <img src="https://wdvolamasztetwpitbwg.supabase.co/storage/v1/object/public/hub-files/brand/yrl-logo-color.png"
+                 alt="Your Realty Link" class="sub-header-logo">
+            <div class="sub-header-text">
+                <h1>Pre-Qualifying Buyer Call</h1>
+                <p>15 questions to ask before the first showing</p>
+            </div>
+        </div>
+        <a href="yrl-client-buyers.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Buyer Tools</a>
+    </div>
+</header>
+
+<main class="main">
+
+    <div class="intro-card">
+        <h2>Before You Show a Single Home</h2>
+        <div class="rules">
+            <div class="rule"><i class="fa-solid fa-clock"></i> Call within 24 hours of first contact</div>
+            <div class="rule"><i class="fa-solid fa-circle-exclamation"></i> No exceptions &mdash; qualify every lead</div>
+            <div class="rule"><i class="fa-solid fa-stopwatch"></i> Takes about 10 minutes</div>
+        </div>
+        <p style="margin-top: 16px;">These questions help you understand the buyer's motivation, timeline, and readiness. Don't skip them &mdash; a qualified buyer saves you time and earns you more. An unqualified buyer costs you gas money and weekends.</p>
+    </div>
+
+    <!-- Opening -->
+    <div class="opener-script">
+        <h2><i class="fa-solid fa-phone"></i> &nbsp;Opening</h2>
+        <div class="script-line">
+            <span class="say">Hi, <span class="blank"></span>, this is <span class="blank"></span> with Your Realty Link, and I'm calling because you expressed interest in buying a home. I'd love to help you with that. Before we start looking at homes together, I want to make sure I understand exactly what you're looking for so I don't waste your time. Do you have about 10 minutes?</span>
+        </div>
+    </div>
+
+    <!-- 15 Questions -->
+
+    <!-- 1 -->
+    <div class="script-section">
+        <div class="script-header">
+            <div class="script-num">1</div>
+            <div><h3>Motivation</h3>
+            <p>Understand their 'why' &mdash; it drives every decision</p></div>
+        </div>
+        <div class="script-body">
+            <div class="script-line">
+                <span class="say">Why are you thinking about buying a home right now?</span>
+                <span class="note">Listen for urgency. Job transfer, growing family, and lease ending are strong motivators. "Just browsing" needs more qualification.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="script-section">
+        <div class="script-header">
+            <div class="script-num">2</div>
+            <div><h3>Timeline</h3>
+            <p>Determine urgency and timeline</p></div>
+        </div>
+        <div class="script-body">
+            <div class="script-line">
+                <span class="say">When do you need to be in your new home?</span>
+                <span class="note">If they say "no rush," ask: "If the perfect home came on the market tomorrow, would you be ready to move on it?" Their answer tells you their real timeline.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="script-section">
+        <div class="script-header">
+            <div class="script-num">3</div>
+            <div><h3>Pre-Approval</h3>
+            <p>Confirm financial readiness</p></div>
+        </div>
+        <div class="script-body">
+            <div class="script-line">
+                <span class="say">Have you spoken with a lender yet about getting pre-approved? ... That's an important first step. I work with some great local lenders who can get you pre-approved quickly, usually within 24 hours. Would you like me to connect you with one?</span>
+                <span class="note">No pre-approval = not ready to tour homes. Offer to connect them with a lender. This is non-negotiable.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="script-section">
+        <div class="script-header">
+            <div class="script-num">4</div>
+            <div><h3>Budget</h3>
+            <p>Confirm budget expectations</p></div>
+        </div>
+        <div class="script-body">
+            <div class="script-line">
+                <span class="say">What monthly payment are you comfortable with, and has your lender told you what price range that puts you in?</span>
+                <span class="note">Monthly payment matters more than purchase price to most buyers. If they haven't talked to a lender, don't assume &mdash; connect them first.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5 -->
+    <div class="script-section">
+        <div class="script-header">
+            <div class="script-num">5</div>
+            <div><h3>Down Payment</h3>
+            <p>Understand loan type and cash position</p></div>
+        </div>
+        <div class="script-body">
+            <div class="script-line">
+                <span class="say">Do you know roughly how much you're planning for a down payment? Are you looking at conventional, FHA, VA, or USDA financing?</span>
+                <span class="note">Down payment affects loan type, which affects what homes qualify. VA and USDA have property requirements. FHA has condition requirements.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6 -->
+    <div class="script-section">
+        <div class="script-header">
+            <div class="script-num">6</div>
+            <div><h3>Current Situation</h3>
+            <p>Understand their current housing situation</p></div>
+        </div>
+        <div class="script-body">
+            <div class="script-line">
+                <span class="say">Are you currently renting or do you own a home? ... <em>(If own)</em> Would you need to sell your current home before buying? ... Do you have equity in your current home?</span>
+                <span class="note">If they need to sell first, this becomes a sell-then-buy coordination. Note this &mdash; it changes the strategy significantly.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7 -->
+    <div class="script-section">
+        <div class="script-header">
+            <div class="script-num">7</div>
+            <div><h3>Location</h3>
+            <p>Define the search area</p></div>
+        </div>
+        <div class="script-body">
+            <div class="script-line">
+                <span class="say">What cities or neighborhoods are you most interested in? Is there a specific school district that matters to you? How far are you willing to commute to work?</span>
+                <span class="note">Get specific. "Indianapolis area" is too broad. Push for 2&ndash;3 target cities or specific neighborhoods.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8 -->
+    <div class="script-section">
+        <div class="script-header">
+            <div class="script-num">8</div>
+            <div><h3>Must-Haves</h3>
+            <p>Identify non-negotiable features</p></div>
+        </div>
+        <div class="script-body">
+            <div class="script-line">
+                <span class="say">If you could only have three things in your new home, what would they be? ... What about bedrooms and bathrooms &mdash; what's the minimum you need?</span>
+                <span class="note">Limit them to 3&ndash;5 must-haves. Everything else is a want. Too many must-haves means no home will ever be good enough.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 9 -->
+    <div class="script-section">
+        <div class="script-header">
+            <div class="script-num">9</div>
+            <div><h3>Deal-Breakers</h3>
+            <p>Identify disqualifying features</p></div>
+        </div>
+        <div class="script-body">
+            <div class="script-line">
+                <span class="say">Is there anything that would be an absolute deal-breaker? Something that would make you walk away no matter how great the rest of the house is?</span>
+                <span class="note">Common deal-breakers: HOA, busy road, no garage, specific school districts, flood zone. Knowing these saves showing time.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10 -->
+    <div class="script-section">
+        <div class="script-header">
+            <div class="script-num">10</div>
+            <div><h3>Search History</h3>
+            <p>Gauge where they are in the process</p></div>
+        </div>
+        <div class="script-body">
+            <div class="script-line">
+                <span class="say">Have you been browsing on Zillow or Realtor.com? Have you toured any homes yet? ... Is there a specific home you've seen online that caught your eye?</span>
+                <span class="note">If they've been looking for months without an agent, ask why. If they've toured with another agent, find out what happened.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 11 -->
+    <div class="script-section">
+        <div class="script-header">
+            <div class="script-num">11</div>
+            <div><h3>Other Agents</h3>
+            <p>Check for existing agent relationships</p></div>
+        </div>
+        <div class="script-body">
+            <div class="script-line">
+                <span class="say">Are you currently working with another agent, or have you signed any agreements with anyone?</span>
+                <span class="note">If they have a signed buyer agreement with another agent, you cannot show them homes. Be direct about this. If they're just casually talking to someone, that's different.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 12 -->
+    <div class="script-section">
+        <div class="script-header">
+            <div class="script-num">12</div>
+            <div><h3>Decision Makers</h3>
+            <p>Identify all decision makers</p></div>
+        </div>
+        <div class="script-body">
+            <div class="script-line">
+                <span class="say">Besides yourself, who else will be involved in making this decision? Will they be joining us for showings?</span>
+                <span class="note">Never show homes without all decision makers present. You'll show the home twice and risk losing the deal when the absent party disagrees.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 13 -->
+    <div class="script-section">
+        <div class="script-header">
+            <div class="script-num">13</div>
+            <div><h3>Buyer Compensation</h3>
+            <p>Set the stage for the compensation agreement</p></div>
+        </div>
+        <div class="script-body">
+            <div class="script-line">
+                <span class="say">Have you heard about the changes in how real estate agents are compensated? ... Starting last year, all buyers are required to sign a written agreement with their agent before touring homes. I'll walk you through exactly how that works when we meet &mdash; it's very straightforward and actually protects you.</span>
+                <span class="note">Don't negotiate compensation on this call. Just plant the seed that it exists and that you'll explain it in person. Confidence is key.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 14 -->
+    <div class="script-section">
+        <div class="script-header">
+            <div class="script-num">14</div>
+            <div><h3>Expectations</h3>
+            <p>Understand their expectations for service</p></div>
+        </div>
+        <div class="script-body">
+            <div class="script-line">
+                <span class="say">What matters most to you in a real estate agent? Communication style, availability, expertise in a specific area? I want to make sure I'm the right fit for you.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 15 -->
+    <div class="script-section">
+        <div class="script-header">
+            <div class="script-num">15</div>
+            <div><h3>Next Steps</h3>
+            <p>Schedule the buyer consultation</p></div>
+        </div>
+        <div class="script-body">
+            <div class="script-line">
+                <span class="say">Based on everything you've told me, I think I can really help you find the right home. I'd love to sit down with you &mdash; it takes about 30 minutes &mdash; to go over the market, explain the buying process, and map out a plan to find your home. What day works best this week?</span>
+                <span class="note">Always push for an in-person consultation before showing homes. This is where you present the buyer consultation, explain the compensation agreement, and get it signed.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Closing -->
+    <div class="opener-script" style="margin-top: 32px;">
+        <h2><i class="fa-solid fa-handshake"></i> &nbsp;Wrap Up</h2>
+        <div class="script-line">
+            <span class="say">Thank you for taking the time to go through these questions with me, <span class="blank"></span>. I'll start putting together a list of homes that match what you're looking for. When we meet on <span class="blank"></span>, I'll have everything ready to go. In the meantime, if you haven't been pre-approved yet, I'd recommend reaching out to <span class="blank"></span> &mdash; I'll text you their info right after we hang up. Talk soon!</span>
+        </div>
+    </div>
+
+</main>
+
+<footer class="footer">
+    <img src="https://wdvolamasztetwpitbwg.supabase.co/storage/v1/object/public/hub-files/brand/yrl-logo-color.png"
+         alt="Your Realty Link" class="footer-logo" onerror="this.style.display='none'">
+    <p>&copy; 2026 Your Realty Link &nbsp;&middot;&nbsp; All Rights Reserved</p>
+</footer>
+
+</body>
+</html>
