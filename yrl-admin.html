@@ -2770,31 +2770,16 @@ async function setVohStatus(id, status) {
     }
 }
 
-const GHL_COMPLETE_WEBHOOK = 'https://services.leadconnectorhq.com/hooks/iOT1nopTL5CnKPq44zFI/webhook-trigger/e72bef37-be09-45f7-a664-68d4dccaad39';
+const VOH_FN = 'https://wdvolamasztetwpitbwg.supabase.co/functions/v1/yrl-voh';  // our own handler (GoHighLevel retired 2026-10-24)
 
+// Emails the event's results to the team. The summary is built server-side from the saved event,
+// so only the id is sent (the function checks the event really is complete).
 function sendVohCompleteWebhook(e) {
-    const payload = {
-        source:               'VOH Event Complete',
-        agent_name:           e.agent_name           || '',
-        agent_email:          e.agent_email          || '',
-        property_address:     e.property_address     || '',
-        event_date:           e.event_date            || '',
-        event_time:           e.event_time            || '',
-        zoom_live_attendees:  e.zoom_live_attendees   || 0,
-        fb_leads_count:       e.fb_leads_count        || 0,
-        interest_submissions: e.interest_submissions  || 0,
-        zoom_registrants:     e.zoom_registrants      || 0,
-        showings_booked:      e.showings_booked       || 0,
-        offers_received:      e.offers_received       || 0,
-        youtube_url:          e.youtube_url           || '',
-        ad_spend_actual:      e.ad_spend_actual       || '',
-        cost_per_lead:        e.cost_per_lead         || '',
-    };
-    fetch(GHL_COMPLETE_WEBHOOK, {
-        method: 'POST', mode: 'no-cors',
+    fetch(VOH_FN, {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-    });
+        body: JSON.stringify({ action: 'complete', event_id: e.id })
+    }).catch(err => console.warn('VOH complete email error:', err));
 }
 
 function sendVohReadyEmail(e) {

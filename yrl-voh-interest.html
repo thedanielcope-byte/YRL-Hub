@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Virtual Open House — Buyer Interest Form</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -155,12 +156,12 @@
             .form-group.full{grid-column:1;}
         }
     </style>
-</head>
+<link rel="stylesheet" href="hub-theme.css?v=20260903b"><script src="hub-brand.js" defer></script></head>
 <body>
 
 <header class="header">
     <div class="header-inner">
-        <img src="https://yrlagent.com/wp-content/uploads/2026/04/Your-Realty-Link-ver6.6-4-final.png"
+        <img src="yrl-logo.png"
              alt="Your Realty Link" class="header-logo">
         <h1>Virtual Open House</h1>
         <div class="header-sub">Live property tour — express your interest below</div>
@@ -289,7 +290,8 @@
                 </div>
             </div>
 
-            <button class="btn-submit" id="btnSubmit" onclick="submitInterest()">
+            <input type="text" id="f_website" name="website_hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+                <button class="btn-submit" id="btnSubmit" onclick="submitInterest()">
                 <i class="fa-solid fa-paper-plane"></i> Submit Interest
             </button>
             <p class="privacy"><i class="fa-solid fa-lock" style="margin-right:4px;"></i>Your information is private and will only be shared with your agent.</p>
@@ -310,7 +312,7 @@
 <script>
 const SB_URL = 'https://wdvolamasztetwpitbwg.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indkdm9sYW1hc3p0ZXR3cGl0YndnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3Nzc2MTYsImV4cCI6MjA5MTM1MzYxNn0.uiGIaZwr88ZNtAobfSV-axlpXB3sos2Rcw3FiFm6JO8';
-const GHL_WEBHOOK = 'https://services.leadconnectorhq.com/hooks/iOT1nopTL5CnKPq44zFI/webhook-trigger/ac791ae2-015d-4aaa-9356-0e2081f04093';
+const VOH_FN = 'https://wdvolamasztetwpitbwg.supabase.co/functions/v1/yrl-voh';  // our own lead handler (GoHighLevel retired 2026-10-24)
 
 let eventData = null;
 let selectedIntent = '';
@@ -390,22 +392,22 @@ async function submitInterest() {
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting…';
 
     try {
-        await fetch(GHL_WEBHOOK, {
+        const res = await fetch(VOH_FN, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            mode: 'no-cors',
             body: JSON.stringify({
-                first_name:       first,
-                last_name:        last,
-                email:            email,
-                phone:            phone,
-                intent:           selectedIntent,
-                property_address: eventData?.property_address || '',
-                agent_name:       eventData?.agent_name || '',
-                event_date:       eventData?.event_date || '',
-                source:           'VOH Interest Form'
+                action:     'interest',
+                event_id:   new URLSearchParams(window.location.search).get('event') || '',
+                first_name: first,
+                last_name:  last,
+                email:      email,
+                phone:      phone,
+                intent:     selectedIntent,
+                website_hp: val('f_website')
             })
         });
+        const out = await res.json().catch(() => ({}));
+        if (!res.ok || out.ok === false) throw new Error(out.error || 'submit failed');
 
         setText('thanksAddress', eventData?.property_address || 'this property');
         hide('viewForm'); show('viewThanks');
